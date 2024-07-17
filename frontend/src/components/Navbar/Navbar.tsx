@@ -12,7 +12,7 @@ const Navbar = (props: Props) => {
   // Menu 상태 관리 (메뉴 열기, 닫기)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // 확장 Menu 상태 관리 (확장메뉴 열기, 닫기)
-  const [isExtendRentalOpen, setExtendRentalOpen] = useState(false);
+  const [isExtendRentalOpen, setIsExtendRentalOpen] = useState(false);
   const [isExtendCommunityOpen, setisExtendCommunityOpen] = useState(false);
   // 선택된 확장 Menu 카테고리
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
@@ -21,23 +21,28 @@ const Navbar = (props: Props) => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-    setExtendRentalOpen(false);
+    setIsExtendRentalOpen(false);
     setisExtendCommunityOpen(false);
   };
 
   const toggleExtendMenu = (selectedCategory:string) => {
     setSelectedExtendMenu(selectedCategory);
 
-    if (isEitherOpen) {
-      setExtendRentalOpen(false);
-      setisExtendCommunityOpen(false);
-    };
-
     if (selectedCategory === 'rental') {
-      setExtendRentalOpen(!isExtendRentalOpen);
+      if (isExtendRentalOpen) {
+        setIsExtendRentalOpen(false)
+      } else {
+        setisExtendCommunityOpen(false)
+        setIsExtendRentalOpen(true)
+      }
     } else if (selectedCategory === 'community') {
-      setisExtendCommunityOpen(!isExtendCommunityOpen);
-    }
+      if (isExtendCommunityOpen) {
+        setisExtendCommunityOpen(false)
+      } else {
+        setIsExtendRentalOpen(false)
+        setisExtendCommunityOpen(true)
+      }
+    };
   };
 
   useEffect(() => {
@@ -45,7 +50,7 @@ const Navbar = (props: Props) => {
     const handleResize = () => {
       if (window.innerWidth >= 768 || window.innerWidth >= 1024) {
         setIsMenuOpen(false);
-        setExtendRentalOpen(false);
+        setIsExtendRentalOpen(false);
         setisExtendCommunityOpen(false);
       }
     };

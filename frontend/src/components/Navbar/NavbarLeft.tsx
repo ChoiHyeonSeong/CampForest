@@ -25,55 +25,56 @@ const NavbarLeft = (props: Props) => {
       <div className='h-full hidden md:flex flex-col justify-between'>
         {/* main menu */}
         <div>
-          <div className='bg-gray-600 h-20 flex'>
+          <div className='bg-gray-600 h-20 flex flex-nowrap'>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex flex-all-center`}>로고 들어갑니다</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>로고 들어갑니다.
+            </div>
           </div>
 
           <div className='bg-gray-100 h-16 flex'>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className={`${isEitherOpen ? 'hidden' : 'block'} h-8`}/>
             </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex flex-all-center`}>프로필 들어갑니다</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>프로필 들어갑니다</div>
           </div>
 
           <div className='bg-gray-600 h-12 flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex flex-all-center`}>대여 / 판매</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>대여 / 판매</div>
           </div>
           <div className='bg-gray-600 h-12 flex cursor-pointer' onClick={() => props.toggleExtendMenu('community')}>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex flex-all-center`}>커뮤니티</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
           </div>
           <div className='bg-gray-600 h-12 flex'>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex flex-all-center`}>캠핑장 찾기</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
           </div>
           <div className='bg-gray-600 h-12 flex'>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex flex-all-center`}>채팅</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
           </div>
           <div className='bg-gray-600 h-12 flex'>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen   ? 'hidden' : 'block'} flex flex-all-center`}>알림</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>알림</div>
           </div>
           <div className='bg-gray-600 h-12 flex'>
             <div className='w-[4rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex flex-all-center`}>검색</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>검색</div>
           </div>
         </div>
         {/* darkmode */}
