@@ -4,6 +4,7 @@ import NavbarLeft from './NavbarLeft';
 import NavbarLeftExtendRental from './NavbarLeftExtendRental';
 import NavbarLeftExtendCommunity from './NavbarLeftExtendCommunity';
 import NavbarBottom from './NavbarBottom';
+import Aside from './Aside';
 
 type Props = {}
 
@@ -81,6 +82,9 @@ const Navbar = (props: Props) => {
 
       {/* 모바일용 하단 네비게이션바 */}
       <NavbarBottom toggleMenu={toggleMenu}/>
+
+      {/* 우측 하단 고정사이드바 */}
+      <Aside />
     </div>
   )
 }
