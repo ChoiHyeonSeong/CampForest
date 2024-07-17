@@ -13,7 +13,7 @@ const NavbarLeftExtendRental = (props: Props) => {
         bg-gray-500`
       }
     >
-      <div className='bg-orange-500 h-20'>Rental</div>
+      <div className='bg-orange-500 h-20 ms-4 flex items-center'>Rental</div>
       <div className="grid grid-cols-2 grid-rows-5 gap-4 p-4">
         <div className="bg-gray-200 p-4">1</div>
         <div className="bg-gray-200 p-4">2</div>
