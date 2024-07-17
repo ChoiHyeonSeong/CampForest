@@ -7,9 +7,9 @@ type Props = {
 const NavbarLeftExtendCommunity = (props: Props) => {
   return (
     <div
-      className={`fixed w-[18rem] h-full md:mt-10 lg:mt-0 mb-10 md:mb-0 
+      className={`fixed w-[25rem] h-full md:mt-10 lg:mt-0 mb-10 md:mb-0 
         transition-all duration-300 ease-in-out 
-        ${props.isExtendMenuOpen ? 'translate-x-[4rem]' : '-translate-x-full'} 
+        ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'} 
         bg-gray-500`
       }
     >

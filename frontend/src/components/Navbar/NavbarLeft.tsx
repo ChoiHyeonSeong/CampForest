@@ -14,10 +14,10 @@ const NavbarLeft = (props: Props) => {
 
   return (
     <div 
-      className={`fixed z-10 w-56 h-full md:mt-10 lg:mt-0 mb-10 md:mb-0 
+      className={`fixed z-10 h-full md:mt-10 lg:mt-0 mb-10 md:mb-0 
         lg:translate-x-0 transition-all duration-300 ease-in-out
         ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
-        ${isEitherOpen ? 'w-[4rem]' : 'w-56'} 
+        ${isEitherOpen ? 'w-[5rem]' : 'w-[15rem]'} 
         bg-amber-500`
       }
     >
@@ -25,53 +25,53 @@ const NavbarLeft = (props: Props) => {
       <div className='h-full hidden md:flex flex-col justify-between'>
         {/* main menu */}
         <div>
-          <div className='bg-gray-600 h-20 flex flex-nowrap'>
-            <div className='w-[4rem] flex flex-all-center'>
+          <div className='bg-gray-600 h-[7rem] flex'>
+            <div className='w-[5rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>로고 들어갑니다.
             </div>
           </div>
 
-          <div className='bg-gray-100 h-16 flex'>
-            <div className='w-[4rem] flex flex-all-center'>
-              <img src={tempImage} alt="NoImg" className={`${isEitherOpen ? 'hidden' : 'block'} h-8`}/>
+          <div className={`bg-gray-100 h-[7rem] flex ${isEitherOpen ? '-translate-x-full' : 'translate-x-0'} transition-all duration-300 ease-in-out`}>
+            <div className='w-[5rem] flex flex-all-center'>
+              <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>프로필 들어갑니다</div>
+            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>프로필 들어갑니다</div>
           </div>
 
-          <div className='bg-gray-600 h-12 flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
-            <div className='w-[4rem] flex flex-all-center'>
+          <div className='bg-gray-600 h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
+            <div className='w-[5rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>대여 / 판매</div>
           </div>
-          <div className='bg-gray-600 h-12 flex cursor-pointer' onClick={() => props.toggleExtendMenu('community')}>
-            <div className='w-[4rem] flex flex-all-center'>
+          <div className='bg-gray-600 h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('community')}>
+            <div className='w-[5rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
           </div>
-          <div className='bg-gray-600 h-12 flex'>
-            <div className='w-[4rem] flex flex-all-center'>
+          <div className='bg-gray-600 h-[3.5rem] flex'>
+            <div className='w-[5rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
           </div>
-          <div className='bg-gray-600 h-12 flex'>
-            <div className='w-[4rem] flex flex-all-center'>
+          <div className='bg-gray-600 h-[3.5rem] flex'>
+            <div className='w-[5rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
           </div>
-          <div className='bg-gray-600 h-12 flex'>
-            <div className='w-[4rem] flex flex-all-center'>
+          <div className='bg-gray-600 h-[3.5rem] flex'>
+            <div className='w-[5rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>알림</div>
           </div>
-          <div className='bg-gray-600 h-12 flex'>
-            <div className='w-[4rem] flex flex-all-center'>
+          <div className='bg-gray-600 h-[3.5rem] flex'>
+            <div className='w-[5rem] flex flex-all-center'>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>검색</div>
