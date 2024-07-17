@@ -1,7 +1,8 @@
 import React from 'react'
 import tempImage from '@assets/logo192.png';
-import longLogoImg from '@assets/logo/logo.png'
+
 import shortLogoImg from '@assets/logo/mini-logo.png'
+import { ReactComponent as BigLogoIcon } from '@assets/logo/logo.svg'
 
 import { ReactComponent as RentalIcon } from '@assets/icons/nav-rental.svg'
 import { ReactComponent as CommunityIcon } from '@assets/icons/nav-community.svg'
@@ -39,7 +40,7 @@ const NavbarLeft = (props: Props) => {
               <img src={shortLogoImg} alt="NoImg" className={`${isEitherOpen ? 'h-8' : 'h-0'} h-8`}/>
             </div>
             <div className={`${isEitherOpen ? 'hidden' : 'block'} flex truncate`}>
-              <img src={longLogoImg} alt="NoImg" />
+              <BigLogoIcon className='fill-[#000000] w-[180]'/>
             </div>
           </div>
 
