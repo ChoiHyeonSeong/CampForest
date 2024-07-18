@@ -2,7 +2,11 @@ import '@styles/App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Navbar from '@components/Navbar/Navbar';
-import Regist from '@components/User/Regist';
+
+// 임시
+import UserInformation from '@components/User/UserInformation';
+// 임시
+import Login from '@components/Login/Login';
 
 function App() {
   return (
