@@ -1,13 +1,12 @@
 import '@styles/App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import RouterTest from '@components/RouterTest';
-
 import Navbar from '@components/Navbar/Navbar';
 
 // 임시
 import UserInformation from '@components/User/UserInformation';
 // 임시
+import Login from '@components/Login/Login';
 
 function App() {
   return (
@@ -29,9 +28,11 @@ function App() {
           <div className='h-96'>To scroll</div>
           <div className='h-96'>To scroll</div> */}
 
+
+
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<RouterTest/>}/>
+              <Route path="/login" element={<Login/>}/>
             </Routes>
           </BrowserRouter>
           {/* 여기까지 컨텐츠 */}
