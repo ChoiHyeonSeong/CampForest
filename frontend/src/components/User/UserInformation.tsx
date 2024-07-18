@@ -10,7 +10,7 @@ const UserInformation = (props: Props) => {
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <div className="bg-white p-6 w-full max-w-lg md:max-w-3xl lg:w-[44rem]">
+      <div className="bg-white p-6 w-full max-w-lg md:max-w-3xl lg:w-[40rem]">
 
         {/* 프로필사진 */}
         <div className="flex justify-center mb-10">

@@ -19,7 +19,7 @@ function App() {
 
           {/* 여기서 부터 */}
             {/* 임시 */}
-            <UserInformation></UserInformation>
+            {/* <UserInformation></UserInformation> */}
             {/* 임시 */}
           <BrowserRouter>
             <Routes>
