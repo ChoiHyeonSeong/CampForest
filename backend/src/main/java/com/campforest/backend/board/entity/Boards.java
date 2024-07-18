@@ -30,6 +30,7 @@ public class Boards {
 	private String userId;
 	private String title;
 	private String content;
+	@Column(name = "category")
 	private String category;
 	@Column(name="like_count")
 	private Long likeCount;

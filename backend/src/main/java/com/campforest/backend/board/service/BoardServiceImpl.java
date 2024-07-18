@@ -76,18 +76,30 @@ public class BoardServiceImpl implements BoardService {
 		return boardResponseDtos;
 	}
 
-	@Transactional
-	@Override
-	public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
-		Boards boards = boardRepository.findById(boardId)
-			.orElseThrow(() -> new RuntimeException("Board not found"));
-
-		boards.setTitle(boardRequestDto.getTitle());
-		boards.setContent(boardRequestDto.getContent());
-		boards.setCategory(boardRequestDto.getCategory());
-		boards.setBoardOpen(boardRequestDto.isBoardOpen());
-
-	}
+//	@Transactional
+//	@Override
+//	public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
+//		Boards boards = boardRepository.findById(boardId)
+//			.orElseThrow(() -> new RuntimeException("Board not found"));
+//		System.out.println();
+//		boards.setUserId(boards.getUserId());
+//		boards.setLikeCount(boards.getBoardId());
+//		boards.setTitle(boardRequestDto.getTitle());
+//		boards.setContent(boardRequestDto.getContent());
+//		boards.setCategory(boardRequestDto.getCategory());
+//		boards.setBoardOpen(boardRequestDto.isBoardOpen());
+//	}
+@Transactional
+@Override
+public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
+	boardRepository.updateBoard(
+			boardId,
+			boardRequestDto.getTitle(),
+			boardRequestDto.getContent(),
+			boardRequestDto.getCategory(),
+			boardRequestDto.isBoardOpen()
+	);
+}
 	@Transactional
 	@Override
 	public void deleteBoard(Long boardId) {
