@@ -1,6 +1,7 @@
 import '@styles/App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+
 import Navbar from '@components/Navbar/Navbar';
 
 // 임시
@@ -20,7 +21,7 @@ function App() {
           {/* 여기서 부터 */}
           <BrowserRouter>
             <Routes>
-              <Route path="/user/regist/email" element={<Regist/>}/>
+              <Route path="/user/regist/*" element={<Regist/>}/>
             </Routes>
           </BrowserRouter>
           {/* 여기까지 컨텐츠 */}
