@@ -5,7 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
 
 
-type LoginForm = {
+type RegistForm = {
     userName: string,
     userBirthdate: Date | null,
     userGender: string,
@@ -15,7 +15,7 @@ type LoginForm = {
 }
 
 const Regist = () => {
-    const [values, setValues] = useState<LoginForm>({
+    const [values, setValues] = useState<RegistForm>({
         userName: "",
         userBirthdate: null,
         userGender: "",
