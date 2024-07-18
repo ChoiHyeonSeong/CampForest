@@ -8,12 +8,7 @@ type LoginForm = {
   userPassword: string
 }
 
-
-type Props = {}
-
-
-function Login({}: Props) {
-
+function Login() {
   const [values, setValues] = useState<LoginForm>({
     userEmail: "",
     userPassword: ""

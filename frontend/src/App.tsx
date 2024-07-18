@@ -4,10 +4,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Navbar from '@components/Navbar/Navbar';
 
-// 임시
-import UserInformation from '@components/User/UserInformation';
-// 임시
-import Login from '@components/Login/Login';
+
+import Login from '@pages/Login';
+import Regist from '@components/User/Regist';
 
 function App() {
   return (
@@ -21,7 +20,8 @@ function App() {
           {/* 여기서 부터 */}
           <BrowserRouter>
             <Routes>
-              <Route path="/user/regist/*" element={<Regist/>}/>
+              <Route path='/user/login' element={<Login/>}/>
+              <Route path="/user/regist/email" element={<Regist/>}/>
             </Routes>
           </BrowserRouter>
           {/* 여기까지 컨텐츠 */}
