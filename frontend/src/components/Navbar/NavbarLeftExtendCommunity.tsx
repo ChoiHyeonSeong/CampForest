@@ -7,7 +7,35 @@ type Props = {
   toggleExtendMenu: (param:string) => void;
 }
 
+type CommunityCategoryObj = {
+  title: string;
+}
+
 const NavbarLeftExtendCommunity = (props: Props) => {
+  const communityCategory: CommunityCategoryObj[] = [
+    {
+      title: '전체보기'
+    },
+    {
+      title: '캠핑장 후기'
+    },
+    {
+      title: '캠핑장비 후기'
+    },
+    {
+      title: '레시피 추천'
+    },
+    {
+      title: '캠핑장 양도'
+    },
+    {
+      title: '자유게시판'
+    },
+    {
+      title: '질문게시판'
+    },
+  ]
+
   return (
     <div
       className={`fixed w-[25rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
@@ -20,14 +48,10 @@ const NavbarLeftExtendCommunity = (props: Props) => {
         <LeftArrow className='me-3 cursor-pointer w-5 h-5' onClick={() => props.toggleExtendMenu('community')}/>
         <p className='text-2xl'>커뮤니티</p>
       </div>
-      <div className='flex flex-col text-left ps-10'>
-        <div className="p-6">전체보기</div>
-        <div className="p-6">캠핑장 후기</div>
-        <div className="p-6">캠핑장비 후기</div>
-        <div className="p-6">레시피 추천</div>
-        <div className="p-6">캠핑장 양도</div>
-        <div className="p-6">자유게시판</div>
-        <div className="p-6">질문게시판</div>
+      <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide flex flex-col text-left ps-10'>
+        {communityCategory.map((eachObj, index) => (
+          <div className="p-6">{eachObj.title}</div>
+        ))}
       </div>
     </div>
   )
