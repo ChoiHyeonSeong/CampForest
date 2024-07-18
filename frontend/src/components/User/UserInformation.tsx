@@ -4,7 +4,6 @@ import InterestSetting from './InterestSetting'
 import ProfileImg from '@assets/icons/profileimg.png'
 
 const UserInformation = () => {
-
   return (
     <form className="flex justify-center items-center min-h-screen">
       <div className="bg-white p-6 w-full md:max-w-3xl lg:w-[40rem] lg:p-0">

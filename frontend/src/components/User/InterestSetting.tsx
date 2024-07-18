@@ -1,7 +1,6 @@
 import React from 'react'
 
 const InterestSetting = () => {
-  // 관심태그
   const interestTagList: string[] = [
     '#일반야영장', '#자동차야영장', '#글램핑', '#카라반', '#숲', '#도심', '#산', '#호수', 
     '#계곡', '#해변', '#섬', '#주1회이상', '#월1회이상', '#가족', '#반려동물', '#친구', 
