@@ -21,7 +21,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path='/user/login' element={<Login/>}/>
-              <Route path="/user/regist/email" element={<Regist/>}/>
+              <Route path="/user/regist/*" element={<Regist/>}/>
             </Routes>
           </BrowserRouter>
           {/* 여기까지 컨텐츠 */}
