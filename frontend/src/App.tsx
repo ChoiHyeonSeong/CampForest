@@ -5,6 +5,10 @@ import RouterTest from '@components/RouterTest';
 
 import Navbar from '@components/Navbar/Navbar';
 
+// 임시
+import UserInformation from '@components/User/UserInformation';
+// 임시
+
 function App() {
   return (
     <div className="App">
@@ -15,10 +19,15 @@ function App() {
         <div className='flex-grow'>
 
           {/* 여기서 부터 */}
-          <div className='font-semibold'>Tailwind Test</div>
+
+          {/* 임시 */}
+          <UserInformation></UserInformation>
+          {/* 임시 */}
+
+          {/* <div className='font-semibold'>Tailwind Test</div>
           <div className='h-96'>To scroll</div>
           <div className='h-96'>To scroll</div>
-          <div className='h-96'>To scroll</div>
+          <div className='h-96'>To scroll</div> */}
 
           <BrowserRouter>
             <Routes>
