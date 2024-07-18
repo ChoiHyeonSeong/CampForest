@@ -37,12 +37,12 @@ const Regist = () => {
     };
 
     return (
-        <div className='mt-[3rem] w-[40rem] mx-auto'>
-            <div className='text-center     pb-[0.75rem] text-[2rem] border-b-2 border-black'>
+        <div className='md:mt-[1rem] lg:mt-[3rem] mx-auto p-6 md:max-w-3xl lg:w-[40rem] lg:p-0'>
+            <div className='text-center pb-[0.75rem] text-[2rem] border-b-2 border-black'>
                 회원가입
             </div>
             <form>
-                <div className='border-b my-[1.5rem]'>
+                <div className='border-b my-[3rem] lg:my-[1.5rem]'>
                     <div className='font-medium mb-[0.25rem]'>이름</div>
                     <input
                         className='focus:outline-none px-[1rem] py-[0.75rem]'
@@ -53,12 +53,12 @@ const Regist = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div className='border-b my-[1.5rem]'>
+                <div className='md:border-b my-[3rem] lg:my-[1.5rem]'>
                     <div className='font-medium mb-[0.25rem]'>생년월일</div>
-                    <div className='flex'>
+                    <div className='flex md:flex-row flex-col'>
                         <DatePicker
                             placeholderText='날짜를 선택해주세요.'
-                            className='focus:outline-none px-[1rem] py-[0.75rem]'
+                            className='md:border-none w-full border-b focus:outline-none px-[1rem] py-[0.75rem]'
                             dateFormat='yyyy.MM.dd'
                             formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
                             showYearDropdown
@@ -76,7 +76,8 @@ const Regist = () => {
                                 })
                             }}
                         />
-                        <div className='flex ms-auto me-[2rem] items-center space-x-[2rem]'>
+                        <div className='md:hidden mt-[3rem] mb-[1rem]'>성별</div>
+                        <div className='flex md:ms-auto me-[1rem] items-center space-x-[2rem]'>
                             <div className='flex items-center'>
                                 <input
                                     className='mx-[0.75rem] size-[1rem] accent-black' 
@@ -98,10 +99,10 @@ const Regist = () => {
                         </div>
                     </div>
                 </div>
-                <div className='my-[1.5rem]'>
+                <div className='my-[3rem] lg:my-[1.5rem]'>
                     <div className='font-medium mb-[0.25rem]'>휴대폰 번호</div>
-                    <div className='flex space-x-[1.5rem]'>
-                        <div className='w-[55%] border-b'>
+                    <div className='flex md:flex-row flex-col md:space-x-[1.5rem]'>
+                        <div className='w-full md:mb-0 mb-[1rem] md:w-[55%] border-b'>
                             <input
                                 className='focus:outline-none px-[1rem] py-[0.75rem]'
                                 placeholder='휴대폰 번호 (- 제외)'
@@ -112,7 +113,7 @@ const Regist = () => {
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className='w-[45%] border-b'>
+                        <div className='min-w-[20rem] w-[45%] border-b'>
                             <input
                                 className='w-[75%] focus:outline-none px-[1rem] py-[0.75rem]'
                                 placeholder='인증번호 입력'
@@ -129,8 +130,8 @@ const Regist = () => {
                 </div>
                 <div>
                     <div className='font-medium mb-[0.25rem]'>이메일</div>
-                    <div className='flex space-x-[1.5rem]'>
-                        <div className='w-[55%] border-b'>
+                    <div className='flex md:flex-row flex-col md:space-x-[1.5rem]'>
+                        <div className='w-full md:mb-0 mb-[1rem] md:w-[55%] border-b'>
                             <input
                                 className='focus:outline-none px-[1rem] py-[0.75rem]'
                                 placeholder='이메일을 입력해주세요.'
@@ -140,7 +141,7 @@ const Regist = () => {
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className='flex items-center w-[45%] border-b'>
+                        <div className='min-w-[20rem] flex items-center w-[45%] border-b'>
                             <input
                                 className='w-[75%] focus:outline-none px-[1rem] py-[0.75rem]'
                                 placeholder='인증번호 입력'
@@ -155,7 +156,7 @@ const Regist = () => {
                         </div>
                     </div>
                 </div>
-                <div className='border-b mt-[1.5rem]'>
+                <div className='border-b mt-[3rem] lg:mt-[1.5rem]'>
                     <div className='font-medium mb-[0.25rem]'>비밀번호</div>
                     <input
                         className='focus:outline-none px-[1rem] py-[0.75rem]'
@@ -178,7 +179,7 @@ const Regist = () => {
                     />
                 </div>
             </form>
-            <div className='flex items-center mx-3'>
+            <div className='mt-[2rem] flex items-center mx-3'>
                 <input
                     className='size-[1rem] accent-black'
                     type='checkbox'
@@ -187,7 +188,7 @@ const Regist = () => {
                 <ArrowBottomIcon className='ms-auto'/>
             </div>
             <div className='text-center'>
-                <button className='mt-[5rem] border-2 border-black font-bold w-[11rem] h-[2.5rem] hover:bg-black hover:text-white transition-all duration-300'>다음</button>
+                <button className='mt-[5rem] border-2 border-black font-bold w-[20rem] md:rounded-none rounded-md md:w-[11rem] h-[2.5rem] hover:bg-black hover:text-white transition-all duration-300'>다음</button>
             </div>
         </div>
     )
