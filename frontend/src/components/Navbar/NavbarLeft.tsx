@@ -26,7 +26,7 @@ type Props = {
 }
 
 const NavbarLeft = (props: Props) => {
-  const isEitherOpen = (props.isExtendRentalOpen || props.isExtendCommunityOpen);
+  const isEitherOpen: boolean = (props.isExtendRentalOpen || props.isExtendCommunityOpen);
 
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 

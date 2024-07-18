@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 
-type Props = {}
+const DarkmodeBtn = () => {
+  const [isDarkmode, setIsDarkmode] = useState<boolean>(false)
 
-const DarkmodeBtn = (props: Props) => {
-  const [isDarkmode, setIsDarkmode] = useState(false)
-
-  const toggleDarkmode = () => {
+  const toggleDarkmode = (): void => {
     setIsDarkmode(!isDarkmode)
   }
 

@@ -7,16 +7,14 @@ import { ReactComponent as DotIcon } from '@assets/icons/more-dots.svg'
 import { ReactComponent as RentalIcon } from '@assets/icons/nav-rental.svg'
 import { ReactComponent as CommunityIcon } from '@assets/icons/nav-community.svg'
 
-type Props = {}
+const Aside = () => {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-const Aside = (props: Props) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleExpand = () => {
+  const toggleExpand = (): void => {
     setIsExpanded(!isExpanded);
   };
 
-  const scrollToTop = () => {
+  const scrollToTop = (): void => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -25,38 +23,38 @@ const Aside = (props: Props) => {
 
   return (
     <aside className='fixed bottom-14 right-5 md:bottom-8 md:right-5'>
-        <div className='flex items-center mb-2 relative'>
-          <div className='flex absolute right-2'>
-            <div 
-              className={`w-11 h-11 bg-black rounded-full flex flex-all-center transition-all duration-300 ease-in-out 
-                ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}
-                delay-100
-                `}
-            >
-              <RentalIcon className='stroke-white'/>
-            </div>
-            <div 
-              className={`w-11 h-11 bg-black rounded-full flex flex-all-center ml-2 transition-all duration-300 ease-in-out 
-                ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}`}
-            >
-              <CommunityIcon className='stroke-white'/>
-            </div>
-          </div>
-
+      <div className='flex items-center mb-2 relative'>
+        <div className='flex absolute right-2'>
           <div 
-            className={`w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200 transition-all z-10`}
-            onClick={toggleExpand}
+            className={`w-11 h-11 bg-black rounded-full flex flex-all-center transition-all duration-300 ease-in-out 
+              ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}
+              delay-100
+              `}
           >
-            {isExpanded ? <DotIcon className='fill-white rotate-90'/> : <WriteIcon className='stroke-white'/>}
+            <RentalIcon className='stroke-white'/>
+          </div>
+          <div 
+            className={`w-11 h-11 bg-black rounded-full flex flex-all-center ml-2 transition-all duration-300 ease-in-out 
+              ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}`}
+          >
+            <CommunityIcon className='stroke-white'/>
           </div>
         </div>
 
         <div 
-          className='w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200'
-          onClick={scrollToTop}
+          className={`w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200 transition-all z-10`}
+          onClick={toggleExpand}
         >
-            <TopBtnIcon />
+          {isExpanded ? <DotIcon className='fill-white rotate-90'/> : <WriteIcon className='stroke-white'/>}
         </div>
+      </div>
+
+      <div 
+        className='w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200'
+        onClick={scrollToTop}
+      >
+          <TopBtnIcon />
+      </div>
     </aside>
   )
 }

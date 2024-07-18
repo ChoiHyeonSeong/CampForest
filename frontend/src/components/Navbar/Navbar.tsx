@@ -6,25 +6,23 @@ import NavbarLeftExtendCommunity from './NavbarLeftExtendCommunity';
 import NavbarBottom from './NavbarBottom';
 import Aside from './Aside';
 
-type Props = {}
-
-const Navbar = (props: Props) => {
+const Navbar = () => {
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   // 확장 Menu 상태 관리 (확장메뉴 열기, 닫기)
-  const [isExtendRentalOpen, setIsExtendRentalOpen] = useState(false);
-  const [isExtendCommunityOpen, setisExtendCommunityOpen] = useState(false);
+  const [isExtendRentalOpen, setIsExtendRentalOpen] = useState<boolean>(false);
+  const [isExtendCommunityOpen, setisExtendCommunityOpen] = useState<boolean>(false);
   // 선택된 확장 Menu 카테고리
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 
-  const toggleMenu = () => {
+  const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen);
     setIsExtendRentalOpen(false);
     setisExtendCommunityOpen(false);
   };
 
-  const toggleExtendMenu = (selectedCategory:string) => {
+  const toggleExtendMenu = (selectedCategory: string): void => {
     setSelectedExtendMenu(selectedCategory);
 
     if (selectedCategory === 'rental') {

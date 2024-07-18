@@ -4,14 +4,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
 
-
 type LoginForm = {
-    userName: string,
-    userBirthdate: Date | null,
-    userGender: string,
-    phoneNumber: string,
-    userEmail: string,
-    userPassword: string
+        userName: string,
+        userBirthdate: Date | null,
+        userGender: string,
+        phoneNumber: string,
+        userEmail: string,
+        userPassword: string
 }
 
 const Regist = () => {
@@ -38,7 +37,7 @@ const Regist = () => {
 
     return (
         <div className='mt-[3rem] w-[40rem] mx-auto'>
-            <div className='text-center     pb-[0.75rem] text-[2rem] border-b-2 border-black'>
+            <div className='text-center pb-[0.75rem] text-[2rem] border-b-2 border-black'>
                 회원가입
             </div>
             <form>
