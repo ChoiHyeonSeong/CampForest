@@ -14,29 +14,16 @@ function App() {
       <Navbar />
       <div className='flex'>
         {/* Desktop Navigation bar용 공간 */}
-        <div className='hidden lg:block w-56'/>
+        <div className='hidden lg:block w-[15rem]'/>
         <div className='flex-grow'>
 
           {/* 여기서 부터 */}
-
-          {/* 임시 */}
-          <UserInformation></UserInformation>
-          {/* 임시 */}
-
-          {/* <div className='font-semibold'>Tailwind Test</div>
-          <div className='h-96'>To scroll</div>
-          <div className='h-96'>To scroll</div>
-          <div className='h-96'>To scroll</div> */}
-
-
-
           <BrowserRouter>
             <Routes>
-              <Route path="/login" element={<Login/>}/>
+              <Route path="/user/regist/email" element={<Regist/>}/>
             </Routes>
           </BrowserRouter>
           {/* 여기까지 컨텐츠 */}
-
         </div> 
       </div>
     </div>

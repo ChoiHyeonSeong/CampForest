@@ -3,10 +3,7 @@ import InterestSetting from './InterestSetting'
 
 import ProfileImg from '@assets/icons/profileimg.png'
 
-type Props = {}
-
-const UserInformation = (props: Props) => {
-
+const UserInformation = () => {
 
   return (
     <form className="flex justify-center items-center min-h-screen">
