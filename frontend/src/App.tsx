@@ -11,7 +11,7 @@ function App() {
       <Navbar />
       <div className='flex'>
         {/* Desktop Navigation bar용 공간 */}
-        <div className='hidden lg:block w-56'/>
+        <div className='hidden lg:block w-[15rem]'/>
         <div className='flex-grow'>
 
           {/* 여기서 부터 */}

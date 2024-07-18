@@ -1,4 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+
+import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
+
+import DarkmodeBtn from './DarkmodeBtn';
+
 import tempImage from '@assets/logo192.png';
 
 import shortLogoImg from '@assets/logo/mini-logo.png'
@@ -10,6 +15,7 @@ import { ReactComponent as CampingIcon } from '@assets/icons/nav-findcamping.svg
 import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 
 type Props = {
   isMenuOpen: boolean;
@@ -22,13 +28,30 @@ type Props = {
 const NavbarLeft = (props: Props) => {
   const isEitherOpen = (props.isExtendRentalOpen || props.isExtendCommunityOpen);
 
+  const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (props.isMenuOpen) {
+      // 모달이 열릴 때 스크롤 방지
+      document.body.style.overflow = 'hidden';
+    } else {
+      // 모달이 닫힐 때 스크롤 허용
+      document.body.style.overflow = 'unset';
+    }
+
+    // 컴포넌트가 언마운트될 때 스크롤 허용
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [props.isMenuOpen]);
+
   return (
     <div 
-      className={`fixed z-10 h-full md:mt-10 lg:mt-0 mb-10 md:mb-0 
+      className={`fixed z-10 h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
         lg:translate-x-0 transition-all duration-300 ease-in-out
-        ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
-        ${isEitherOpen ? 'w-[5rem]' : 'w-[15rem]'} 
-        bg-white outline outline-1 outline-[#CCCCCC]`
+        lg:outline lg:outline-1 lg:outline-[#CCCCCC] w-[90vw] bg-white
+        ${props.isMenuOpen ? '-translate-x-0 outline outline-1 outline-[#CCCCCC]' : '-translate-x-[100%] outline-none'}
+        ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}`
       }
     >
       {/* desktop tablet */}
@@ -75,7 +98,7 @@ const NavbarLeft = (props: Props) => {
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
           </div>
-          <div className='h-[3.5rem] flex'>
+          <div className='h-[3.5rem] hidden lg:flex'>
             <div className='w-[5rem] flex flex-all-center'>
               <PushIcon className='stroke-[#999999] w-[2rem]'/>
             </div>
@@ -89,32 +112,45 @@ const NavbarLeft = (props: Props) => {
           </div>
         </div>
         {/* darkmode */}
-        <div className='mb-0 md:mb-10 lg:mb-0'>
-          <div className={`bg-blue-500 ${isEitherOpen ? 'hidden' : 'block'}`}>darkmode</div>
+        <div className='mb-16 lg:mb-5'>
+          <div className={`flex flex-all-center ${isEitherOpen ? 'hidden' : 'block'}`}>
+            <p className='me-5'>다크모드</p>
+            <DarkmodeBtn />
+          </div>
         </div>      
       </div>
 
       {/* mobile */}
-      <div className='flex md:hidden flex-col'>
+      <div className='flex md:hidden flex-col bg-white'>
         {/* main menu */}
-        <div className='bg-gray-600 flex justify-between h-10'>
-          <div>Logo</div>
-          <div>darkmode</div>
-          <div>
-            <button onClick={props.toggleMenu}>quit</button>
+        <div className='flex justify-between items-center h-11'>
+          <BigLogoIcon className='w-[40vw] ps-5 mt-1' fill='black'/>
+          <DarkmodeBtn />
+          <div className='cursor-pointer me-3' onClick={props.toggleMenu}>
+            <CloseIcon width={32} fill='black'/>
           </div>
         </div>
-        <div className='bg-gray-100 h-14'>Profile</div>
-        <div className='bg-gray-600 flex justify-between  '>
-          <div className='bg-blue-100 w-3/6'>
-            <div className='h-10 flex flex-all-center'>대여 / 판매</div>
-            <div className='h-10 flex flex-all-center'>커뮤니티</div>
-            <div className='h-10 flex flex-all-center'>캠핑장 찾기</div>
+        <div className='h-[5rem] flex justify-around items-center'>
+          <div className='w-[22vw] flex flex-all-center'>
+            <img src={tempImage} alt="NoImg" className='h-[3rem]'/>
           </div>
-          <div className='bg-blue-500 w-3/6 h-screen overflow-y-auto scrollbar-hide'>
-            <div className='h-96'>메뉴</div>
-            <div className='h-96'>메뉴</div>
-            <div className='h-96'>메뉴</div>
+          <div className='w-[46vw] flex flex-col items-center text-start'>
+            <p className='w-[46vw]'>여기는 닉네임입니다.</p>
+            <p className='w-[46vw]'>그럼 여기는 작성글</p>
+          </div>
+          <div className='w-[22vw] flex flex-all-center'>
+            <ChatIcon className='h-[2rem]' fill='black'/>
+          </div>
+        </div>
+
+        <div className='flex justify-between'>
+          <div className='bg-[#CCCCCC] w-3/6'>
+            <div className='h-10 mt-6 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu('rental')}>대여 / 판매</div>
+            <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu('community')}>커뮤니티</div>
+            <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu(null)}>캠핑장 찾기</div>
+          </div>
+          <div className='bg-white w-3/6 h-[calc(100vh-7.75rem)] overflow-y-auto scrollbar-hide'>
+            <NavbarLeftExtendMobile selectedExtendMenu={selectedExtendMenu}/>
           </div>
         </div>
       </div>

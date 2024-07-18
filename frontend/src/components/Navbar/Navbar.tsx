@@ -18,8 +18,6 @@ const Navbar = (props: Props) => {
   // 선택된 확장 Menu 카테고리
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 
-  const isEitherOpen = (isExtendRentalOpen || isExtendCommunityOpen);
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     setIsExtendRentalOpen(false);
@@ -49,11 +47,9 @@ const Navbar = (props: Props) => {
   useEffect(() => {
     // 화면 줄어들면 Menu 강제로 닫기
     const handleResize = () => {
-      if (window.innerWidth >= 768 || window.innerWidth >= 1024) {
-        setIsMenuOpen(false);
-        setIsExtendRentalOpen(false);
-        setisExtendCommunityOpen(false);
-      }
+      setIsMenuOpen(false);
+      setIsExtendRentalOpen(false);
+      setisExtendCommunityOpen(false);
     };
 
     window.addEventListener('resize', handleResize);
@@ -67,18 +63,20 @@ const Navbar = (props: Props) => {
   }, [selectedExtendMenu]);
 
   return (
-    <div className='h-10 lg:h-0'>
+    <div className='h-11 lg:h-0'>
 
       {/* 상단 네비게이션바 */}
       <NavbarTop toggleMenu={toggleMenu}/>
 
       {/* 좌측 메뉴바 */}
-      <NavbarLeft isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} 
-        toggleMenu={toggleMenu} isExtendRentalOpen={isExtendRentalOpen} isExtendCommunityOpen={isExtendCommunityOpen}/>
+      <NavbarLeft 
+        isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} 
+        toggleMenu={toggleMenu} isExtendRentalOpen={isExtendRentalOpen} isExtendCommunityOpen={isExtendCommunityOpen}
+      />
 
       {/* 좌측 메뉴바 확장 */}
-      <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen}/>
-      <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen}/>
+      <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu}/>
+      <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu}/>
 
       {/* 모바일용 하단 네비게이션바 */}
       <NavbarBottom toggleMenu={toggleMenu}/>

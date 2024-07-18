@@ -1,18 +1,60 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 // icon import
 import { ReactComponent as WriteIcon } from '@assets/icons/write.svg'
 import { ReactComponent as TopBtnIcon } from '@assets/icons/top-btn.svg'
+import { ReactComponent as DotIcon } from '@assets/icons/more-dots.svg'
+import { ReactComponent as RentalIcon } from '@assets/icons/nav-rental.svg'
+import { ReactComponent as CommunityIcon } from '@assets/icons/nav-community.svg'
 
 type Props = {}
 
 const Aside = (props: Props) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
-    <aside className='fixed bottom-8 right-5'>
-        <div className='w-11 h-11 bg-black mb-2 rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200'>
-            <WriteIcon />
+    <aside className='fixed bottom-14 right-5 md:bottom-8 md:right-5'>
+        <div className='flex items-center mb-2 relative'>
+          <div className='flex absolute right-2'>
+            <div 
+              className={`w-11 h-11 bg-black rounded-full flex flex-all-center transition-all duration-300 ease-in-out 
+                ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}
+                delay-100
+                `}
+            >
+              <RentalIcon className='stroke-white'/>
+            </div>
+            <div 
+              className={`w-11 h-11 bg-black rounded-full flex flex-all-center ml-2 transition-all duration-300 ease-in-out 
+                ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}`}
+            >
+              <CommunityIcon className='stroke-white'/>
+            </div>
+          </div>
+
+          <div 
+            className={`w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200 transition-all z-10`}
+            onClick={toggleExpand}
+          >
+            {isExpanded ? <DotIcon className='fill-white rotate-90'/> : <WriteIcon className='stroke-white'/>}
+          </div>
         </div>
-        <div className='w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200'>
+
+        <div 
+          className='w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200'
+          onClick={scrollToTop}
+        >
             <TopBtnIcon />
         </div>
     </aside>
