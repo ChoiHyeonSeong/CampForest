@@ -91,22 +91,26 @@ public class BoardController {
 		}
 	}
 
-	@PostMapping("/comment")
-	public ApiResponse<?> writeComment(@RequestBody CommentRequestDto commentRequestDto){
-			boardService.writeComment(commentRequestDto);
+	//게시글에 댓글 작성
+	@PostMapping("/comment/{boardId}")
+	public ApiResponse<?> writeComment(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto){
+			boardService.writeComment(boardId, commentRequestDto);
 			return ApiResponse.createSuccessWithNoContent("댓글 작성 성공");
 	}
+	//게시글에 달려있는 댓글 목록 조회
 	@GetMapping("/comment/{boardId}")
-	public ApiResponse<List<CommentResponseDto>> getComment (@PathVariable Long boarId){
-		List<CommentResponseDto> commentResponseDtos = boardService.getComment(boarId);
+	public ApiResponse<List<CommentResponseDto>> getComment (@PathVariable Long boardId){
+		List<CommentResponseDto> commentResponseDtos = boardService.getComment(boardId);
 		return ApiResponse.createSuccess(commentResponseDtos,"댓글 게시글별 조회에 성공하였습니다");
 	}
-	@GetMapping("/comment/{userId}")
-	public ApiResponse<List<CommentResponseDto>> getUserComment (@PathVariable Long userId){
-		List<CommentResponseDto> commentResponseDtos = boardService.getUserComment(userId);
+
+	//유저가 단 댓글 목록 조회
+	@GetMapping("/comment/user/{commentWriterId}")
+	public ApiResponse<List<CommentResponseDto>> getUserComment (@PathVariable Long commentWriterId){
+		List<CommentResponseDto> commentResponseDtos = boardService.getUserComment(commentWriterId);
 		return ApiResponse.createSuccess(commentResponseDtos,"댓글 유저별 조회에 성공하였습니다");
 	}
-
+	//댓글 삭제
 	@DeleteMapping("/comment/{commentId}")
 	public ApiResponse<?> deleteComment(@PathVariable Long commentId){
 		boardService.deleteComment(commentId);

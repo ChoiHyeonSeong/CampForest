@@ -20,8 +20,8 @@ public interface BoardService {
 	void saveBoard(Long boardId, Long userId);
 	void deleteSave(Long boardId, Long userId);
 	boolean checkSave(Long boardId, Long userId);
-	void writeComment(CommentRequestDto commentRequestDto);
+	void writeComment(Long boardId, CommentRequestDto commentRequestDto);
 	List<CommentResponseDto> getComment(Long boardId);
-	List<CommentResponseDto> getUserComment(Long commentId);
+	List<CommentResponseDto> getUserComment(Long commentWriterId);
 	void deleteComment(Long commentId);
 }

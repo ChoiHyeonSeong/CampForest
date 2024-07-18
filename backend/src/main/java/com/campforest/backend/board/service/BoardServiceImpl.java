@@ -137,9 +137,9 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void writeComment(CommentRequestDto commentRequestDto) {
+	public void writeComment(Long boardId, CommentRequestDto commentRequestDto) {
 		Comment comment=Comment.builder()
-			.boardId(commentRequestDto.getBoardId())
+			.boardId(boardId)
 			.commentWriterId(commentRequestDto.getCommentWriterId())
 			.content(commentRequestDto.getContent())
 			.build();
@@ -158,8 +158,8 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<CommentResponseDto> getUserComment(Long userId) {
-		List<Comment> commentList = commentRepository.findByUserId(userId);
+	public List<CommentResponseDto> getUserComment(Long commentWriterId) {
+		List<Comment> commentList = commentRepository.findByCommentWriterId(commentWriterId);
 		List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
 		for(Comment comment: commentList){
 			CommentResponseDto dto = convertToCommentDto(comment);

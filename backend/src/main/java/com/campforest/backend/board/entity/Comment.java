@@ -2,11 +2,7 @@ package com.campforest.backend.board.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +18,14 @@ import lombok.Setter;
 public class Comment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="comment_id")
 	private Long commentId;
+	@Column(name="comment_writer_id")
 	private Long commentWriterId;
+	@Column(name = "board_id")
 	private Long boardId;
 	private String content;
+	@Column (name = "created_at")
 	private LocalDateTime createdAt;
 
 	@PrePersist
