@@ -9,6 +9,7 @@ import com.campforest.backend.user.model.Users;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -25,6 +26,10 @@ public class UserRequestDTO {
 	private String phoneNumber;
 	private String introduction;
 	private String profileImage;
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	public Users toEntity() {
 		return Users.builder()
