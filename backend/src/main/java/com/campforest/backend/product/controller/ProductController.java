@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -18,6 +19,7 @@ import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductRegistDto;
+import com.campforest.backend.product.dto.ProductUpdateDto;
 import com.campforest.backend.product.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,7 @@ public class ProductController {
 	private final S3Service s3Service;
 
 	//게시물 작성
-	@PostMapping(path = "/regist", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ApiResponse<?> createProduct(
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
 		@RequestPart(value = "productRegistDto") ProductRegistDto productRegistDto
@@ -64,5 +66,24 @@ public class ProductController {
 	}
 
 	//게시물 수정
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
+	public ApiResponse<?> updateProduct(
+		@RequestPart(value = "files", required = false) MultipartFile[] files,
+		@RequestPart(value = "productUpdateDto") ProductUpdateDto productUpdateDto
+	) throws IOException {
 
+		List<String> imageUrls = new ArrayList<>();
+		if (files != null) {
+			for (MultipartFile file : files) {
+				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+				String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
+				imageUrls.add(fileUrl);
+			}
+		}
+
+		productUpdateDto.setImageUrls(imageUrls);
+		productService.updateProduct(productUpdateDto.getProductId(), productUpdateDto);
+
+		return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다");
+	}
 }

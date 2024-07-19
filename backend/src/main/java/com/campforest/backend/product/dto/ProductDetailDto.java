@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class ProductDetailDto {
 
-	private Long id;
+	private Long productId;
 	private Long userId;
 	private Category category;
 	private String productName;
@@ -26,7 +26,7 @@ public class ProductDetailDto {
 	private List<String> imageUrls;
 
 	public ProductDetailDto(Product product, List<String> imageUrls) {
-		this.id = product.getId();
+		this.productId = product.getId();
 		this.category = product.getCategory();
 		this.productName = product.getProductName();
 		this.productPrice = product.getProductPrice();
