@@ -4,16 +4,15 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Navbar from '@components/Navbar/Navbar';
 
-import Push from '@components/Navbar/Push';
-
 import Login from '@pages/Login';
 import Regist from '@pages/Regist';
+import MyPage from '@pages/MyPage';
+import ProfileEdit from '@pages/ProfileEdit';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App scrollbar-hide">
       <Navbar />
-      <Push />
       <div className='flex'>
         {/* Desktop Navigation bar용 공간 */}
         <div className='hidden lg:block w-[15rem]'/>
@@ -24,6 +23,8 @@ function App() {
             <Routes>
               <Route path='/user/login' element={<Login/>}/>
               <Route path="/user/regist/*" element={<Regist/>}/>
+              <Route path="/user/mypage" element={<MyPage/>}/>
+              <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
             </Routes>
           </BrowserRouter>
           {/* 여기까지 컨텐츠 */}

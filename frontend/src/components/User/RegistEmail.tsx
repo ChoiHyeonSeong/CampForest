@@ -183,6 +183,7 @@ const RegistEmail = () => {
           <span className='ms-6 font-bold text-[1rem]'>모든 약관에 동의합니다.</span>
           <ArrowBottomIcon className='ms-auto'/>
       </div>
+
       <div className='text-center'>
           <button className='mt-[5rem] border-2 border-black font-bold w-[20rem] md:rounded-none rounded-md md:w-[11rem] h-[2.5rem] hover:bg-black hover:text-white transition-all duration-300'>다음</button>
       </div>
