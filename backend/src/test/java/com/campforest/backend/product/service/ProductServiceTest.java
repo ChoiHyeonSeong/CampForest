@@ -2,8 +2,7 @@ package com.campforest.backend.product.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductRegistDto;
+import com.campforest.backend.product.dto.ProductUpdateDto;
 import com.campforest.backend.product.model.Category;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductImage;
@@ -57,11 +57,14 @@ class ProductServiceTest {
 		productRegistDto.setImageUrls(imageUrls);
 
 		mockProduct = productRegistDto.toEntity();
+		mockProduct.setId(1L);  // ID 설정
+
 		when(productRepository.save(any(Product.class))).thenReturn(mockProduct);
 
 		productService.createProduct(productRegistDto);
 
 		ProductImage productImage = new ProductImage();
+		productImage.setId(1L);  // ID 설정
 		productImage.setImageUrl("DASDAS");
 		productImage.setProduct(mockProduct);
 		mockProduct.setProductImages(Arrays.asList(productImage));
@@ -70,7 +73,6 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("Product 생성 기능 테스트")
 	void createProduct() {
-
 		verify(productRepository).save(any(Product.class));
 		verify(productImageRepository).saveAll(anyList());
 	}
@@ -78,7 +80,6 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("Product 조회 기능 테스트 - 성공")
 	void getProductSuccess() {
-
 		Long productId = 1L;
 
 		when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
@@ -104,4 +105,86 @@ class ProductServiceTest {
 		verify(productRepository).findById(productId);
 	}
 
+	@Test
+	@DisplayName("Product 수정 기능 테스트")
+	void updateProduct() {
+		Long productId = 1L;
+
+		ProductUpdateDto productUpdateDto = new ProductUpdateDto();
+		productUpdateDto.setProductName("수정된 텐트");
+		productUpdateDto.setProductPrice(6000L);
+		productUpdateDto.setProductContent("수정된 설명");
+		productUpdateDto.setCategory(Category.코펠_식기);
+		productUpdateDto.setImageUrls(Arrays.asList("NEW_URL1", "NEW_URL2"));
+
+		when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
+
+		productService.updateProduct(productId, productUpdateDto);
+
+		verify(productRepository).findById(productId);
+		verify(productImageRepository).deleteByProductId(productId);
+		verify(productImageRepository, times(2)).saveAll(anyList());
+
+		assertEquals(productUpdateDto.getProductName(), mockProduct.getProductName());
+		assertEquals(productUpdateDto.getProductPrice(), mockProduct.getProductPrice());
+		assertEquals(productUpdateDto.getProductContent(), mockProduct.getProductContent());
+		assertEquals(productUpdateDto.getCategory(), mockProduct.getCategory());
+	}
+
+	@Test
+	@DisplayName("Product 이미지 삭제 기능 테스트 - 성공")
+	void deleteProductImageSuccess() {
+		Long productId = 1L;
+		Long imageId = 1L;
+
+		ProductImage productImage = new ProductImage();
+		productImage.setId(imageId);
+		productImage.setImageUrl("DASDAS");
+		productImage.setProduct(mockProduct);
+
+		when(productImageRepository.findById(imageId)).thenReturn(Optional.of(productImage));
+
+		productService.deleteProductImage(productId, imageId);
+
+		verify(productImageRepository).findById(imageId);
+		verify(productImageRepository).delete(productImage);
+	}
+
+	@Test
+	@DisplayName("Product 이미지 삭제 기능 테스트 - 실패")
+	void deleteProductImageFail() {
+		Long productId = 1L;
+		Long imageId = 1L;
+
+		when(productImageRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(IllegalArgumentException.class, () -> productService.deleteProductImage(productId, imageId));
+
+		verify(productImageRepository).findById(imageId);
+	}
+
+	@Test
+	@DisplayName("Product 삭제 기능 테스트 - 성공")
+	void deleteProductSuccess() {
+		Long productId = 1L;
+
+		when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
+
+		productService.deleteProduct(productId);
+
+		verify(productRepository).findById(productId);
+		verify(productRepository).delete(mockProduct);
+	}
+
+	@Test
+	@DisplayName("Product 삭제 기능 테스트 - 실패")
+	void deleteProductFail() {
+		Long productId = 1L;
+
+		when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(IllegalArgumentException.class, () -> productService.deleteProduct(productId));
+
+		verify(productRepository).findById(productId);
+	}
 }
