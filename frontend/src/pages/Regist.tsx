@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Route, Routes } from "react-router-dom";
-import Email from './RegistEmail';
-import Information from './UserInformation';
+import Email from '@components/User/RegistEmail';
+import Information from '@components/User/UserInformation';
 
 const Regist = () => {
 
@@ -11,8 +11,8 @@ const Regist = () => {
                 회원가입
             </div>
             <Routes>
-                <Route path='email' element={<Email />} />
-                <Route path='information' element={<Information />} />
+                <Route path='/' element={<Email />} />
+                <Route path='/information' element={<Information />} />
             </Routes>
         </div>
     )
