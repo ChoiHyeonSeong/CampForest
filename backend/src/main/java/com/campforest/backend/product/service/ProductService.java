@@ -5,14 +5,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductRegistDto;
+import com.campforest.backend.product.dto.ProductSearchDto;
 import com.campforest.backend.product.dto.ProductUpdateDto;
+import com.campforest.backend.product.model.Category;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductImage;
+import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.repository.ProductImageRepository;
 import com.campforest.backend.product.repository.ProductRepository;
 
@@ -97,5 +102,24 @@ public class ProductService {
 		}
 
 		productImageRepository.delete(productImage);
+	}
+
+	private ProductSearchDto toDto(Product product) {
+		ProductSearchDto dto = new ProductSearchDto();
+		dto.setProductId(product.getId());
+		dto.setProductName(product.getProductName());
+		dto.setProductPrice(product.getProductPrice());
+		dto.setCategory(product.getCategory());
+		dto.setProductType(product.getProductType());
+		dto.setLocation(product.getLocation());
+		List<ProductImage> productImages = product.getProductImages();
+		dto.setImageUrl(productImages.get(0).getImageUrl());
+		return dto;
+	}
+
+	public Page<ProductSearchDto> findProductsByDynamicConditions(Category category, ProductType productType, Long minPrice,
+		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable) {
+		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, titleKeyword, pageable);
+		return products.map(this::toDto);
 	}
 }

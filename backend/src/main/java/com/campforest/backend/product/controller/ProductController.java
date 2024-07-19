@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +23,11 @@ import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductRegistDto;
+import com.campforest.backend.product.dto.ProductSearchDto;
 import com.campforest.backend.product.dto.ProductUpdateDto;
+import com.campforest.backend.product.model.Category;
+import com.campforest.backend.product.model.Product;
+import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -103,4 +110,34 @@ public class ProductController {
 
 		return ApiResponse.createSuccessWithNoContent("삭제되었습니다");
 	}
+
+	// 게시물 조회 - 카테고리, 검색, 지역, 대여&판매, 페이지
+	@GetMapping("/search")
+	public ApiResponse<?> findProductsByDynamicConditions(
+		@RequestParam(required = false) String category,
+		@RequestParam(required = false) ProductType productType,
+		@RequestParam(required = false) Long minPrice,
+		@RequestParam(required = false) Long maxPrice,
+		@RequestParam(required = false) List<String> locations,
+		@RequestParam(required = false) String titleKeyword,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "20") int size) {
+
+		Category categoryEnum = null;
+		if (category != null) {
+			System.out.println(category);
+			try {
+				categoryEnum = Category.valueOf(category);
+			} catch (IllegalArgumentException e) {
+				return ApiResponse.createError("잘못된 카테고리 값입니다.");
+			}
+		}
+
+		Pageable pageable = PageRequest.of(page, size);
+		Page<ProductSearchDto> result = productService.findProductsByDynamicConditions(categoryEnum,
+			productType, minPrice, maxPrice, locations, titleKeyword, pageable);
+
+		return ApiResponse.createSuccess(result, "성공적으로 조회하였습니다.");
+	}
+
 }
