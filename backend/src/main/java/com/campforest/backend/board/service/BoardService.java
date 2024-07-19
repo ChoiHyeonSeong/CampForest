@@ -28,6 +28,8 @@ public interface BoardService {
 
 	boolean checkLike(Long boardId, Long userId);
 
+	Long countBoardLike(Long boardID);
+
 	void saveBoard(Long boardId, Long userId);
 
 	void deleteSave(Long boardId, Long userId);

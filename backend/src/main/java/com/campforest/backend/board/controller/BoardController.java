@@ -91,12 +91,12 @@ public class BoardController {
 		}
 	}
 
-	// //게시글별 좋아요 갯수 조회
-	// @GetMapping("/like/{boardId}/count")
-	// public ApiResponse<Long> countBoardLike(@PathVariable Long boardId) {
-	// 	Long count = boardService.countBoardLike(boardId);
-	// 	return ApiResponse.createSuccess(count, "좋아요 개수 조회 성공하였습니다");
-	// }
+	//게시글별 좋아요 갯수 조회
+	@GetMapping("/like/{boardId}/count")
+	public ApiResponse<Long> countBoardLike(@PathVariable Long boardId) {
+		Long count = boardService.countBoardLike(boardId);
+		return ApiResponse.createSuccess(count, "좋아요 개수 조회 성공하였습니다");
+	}
 
 	//게시글 저장, 이미 동일 boardId, userId존재하면 삭제
 	@PostMapping("/save/{boardId}/{userId}")

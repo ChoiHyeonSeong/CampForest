@@ -212,10 +212,10 @@ public class BoardServiceImpl implements BoardService {
 		return commentRepository.countAllByBoardId(boardId);
 	}
 
-	// @Override
-	// public Long countBoardLike(Long boardId) {
-	// 	return 0;
-	// }
+	@Override
+	public Long countBoardLike(Long boardId) {
+		return likeRepository.countAllByBoardId(boardId);
+	}
 
 	@Transactional
 	@Override
