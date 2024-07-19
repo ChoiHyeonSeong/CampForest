@@ -1,7 +1,6 @@
 package com.campforest.backend.product.model;
 
 public enum Category {
-
 	텐트("텐트"),
 	의자("의자"),
 	침낭_매트("침낭/매트"),

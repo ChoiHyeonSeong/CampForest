@@ -2,11 +2,13 @@ package com.campforest.backend.product.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductRegistDto;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductImage;
@@ -17,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductService {
 
 	private final ProductRepository productRepository;
 
 	private final ProductImageRepository productImageRepository;
 
-	@Transactional
 	public void createProduct(ProductRegistDto productRegistDto) {
 
 		Product product = productRegistDto.toEntity();
@@ -39,4 +41,18 @@ public class ProductService {
 		}
 		productImageRepository.saveAll(productImages);
 	}
+
+	//게시물 조회기능
+	public ProductDetailDto getProduct(Long productId) {
+		Product findProduct = productRepository.findById(productId)
+			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
+
+		List<String> imageUrls = findProduct.getProductImages()
+			.stream().map(productImage -> productImage.getImageUrl())
+			.collect(Collectors.toList());
+
+		return new ProductDetailDto(findProduct, imageUrls);
+	}
+
+	//
 }

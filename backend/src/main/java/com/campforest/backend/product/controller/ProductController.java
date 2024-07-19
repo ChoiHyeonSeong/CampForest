@@ -9,12 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductRegistDto;
 import com.campforest.backend.product.service.ProductService;
 
@@ -31,6 +33,7 @@ public class ProductController {
 	private final ProductService productService;
 	private final S3Service s3Service;
 
+	//게시물 작성
 	@PostMapping(path = "/regist", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponse<?> createProduct(
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
@@ -51,5 +54,15 @@ public class ProductController {
 
 		return ApiResponse.createSuccessWithNoContent("게시물 작성에 성공하였습니다");
 	}
+
+	//게시물 정보 가져오기
+	@GetMapping
+	public ApiResponse<?> getProduct(@RequestParam Long productId) {
+		ProductDetailDto findProduct = productService.getProduct(productId);
+
+		return ApiResponse.createSuccess(findProduct, "게시물 조회 성공하였습니다.");
+	}
+
+	//게시물 수정
 
 }
