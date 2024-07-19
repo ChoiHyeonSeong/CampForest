@@ -31,7 +31,8 @@ public class BoardServiceImpl implements BoardService {
 	private final CommentLikeRepository commentLikeRepository;
 
 	public BoardServiceImpl(BoardRepository boardRepository, LikeRepository likeRepository,
-		SaveRepository saveRepository, CommentRepository commentRepository, CommentLikeRepository commentLikeRepository) {
+		SaveRepository saveRepository, CommentRepository commentRepository,
+		CommentLikeRepository commentLikeRepository) {
 		this.boardRepository = boardRepository;
 		this.likeRepository = likeRepository;
 		this.saveRepository = saveRepository;
@@ -93,19 +94,6 @@ public class BoardServiceImpl implements BoardService {
 		return boardResponseDtos;
 	}
 
-	//	@Transactional
-	//	@Override
-	//	public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
-	//		Boards boards = boardRepository.findById(boardId)
-	//			.orElseThrow(() -> new RuntimeException("Board not found"));
-	//		System.out.println();
-	//		boards.setUserId(boards.getUserId());
-	//		boards.setLikeCount(boards.getBoardId());
-	//		boards.setTitle(boardRequestDto.getTitle());
-	//		boards.setContent(boardRequestDto.getContent());
-	//		boards.setCategory(boardRequestDto.getCategory());
-	//		boards.setBoardOpen(boardRequestDto.isBoardOpen());
-	//	}
 	@Transactional
 	@Override
 	public void modifyBoard(Long boardId, BoardRequestDto boardRequestDto) {
@@ -170,6 +158,7 @@ public class BoardServiceImpl implements BoardService {
 		return saveRepository.existsByBoardIdAndUserId(boardId, userId);
 	}
 
+	@Transactional
 	@Override
 	public void writeComment(Long boardId, CommentRequestDto commentRequestDto) {
 		Comment comment = Comment.builder()
@@ -180,6 +169,7 @@ public class BoardServiceImpl implements BoardService {
 		commentRepository.save(comment);
 	}
 
+	@Transactional
 	@Override
 	public List<CommentResponseDto> getComment(Long boardId) {
 		List<Comment> commentList = commentRepository.findAllByBoardId(boardId);
@@ -191,6 +181,7 @@ public class BoardServiceImpl implements BoardService {
 		return commentResponseDtos;
 	}
 
+	@Transactional
 	@Override
 	public List<CommentResponseDto> getUserComment(Long commentWriterId) {
 		List<Comment> commentList = commentRepository.findByCommentWriterId(commentWriterId);
@@ -202,16 +193,19 @@ public class BoardServiceImpl implements BoardService {
 		return commentResponseDtos;
 	}
 
+	@Transactional
 	@Override
 	public void deleteComment(Long commentId) {
 		commentRepository.deleteById(commentId);
 	}
 
+	@Transactional
 	@Override
 	public Long countBoardComment(Long boardId) {
 		return commentRepository.countAllByBoardId(boardId);
 	}
 
+	@Transactional
 	@Override
 	public Long countBoardLike(Long boardId) {
 		return likeRepository.countAllByBoardId(boardId);
@@ -240,6 +234,7 @@ public class BoardServiceImpl implements BoardService {
 		return commentLikeRepository.existsByCommentIdAndUserId(commentLike, userId);
 	}
 
+	@Transactional
 	@Override
 	public Long countCommentLike(Long commentId) {
 		return commentLikeRepository.countAllByCommentId(commentId);
