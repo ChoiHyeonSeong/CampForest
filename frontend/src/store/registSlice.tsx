@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type RegistState = {
-  userName: string | null,
-  userBirthdate: Date | null,
-  userGender: string | null,
-  phoneNumber: string | null,
-  userEmail: string | null,
-  userPassword: string | null,
+  userName: string,
+  userBirthdate: string | null | undefined,
+  userGender: string,
+  phoneNumber: string,
+  userEmail: string,
+  userPassword: string,
   profileImage: string | null,
-  nickname: string | null,
-  introduction: string | null,
-  interests: boolean[] | null
+  nickname: string,
+  introduction: string,
+  interests: object | null
 }
 
 type RegistRequiredPayload = {
   userName: string,
-  userBirthdate: Date,
+  userBirthdate: string | null | undefined,
   userGender: string,
   phoneNumber: string,
   userEmail: string,
@@ -24,22 +24,22 @@ type RegistRequiredPayload = {
 
 type RegistOptionalPayload = {
   profileImage: string | null,
-  nickname: string | null,
-  introduction: string | null,
-  interests: boolean[]
+  nickname: string,
+  introduction: string,
+  interests: object | null
 }
 
 const Regist: RegistState = {
-  userName: null,
-  userBirthdate: null,
-  userGender: null,
-  phoneNumber: null,
-  userEmail: null,
-  userPassword: null,
+  userName: '',
+  userBirthdate: '',
+  userGender: '',
+  phoneNumber: '',
+  userEmail: '',
+  userPassword: '',
   profileImage: null,
-  nickname: null,
-  introduction: null,
-  interests: null
+  nickname: '',
+  introduction: '',
+  interests: null,
 };
 
 const registSlice = createSlice({
@@ -61,19 +61,19 @@ const registSlice = createSlice({
       state.interests = action.payload.interests;
     },
     registClear: (state) => {
-      state.userName = null;
+      state.userName = '';
       state.userBirthdate = null;
-      state.userGender = null;
-      state.phoneNumber = null;
-      state.userEmail = null;
-      state.userPassword = null;
+      state.userGender = '';
+      state.phoneNumber = '';
+      state.userEmail = '';
+      state.userPassword = '';
       state.profileImage = null;
-      state.nickname = null;
-      state.introduction = null;
+      state.nickname = '';
+      state.introduction = '';
       state.interests = null;
     },
   },
 });
 
-export const { registRequired, registOptional } = registSlice.actions;
+export const { registRequired, registOptional, registClear } = registSlice.actions;
 export default registSlice.reducer;

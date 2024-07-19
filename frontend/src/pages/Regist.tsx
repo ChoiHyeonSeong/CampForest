@@ -2,10 +2,8 @@ import React from 'react';
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Email from '@components/User/RegistEmail';
 import Information from '@components/User/UserInformation';
-import { RegistProvider, useRegistContext } from '@components/User/RegistContext';
 
-const RegistContent: React.FC = () => {
-  const { formData } = useRegistContext();
+const Regist: React.FC = () => {
   const navigate = useNavigate();
 
   const handleNextClick = () => {
@@ -33,11 +31,5 @@ const RegistContent: React.FC = () => {
     </div>
   );
 };
-
-const Regist: React.FC = () => (
-  <RegistProvider>
-    <RegistContent />
-  </RegistProvider>
-);
 
 export default Regist;

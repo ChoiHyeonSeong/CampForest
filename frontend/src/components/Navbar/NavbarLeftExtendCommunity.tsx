@@ -38,7 +38,7 @@ const NavbarLeftExtendCommunity = (props: Props) => {
 
   return (
     <div
-      className={`fixed w-[25rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-30 w-[25rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
         transition-all duration-300 ease-in-out 
         ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'} 
         bg-white outline outline-1 outline-[#CCCCCC]`
@@ -50,7 +50,7 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       </div>
       <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide flex flex-col text-left ps-10'>
         {communityCategory.map((eachObj, index) => (
-          <div className="p-6">{eachObj.title}</div>
+          <div key={index} className="p-6">{eachObj.title}</div>
         ))}
       </div>
     </div>

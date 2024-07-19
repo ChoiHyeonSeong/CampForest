@@ -83,7 +83,7 @@ const NavbarLeftExtendRental = (props: Props) => {
 
   return (
     <div
-      className={`fixed w-[25rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-30 w-[25rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
         transition-all duration-300 ease-in-out 
         ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'} 
         bg-white outline outline-1 outline-[#CCCCCC]`
@@ -96,7 +96,7 @@ const NavbarLeftExtendRental = (props: Props) => {
       <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide p-2 mx-10'>
         <div className="grid grid-cols-2 gap-4">
           {rentalCategory.map((eachObj, index) => (
-            <EachCategory title={eachObj.title} imgsrc={eachObj.imgsrc} imgBgColor={eachObj.imgBgColor} imgWd={eachObj.imgWd}/>
+            <EachCategory key={index} title={eachObj.title} imgsrc={eachObj.imgsrc} imgBgColor={eachObj.imgBgColor} imgWd={eachObj.imgWd}/>
           ))}
         </div>
       </div>
