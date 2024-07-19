@@ -16,6 +16,8 @@ public interface BoardService {
 
 	List<BoardResponseDto> getUserBoards(Long userId);
 
+	List<BoardResponseDto> getCategoryBoards(String category);
+
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 
 	void deleteBoard(Long boardId);

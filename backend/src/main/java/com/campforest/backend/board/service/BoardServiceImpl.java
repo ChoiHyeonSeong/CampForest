@@ -78,6 +78,17 @@ public class BoardServiceImpl implements BoardService {
 		return boardResponseDtos;
 	}
 
+	@Override
+	public List<BoardResponseDto> getCategoryBoards(String category) {
+		List<Boards> boardsList = boardRepository.findByCategory(category);
+		List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
+		for (Boards board : boardsList) {
+			BoardResponseDto dto = convertToDto(board);
+			boardResponseDtos.add(dto);
+		}
+		return boardResponseDtos;
+	}
+
 	//	@Transactional
 	//	@Override
 	//	public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {

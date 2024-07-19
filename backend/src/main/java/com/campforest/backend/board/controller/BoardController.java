@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.campforest.backend.board.dto.BoardRequestDto;
@@ -52,6 +53,13 @@ public class BoardController {
 	public ApiResponse<List<BoardResponseDto>> getUserBoard(@PathVariable Long userId) {
 		List<BoardResponseDto> boardResponseDtoList = boardService.getUserBoards(userId);
 		return ApiResponse.createSuccess(boardResponseDtoList, "게시글 사용자별 조회에 성공하였습니다");
+	}
+
+	//카테고리별 게시글 조회
+	@GetMapping("/category")
+	public ApiResponse<List<BoardResponseDto>> getCategoryBoard(@RequestParam String category) {
+		List<BoardResponseDto> boardResponseDtoList = boardService.getCategoryBoards(category);
+		return ApiResponse.createSuccess(boardResponseDtoList, "게시글 카테고리별 조회에 성공하였습니다");
 	}
 
 	//게시물 수정
