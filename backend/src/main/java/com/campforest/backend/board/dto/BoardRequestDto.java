@@ -1,5 +1,7 @@
 package com.campforest.backend.board.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,5 +17,6 @@ public class BoardRequestDto {
 	private String content;
 	private String category;
 	private boolean isBoardOpen;
+	private List<String> imageUrls;
 
 }

@@ -9,16 +9,19 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
+import com.campforest.backend.board.entity.BoardImage;
 import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
 import com.campforest.backend.board.entity.CommentLikes;
 import com.campforest.backend.board.entity.Likes;
 import com.campforest.backend.board.entity.Save;
+import com.campforest.backend.board.repository.BoardImageRepository;
 import com.campforest.backend.board.repository.BoardRepository;
 import com.campforest.backend.board.repository.CommentLikeRepository;
 import com.campforest.backend.board.repository.CommentRepository;
 import com.campforest.backend.board.repository.LikeRepository;
 import com.campforest.backend.board.repository.SaveRepository;
+import com.campforest.backend.product.model.ProductImage;
 
 import jakarta.transaction.Transactional;
 
@@ -29,15 +32,17 @@ public class BoardServiceImpl implements BoardService {
 	private final SaveRepository saveRepository;
 	private final CommentRepository commentRepository;
 	private final CommentLikeRepository commentLikeRepository;
+	private final BoardImageRepository boardImageRepository;
 
 	public BoardServiceImpl(BoardRepository boardRepository, LikeRepository likeRepository,
 		SaveRepository saveRepository, CommentRepository commentRepository,
-		CommentLikeRepository commentLikeRepository) {
+		CommentLikeRepository commentLikeRepository, BoardImageRepository boardImageRepository) {
 		this.boardRepository = boardRepository;
 		this.likeRepository = likeRepository;
 		this.saveRepository = saveRepository;
 		this.commentRepository = commentRepository;
 		this.commentLikeRepository = commentLikeRepository;
+		this.boardImageRepository = boardImageRepository;
 	}
 
 	@Transactional
@@ -50,7 +55,16 @@ public class BoardServiceImpl implements BoardService {
 			.category(boardRequestDto.getCategory())
 			.isBoardOpen(boardRequestDto.isBoardOpen())
 			.build();
-		boardRepository.save(boards);
+		Boards saveBoard = boardRepository.save(boards);
+
+		List<BoardImage> boardImages = new ArrayList<>();
+		for (String imageUrl : boardRequestDto.getImageUrls()) {
+			BoardImage boardImage = new BoardImage();
+			boardImage.setBoards(saveBoard);
+			boardImage.setImageUrl(imageUrl);
+			boardImages.add(boardImage);
+		}
+		boardImageRepository.saveAll(boardImages);
 	}
 
 	@Transactional

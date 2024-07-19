@@ -1,12 +1,17 @@
 package com.campforest.backend.board.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.campforest.backend.product.model.ProductImage;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
@@ -41,6 +46,9 @@ public class Boards {
 	private LocalDateTime createdAt;
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
+
+	@OneToMany(mappedBy = "boards", cascade = CascadeType.ALL)
+	private List<BoardImage> boardImages;
 
 	@PrePersist
 	protected void onCreate() {

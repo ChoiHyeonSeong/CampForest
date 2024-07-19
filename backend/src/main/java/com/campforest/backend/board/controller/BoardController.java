@@ -1,8 +1,11 @@
 package com.campforest.backend.board.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
@@ -19,19 +24,38 @@ import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.service.BoardService;
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.product.dto.ProductRegistDto;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/board")
+@RequiredArgsConstructor
+@Slf4j
 public class BoardController {
 
-	@Autowired
-	private BoardService boardService;
+	private final BoardService boardService;
+	private final S3Service s3Service;
 
 
 
 	//게시글 작성
-	@PostMapping
-	public ApiResponse<?> writeBoard(@RequestBody BoardRequestDto boardRequestDto) {
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ApiResponse<?> writeBoard(
+		@RequestPart(value = "files", required = false) MultipartFile[] files,
+		@RequestPart(value = "boardRequestDto") BoardRequestDto boardRequestDto
+	)	throws IOException
+	{
+		List<String> imageUrls = new ArrayList<>();
+		for (MultipartFile file : files) {
+			String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+			String fileUrl = s3Service.upload(file.getOriginalFilename(),file,extension);
+			imageUrls.add(fileUrl);
+			log.info("Uploaded file URL: " + fileUrl);
+		}
+		boardRequestDto.setImageUrls(imageUrls);
 		boardService.writeBoard(boardRequestDto);
 		return ApiResponse.createSuccessWithNoContent("게시물 작성에 성공하였습니다.");
 	}
