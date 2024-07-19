@@ -1,38 +1,22 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
+import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg';
+import { useRegistContext } from './RegistContext';
 // import 'react-datapicker/dist/react-datepicker.css';
 
-import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
-
-type RegistForm = {
-  userName: string,
-  userBirthdate: Date | null,
-  userGender: string,
-  phoneNumber: string,
-  userEmail: string,
-  userPassword: string
-}
-
-const RegistEmail = () => {
-  const [values, setValues] = useState<RegistForm>({
-    userName: "",
-    userBirthdate: null,
-    userGender: "",
-    phoneNumber: "",
-    userEmail: "",
-    userPassword: ""
-  });
+const RegistEmail: React.FC = () => {
+  const { formData, updateFormData } = useRegistContext();
   const [isMale, setIsMale] = useState(true);
-  const [phoneCertNumber, setPhoneCertNumber] = 
-      useState<string | number | readonly string[] | undefined>();
-  const [emailCertNumber, setEmailCertNumber] =
-      useState<string | number | readonly string[] | undefined>();
+  const [phoneCertNumber, setPhoneCertNumber] = useState<string>("");
+  const [emailCertNumber, setEmailCertNumber] = useState<string>("");
+  const [repeatPassword, setRepeatPassword] = useState<string>("");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setValues({
-          ...values,
-          [event.target.name]: event.target.value,
-      })
+    updateFormData({ [event.target.name]: event.target.value });
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    updateFormData({ userBirthdate: date });
   };
 
   return (
@@ -45,7 +29,7 @@ const RegistEmail = () => {
                   placeholder='이름을 입력해주세요.'
                   type="text" 
                   name="userName"
-                  value={values.userName}
+                  value={formData.userName}
                   onChange={handleChange}
               />
           </div>
@@ -64,13 +48,8 @@ const RegistEmail = () => {
                       yearDropdownItemNumber={100}
                       minDate={new Date('1900-01-01')}
                       maxDate={new Date()}
-                      selected={values.userBirthdate}
-                      onChange={(date) => {
-                          setValues({
-                              ...values,
-                              userBirthdate: date,
-                          })
-                      }}
+                      selected={formData.userBirthdate}
+                      onChange={handleDateChange}
                   />
                   <div className='md:hidden mt-[3rem] mb-[1rem]'>성별</div>
                   <div className='flex md:ms-auto me-[1rem] items-center space-x-[2rem]'>
@@ -105,7 +84,7 @@ const RegistEmail = () => {
                           type="text"
                           maxLength={11}
                           name="phoneNumber"
-                          value={values.phoneNumber}
+                          value={formData.phoneNumber}
                           onChange={handleChange}
                       />
                   </div>
@@ -133,7 +112,7 @@ const RegistEmail = () => {
                           placeholder='이메일을 입력해주세요.'
                           type="email" 
                           name="userEmail"
-                          value={values.userEmail}
+                          value={formData.userEmail}
                           onChange={handleChange}
                       />
                   </div>
@@ -157,9 +136,9 @@ const RegistEmail = () => {
               <input
                   className='focus:outline-none px-[1rem] py-[0.75rem]'
                   placeholder='비밀번호를 입력해주세요.'
-                  type="text" 
+                  type="password" 
                   name="userPassword"
-                  value={values.userPassword}
+                  value={formData.userPassword}
                   onChange={handleChange}
               />
           </div>
@@ -168,10 +147,12 @@ const RegistEmail = () => {
               <input
                   className='focus:outline-none px-[1rem] py-[0.75rem]'
                   placeholder='비밀번호 확인'
-                  type="text" 
+                  type="password" 
                   name="userPassword"
-                  value={values.userPassword}
-                  onChange={handleChange}
+                  value={repeatPassword}
+                  onChange={() => {
+                    setRepeatPassword(repeatPassword);
+                  }}
               />
           </div>
       </form>
@@ -182,9 +163,6 @@ const RegistEmail = () => {
           />
           <span className='ms-6 font-bold text-[1rem]'>모든 약관에 동의합니다.</span>
           <ArrowBottomIcon className='ms-auto'/>
-      </div>
-      <div className='text-center'>
-          <button className='mt-[5rem] border-2 border-black font-bold w-[20rem] md:rounded-none rounded-md md:w-[11rem] h-[2.5rem] hover:bg-black hover:text-white transition-all duration-300'>다음</button>
       </div>
     </div>
   )

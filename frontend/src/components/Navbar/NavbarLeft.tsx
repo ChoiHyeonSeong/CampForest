@@ -60,10 +60,14 @@ const NavbarLeft = (props: Props) => {
         <div>
           <div className='h-[7rem] flex flex-all-center'>
             <div className={`${isEitherOpen ? 'block' : 'hidden'} w-[5rem] flex flex-all-center`}>
-              <img src={shortLogoImg} alt="NoImg" className={`${isEitherOpen ? 'h-8' : 'h-0'} h-8`}/>
+              <a href='/'>
+                <img src={shortLogoImg} alt="NoImg" className={`${isEitherOpen ? 'h-8' : 'h-0'} h-8`}/>
+              </a>
             </div>
             <div className={`${isEitherOpen ? 'hidden' : 'block'} flex truncate`}>
-              <BigLogoIcon className='fill-[#000000] w-[180]'/>
+              <a href='/'>
+                <BigLogoIcon className='fill-[#000000] w-[180]'/>
+              </a>
             </div>
           </div>
 

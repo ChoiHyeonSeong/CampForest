@@ -8,6 +8,7 @@ import Push from '@components/Navbar/Push';
 
 import Login from '@pages/Login';
 import Regist from '@pages/Regist';
+import Main from '@pages/Main';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Routes>
               <Route path='/user/login' element={<Login/>}/>
               <Route path="/user/regist/*" element={<Regist/>}/>
+              <Route path='/' element={<Main />}/>
             </Routes>
           </BrowserRouter>
           {/* 여기까지 컨텐츠 */}
