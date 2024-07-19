@@ -52,4 +52,5 @@ public interface BoardService {
 	void deleteCommentLike ( Long commentId, Long userId );
 
 	boolean checkCommentLike(Long commentId, Long userId);
+	Long countCommentLike(Long commentId);
 }

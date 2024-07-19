@@ -240,6 +240,10 @@ public class BoardServiceImpl implements BoardService {
 		return commentLikeRepository.existsByCommentIdAndUserId(commentLike, userId);
 	}
 
+	@Override
+	public Long countCommentLike(Long commentId) {
+		return commentLikeRepository.countAllByCommentId(commentId);
+	}
 
 	private BoardResponseDto convertToDto(Boards boards) {
 		BoardResponseDto dto = new BoardResponseDto();

@@ -27,6 +27,8 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 
+
+
 	//게시글 작성
 	@PostMapping
 	public ApiResponse<?> writeBoard(@RequestBody BoardRequestDto boardRequestDto) {
@@ -146,7 +148,7 @@ public class BoardController {
 	}
 
 	//댓글 좋아요 이미 동일 boardId, userId존재하면 삭제
-	@PostMapping("/commentLike")
+	@PostMapping("/commentlike")
 	public  ApiResponse<?> likeComment(@RequestParam Long commentId, @RequestParam Long userId ){
 		if(boardService.checkCommentLike(commentId, userId)){
 			boardService.deleteCommentLike(commentId, userId);
@@ -156,5 +158,11 @@ public class BoardController {
 			boardService.likeComment(commentId, userId);
 			return ApiResponse.createSuccessWithNoContent("댓글 좋아요 성공하였습니다");
 		}
+	}
+
+	@GetMapping("/commentlike/{commentId}/count")
+	public ApiResponse<Long> countCommentLike(@PathVariable Long commentId ){
+		Long count = boardService.countCommentLike(commentId);
+		return ApiResponse.createSuccess(count,"댓글 좋아요 수 조회 성공");
 	}
 }
