@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Board from '@components/Board/Board'
+import Write from '@components/Board/Write'
 
 function Main() {
+  const [isModalOpen, setIsModalOpen] = useState(true)
+
   return (
     <div className='flex justify-center'>
+      <div 
+        onClick={() => setIsModalOpen(false)} 
+        className={`${isModalOpen ? '' : 'hidden'} fixed md:items-center w-full h-full bg-black bg-opacity-70`}>
+        <div className="h-full md:h-[100%] md:min-h-[59rem] md:mx-auto" onClick={(event) => event.stopPropagation()}>
+          <Write />
+        </div>
+      </div>
       <div className='w-full md:w-[40rem]'>
         <Board />
         <Board />
@@ -12,7 +22,6 @@ function Main() {
         <Board />
         <Board />
         <Board />
-
       </div>
     </div>
   )
