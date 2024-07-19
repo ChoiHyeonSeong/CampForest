@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.campforest.backend.product.model.Category;
 import com.campforest.backend.product.model.Product;
-import com.campforest.backend.product.model.ProductImage;
+import com.campforest.backend.product.model.ProductType;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +19,8 @@ public class ProductRegistDto {
 	private Long productPrice;
 	private String productContent;
 	private String location;
-	private String productType;
-	private String category;
+	private ProductType productType;
+	private Category category;
 	private List<String> imageUrls;
 
 

@@ -8,24 +8,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.product.dto.ProductRegistDto;
-import com.campforest.backend.product.model.Category;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductImage;
-import com.campforest.backend.product.repository.CategoryRepository;
 import com.campforest.backend.product.repository.ProductImageRepository;
 import com.campforest.backend.product.repository.ProductRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-	@Autowired
-	private ProductRepository productRepository;
+	private final ProductRepository productRepository;
 
-	@Autowired
-	private ProductImageRepository productImageRepository;
-
-	@Autowired
-	private CategoryRepository categoryRepository;
+	private final ProductImageRepository productImageRepository;
 
 	@Transactional
 	public void createProduct(ProductRegistDto productRegistDto) {

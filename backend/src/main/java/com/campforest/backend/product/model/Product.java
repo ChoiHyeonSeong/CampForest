@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -23,7 +25,6 @@ import lombok.Setter;
 
 @Getter
 @Entity
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,7 +37,8 @@ public class Product {
 
 	private Long user_id;
 
-	private String category;
+	@Enumerated(EnumType.STRING)
+	private Category category;
 
 	@Column(name = "product_name")
 	private String productName;
@@ -49,7 +51,8 @@ public class Product {
 	private String location;
 
 	@Column(name = "product_type")
-	private String productType;
+	@Enumerated(EnumType.STRING)
+	private ProductType productType;
 
 	//관심수
 	@ColumnDefault("0")
