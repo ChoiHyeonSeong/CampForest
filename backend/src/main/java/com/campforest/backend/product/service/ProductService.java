@@ -17,10 +17,12 @@ import com.campforest.backend.product.repository.ProductImageRepository;
 import com.campforest.backend.product.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ProductService {
 
 	private final ProductRepository productRepository;
@@ -51,7 +53,7 @@ public class ProductService {
 		List<String> imageUrls = findProduct.getProductImages()
 			.stream().map(productImage -> productImage.getImageUrl())
 			.collect(Collectors.toList());
-
+		log.info(imageUrls.toString());
 		return new ProductDetailDto(findProduct, imageUrls);
 	}
 
