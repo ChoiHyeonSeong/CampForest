@@ -1,6 +1,9 @@
 package com.campforest.backend.board.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.campforest.backend.board.entity.Likes;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +24,5 @@ public class BoardResponseDto {
 	private boolean isBoardOpen;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
-
+	private List<String> imageUrls;
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,9 +70,12 @@ public class BoardController {
 
 	//전체 게시글 조회
 	@GetMapping
-	public ApiResponse<List<BoardResponseDto>> getAllBoard() {
-		List<BoardResponseDto> boardResponseDtoList = boardService.getAllBoards();
-		return ApiResponse.createSuccess(boardResponseDtoList, "게시글 목록 조회 성공하였습니다");
+	public ApiResponse<Page<BoardResponseDto>> getAllBoard(
+		@RequestParam (defaultValue = "0") int page,
+		@RequestParam (defaultValue = "10") int size
+	)	{
+	Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(page,size);
+	return ApiResponse.createSuccess(boardResponseDtos,"게시글 목록 조회 성공하였습니다");
 	}
 
 	//사용자별 게시글 조회

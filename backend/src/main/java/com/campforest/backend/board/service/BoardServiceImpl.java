@@ -3,6 +3,10 @@ package com.campforest.backend.board.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.board.dto.BoardRequestDto;
@@ -76,14 +80,11 @@ public class BoardServiceImpl implements BoardService {
 
 	@Transactional
 	@Override
-	public List<BoardResponseDto> getAllBoards() {
-		List<Boards> boardsList = boardRepository.findAll();
-		List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
-		for (Boards board : boardsList) {
-			BoardResponseDto dto = convertToDto(board);
-			boardResponseDtos.add(dto);
-		}
-		return boardResponseDtos;
+	public Page<BoardResponseDto> getAllBoards(int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())	;
+		Page<Boards> boardsPage = boardRepository.findAll(pageable);
+
+		return boardsPage.map(this::convertToDto);
 	}
 
 	@Override
@@ -265,6 +266,12 @@ public class BoardServiceImpl implements BoardService {
 		dto.setBoardOpen(boards.isBoardOpen());
 		dto.setCreatedAt(boards.getCreatedAt());
 		dto.setModifiedAt(boards.getModifiedAt());
+
+		List<String> imageUrls = new ArrayList<>();
+		for (BoardImage boardImage : boards.getBoardImages()) {
+			imageUrls.add(boardImage.getImageUrl());
+		}
+		dto.setImageUrls(imageUrls);
 		return dto;
 	}
 

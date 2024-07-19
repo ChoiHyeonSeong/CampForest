@@ -2,6 +2,8 @@ package com.campforest.backend.board.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
@@ -12,7 +14,7 @@ public interface BoardService {
 
 	BoardResponseDto getBoard(Long boardId);
 
-	List<BoardResponseDto> getAllBoards();
+	Page<BoardResponseDto> getAllBoards(int page, int size);
 
 	List<BoardResponseDto> getUserBoards(Long userId);
 
