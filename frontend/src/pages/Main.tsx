@@ -10,7 +10,7 @@ function Main() {
       <div 
         onClick={() => setIsModalOpen(false)} 
         className={`${isModalOpen ? '' : 'hidden'} fixed md:items-center w-full h-full bg-black bg-opacity-70`}>
-        <div className="h-full md:h-[100%] md:min-h-[59rem] md:mx-auto" onClick={(event) => event.stopPropagation()}>
+        <div className="h-full md:w-[40rem] md:h-[85%] md:mx-auto" onClick={(event) => event.stopPropagation()}>
           <Write />
         </div>
       </div>

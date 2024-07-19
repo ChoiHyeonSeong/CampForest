@@ -4,7 +4,7 @@ import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.sv
 
 const Write = () => {
   return (
-    <div className='overflow-auto md:mx-auto h-[100%] md:mt-[5%] md:h-[85%] md:w-[40rem] bg-white md:rounded-md p-4 md:p-12'>
+    <div className='overflow-auto md:mx-auto h-[100%] md:mt-[8%] md:w-[40rem] bg-white md:rounded-md p-4 md:p-12'>
       <div className='flex mb-4 md:mb-8'>
         <div className='ms-4 font-bold md:text-2xl'>글 쓰기</div>
         <div className='ms-auto'><CloseIcon className='hidden md:block md:size-8' fill='000000' /></div>
