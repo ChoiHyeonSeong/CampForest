@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 import NavbarTop from './NavbarTop';
 import NavbarLeft from './NavbarLeft';
 import NavbarLeftExtendRental from './NavbarLeftExtendRental';
@@ -7,6 +10,7 @@ import NavbarBottom from './NavbarBottom';
 import Aside from './Aside';
 
 const Navbar = () => {
+  const auth = useSelector((state: RootState) => state.authStore);
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -68,7 +72,7 @@ const Navbar = () => {
 
       {/* 좌측 메뉴바 */}
       <NavbarLeft 
-        isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} 
+        isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} auth={auth}
         toggleMenu={toggleMenu} isExtendRentalOpen={isExtendRentalOpen} isExtendCommunityOpen={isExtendCommunityOpen}
       />
 

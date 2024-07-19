@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { RootState } from '@store/store';
 
 import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
 
@@ -23,6 +24,7 @@ type Props = {
   isExtendCommunityOpen: boolean;
   toggleExtendMenu: (param:string) => void;
   toggleMenu: () => void;
+  auth: RootState['authStore'];
 }
 
 const NavbarLeft = (props: Props) => {
@@ -68,10 +70,14 @@ const NavbarLeft = (props: Props) => {
           </div>
 
           <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-full' : 'translate-x-0'} transition-all duration-300 ease-in-out`}>
-            <div className='w-[5rem] flex flex-all-center'>
+            <div className={`w-[5rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} flex-all-center`}>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>프로필 들어갑니다</div>
+            {props.auth.isLoggedIn ? (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
+            ) : (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>로그인 해주세요</div>
+            )}
           </div>
 
           <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
@@ -114,7 +120,7 @@ const NavbarLeft = (props: Props) => {
         {/* darkmode */}
         <div className='mb-16 lg:mb-5'>
           <div className={`flex flex-all-center ${isEitherOpen ? 'hidden' : 'block'}`}>
-            <p className='me-5'>다크모드</p>
+            <p className={`me-5 ${isEitherOpen ? 'w-[0rem]' : 'w-[4rem]'} transition-all duration-300 truncate`}>다크모드</p>
             <DarkmodeBtn />
           </div>
         </div>      
