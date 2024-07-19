@@ -82,7 +82,6 @@ const UserInformation = () => {
               accept="image/*"
             />
           </div>
-        </div>
 
         {/* 닉네임 */}
         <div className="mb-6">

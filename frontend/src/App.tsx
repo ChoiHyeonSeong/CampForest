@@ -21,6 +21,8 @@ function App() {
               <Route path='/' element={<Main />}/>
               <Route path='/user/login' element={<Login/>}/>
               <Route path="/user/regist/*" element={<Regist/>}/>
+              <Route path="/user/mypage" element={<MyPage/>}/>
+              <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
             </Routes>
             {/* 여기까지 컨텐츠 */}
           </div> 

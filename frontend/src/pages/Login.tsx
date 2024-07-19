@@ -24,9 +24,9 @@ function Login() {
   };
 
   return (
-    <div className='flex justify-center items-center mb-10'>
+    <div className='flex justify-center items-center min-h-screen'>
       <div className='bg-white p-6 w-full md:max-w-3xl lg:w-[40rem] lg:p-0'>
-        <h3 className='text-center pb-[0.75rem] text-[2rem]'>로그인</h3>
+        <h3 className='text-center pb-[0.75rem] text-[2rem] mb-10'>로그인</h3>
 
         {/* 로그인 폼 */}
         <form>
