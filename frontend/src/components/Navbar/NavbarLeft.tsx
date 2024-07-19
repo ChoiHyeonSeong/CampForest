@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { RootState } from '@store/store';
+import { Link } from 'react-router-dom';
 
 import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
 
@@ -23,6 +25,7 @@ type Props = {
   isExtendCommunityOpen: boolean;
   toggleExtendMenu: (param:string) => void;
   toggleMenu: () => void;
+  auth: RootState['authStore'];
 }
 
 const NavbarLeft = (props: Props) => {
@@ -47,7 +50,7 @@ const NavbarLeft = (props: Props) => {
 
   return (
     <div 
-      className={`fixed z-10 h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-40 h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
         lg:translate-x-0 transition-all duration-300 ease-in-out
         lg:outline lg:outline-1 lg:outline-[#CCCCCC] w-[90vw] bg-white
         ${props.isMenuOpen ? '-translate-x-0 outline outline-1 outline-[#CCCCCC]' : '-translate-x-[100%] outline-none'}
@@ -59,19 +62,27 @@ const NavbarLeft = (props: Props) => {
         {/* main menu */}
         <div>
           <div className='h-[7rem] flex flex-all-center'>
-            <div className={`${isEitherOpen ? 'block' : 'hidden'} w-[5rem] flex flex-all-center`}>
-              <img src={shortLogoImg} alt="NoImg" className={`${isEitherOpen ? 'h-8' : 'h-0'} h-8`}/>
-            </div>
-            <div className={`${isEitherOpen ? 'hidden' : 'block'} flex truncate`}>
-              <BigLogoIcon className='fill-[#000000] w-[180]'/>
-            </div>
+            <Link to='/'>
+              <div className={`${isEitherOpen ? 'block' : 'hidden'} w-[5rem] flex flex-all-center`}>
+                <img src={shortLogoImg} alt="NoImg" className={`${isEitherOpen ? 'h-8' : 'h-0'} h-8`}/>
+              </div>
+              <div className={`${isEitherOpen ? 'hidden' : 'block'} flex truncate`}>
+                <BigLogoIcon className='fill-[#000000] w-[180]'/>
+              </div>
+            </Link>
           </div>
 
           <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-full' : 'translate-x-0'} transition-all duration-300 ease-in-out`}>
-            <div className='w-[5rem] flex flex-all-center'>
+            <div className={`w-[5rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} flex-all-center`}>
               <img src={tempImage} alt="NoImg" className='h-8'/>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>프로필 들어갑니다</div>
+            {props.auth.isLoggedIn ? (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
+            ) : (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
+                <Link to='/user/login'>로그인 해주세요</Link>
+              </div>
+            )}
           </div>
 
           <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
@@ -114,7 +125,7 @@ const NavbarLeft = (props: Props) => {
         {/* darkmode */}
         <div className='mb-16 lg:mb-5'>
           <div className={`flex flex-all-center ${isEitherOpen ? 'hidden' : 'block'}`}>
-            <p className='me-5'>다크모드</p>
+            <p className={`me-5 ${isEitherOpen ? 'w-[0rem]' : 'w-[4rem]'} transition-all duration-300 truncate`}>다크모드</p>
             <DarkmodeBtn />
           </div>
         </div>      
@@ -124,10 +135,12 @@ const NavbarLeft = (props: Props) => {
       <div className='flex md:hidden flex-col bg-white'>
         {/* main menu */}
         <div className='flex justify-between items-center h-11'>
-          <BigLogoIcon className='w-[40vw] ps-5 mt-1' fill='black'/>
+          <Link to='/'>
+            <BigLogoIcon className='w-[40vw] ps-5 mt-1' fill='black'/>
+          </Link>
           <DarkmodeBtn />
           <div className='cursor-pointer me-3' onClick={props.toggleMenu}>
-            <CloseIcon width={32} fill='black'/>
+            <CloseIcon className={`size-[2rem] ${props.isMenuOpen ? 'block' : 'hidden'}`} fill='black'/>
           </div>
         </div>
         <div className='h-[5rem] flex justify-around items-center'>
@@ -139,7 +152,7 @@ const NavbarLeft = (props: Props) => {
             <p className='w-[46vw]'>그럼 여기는 작성글</p>
           </div>
           <div className='w-[22vw] flex flex-all-center'>
-            <ChatIcon className='h-[2rem]' fill='black'/>
+            <ChatIcon className={`size-[2rem] ${props.isMenuOpen ? 'block' : 'hidden'}`} fill='black'/>
           </div>
         </div>
 

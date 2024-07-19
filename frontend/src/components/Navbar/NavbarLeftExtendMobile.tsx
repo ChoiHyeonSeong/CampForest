@@ -132,7 +132,7 @@ const NavbarLeftExtendMobile = (props: Props) => {
   }
 
   return (
-    <div>
+    <div className='z-30'>
       {htmlContent}
     </div>
   )

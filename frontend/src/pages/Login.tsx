@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
+import { Link } from 'react-router-dom'
 
 type LoginForm = {
   userEmail: string,
@@ -59,14 +60,18 @@ function Login() {
 
           {/* 비밀번호 잊으셨나요? */}
           <div className="flex justify-between items-center mb-6">
-            <a href="" className="text-gray-400 text-sm text-right w-full font-medium">비밀번호를 잊으셨나요?</a>
+            <a href="/" className="text-gray-400 text-sm text-right w-full font-medium">비밀번호를 잊으셨나요?</a>
           </div>
           <button type="submit" className="w-full bg-black text-white py-2 rounded-lg hover:bg-[#000000c0] duration-200">Login</button>
         </form>
 
         {/* 회원가입 하세요 */}
         <div className="text-center mt-12">
-          <p className="text-gray-700">아직 회원이 아니신가요? <span className="text-red-500 font-medium cursor-pointer">회원가입하세요!</span></p>
+          <p className="text-gray-700">아직 회원이 아니신가요? 
+            <Link to='/user/regist'>
+              <span className="text-red-500 font-medium cursor-pointer">회원가입하세요!</span>
+            </Link>
+          </p>
         </div>
 
         {/* 소셜 로그인 */}

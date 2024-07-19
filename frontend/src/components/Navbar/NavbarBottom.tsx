@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
@@ -12,21 +13,23 @@ type Props = {
 
 const NavbarBottom = (props: Props) => {
   return (
-    <div className='fixed bottom-0 w-full h-11 flex md:hidden justify-around bg-white outline outline-1 outline-[#CCCCCC]'>
+    <div className='fixed z-30 bottom-0 w-full h-11 flex md:hidden justify-around bg-white outline outline-1 outline-[#CCCCCC]'>
       <div className='w-11 flex flex-all-center cursor-pointer' onClick={props.toggleMenu}>
-        <HamMenuIcon width={32} stroke={'black'}/>
+        <HamMenuIcon className='size-[2rem]' stroke={'black'}/>
       </div>
       <div className='w-11 flex flex-all-center'>
-        <SearchIcon width={32} stroke={'black'}/>
+        <SearchIcon className='size-[1.5rem]' stroke={'black'}/>
+      </div>    
+      <div className='w-11 flex flex-all-center'>
+        <Link to='/'>
+          <HomeIcon className='size-[1.5rem]' fill={'black'}/>
+        </Link>
       </div>
       <div className='w-11 flex flex-all-center'>
-        <HomeIcon width={32} fill={'black'}/>
+        <ChatIcon className='size-[1.5rem]' fill={'black'}/>
       </div>
       <div className='w-11 flex flex-all-center'>
-        <ChatIcon width={32} fill={'black'}/>
-      </div>
-      <div className='w-11 flex flex-all-center'>
-        <MyPageIcon width={32}/>
+        <MyPageIcon className='size-[1.5rem]'/>
       </div>
     </div>
   )
