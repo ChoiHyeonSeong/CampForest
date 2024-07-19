@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,7 +37,7 @@ public class ProductController {
 	private final S3Service s3Service;
 
 	//게시물 작성
-	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
+	@PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ApiResponse<?> createProduct(
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
 		@RequestPart(value = "productRegistDto") ProductRegistDto productRegistDto
@@ -66,7 +67,7 @@ public class ProductController {
 	}
 
 	//게시물 수정
-	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
+	@PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ApiResponse<?> updateProduct(
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
 		@RequestPart(value = "productUpdateDto") ProductUpdateDto productUpdateDto
@@ -85,5 +86,13 @@ public class ProductController {
 		productService.updateProduct(productUpdateDto.getProductId(), productUpdateDto);
 
 		return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다");
+	}
+
+	//이미지 삭제
+	@DeleteMapping("/image")
+	public ApiResponse<?> deleteProduct(@RequestParam Long productImageId, @RequestPart Long productId) {
+		productService.deleteProductImage(productId, productImageId);
+
+		return ApiResponse.createSuccessWithNoContent("삭제되었습니다");
 	}
 }

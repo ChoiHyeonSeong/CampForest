@@ -76,4 +76,16 @@ public class ProductService {
 		}
 		productImageRepository.saveAll(productImages);
 	}
+
+	@Transactional
+	public void deleteProductImage(Long productId, Long imageId) {
+		ProductImage productImage = productImageRepository.findById(imageId)
+			.orElseThrow(() -> new IllegalArgumentException("이미지 없음요"));
+
+		if (!productImage.getProduct().getId().equals(productId)) {
+			throw new IllegalArgumentException("해당 상품의 이미지가 아닙니다");
+		}
+
+		productImageRepository.delete(productImage);
+	}
 }
