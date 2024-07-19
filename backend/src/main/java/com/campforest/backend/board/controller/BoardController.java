@@ -91,12 +91,12 @@ public class BoardController {
 		}
 	}
 
-	//게시글별 댓글 갯수 조회
-	@GetMapping("/like/{boardId}/count")
-	public ApiResponse<Long> countBoardLike(@PathVariable Long boardId) {
-		Long count = boardService.countBoardLike(boardId);
-		return ApiResponse.createSuccess(count, "좋아요 개수 조회 성공하였습니다");
-	}
+	// //게시글별 좋아요 갯수 조회
+	// @GetMapping("/like/{boardId}/count")
+	// public ApiResponse<Long> countBoardLike(@PathVariable Long boardId) {
+	// 	Long count = boardService.countBoardLike(boardId);
+	// 	return ApiResponse.createSuccess(count, "좋아요 개수 조회 성공하였습니다");
+	// }
 
 	//게시글 저장, 이미 동일 boardId, userId존재하면 삭제
 	@PostMapping("/save/{boardId}/{userId}")
@@ -143,5 +143,18 @@ public class BoardController {
 	public ApiResponse<Long> countBoardComment(@PathVariable Long boardId) {
 		Long count = boardService.countBoardComment(boardId);
 		return ApiResponse.createSuccess(count, "댓글 개수 조회 성공하였습니다");
+	}
+
+	//댓글 좋아요 이미 동일 boardId, userId존재하면 삭제
+	@PostMapping("/commentLike")
+	public  ApiResponse<?> likeComment(@RequestParam Long commentId, @RequestParam Long userId ){
+		if(boardService.checkCommentLike(commentId, userId)){
+			boardService.deleteCommentLike(commentId, userId);
+			return ApiResponse.createSuccessWithNoContent("댓글 좋아요 삭제 성공하였습니다");
+		}
+		else{
+			boardService.likeComment(commentId, userId);
+			return ApiResponse.createSuccessWithNoContent("댓글 좋아요 성공하였습니다");
+		}
 	}
 }

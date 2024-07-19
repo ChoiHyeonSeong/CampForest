@@ -11,9 +11,11 @@ import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
+import com.campforest.backend.board.entity.CommentLikes;
 import com.campforest.backend.board.entity.Likes;
 import com.campforest.backend.board.entity.Save;
 import com.campforest.backend.board.repository.BoardRepository;
+import com.campforest.backend.board.repository.CommentLikeRepository;
 import com.campforest.backend.board.repository.CommentRepository;
 import com.campforest.backend.board.repository.LikeRepository;
 import com.campforest.backend.board.repository.SaveRepository;
@@ -26,13 +28,15 @@ public class BoardServiceImpl implements BoardService {
 	private final LikeRepository likeRepository;
 	private final SaveRepository saveRepository;
 	private final CommentRepository commentRepository;
+	private final CommentLikeRepository commentLikeRepository;
 
 	public BoardServiceImpl(BoardRepository boardRepository, LikeRepository likeRepository,
-		SaveRepository saveRepository, CommentRepository commentRepository) {
+		SaveRepository saveRepository, CommentRepository commentRepository, CommentLikeRepository commentLikeRepository) {
 		this.boardRepository = boardRepository;
 		this.likeRepository = likeRepository;
 		this.saveRepository = saveRepository;
 		this.commentRepository = commentRepository;
+		this.commentLikeRepository = commentLikeRepository;
 	}
 
 	@Transactional
@@ -208,10 +212,34 @@ public class BoardServiceImpl implements BoardService {
 		return commentRepository.countAllByBoardId(boardId);
 	}
 
+	// @Override
+	// public Long countBoardLike(Long boardId) {
+	// 	return 0;
+	// }
+
+	@Transactional
 	@Override
-	public Long countBoardLike(Long boardId) {
-		return likeRepository.countAllByBoardId(boardId);
+	public void likeComment(Long commentId, Long userId) {
+
+		CommentLikes commentLikes = CommentLikes.builder()
+			.commentId(commentId)
+			.userId(userId)
+			.build();
+		commentLikeRepository.save(commentLikes);
 	}
+
+	@Transactional
+	@Override
+	public void deleteCommentLike(Long commentLike, Long userId) {
+		commentLikeRepository.deleteByCommentIdAndUserId(commentLike, userId);
+	}
+
+	@Transactional
+	@Override
+	public boolean checkCommentLike(Long commentLike, Long userId) {
+		return commentLikeRepository.existsByCommentIdAndUserId(commentLike, userId);
+	}
+
 
 	private BoardResponseDto convertToDto(Boards boards) {
 		BoardResponseDto dto = new BoardResponseDto();
