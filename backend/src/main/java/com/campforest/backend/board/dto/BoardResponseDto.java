@@ -20,6 +20,6 @@ public class BoardResponseDto {
 	private Long likeCount;
 	private boolean isBoardOpen;
 	private LocalDateTime createdAt;
-	private  LocalDateTime modifiedAt;
+	private LocalDateTime modifiedAt;
 
 }

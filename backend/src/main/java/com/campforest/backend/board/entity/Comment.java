@@ -18,14 +18,14 @@ import lombok.Setter;
 public class Comment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="comment_id")
+	@Column(name = "comment_id")
 	private Long commentId;
-	@Column(name="comment_writer_id")
+	@Column(name = "comment_writer_id")
 	private Long commentWriterId;
 	@Column(name = "board_id")
 	private Long boardId;
 	private String content;
-	@Column (name = "created_at")
+	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
 	@PrePersist

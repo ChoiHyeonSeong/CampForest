@@ -31,6 +31,7 @@ public class Save {
 	private Long userId;
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();

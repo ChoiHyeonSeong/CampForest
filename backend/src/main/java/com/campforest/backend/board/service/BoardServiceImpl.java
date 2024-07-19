@@ -26,6 +26,7 @@ public class BoardServiceImpl implements BoardService {
 	private final LikeRepository likeRepository;
 	private final SaveRepository saveRepository;
 	private final CommentRepository commentRepository;
+
 	public BoardServiceImpl(BoardRepository boardRepository, LikeRepository likeRepository,
 		SaveRepository saveRepository, CommentRepository commentRepository) {
 		this.boardRepository = boardRepository;
@@ -42,17 +43,18 @@ public class BoardServiceImpl implements BoardService {
 			.title(boardRequestDto.getTitle())
 			.content(boardRequestDto.getContent())
 			.category(boardRequestDto.getCategory())
-			.likeCount(boardRequestDto.getLikeCount())
 			.isBoardOpen(boardRequestDto.isBoardOpen())
 			.build();
 		boardRepository.save(boards);
 	}
+
 	@Transactional
 	@Override
 	public BoardResponseDto getBoard(Long boardId) {
-		Boards boards= boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("Board not found"));
+		Boards boards = boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("Board not found"));
 		return convertToDto(boards);
 	}
+
 	@Transactional
 	@Override
 	public List<BoardResponseDto> getAllBoards() {
@@ -69,37 +71,38 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardResponseDto> getUserBoards(Long userId) {
 		List<Boards> boardsList = boardRepository.findByUserId(userId);
 		List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
-		for(Boards board: boardsList){
+		for (Boards board : boardsList) {
 			BoardResponseDto dto = convertToDto(board);
 			boardResponseDtos.add(dto);
 		}
 		return boardResponseDtos;
 	}
 
-//	@Transactional
-//	@Override
-//	public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
-//		Boards boards = boardRepository.findById(boardId)
-//			.orElseThrow(() -> new RuntimeException("Board not found"));
-//		System.out.println();
-//		boards.setUserId(boards.getUserId());
-//		boards.setLikeCount(boards.getBoardId());
-//		boards.setTitle(boardRequestDto.getTitle());
-//		boards.setContent(boardRequestDto.getContent());
-//		boards.setCategory(boardRequestDto.getCategory());
-//		boards.setBoardOpen(boardRequestDto.isBoardOpen());
-//	}
-@Transactional
-@Override
-public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
-	boardRepository.updateBoard(
+	//	@Transactional
+	//	@Override
+	//	public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
+	//		Boards boards = boardRepository.findById(boardId)
+	//			.orElseThrow(() -> new RuntimeException("Board not found"));
+	//		System.out.println();
+	//		boards.setUserId(boards.getUserId());
+	//		boards.setLikeCount(boards.getBoardId());
+	//		boards.setTitle(boardRequestDto.getTitle());
+	//		boards.setContent(boardRequestDto.getContent());
+	//		boards.setCategory(boardRequestDto.getCategory());
+	//		boards.setBoardOpen(boardRequestDto.isBoardOpen());
+	//	}
+	@Transactional
+	@Override
+	public void modifyBoard(Long boardId, BoardRequestDto boardRequestDto) {
+		boardRepository.updateBoard(
 			boardId,
 			boardRequestDto.getTitle(),
 			boardRequestDto.getContent(),
 			boardRequestDto.getCategory(),
 			boardRequestDto.isBoardOpen()
-	);
-}
+		);
+	}
+
 	@Transactional
 	@Override
 	public void deleteBoard(Long boardId) {
@@ -110,22 +113,24 @@ public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
 	@Override
 	public void likeBoard(Long boardId, Long userId) {
 
-			Likes likes=Likes.builder()
-				.boardId(boardId)
-				.userId(userId)
-				.build();
-			likeRepository.save(likes);
+		Likes likes = Likes.builder()
+			.boardId(boardId)
+			.userId(userId)
+			.build();
+		likeRepository.save(likes);
 
 	}
+
 	@Transactional
 	@Override
 	public void deleteLike(Long boardId, Long userId) {
 		likeRepository.deleteByBoardIdAndUserId(boardId, userId);
 	}
+
 	@Transactional
 	@Override
-	public boolean checkLike(Long boardId, Long userId){
-		return likeRepository.existsByBoardIdAndUserId(boardId,userId);
+	public boolean checkLike(Long boardId, Long userId) {
+		return likeRepository.existsByBoardIdAndUserId(boardId, userId);
 	}
 
 	@Transactional
@@ -137,20 +142,22 @@ public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
 			.build();
 		saveRepository.save(save);
 	}
+
 	@Transactional
 	@Override
 	public void deleteSave(Long boardId, Long userId) {
-		saveRepository.deleteByBoardIdAndUserId(boardId,userId);
+		saveRepository.deleteByBoardIdAndUserId(boardId, userId);
 	}
+
 	@Transactional
 	@Override
 	public boolean checkSave(Long boardId, Long userId) {
-		return saveRepository.existsByBoardIdAndUserId(boardId,userId);
+		return saveRepository.existsByBoardIdAndUserId(boardId, userId);
 	}
 
 	@Override
 	public void writeComment(Long boardId, CommentRequestDto commentRequestDto) {
-		Comment comment=Comment.builder()
+		Comment comment = Comment.builder()
 			.boardId(boardId)
 			.commentWriterId(commentRequestDto.getCommentWriterId())
 			.content(commentRequestDto.getContent())
@@ -162,7 +169,7 @@ public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
 	public List<CommentResponseDto> getComment(Long boardId) {
 		List<Comment> commentList = commentRepository.findAllByBoardId(boardId);
 		List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
-		for(Comment comment: commentList){
+		for (Comment comment : commentList) {
 			CommentResponseDto dto = convertToCommentDto(comment);
 			commentResponseDtos.add(dto);
 		}
@@ -173,7 +180,7 @@ public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
 	public List<CommentResponseDto> getUserComment(Long commentWriterId) {
 		List<Comment> commentList = commentRepository.findByCommentWriterId(commentWriterId);
 		List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
-		for(Comment comment: commentList){
+		for (Comment comment : commentList) {
 			CommentResponseDto dto = convertToCommentDto(comment);
 			commentResponseDtos.add(dto);
 		}
@@ -183,6 +190,16 @@ public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
 	@Override
 	public void deleteComment(Long commentId) {
 		commentRepository.deleteById(commentId);
+	}
+
+	@Override
+	public Long countBoardComment(Long boardId) {
+		return commentRepository.countAllByBoardId(boardId);
+	}
+
+	@Override
+	public Long countBoardLike(Long boardId) {
+		return likeRepository.countAllByBoardId(boardId);
 	}
 
 	private BoardResponseDto convertToDto(Boards boards) {
@@ -198,6 +215,7 @@ public void modifyBoard(Long boardId,BoardRequestDto boardRequestDto) {
 		dto.setModifiedAt(boards.getModifiedAt());
 		return dto;
 	}
+
 	private CommentResponseDto convertToCommentDto(Comment comment) {
 		CommentResponseDto dto = new CommentResponseDto();
 		dto.setBoardId(comment.getBoardId());
