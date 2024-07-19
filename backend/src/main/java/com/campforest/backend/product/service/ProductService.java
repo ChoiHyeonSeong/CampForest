@@ -51,7 +51,7 @@ public class ProductService {
 			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
 
 		List<String> imageUrls = findProduct.getProductImages()
-			.stream().map(productImage -> productImage.getImageUrl())
+			.stream().map(ProductImage::getImageUrl)
 			.collect(Collectors.toList());
 		log.info(imageUrls.toString());
 		return new ProductDetailDto(findProduct, imageUrls);
@@ -77,6 +77,14 @@ public class ProductService {
 			productImages.add(productImage);
 		}
 		productImageRepository.saveAll(productImages);
+	}
+
+	//게시물 삭제 기능
+	public void deleteProduct(Long productId) {
+		Product product = productRepository.findById(productId)
+			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
+
+		productRepository.delete(product);
 	}
 
 	@Transactional

@@ -88,6 +88,14 @@ public class ProductController {
 		return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다");
 	}
 
+	//게시물 삭제
+	@DeleteMapping()
+	public ApiResponse<?> deleteProduct(@RequestParam Long productId) {
+		productService.deleteProduct(productId);
+
+		return ApiResponse.createSuccessWithNoContent("게시물 삭제에 성공하였습니다");
+	}
+
 	//이미지 삭제
 	@DeleteMapping("/image")
 	public ApiResponse<?> deleteProduct(@RequestParam Long productImageId, @RequestPart Long productId) {
