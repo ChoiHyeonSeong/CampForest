@@ -79,8 +79,8 @@ public class BoardController {
 	}
 
 	//사용자별 게시글 조회
-	@GetMapping("/user/{userId}")
-	public ApiResponse<List<BoardResponseDto>> getUserBoard(@PathVariable Long userId) {
+	@GetMapping("/user")
+	public ApiResponse<List<BoardResponseDto>> getUserBoard(@RequestParam Long userId) {
 		List<BoardResponseDto> boardResponseDtoList = boardService.getUserBoards(userId);
 		return ApiResponse.createSuccess(boardResponseDtoList, "게시글 사용자별 조회에 성공하였습니다");
 	}
@@ -101,8 +101,8 @@ public class BoardController {
 	}
 
 	//게시글 삭제
-	@DeleteMapping("/{boardId}")
-	public ApiResponse<?> deleteBoard(@PathVariable Long boardId) {
+	@DeleteMapping
+	public ApiResponse<?> deleteBoard(@RequestParam Long boardId) {
 		System.out.println(boardId);
 		boardService.deleteBoard(boardId);
 		return ApiResponse.createSuccessWithNoContent("게시글 삭제 성공하였습니다");
@@ -122,8 +122,8 @@ public class BoardController {
 	}
 
 	//게시글별 좋아요 갯수 조회
-	@GetMapping("/like/{boardId}/count")
-	public ApiResponse<Long> countBoardLike(@PathVariable Long boardId) {
+	@GetMapping("/like/count")
+	public ApiResponse<Long> countBoardLike(@RequestParam Long boardId) {
 		Long count = boardService.countBoardLike(boardId);
 		return ApiResponse.createSuccess(count, "좋아요 개수 조회 성공하였습니다");
 	}
@@ -141,36 +141,36 @@ public class BoardController {
 	}
 
 	//게시글에 댓글 작성
-	@PostMapping("/comment/{boardId}")
-	public ApiResponse<?> writeComment(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto) {
+	@PostMapping("/comment")
+	public ApiResponse<?> writeComment(@RequestParam Long boardId, @RequestBody CommentRequestDto commentRequestDto) {
 		boardService.writeComment(boardId, commentRequestDto);
 		return ApiResponse.createSuccessWithNoContent("댓글 작성 성공");
 	}
 
 	//게시글에 달려있는 댓글 목록 조회
-	@GetMapping("/comment/{boardId}")
-	public ApiResponse<List<CommentResponseDto>> getComment(@PathVariable Long boardId) {
+	@GetMapping("/comment")
+	public ApiResponse<List<CommentResponseDto>> getComment(@RequestParam Long boardId) {
 		List<CommentResponseDto> commendResponseDtos = boardService.getComment(boardId);
 		return ApiResponse.createSuccess(commendResponseDtos, "댓글 게시글별 조회에 성공하였습니다");
 	}
 
 	//유저가 단 댓글 목록 조회
-	@GetMapping("/comment/user/{commentWriterId}")
-	public ApiResponse<List<CommentResponseDto>> getUserComment(@PathVariable Long commentWriterId) {
+	@GetMapping("/comment/user")
+	public ApiResponse<List<CommentResponseDto>> getUserComment(@RequestParam Long commentWriterId) {
 		List<CommentResponseDto> commentResponseDtos = boardService.getUserComment(commentWriterId);
 		return ApiResponse.createSuccess(commentResponseDtos, "댓글 유저별 조회에 성공하였습니다");
 	}
 
 	//댓글 삭제
-	@DeleteMapping("/comment/{commentId}")
-	public ApiResponse<?> deleteComment(@PathVariable Long commentId) {
+	@DeleteMapping("/comment")
+	public ApiResponse<?> deleteComment(@RequestParam Long commentId) {
 		boardService.deleteComment(commentId);
 		return ApiResponse.createSuccessWithNoContent("댓글 삭제 성공하였습니다");
 	}
 
 	//게시글별 댓글 갯수 조회
-	@GetMapping("/comment/{boardId}/count")
-	public ApiResponse<Long> countBoardComment(@PathVariable Long boardId) {
+	@GetMapping("/comment/count")
+	public ApiResponse<Long> countBoardComment(@RequestParam Long boardId) {
 		Long count = boardService.countBoardComment(boardId);
 		return ApiResponse.createSuccess(count, "댓글 개수 조회 성공하였습니다");
 	}
@@ -188,8 +188,8 @@ public class BoardController {
 		}
 	}
 
-	@GetMapping("/commentlike/{commentId}/count")
-	public ApiResponse<Long> countCommentLike(@PathVariable Long commentId ){
+	@GetMapping("/commentlike/count")
+	public ApiResponse<Long> countCommentLike(@RequestParam Long commentId ){
 		Long count = boardService.countCommentLike(commentId);
 		return ApiResponse.createSuccess(count,"댓글 좋아요 수 조회 성공");
 	}
