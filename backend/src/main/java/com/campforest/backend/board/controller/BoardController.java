@@ -62,8 +62,8 @@ public class BoardController {
 	}
 
 	//게시글 상세 조회
-	@GetMapping("/{boardId}")
-	public ApiResponse<BoardResponseDto> getBoard(@PathVariable Long boardId) {
+	@GetMapping("/detail")
+	public ApiResponse<BoardResponseDto> getBoard(@RequestParam Long boardId) {
 		BoardResponseDto board = boardService.getBoard(boardId);
 		return ApiResponse.createSuccess(board, "게시글 단일 조회 성공");
 	}
@@ -109,8 +109,8 @@ public class BoardController {
 	}
 
 	//게시글 좋아요, 이미 동일 boardId, userId존재하면 삭제
-	@PostMapping("/like/{boardId}/{userId}")
-	public ApiResponse<?> likeBoard(@PathVariable Long boardId, @PathVariable Long userId) {
+	@PostMapping("/like")
+	public ApiResponse<?> likeBoard(@RequestParam Long boardId, @RequestParam Long userId) {
 		if (boardService.checkLike(boardId, userId)) {
 			boardService.deleteLike(boardId, userId);
 			return ApiResponse.createSuccessWithNoContent("게시글 좋아요 삭제 성공하였습니다");
@@ -129,8 +129,8 @@ public class BoardController {
 	}
 
 	//게시글 저장, 이미 동일 boardId, userId존재하면 삭제
-	@PostMapping("/save/{boardId}/{userId}")
-	public ApiResponse<?> saveBoard(@PathVariable Long boardId, @PathVariable Long userId) {
+	@PostMapping("/save")
+	public ApiResponse<?> saveBoard(@RequestParam Long boardId, @RequestParam Long userId) {
 		if (boardService.checkSave(boardId, userId)) {
 			boardService.deleteSave(boardId, userId);
 			return ApiResponse.createSuccessWithNoContent("저장 삭제 성공하였습니다");
