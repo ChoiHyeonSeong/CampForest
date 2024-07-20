@@ -32,7 +32,7 @@ public class Boards {
 	@Column(name = "board_id")
 	private Long boardId;
 	@Column(name = "user_id")
-	private String userId;
+	private Long userId;
 	private String title;
 	private String content;
 	@Column(name = "category")

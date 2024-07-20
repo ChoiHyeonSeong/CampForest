@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 public class BoardResponseDto {
 	private Long boardId;
-	private String userId;
+	private Long userId;
 	private String title;
 	private String content;
 	private String category;

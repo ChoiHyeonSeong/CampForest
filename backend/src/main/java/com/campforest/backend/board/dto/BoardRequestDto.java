@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class BoardRequestDto {
-	private String userId;
+	private Long userId;
 	private String title;
 	private String content;
 	private String category;
