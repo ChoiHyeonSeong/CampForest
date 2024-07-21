@@ -24,7 +24,7 @@ import com.campforest.backend.board.repository.board.BoardRepository;
 import com.campforest.backend.board.repository.commentlike.CommentLikeRepository;
 import com.campforest.backend.board.repository.comment.CommentRepository;
 import com.campforest.backend.board.repository.like.LikeRepository;
-import com.campforest.backend.board.repository.SaveRepository;
+import com.campforest.backend.board.repository.save.SaveRepository;
 
 import jakarta.transaction.Transactional;
 
