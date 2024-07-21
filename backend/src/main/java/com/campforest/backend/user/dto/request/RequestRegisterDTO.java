@@ -1,4 +1,4 @@
-package com.campforest.backend.user.dto;
+package com.campforest.backend.user.dto.request;
 
 import java.util.Date;
 
@@ -6,17 +6,17 @@ import com.campforest.backend.user.model.Gender;
 import com.campforest.backend.user.model.Role;
 import com.campforest.backend.user.model.Users;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Builder
-public class UserRequestDTO {
+public class RequestRegisterDTO {
 
 	private String userName;
 	private String email;
+	@Setter
 	private String password;
 	private Role role;
 	private Date birthdate;
@@ -27,9 +27,6 @@ public class UserRequestDTO {
 	private String introduction;
 	private String profileImage;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	public Users toEntity() {
 		return Users.builder()
