@@ -1,4 +1,4 @@
-package com.campforest.backend.board.repository.boardrepository;
+package com.campforest.backend.board.repository.board;
 
 import  com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.QBoards;

@@ -20,9 +20,9 @@ import com.campforest.backend.board.entity.CommentLikes;
 import com.campforest.backend.board.entity.Likes;
 import com.campforest.backend.board.entity.Save;
 import com.campforest.backend.board.repository.BoardImageRepository;
-import com.campforest.backend.board.repository.boardrepository.BoardRepository;
+import com.campforest.backend.board.repository.board.BoardRepository;
 import com.campforest.backend.board.repository.CommentLikeRepository;
-import com.campforest.backend.board.repository.CommentRepository;
+import com.campforest.backend.board.repository.comment.CommentRepository;
 import com.campforest.backend.board.repository.LikeRepository;
 import com.campforest.backend.board.repository.SaveRepository;
 
