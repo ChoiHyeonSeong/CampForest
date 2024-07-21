@@ -3,6 +3,7 @@ package com.campforest.backend.board.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ import com.campforest.backend.board.entity.Comment;
 import com.campforest.backend.board.entity.CommentLikes;
 import com.campforest.backend.board.entity.Likes;
 import com.campforest.backend.board.entity.Save;
-import com.campforest.backend.board.repository.BoardImageRepository;
+import com.campforest.backend.board.repository.boardimage.BoardImageRepository;
 import com.campforest.backend.board.repository.board.BoardRepository;
 import com.campforest.backend.board.repository.commentlike.CommentLikeRepository;
 import com.campforest.backend.board.repository.comment.CommentRepository;
@@ -111,13 +112,30 @@ public class BoardServiceImpl implements BoardService {
 	@Transactional
 	@Override
 	public void modifyBoard(Long boardId, BoardRequestDto boardRequestDto) {
-		boardRepository.updateBoard(
-			boardId,
-			boardRequestDto.getTitle(),
-			boardRequestDto.getContent(),
-			boardRequestDto.getCategory(),
-			boardRequestDto.isBoardOpen()
-		);
+		// 1. 게시글 조회
+		Boards board = boardRepository.findById(boardId)
+				.orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + boardId));
+
+		// 2. 게시글 정보 업데이트
+		board.setTitle(boardRequestDto.getTitle());
+		board.setContent(boardRequestDto.getContent());
+		board.setCategory(boardRequestDto.getCategory());
+		board.setBoardOpen(boardRequestDto.isBoardOpen());
+
+		// 3. 기존 이미지 삭제
+		boardImageRepository.deleteByBoardId(board);
+
+		// 4. 새 이미지 추가
+		List<BoardImage> boardImages = new ArrayList<>();
+		for (String imageUrl : boardRequestDto.getImageUrls()) {
+			BoardImage boardImage = new BoardImage();
+			boardImage.setBoards(board);
+			boardImage.setImageUrl(imageUrl);
+			boardImages.add(boardImage);
+		}
+		boardImageRepository.saveAll(boardImages);
+
+		// 5. 변경사항 저장 (Boards 엔티티는 @Transactional에 의해 자동 저장됨)
 	}
 
 	@Transactional

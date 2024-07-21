@@ -122,17 +122,23 @@ class BoardServiceTest {
         assertEquals(boardList, response.getData());
     }
 
-//    @Test
-//    void testModifyBoard() {
-//        Long boardId = 1L;
-//        BoardRequestDto boardRequestDto = new BoardRequestDto();
-//
-//        ApiResponse<?> response = boardController.modifyBoard(boardId, boardRequestDto);
-//
-//        assertNotNull(response);
-//        assertEquals("게시물 수정에 성공하였습니다.", response.getMessage());
-//        verify(boardService, times(1)).modifyBoard(boardId, boardRequestDto);
-//    }
+    @Test
+    void testModifyBoard() {
+        Long boardId = 1L;
+        BoardRequestDto boardRequestDto = new BoardRequestDto();
+        boardRequestDto.setTitle("수정된 제목");
+        boardRequestDto.setContent("수정된 내용");
+        boardRequestDto.setCategory("수정된 카테고리");
+        boardRequestDto.setBoardOpen(true);
+        boardRequestDto.setImageUrls(Arrays.asList("http://example.com/image1.jpg", "http://example.com/image2.jpg"));
+
+
+        ApiResponse<?> response = boardController.modifyBoard(boardId, boardRequestDto);
+
+        assertNotNull(response);
+        assertEquals("게시물 수정에 성공하였습니다.", response.getMessage());
+        verify(boardService, times(1)).modifyBoard(boardId, boardRequestDto);
+    }
 
     @Test
     void testDeleteBoard() {

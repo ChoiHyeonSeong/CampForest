@@ -29,9 +29,4 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 .where(boards.category.eq(category))
                 .fetch();
     }
-
-    @Override
-    public void updateBoard(Long boardId, String title, String content, String category, boolean isBoardOpen) {
-
-    }
 }

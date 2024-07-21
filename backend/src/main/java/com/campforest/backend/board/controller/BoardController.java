@@ -93,8 +93,8 @@ public class BoardController {
 	}
 
 	//게시물 수정
-	@PutMapping(("/{boardId}"))
-	public ApiResponse<?> modifyBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
+	@PutMapping
+	public ApiResponse<?> modifyBoard(@RequestParam Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
 		boardService.modifyBoard(boardId, boardRequestDto);
 		System.out.println(boardRequestDto.toString());
 		return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다.");
