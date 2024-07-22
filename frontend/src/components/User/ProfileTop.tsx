@@ -1,9 +1,13 @@
 import React from 'react'
 import ProfileImgEX from '@assets/icons/profileimg1.png'
+import FireGif from '@assets/images/fire.gif'
 
-type Props = {}
+type Props = {
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsFollowing: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export default function ProfileTop({}: Props) {
+export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
   return (
     <div className='p-6'>
           <div className='flex'>
@@ -29,11 +33,17 @@ export default function ProfileTop({}: Props) {
                 <div className='font-light text-xs md:text-sm lg:text-base mt-2 cursor-pointer'>프로필 수정하기</div>
               </div>
 
-              <div className=" mt-2">
-                <div className="text-gray-700 inline-block md:text pr-3">팔로워
+              <div className="mt-2">
+                <div onClick={() => {
+                  setIsModalOpen(true)
+                  setIsFollowing(false)
+                  }} className="text-gray-700 inline-block md:text pr-3">팔로워
                   <span className='font-medium ms-2 cursor-pointer'>111</span>
                 </div>
-                <div className="text-gray-700 inline-block md:text">팔로잉
+                <div onClick={() => {
+                  setIsModalOpen(true)
+                  setIsFollowing(true)
+                  }} className="text-gray-700 inline-block md:text">팔로잉
                   <span className='font-medium ms-2 cursor-pointer'>286</span>
                 </div>
               </div>
@@ -47,8 +57,10 @@ export default function ProfileTop({}: Props) {
           {/* 거래불꽃온도 */}
           <div className='ms-2 mt-6 mb-3'>
             <div className='mb-2 font-medium'>거래불꽃온도</div>
-            <div className="w-4/5 h-3 bg-gray-200 rounded-full">
-              <div className="h-full rounded-full w-1/2 bg-gradient-to-r from-red-500 to-orange-400"></div>
+            <div className="w-full h-3 bg-gray-200 rounded-full">
+              <div className="h-full rounded-full w-1/2 bg-gradient-to-r from-red-500 to-orange-400 relative">
+                <img src={FireGif} alt="불꽃" className="absolute -right-16 -top-[3.75rem] size-32"/>
+              </div>
             </div>
           </div>
         </div>
