@@ -21,7 +21,7 @@ const MenuBar = () => {
         </div>
       </div>
       <div>
-        <div className='flex justify-center mt-6'>
+        <div className='flex justify-center mt-6 relative'>
           <div className='flex items-center'>
             <ArticleIcon className='size-4'/>
             <span className='ms-2 text-sm'>작성글</span>
@@ -30,13 +30,12 @@ const MenuBar = () => {
             <BookMarkIcon className='size-5'/>
             <span className='ms-2 text-sm'>저장됨</span>
           </div>
-        </div>
-      </div>
-      <div>
-        <div className='flex justify-end'>
-          <div className='flex items-center border-b px-2 mt-6'>필터
+        <div className='flex justify-end absolute right-0'>
+          <div className='flex items-center border-b px-2 ms-auto text-sm'>
+            <div>필터</div>
             <FilterIcon className='size-5 ms-2' />
           </div>
+        </div>
         </div>
       </div>
     </div>
