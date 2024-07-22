@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import Board from '@components/Board/Board';
+import Review from '@components/Transaction/Review';
 import FollowUsers from '@components/User/FollowUsers';
 
 function MyPage() {
@@ -30,6 +31,7 @@ function MyPage() {
           <div className='w-full h-56'>
             <Routes>
               <Route path='/' element={<Board />} />
+              <Route path='/review' element={<Review />} />
             </Routes>
           </div>
 

@@ -6,7 +6,7 @@ import { ReactComponent as MoreDot} from '@assets/icons/more-dots.svg'
 const Board = () => {
   return (
     <div className='mx-auto min-w-[22rem] md:max-w-[40rem] md:my-[2rem] shadow-md rounded-md px-[1.5rem] py-[2rem] md:pt-[2rem]'>
-      <div className='flex items-center h-[3.5rem] mb-[2rem]  md:mb-[1rem]'>
+      <div className='flex items-center h-[3.5rem] mb-[2rem] md:mb-[1rem]'>
         <div className='bg-red-100 rounded-full size-[4rem] md:size-[3rem] shadow-md bg-white overflow-hidden'></div>
         <div className='ms-[1rem]'>
           <div className='text-xl md:text-lg'>하치와레미콘</div>
