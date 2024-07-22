@@ -26,7 +26,6 @@ import com.campforest.backend.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -56,8 +55,10 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/user/regist/**", "user/login", "/user/refreshToken").permitAll()
+				.requestMatchers("user/regist/**", "user/login", "user/refreshToken").permitAll()
 				.anyRequest().authenticated())
+			.exceptionHandling(exception ->
+				exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
 			.formLogin(AbstractHttpConfigurer::disable);
 
 		return http.build();
@@ -73,7 +74,7 @@ public class SecurityConfig {
 		PasswordEncoder passwordEncoder) {
 		CustomUsernamePwdAuthenticationProvider authenticationProvider =
 			new CustomUsernamePwdAuthenticationProvider(userDetailsService, passwordEncoder);
-		log.info("authenticationProvider : {}", authenticationProvider);
+
 		ProviderManager providerManager = new ProviderManager(authenticationProvider);
 		providerManager.setEraseCredentialsAfterAuthentication(false);
 
