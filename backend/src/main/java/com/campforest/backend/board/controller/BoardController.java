@@ -40,19 +40,16 @@ public class BoardController {
 	private final BoardService boardService;
 	private final S3Service s3Service;
 
-
-
 	//게시글 작성
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponse<?> writeBoard(
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
 		@RequestPart(value = "boardRequestDto") BoardRequestDto boardRequestDto
-	)	throws IOException
-	{
+	) throws IOException {
 		List<String> imageUrls = new ArrayList<>();
 		for (MultipartFile file : files) {
 			String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-			String fileUrl = s3Service.upload(file.getOriginalFilename(),file,extension);
+			String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
 			imageUrls.add(fileUrl);
 			log.info("Uploaded file URL: " + fileUrl);
 		}
@@ -71,11 +68,11 @@ public class BoardController {
 	//전체 게시글 조회
 	@GetMapping
 	public ApiResponse<Page<BoardResponseDto>> getAllBoard(
-		@RequestParam (defaultValue = "0") int page,
-		@RequestParam (defaultValue = "10") int size
-	)	{
-	Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(page,size);
-	return ApiResponse.createSuccess(boardResponseDtos,"게시글 목록 조회 성공하였습니다");
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(page, size);
+		return ApiResponse.createSuccess(boardResponseDtos, "게시글 목록 조회 성공하였습니다");
 	}
 
 	//사용자별 게시글 조회
@@ -108,17 +105,23 @@ public class BoardController {
 		return ApiResponse.createSuccessWithNoContent("게시글 삭제 성공하였습니다");
 	}
 
-	//게시글 좋아요, 이미 동일 boardId, userId존재하면 삭제
+	//게시글 좋아요
 	@PostMapping("/like")
 	public ApiResponse<?> likeBoard(@RequestParam Long boardId, @RequestParam Long userId) {
-		if (boardService.checkLike(boardId, userId)) {
-			boardService.deleteLike(boardId, userId);
-			return ApiResponse.createSuccessWithNoContent("게시글 좋아요 삭제 성공하였습니다");
-		} else {
+		if(boardService.checkLike(boardId,userId)){
+			return ApiResponse.createError("이미 좋아요 누른 게시물입니다");
+		}
 			boardService.likeBoard(boardId, userId);
 			return ApiResponse.createSuccessWithNoContent("게시글 좋아요 성공하였습니다");
 
-		}
+
+	}
+	//게시글 좋아요 삭제
+	@DeleteMapping("like")
+	public ApiResponse<?> deleteLike(@RequestParam Long boardId, @RequestParam Long userId){
+		boardService.deleteLike(boardId, userId);
+		return ApiResponse.createSuccessWithNoContent("게시글 좋아요 삭제 성공하였습니다");
+
 	}
 
 	//게시글별 좋아요 갯수 조회
@@ -128,16 +131,20 @@ public class BoardController {
 		return ApiResponse.createSuccess(count, "좋아요 개수 조회 성공하였습니다");
 	}
 
-	//게시글 저장, 이미 동일 boardId, userId존재하면 삭제
+	//게시글 저장
 	@PostMapping("/save")
 	public ApiResponse<?> saveBoard(@RequestParam Long boardId, @RequestParam Long userId) {
-		if (boardService.checkSave(boardId, userId)) {
-			boardService.deleteSave(boardId, userId);
-			return ApiResponse.createSuccessWithNoContent("저장 삭제 성공하였습니다");
-		} else {
+		if(boardService.checkSave(boardId,userId)){
+			return ApiResponse.createError("이미 저장한 게시물입니다");
+		}
 			boardService.saveBoard(boardId, userId);
 			return ApiResponse.createSuccessWithNoContent("게시글 저장 성공하였습니다");
-		}
+
+	}
+	@DeleteMapping("/save")
+	public ApiResponse<?> deleteSave(@RequestParam Long boardId, @RequestParam Long userId){
+		boardService.deleteSave(boardId, userId);
+		return ApiResponse.createSuccessWithNoContent("저장 삭제 성공하였습니다");
 	}
 
 	//게시글에 댓글 작성
@@ -177,20 +184,19 @@ public class BoardController {
 
 	//댓글 좋아요 이미 동일 boardId, userId존재하면 삭제
 	@PostMapping("/commentlike")
-	public  ApiResponse<?> likeComment(@RequestParam Long commentId, @RequestParam Long userId ){
-		if(boardService.checkCommentLike(commentId, userId)){
+	public ApiResponse<?> likeComment(@RequestParam Long commentId, @RequestParam Long userId) {
+		if (boardService.checkCommentLike(commentId, userId)) {
 			boardService.deleteCommentLike(commentId, userId);
 			return ApiResponse.createSuccessWithNoContent("댓글 좋아요 삭제 성공하였습니다");
-		}
-		else{
+		} else {
 			boardService.likeComment(commentId, userId);
 			return ApiResponse.createSuccessWithNoContent("댓글 좋아요 성공하였습니다");
 		}
 	}
 
 	@GetMapping("/commentlike/count")
-	public ApiResponse<Long> countCommentLike(@RequestParam Long commentId ){
+	public ApiResponse<Long> countCommentLike(@RequestParam Long commentId) {
 		Long count = boardService.countCommentLike(commentId);
-		return ApiResponse.createSuccess(count,"댓글 좋아요 수 조회 성공");
+		return ApiResponse.createSuccess(count, "댓글 좋아요 수 조회 성공");
 	}
 }

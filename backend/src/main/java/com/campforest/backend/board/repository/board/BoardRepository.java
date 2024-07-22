@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.campforest.backend.board.entity.Boards;
 
 @Repository
-public interface BoardRepository extends JpaRepository<Boards, Long>,BoardRepositoryCustom {
+public interface BoardRepository extends JpaRepository<Boards, Long>, BoardRepositoryCustom {
 
 }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.campforest.backend.board.entity.Likes;
 
 @Repository
-public interface LikeRepository extends JpaRepository<Likes, Long>,LikeRepositoryCustom {
+public interface LikeRepository extends JpaRepository<Likes, Long>, LikeRepositoryCustom {
 
 }

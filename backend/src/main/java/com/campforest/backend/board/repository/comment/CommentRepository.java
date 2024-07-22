@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import com.campforest.backend.board.entity.Comment;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long>,CommentRepositoryCustom {
-
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
 
 }

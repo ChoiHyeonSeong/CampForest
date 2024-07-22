@@ -8,6 +8,7 @@ import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.service.BoardService;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.config.s3.S3Service;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,294 +33,293 @@ import static org.mockito.Mockito.*;
 
 class BoardServiceTest {
 
-    @InjectMocks
-    private BoardController boardController;
-
-    @Mock
-    private BoardService boardService;
-
-    @Mock
-    private S3Service s3Service;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testWriteBoard() throws IOException {
-        BoardRequestDto boardRequestDto = new BoardRequestDto();
-        boardRequestDto.setUserId(1L);
-        boardRequestDto.setTitle("Test Title");
-        boardRequestDto.setContent("Test Content");
-        boardRequestDto.setCategory("Test Category");
-        boardRequestDto.setBoardOpen(true);
-
-        MockMultipartFile file = new MockMultipartFile(
-                "files", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test image content".getBytes()
-        );
-
-        when(s3Service.upload(anyString(), any(MultipartFile.class), anyString()))
-                .thenReturn("https://s3-url.com/test.jpg");
-
-        ApiResponse<?> response = boardController.writeBoard(new MultipartFile[]{file}, boardRequestDto);
-
-        assertNotNull(response);
-        assertEquals("게시물 작성에 성공하였습니다.", response.getMessage());
-        verify(boardService, times(1)).writeBoard(any(BoardRequestDto.class));
-    }
-
-    @Test
-    void testGetBoard() {
-        Long boardId = 1L;
-        BoardResponseDto boardResponseDto = new BoardResponseDto();
-        when(boardService.getBoard(boardId)).thenReturn(boardResponseDto);
-
-        ApiResponse<BoardResponseDto> response = boardController.getBoard(boardId);
-
-        assertNotNull(response);
-        assertEquals("게시글 단일 조회 성공", response.getMessage());
-        assertEquals(boardResponseDto, response.getData());
-    }
-
-    @Test
-    void testGetAllBoard() {
-        int page = 0;
-        int size = 10;
-        Page<BoardResponseDto> boardPage = new PageImpl<>(new ArrayList<>());
-        when(boardService.getAllBoards(page, size)).thenReturn(boardPage);
-
-        ApiResponse<Page<BoardResponseDto>> response = boardController.getAllBoard(page, size);
-
-        assertNotNull(response);
-        assertEquals("게시글 목록 조회 성공하였습니다", response.getMessage());
-        assertEquals(boardPage, response.getData());
-    }
-
-    @Test
-    void testGetUserBoard() {
-        Long userId = 1L;
-        List<BoardResponseDto> boardList = new ArrayList<>();
-        when(boardService.getUserBoards(userId)).thenReturn(boardList);
-
-        ApiResponse<List<BoardResponseDto>> response = boardController.getUserBoard(userId);
-
-        assertNotNull(response);
-        assertEquals("게시글 사용자별 조회에 성공하였습니다", response.getMessage());
-        assertEquals(boardList, response.getData());
-    }
-
-    @Test
-    void testGetCategoryBoard() {
-        String category = "Test Category";
-        List<BoardResponseDto> boardList = new ArrayList<>();
-        when(boardService.getCategoryBoards(category)).thenReturn(boardList);
-
-        ApiResponse<List<BoardResponseDto>> response = boardController.getCategoryBoard(category);
+	@InjectMocks
+	private BoardController boardController;
+
+	@Mock
+	private BoardService boardService;
+
+	@Mock
+	private S3Service s3Service;
+
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
+
+	@Test
+	void testWriteBoard() throws IOException {
+		BoardRequestDto boardRequestDto = new BoardRequestDto();
+		boardRequestDto.setUserId(1L);
+		boardRequestDto.setTitle("Test Title");
+		boardRequestDto.setContent("Test Content");
+		boardRequestDto.setCategory("Test Category");
+		boardRequestDto.setBoardOpen(true);
+
+		MockMultipartFile file = new MockMultipartFile(
+			"files", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test image content".getBytes()
+		);
+
+		when(s3Service.upload(anyString(), any(MultipartFile.class), anyString()))
+			.thenReturn("https://s3-url.com/test.jpg");
+
+		ApiResponse<?> response = boardController.writeBoard(new MultipartFile[] {file}, boardRequestDto);
+
+		assertNotNull(response);
+		assertEquals("게시물 작성에 성공하였습니다.", response.getMessage());
+		verify(boardService, times(1)).writeBoard(any(BoardRequestDto.class));
+	}
+
+	@Test
+	void testGetBoard() {
+		Long boardId = 1L;
+		BoardResponseDto boardResponseDto = new BoardResponseDto();
+		when(boardService.getBoard(boardId)).thenReturn(boardResponseDto);
+
+		ApiResponse<BoardResponseDto> response = boardController.getBoard(boardId);
+
+		assertNotNull(response);
+		assertEquals("게시글 단일 조회 성공", response.getMessage());
+		assertEquals(boardResponseDto, response.getData());
+	}
+
+	@Test
+	void testGetAllBoard() {
+		int page = 0;
+		int size = 10;
+		Page<BoardResponseDto> boardPage = new PageImpl<>(new ArrayList<>());
+		when(boardService.getAllBoards(page, size)).thenReturn(boardPage);
+
+		ApiResponse<Page<BoardResponseDto>> response = boardController.getAllBoard(page, size);
+
+		assertNotNull(response);
+		assertEquals("게시글 목록 조회 성공하였습니다", response.getMessage());
+		assertEquals(boardPage, response.getData());
+	}
+
+	@Test
+	void testGetUserBoard() {
+		Long userId = 1L;
+		List<BoardResponseDto> boardList = new ArrayList<>();
+		when(boardService.getUserBoards(userId)).thenReturn(boardList);
+
+		ApiResponse<List<BoardResponseDto>> response = boardController.getUserBoard(userId);
+
+		assertNotNull(response);
+		assertEquals("게시글 사용자별 조회에 성공하였습니다", response.getMessage());
+		assertEquals(boardList, response.getData());
+	}
+
+	@Test
+	void testGetCategoryBoard() {
+		String category = "Test Category";
+		List<BoardResponseDto> boardList = new ArrayList<>();
+		when(boardService.getCategoryBoards(category)).thenReturn(boardList);
+
+		ApiResponse<List<BoardResponseDto>> response = boardController.getCategoryBoard(category);
+
+		assertNotNull(response);
+		assertEquals("게시글 카테고리별 조회에 성공하였습니다", response.getMessage());
+		assertEquals(boardList, response.getData());
+	}
+
+	@Test
+	void testModifyBoard() {
+		Long boardId = 1L;
+		BoardRequestDto boardRequestDto = new BoardRequestDto();
+		boardRequestDto.setTitle("수정된 제목");
+		boardRequestDto.setContent("수정된 내용");
+		boardRequestDto.setCategory("수정된 카테고리");
+		boardRequestDto.setBoardOpen(true);
+		boardRequestDto.setImageUrls(Arrays.asList("http://example.com/image1.jpg", "http://example.com/image2.jpg"));
+
+		ApiResponse<?> response = boardController.modifyBoard(boardId, boardRequestDto);
 
-        assertNotNull(response);
-        assertEquals("게시글 카테고리별 조회에 성공하였습니다", response.getMessage());
-        assertEquals(boardList, response.getData());
-    }
-
-    @Test
-    void testModifyBoard() {
-        Long boardId = 1L;
-        BoardRequestDto boardRequestDto = new BoardRequestDto();
-        boardRequestDto.setTitle("수정된 제목");
-        boardRequestDto.setContent("수정된 내용");
-        boardRequestDto.setCategory("수정된 카테고리");
-        boardRequestDto.setBoardOpen(true);
-        boardRequestDto.setImageUrls(Arrays.asList("http://example.com/image1.jpg", "http://example.com/image2.jpg"));
-
+		assertNotNull(response);
+		assertEquals("게시물 수정에 성공하였습니다.", response.getMessage());
+		verify(boardService, times(1)).modifyBoard(boardId, boardRequestDto);
+	}
 
-        ApiResponse<?> response = boardController.modifyBoard(boardId, boardRequestDto);
+	@Test
+	void testDeleteBoard() {
+		Long boardId = 1L;
 
-        assertNotNull(response);
-        assertEquals("게시물 수정에 성공하였습니다.", response.getMessage());
-        verify(boardService, times(1)).modifyBoard(boardId, boardRequestDto);
-    }
+		ApiResponse<?> response = boardController.deleteBoard(boardId);
 
-    @Test
-    void testDeleteBoard() {
-        Long boardId = 1L;
+		assertNotNull(response);
+		assertEquals("게시글 삭제 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).deleteBoard(boardId);
+	}
 
-        ApiResponse<?> response = boardController.deleteBoard(boardId);
+	@Test
+	void testLikeBoard() {
+		Long boardId = 1L;
+		Long userId = 1L;
 
-        assertNotNull(response);
-        assertEquals("게시글 삭제 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).deleteBoard(boardId);
-    }
+		when(boardService.checkLike(boardId, userId)).thenReturn(false);
 
-    @Test
-    void testLikeBoard() {
-        Long boardId = 1L;
-        Long userId = 1L;
+		ApiResponse<?> response = boardController.likeBoard(boardId, userId);
 
-        when(boardService.checkLike(boardId, userId)).thenReturn(false);
+		assertNotNull(response);
+		assertEquals("게시글 좋아요 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).likeBoard(boardId, userId);
+	}
 
-        ApiResponse<?> response = boardController.likeBoard(boardId, userId);
+	@Test
+	void testUnlikeBoard() {
+		Long boardId = 1L;
+		Long userId = 1L;
 
-        assertNotNull(response);
-        assertEquals("게시글 좋아요 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).likeBoard(boardId, userId);
-    }
+		when(boardService.checkLike(boardId, userId)).thenReturn(true);
 
-    @Test
-    void testUnlikeBoard() {
-        Long boardId = 1L;
-        Long userId = 1L;
+		ApiResponse<?> response = boardController.likeBoard(boardId, userId);
 
-        when(boardService.checkLike(boardId, userId)).thenReturn(true);
+		assertNotNull(response);
+		assertEquals("게시글 좋아요 삭제 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).deleteLike(boardId, userId);
+	}
 
-        ApiResponse<?> response = boardController.likeBoard(boardId, userId);
+	@Test
+	void testCountBoardLike() {
+		Long boardId = 1L;
+		Long likeCount = 5L;
+		when(boardService.countBoardLike(boardId)).thenReturn(likeCount);
 
-        assertNotNull(response);
-        assertEquals("게시글 좋아요 삭제 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).deleteLike(boardId, userId);
-    }
+		ApiResponse<Long> response = boardController.countBoardLike(boardId);
 
-    @Test
-    void testCountBoardLike() {
-        Long boardId = 1L;
-        Long likeCount = 5L;
-        when(boardService.countBoardLike(boardId)).thenReturn(likeCount);
+		assertNotNull(response);
+		assertEquals("좋아요 개수 조회 성공하였습니다", response.getMessage());
+		assertEquals(likeCount, response.getData());
+	}
 
-        ApiResponse<Long> response = boardController.countBoardLike(boardId);
+	@Test
+	void testSaveBoard() {
+		Long boardId = 1L;
+		Long userId = 1L;
 
-        assertNotNull(response);
-        assertEquals("좋아요 개수 조회 성공하였습니다", response.getMessage());
-        assertEquals(likeCount, response.getData());
-    }
+		when(boardService.checkSave(boardId, userId)).thenReturn(false);
 
-    @Test
-    void testSaveBoard() {
-        Long boardId = 1L;
-        Long userId = 1L;
+		ApiResponse<?> response = boardController.saveBoard(boardId, userId);
 
-        when(boardService.checkSave(boardId, userId)).thenReturn(false);
+		assertNotNull(response);
+		assertEquals("게시글 저장 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).saveBoard(boardId, userId);
+	}
 
-        ApiResponse<?> response = boardController.saveBoard(boardId, userId);
+	@Test
+	void testUnsaveBoard() {
+		Long boardId = 1L;
+		Long userId = 1L;
 
-        assertNotNull(response);
-        assertEquals("게시글 저장 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).saveBoard(boardId, userId);
-    }
+		when(boardService.checkSave(boardId, userId)).thenReturn(true);
 
-    @Test
-    void testUnsaveBoard() {
-        Long boardId = 1L;
-        Long userId = 1L;
+		ApiResponse<?> response = boardController.saveBoard(boardId, userId);
 
-        when(boardService.checkSave(boardId, userId)).thenReturn(true);
+		assertNotNull(response);
+		assertEquals("저장 삭제 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).deleteSave(boardId, userId);
+	}
 
-        ApiResponse<?> response = boardController.saveBoard(boardId, userId);
+	@Test
+	void testWriteComment() {
+		Long boardId = 1L;
+		CommentRequestDto commentRequestDto = new CommentRequestDto();
 
-        assertNotNull(response);
-        assertEquals("저장 삭제 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).deleteSave(boardId, userId);
-    }
+		ApiResponse<?> response = boardController.writeComment(boardId, commentRequestDto);
 
-    @Test
-    void testWriteComment() {
-        Long boardId = 1L;
-        CommentRequestDto commentRequestDto = new CommentRequestDto();
+		assertNotNull(response);
+		assertEquals("댓글 작성 성공", response.getMessage());
+		verify(boardService, times(1)).writeComment(boardId, commentRequestDto);
+	}
 
-        ApiResponse<?> response = boardController.writeComment(boardId, commentRequestDto);
+	@Test
+	void testGetComment() {
+		Long boardId = 1L;
+		List<CommentResponseDto> commentList = new ArrayList<>();
+		when(boardService.getComment(boardId)).thenReturn(commentList);
 
-        assertNotNull(response);
-        assertEquals("댓글 작성 성공", response.getMessage());
-        verify(boardService, times(1)).writeComment(boardId, commentRequestDto);
-    }
+		ApiResponse<List<CommentResponseDto>> response = boardController.getComment(boardId);
 
-    @Test
-    void testGetComment() {
-        Long boardId = 1L;
-        List<CommentResponseDto> commentList = new ArrayList<>();
-        when(boardService.getComment(boardId)).thenReturn(commentList);
+		assertNotNull(response);
+		assertEquals("댓글 게시글별 조회에 성공하였습니다", response.getMessage());
+		assertEquals(commentList, response.getData());
+	}
 
-        ApiResponse<List<CommentResponseDto>> response = boardController.getComment(boardId);
+	@Test
+	void testGetUserComment() {
+		Long commentWriterId = 1L;
+		List<CommentResponseDto> commentList = new ArrayList<>();
+		when(boardService.getUserComment(commentWriterId)).thenReturn(commentList);
 
-        assertNotNull(response);
-        assertEquals("댓글 게시글별 조회에 성공하였습니다", response.getMessage());
-        assertEquals(commentList, response.getData());
-    }
+		ApiResponse<List<CommentResponseDto>> response = boardController.getUserComment(commentWriterId);
 
-    @Test
-    void testGetUserComment() {
-        Long commentWriterId = 1L;
-        List<CommentResponseDto> commentList = new ArrayList<>();
-        when(boardService.getUserComment(commentWriterId)).thenReturn(commentList);
+		assertNotNull(response);
+		assertEquals("댓글 유저별 조회에 성공하였습니다", response.getMessage());
+		assertEquals(commentList, response.getData());
+	}
 
-        ApiResponse<List<CommentResponseDto>> response = boardController.getUserComment(commentWriterId);
+	@Test
+	void testDeleteComment() {
+		Long commentId = 1L;
 
-        assertNotNull(response);
-        assertEquals("댓글 유저별 조회에 성공하였습니다", response.getMessage());
-        assertEquals(commentList, response.getData());
-    }
+		ApiResponse<?> response = boardController.deleteComment(commentId);
 
-    @Test
-    void testDeleteComment() {
-        Long commentId = 1L;
+		assertNotNull(response);
+		assertEquals("댓글 삭제 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).deleteComment(commentId);
+	}
 
-        ApiResponse<?> response = boardController.deleteComment(commentId);
+	@Test
+	void testCountBoardComment() {
+		Long boardId = 1L;
+		Long commentCount = 3L;
+		when(boardService.countBoardComment(boardId)).thenReturn(commentCount);
 
-        assertNotNull(response);
-        assertEquals("댓글 삭제 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).deleteComment(commentId);
-    }
+		ApiResponse<Long> response = boardController.countBoardComment(boardId);
 
-    @Test
-    void testCountBoardComment() {
-        Long boardId = 1L;
-        Long commentCount = 3L;
-        when(boardService.countBoardComment(boardId)).thenReturn(commentCount);
+		assertNotNull(response);
+		assertEquals("댓글 개수 조회 성공하였습니다", response.getMessage());
+		assertEquals(commentCount, response.getData());
+	}
 
-        ApiResponse<Long> response = boardController.countBoardComment(boardId);
+	@Test
+	void testLikeComment() {
+		Long commentId = 1L;
+		Long userId = 1L;
 
-        assertNotNull(response);
-        assertEquals("댓글 개수 조회 성공하였습니다", response.getMessage());
-        assertEquals(commentCount, response.getData());
-    }
+		when(boardService.checkCommentLike(commentId, userId)).thenReturn(false);
 
-    @Test
-    void testLikeComment() {
-        Long commentId = 1L;
-        Long userId = 1L;
+		ApiResponse<?> response = boardController.likeComment(commentId, userId);
 
-        when(boardService.checkCommentLike(commentId, userId)).thenReturn(false);
+		assertNotNull(response);
+		assertEquals("댓글 좋아요 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).likeComment(commentId, userId);
+	}
 
-        ApiResponse<?> response = boardController.likeComment(commentId, userId);
+	@Test
+	void testUnlikeComment() {
+		Long commentId = 1L;
+		Long userId = 1L;
 
-        assertNotNull(response);
-        assertEquals("댓글 좋아요 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).likeComment(commentId, userId);
-    }
+		when(boardService.checkCommentLike(commentId, userId)).thenReturn(true);
 
-    @Test
-    void testUnlikeComment() {
-        Long commentId = 1L;
-        Long userId = 1L;
+		ApiResponse<?> response = boardController.likeComment(commentId, userId);
 
-        when(boardService.checkCommentLike(commentId, userId)).thenReturn(true);
+		assertNotNull(response);
+		assertEquals("댓글 좋아요 삭제 성공하였습니다", response.getMessage());
+		verify(boardService, times(1)).deleteCommentLike(commentId, userId);
+	}
 
-        ApiResponse<?> response = boardController.likeComment(commentId, userId);
+	@Test
+	void testCountCommentLike() {
+		Long commentId = 1L;
+		Long likeCount = 2L;
+		when(boardService.countCommentLike(commentId)).thenReturn(likeCount);
 
-        assertNotNull(response);
-        assertEquals("댓글 좋아요 삭제 성공하였습니다", response.getMessage());
-        verify(boardService, times(1)).deleteCommentLike(commentId, userId);
-    }
+		ApiResponse<Long> response = boardController.countCommentLike(commentId);
 
-    @Test
-    void testCountCommentLike() {
-        Long commentId = 1L;
-        Long likeCount = 2L;
-        when(boardService.countCommentLike(commentId)).thenReturn(likeCount);
-
-        ApiResponse<Long> response = boardController.countCommentLike(commentId);
-
-        assertNotNull(response);
-        assertEquals("댓글 좋아요 수 조회 성공", response.getMessage());
-        assertEquals(likeCount, response.getData());
-    }
+		assertNotNull(response);
+		assertEquals("댓글 좋아요 수 조회 성공", response.getMessage());
+		assertEquals(likeCount, response.getData());
+	}
 }

@@ -48,11 +48,11 @@ public interface BoardService {
 
 	Long countBoardComment(Long boardId);
 
+	void likeComment(Long commentId, Long userId);
 
-	void likeComment ( Long commentId, Long userId );
-
-	void deleteCommentLike ( Long commentId, Long userId );
+	void deleteCommentLike(Long commentId, Long userId);
 
 	boolean checkCommentLike(Long commentId, Long userId);
+
 	Long countCommentLike(Long commentId);
 }

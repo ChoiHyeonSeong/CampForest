@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -81,7 +82,7 @@ public class BoardServiceImpl implements BoardService {
 	@Transactional
 	@Override
 	public Page<BoardResponseDto> getAllBoards(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())	;
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		Page<Boards> boardsPage = boardRepository.findAll(pageable);
 
 		return boardsPage.map(this::convertToDto);
@@ -114,7 +115,7 @@ public class BoardServiceImpl implements BoardService {
 	public void modifyBoard(Long boardId, BoardRequestDto boardRequestDto) {
 		// 1. 게시글 조회
 		Boards board = boardRepository.findById(boardId)
-				.orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + boardId));
+			.orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + boardId));
 
 		// 2. 게시글 정보 업데이트
 		board.setTitle(boardRequestDto.getTitle());
