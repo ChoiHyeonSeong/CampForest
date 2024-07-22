@@ -4,8 +4,9 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
-  // calc를 사용할 수 있게 만들어준다.
+  plugins: [
+    require('@tailwindcss/aspect-ratio')
+  ],
   mode: "jit",
 };
 

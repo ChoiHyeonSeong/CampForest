@@ -1,17 +1,15 @@
 import React from 'react'
-import ProfileImg from '@assets/icons/profileimg.png'
+import { Route, Routes } from 'react-router-dom';
 import ProfileImgEX from '@assets/icons/profileimg1.png'
+import MenuBar from '@components/User/MenuBar';
+import Board from '@components/Board/Board';
 
-
-type Props = {}
-
-function MyPage({}: Props) {
+function MyPage() {
   return (
     <div className='flex justify-center min-h-screen'>
-      <div className='bg-white p-6 w-full xl:w-[59rem] rounded-lg'>
-        <h3 className='pb-[0.75rem] text-lg md:text-[1.5rem] hidden lg:block'>마이 프로필</h3>
-
-        <div className='p-6 border-b-2'>
+      <div className='bg-white md:p-6 w-full xl:w-[55rem] rounded-lg'>
+        <h3 className='pb-[0.75rem] text-lg md:text-[1.5rem] hidden lg:block'>마이프로필</h3>
+        <div className='p-6'>
           <div className='flex'>
             {/* 프로필사진 */}
             <div className="relative size-20 md:size-24 rounded-full border-[0.1rem] me-6">
@@ -45,40 +43,20 @@ function MyPage({}: Props) {
           {/* 거래불꽃온도 */}
           <div className='ms-2 mt-6 mb-3'>
             <div className='mb-2 font-medium'>거래불꽃온도</div>
-            <div className="w-4/5 h-3 bg-gray-200 rounded-full">
+            <div className="w-1/2 h-3 bg-gray-200 rounded-full">
               <div className="h-full rounded-full w-1/2 bg-gradient-to-r from-red-500 to-orange-400"></div>
             </div>
           </div>
-          
-
         </div>
-
-
-        {/*  */}
         <div>
           {/* 목록전환박스 */}
-          <div className='flex h-24 text-center'>
-            <div className='w-1/4 py-4 flex justify-center flex-col cursor-pointer'>
-              <p>12</p>
-              <p>게시물</p>
-            </div>
-            <div className='w-1/4 py-4 flex justify-center flex-col cursor-pointer'>
-              <p>12</p>
-              <p>보관함</p>
-            </div>
-            <div className='w-1/4 py-4 flex justify-center flex-col cursor-pointer'>
-              <p>00</p>
-              <p>거래품목</p>
-            </div>
-            <div className='w-1/4 py-4 flex justify-center flex-col cursor-pointer'>
-              <p>12</p>
-              <p>거래후기</p>
-            </div>
-          </div>
+          <MenuBar />
 
           {/* 목록 */}
-          <div>
-            <div className='bg-pink-300 w-full h-56'></div>
+          <div className='w-full h-56'>
+            <Routes>
+              <Route path='/' element={<Board />} />
+            </Routes>
           </div>
 
         </div>

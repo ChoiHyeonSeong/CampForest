@@ -22,7 +22,7 @@ const Write = () => {
           placeholder='제목을 입력하세요.'
         />
         <textarea 
-          className='resize-none py-2 ps-4 md:text-lg h-[25rem] focus:outline-none mb-[2rem]'
+          className='resize-none py-2 ps-4 md:text-lg h-[22rem] focus:outline-none mb-[2rem]'
           placeholder='내용을 입력하세요.'
         />
         <div className='flex fixed bottom-0 md:static'>
