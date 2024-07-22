@@ -8,4 +8,8 @@ public interface TokenService {
 	String generateRefreshToken(String email);
 
 	ResponseRefreshTokenDTO refreshToken(String refreshToken);
+
+	void blacklistRefreshToken(String refreshToken);
+
+	boolean isRefreshTokenBlacklisted(String refreshToken);
 }

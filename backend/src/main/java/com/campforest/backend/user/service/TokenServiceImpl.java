@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.model.RefreshToken;
+import com.campforest.backend.user.model.TokenBlacklist;
 import com.campforest.backend.user.repository.RefreshTokenRepository;
+import com.campforest.backend.user.repository.TokenBlacklistRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +17,7 @@ public class TokenServiceImpl implements TokenService{
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final TokenBlacklistRepository tokenBlacklistRepository;
 
 	@Override
 	public String generateAccessToken(String userEmail) {
@@ -30,6 +33,10 @@ public class TokenServiceImpl implements TokenService{
 
 	@Override
 	public ResponseRefreshTokenDTO refreshToken(String refreshToken) {
+		if(isRefreshTokenBlacklisted(refreshToken)) {
+			return null;
+		}
+
 		if (jwtTokenProvider.validateToken(refreshToken)) {
 			String userEmail = jwtTokenProvider.getClaims(refreshToken).get("userEmail", String.class);
 			// TODO : Custom Exception 만들기
@@ -49,6 +56,16 @@ public class TokenServiceImpl implements TokenService{
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void blacklistRefreshToken(String refreshToken) {
+		tokenBlacklistRepository.save(new TokenBlacklist(refreshToken));
+	}
+
+	@Override
+	public boolean isRefreshTokenBlacklisted(String refreshToken) {
+		return tokenBlacklistRepository.existsById(refreshToken);
 	}
 
 	private void saveRefreshToken(String userEmail, String refreshToken) {

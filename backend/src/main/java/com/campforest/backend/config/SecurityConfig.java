@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,7 +23,6 @@ import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.filter.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @RequiredArgsConstructor
@@ -55,7 +53,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("user/regist/**", "user/login", "user/refreshToken").permitAll()
+				.requestMatchers("user/regist/**", "user/login", "user/logout", "user/refreshToken").permitAll()
 				.anyRequest().authenticated())
 			.exceptionHandling(exception ->
 				exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))

@@ -23,6 +23,7 @@ import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.TokenService;
 import com.campforest.backend.user.service.UserService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class UserController {
 	private final UserService userService;
 	private final TokenService tokenService;
 	private final PasswordEncoder passwordEncoder;
-
+	private final JwtTokenProvider jwtTokenProvider;
 
 	@PostMapping("/regist/email")
 	public ApiResponse<?> registByEmail(@RequestBody RequestRegisterDTO requestDTO) {
@@ -79,6 +80,23 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 	}
 
+	@PostMapping("/logout")
+	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
+		String refreshToken = extractRefreshToken(request);
+
+		if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
+			tokenService.blacklistRefreshToken(refreshToken);
+
+			Cookie cookie = new Cookie("refreshToken", null);
+			cookie.setMaxAge(0);
+			cookie.setPath("/");
+			response.addCookie(cookie);
+
+			return ApiResponse.createSuccess(null, "로그아웃이 완료되었습니다.");
+		}
+		return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
+	}
+
 	@GetMapping
 	public ApiResponse<?> getUserDetailsAfterLogin(Authentication authentication, HttpServletRequest request) {
 		try {
@@ -97,6 +115,10 @@ public class UserController {
 	public ApiResponse<?> refreshToken(@RequestBody RequestRefreshTokenDTO requestDTO, HttpServletResponse response) {
 		try {
 			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(requestDTO.getRefreshToken());
+
+			if (responseDTO == null) {
+				throw new IllegalArgumentException("Refresh Token이 만료되었거나 존재하지 않습니다.");
+			}
 			String accessToken = responseDTO.getAccessToken();
 			String refreshToken = responseDTO.getRefreshToken();
 
@@ -113,8 +135,22 @@ public class UserController {
 			response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
 			return ApiResponse.createSuccess(null, "Refresh Token을 통한 Access Token 재발급 성공");
+		} catch (IllegalArgumentException e) {
+			return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 		}
+	}
+
+	private String extractRefreshToken(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if(cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("refreshToken")) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
 	}
 }
