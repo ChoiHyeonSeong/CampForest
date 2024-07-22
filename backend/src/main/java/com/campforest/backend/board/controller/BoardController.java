@@ -51,7 +51,6 @@ public class BoardController {
 			String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 			String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
 			imageUrls.add(fileUrl);
-			log.info("Uploaded file URL: " + fileUrl);
 		}
 		boardRequestDto.setImageUrls(imageUrls);
 		boardService.writeBoard(boardRequestDto);
@@ -93,14 +92,12 @@ public class BoardController {
 	@PutMapping
 	public ApiResponse<?> modifyBoard(@RequestParam Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
 		boardService.modifyBoard(boardId, boardRequestDto);
-		System.out.println(boardRequestDto.toString());
 		return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다.");
 	}
 
 	//게시글 삭제
 	@DeleteMapping
 	public ApiResponse<?> deleteBoard(@RequestParam Long boardId) {
-		System.out.println(boardId);
 		boardService.deleteBoard(boardId);
 		return ApiResponse.createSuccessWithNoContent("게시글 삭제 성공하였습니다");
 	}

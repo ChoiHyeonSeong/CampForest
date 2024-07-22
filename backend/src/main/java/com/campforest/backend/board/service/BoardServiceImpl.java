@@ -2,6 +2,7 @@ package com.campforest.backend.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -62,13 +63,12 @@ public class BoardServiceImpl implements BoardService {
 			.build();
 		Boards saveBoard = boardRepository.save(boards);
 
-		List<BoardImage> boardImages = new ArrayList<>();
-		for (String imageUrl : boardRequestDto.getImageUrls()) {
-			BoardImage boardImage = new BoardImage();
-			boardImage.setBoards(saveBoard);
-			boardImage.setImageUrl(imageUrl);
-			boardImages.add(boardImage);
-		}
+		List<BoardImage> boardImages = boardRequestDto.getImageUrls().stream()
+			.map(imageUrl -> BoardImage.builder()
+				.boards(saveBoard)
+				.imageUrl(imageUrl)
+				.build())
+			.collect(Collectors.toList());
 		boardImageRepository.saveAll(boardImages);
 	}
 
@@ -117,26 +117,26 @@ public class BoardServiceImpl implements BoardService {
 		Boards board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + boardId));
 
-		// 2. 게시글 정보 업데이트
-		board.setTitle(boardRequestDto.getTitle());
-		board.setContent(boardRequestDto.getContent());
-		board.setCategory(boardRequestDto.getCategory());
-		board.setBoardOpen(boardRequestDto.isBoardOpen());
-
+		// 2. 게시글 정보 업데이트 (Builder 패턴 사용)
+		Boards updateBoard = board.toBuilder()
+			.title(boardRequestDto.getTitle())
+			.content(boardRequestDto.getContent())
+			.category(boardRequestDto.getCategory())
+			.isBoardOpen(boardRequestDto.isBoardOpen())
+			.build();
+		boardRepository.save(updateBoard);
 		// 3. 기존 이미지 삭제
 		boardImageRepository.deleteByBoardId(board);
 
 		// 4. 새 이미지 추가
-		List<BoardImage> boardImages = new ArrayList<>();
-		for (String imageUrl : boardRequestDto.getImageUrls()) {
-			BoardImage boardImage = new BoardImage();
-			boardImage.setBoards(board);
-			boardImage.setImageUrl(imageUrl);
-			boardImages.add(boardImage);
-		}
+		List<BoardImage> boardImages = boardRequestDto.getImageUrls().stream()
+			.map(imageUrl -> BoardImage.builder()
+				.boards(updateBoard)
+				.imageUrl(imageUrl)
+				.build())
+			.collect(Collectors.toList());
 		boardImageRepository.saveAll(boardImages);
 
-		// 5. 변경사항 저장 (Boards 엔티티는 @Transactional에 의해 자동 저장됨)
 	}
 
 	@Transactional
