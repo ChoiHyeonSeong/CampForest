@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 
-import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.model.Users;
 
 public interface UserService {
@@ -14,10 +13,4 @@ public interface UserService {
 	Optional<Users> findByEmail(String email);
 
 	Authentication authenticateUser(String email, String password);
-
-	String generateAccessToken(String email);
-
-	String generateRefreshToken(String email);
-
-	ResponseRefreshTokenDTO refreshToken(String refreshToken);
 }

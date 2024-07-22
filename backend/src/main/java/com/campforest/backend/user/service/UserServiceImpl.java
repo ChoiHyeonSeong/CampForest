@@ -27,10 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService{
 
 	private final UserRepository userRepository;
-	private final RefreshTokenRepository refreshTokenRepository;
-	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthenticationManager authenticationManager;
-	private final CustomUserDetailsService customUserDetailsService;
 
 	@Override
 	@Transactional
@@ -47,49 +44,4 @@ public class UserServiceImpl implements UserService{
 	public Authentication authenticateUser(String email, String password) {
 		return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 	}
-
-	@Override
-	public String generateAccessToken(String userEmail) {
-		return jwtTokenProvider.generateAccessToken(userEmail);
-	}
-
-	@Override
-	public String generateRefreshToken(String userEmail) {
-		String refreshToken = jwtTokenProvider.generateRefreshToken(userEmail);
-		saveRefreshToken(userEmail, refreshToken);
-		return refreshToken;
-	}
-
-	@Override
-	public ResponseRefreshTokenDTO refreshToken(String refreshToken) {
-		if (jwtTokenProvider.validateToken(refreshToken)) {
-			String userEmail = jwtTokenProvider.getClaims(refreshToken).get("userEmail", String.class);
-			log.info("userEmail : {}", userEmail);
-			// TODO : Custom Exception 만들기
-			RefreshToken storedToken = refreshTokenRepository.findById(userEmail)
-				.orElseThrow(() -> new IllegalArgumentException("Refresh Token not found"));
-
-			if (storedToken.getToken().equals(refreshToken)) {
-				refreshTokenRepository.deleteById(userEmail);
-
-				String newAccessToken = jwtTokenProvider.generateAccessToken(userEmail);
-				String newRefreshToken = jwtTokenProvider.generateRefreshToken(userEmail);
-				log.info("newAccessToken : {}", newAccessToken);
-				log.info("newRefreshToken : {}", newRefreshToken);
-				RefreshToken newRt = new RefreshToken(userEmail, newRefreshToken,
-					jwtTokenProvider.getRefreshTokenExpiration());
-				refreshTokenRepository.save(newRt);
-
-				return new ResponseRefreshTokenDTO(newAccessToken, newRefreshToken);
-			}
-		}
-		return null;
-	}
-
-	private void saveRefreshToken(String userEmail, String refreshToken) {
-		long refreshTokenExpireTime = jwtTokenProvider.getRefreshTokenExpiration();
-		RefreshToken rt = new RefreshToken(userEmail, refreshToken, refreshTokenExpireTime);
-		refreshTokenRepository.save(rt);
-	}
-
 }

@@ -20,6 +20,7 @@ import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
 import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.service.TokenService;
 import com.campforest.backend.user.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,8 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
 	private final UserService userService;
+	private final TokenService tokenService;
 	private final PasswordEncoder passwordEncoder;
-	private final JwtTokenProvider jwtTokenProvider;
+
 
 	@PostMapping("/regist/email")
 	public ApiResponse<?> registByEmail(@RequestBody RequestRegisterDTO requestDTO) {
@@ -57,8 +59,8 @@ public class UserController {
 		if (authentication.isAuthenticated()) {
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			String accessToken = userService.generateAccessToken(authentication.getName());
-			String refreshToken = userService.generateRefreshToken(authentication.getName());
+			String accessToken = tokenService.generateAccessToken(authentication.getName());
+			String refreshToken = tokenService.generateRefreshToken(authentication.getName());
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
 				.httpOnly(true)
@@ -94,7 +96,7 @@ public class UserController {
 	@PostMapping("/refreshToken")
 	public ApiResponse<?> refreshToken(@RequestBody RequestRefreshTokenDTO requestDTO, HttpServletResponse response) {
 		try {
-			ResponseRefreshTokenDTO responseDTO = userService.refreshToken(requestDTO.getRefreshToken());
+			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(requestDTO.getRefreshToken());
 			String accessToken = responseDTO.getAccessToken();
 			String refreshToken = responseDTO.getRefreshToken();
 
