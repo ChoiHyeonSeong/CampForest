@@ -9,6 +9,7 @@ import Main from '@pages/Main';
 import ProfileEdit from '@pages/ProfileEdit';
 import MyPage from '@pages/MyPage';
 import Trade from '@pages/Trade';
+import CampingSearch from '@pages/CampingSearch';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path="/user/mypage/*" element={<MyPage/>}/>
               <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
               <Route path='/trade' element={<Trade/> }/>
+              <Route path='/camping' element={<CampingSearch/> }/>
             </Routes>
             {/* 여기까지 컨텐츠 */}
           </div> 
