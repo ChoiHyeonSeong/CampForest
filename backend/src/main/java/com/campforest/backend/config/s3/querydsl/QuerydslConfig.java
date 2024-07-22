@@ -10,7 +10,6 @@ import jakarta.persistence.PersistenceContext;
 
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories("com.campforest.backend")
 @Configuration
 public class QuerydslConfig {
 
@@ -22,4 +21,3 @@ public class QuerydslConfig {
 		return new JPAQueryFactory(entityManager);
 	}
 }
-

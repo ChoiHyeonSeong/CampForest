@@ -22,14 +22,16 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.campforest.backend.common.ApiResponse;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class S3Service {
 
-	@Autowired
-	private AmazonS3 amazonS3;
+	private final AmazonS3 amazonS3;
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;

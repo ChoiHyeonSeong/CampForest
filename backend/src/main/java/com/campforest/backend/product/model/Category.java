@@ -1,28 +1,23 @@
 package com.campforest.backend.product.model;
 
-import java.util.List;
+public enum Category {
+	텐트("텐트"),
+	의자("의자"),
+	침낭_매트("침낭/매트"),
+	테이블("테이블"),
+	랜턴("랜턴"),
+	코펠_식기("코펠/식기"),
+	안전용품("안전용품"),
+	버너_화로("버너/화로"),
+	기타("기타");
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.Getter;
-import lombok.Setter;
+	private final String categoryName;
 
-@Entity
-@Getter
-@Setter
-public class Category {
+	Category(String categoryName) {
+		this.categoryName = categoryName;
+	}
 
-	@Id @GeneratedValue
-	@Column(name = "category_id")
-	private Long id;
-
-	@Column(name = "category_name")
-	private String categoryName;
-
-	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-	private List<Product> products;
+	public String getCategoryName() {
+		return categoryName;
+	}
 }
