@@ -17,6 +17,6 @@ public class ProductUpdateDto {
 	private String productContent;
 	private String location;
 	private Category category;
-	private List<String> imageUrls;
+	private List<String> productImageUrl;
 
 }

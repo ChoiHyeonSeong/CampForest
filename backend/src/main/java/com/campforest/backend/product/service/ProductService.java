@@ -41,7 +41,7 @@ public class ProductService {
 		Product savedProduct = productRepository.save(product);
 
 		List<ProductImage> productImages = new ArrayList<>();
-		for (String imageUrl : productRegistDto.getImageUrls()) {
+		for (String imageUrl : productRegistDto.getProductImageUrl()) {
 			ProductImage productImage = new ProductImage();
 			productImage.setProduct(savedProduct);
 			productImage.setImageUrl(imageUrl);
@@ -75,7 +75,7 @@ public class ProductService {
 
 		// 새로운 이미지 추가
 		List<ProductImage> productImages = new ArrayList<>();
-		for (String imageUrl : productUpdateDto.getImageUrls()) {
+		for (String imageUrl : productUpdateDto.getProductImageUrl()) {
 			ProductImage productImage = new ProductImage();
 			productImage.setProduct(product);
 			productImage.setImageUrl(imageUrl);

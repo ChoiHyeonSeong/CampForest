@@ -58,7 +58,7 @@ public class ProductController {
 			log.info("Uploaded file URL: " + fileUrl);
 		}
 
-		productRegistDto.setImageUrls(imageUrls);
+		productRegistDto.setProductImageUrl(imageUrls);
 
 		productService.createProduct(productRegistDto);
 
@@ -89,7 +89,7 @@ public class ProductController {
 			}
 		}
 
-		productUpdateDto.setImageUrls(imageUrls);
+		productUpdateDto.setProductImageUrl(imageUrls);
 		productService.updateProduct(productUpdateDto.getProductId(), productUpdateDto);
 
 		return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다");

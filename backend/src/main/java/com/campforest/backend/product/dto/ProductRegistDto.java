@@ -21,7 +21,7 @@ public class ProductRegistDto {
 	private String location;
 	private ProductType productType;
 	private Category category;
-	private List<String> imageUrls;
+	private List<String> productImageUrl;
 
 
 	public Product toEntity() {
