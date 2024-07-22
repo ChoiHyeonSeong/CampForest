@@ -8,6 +8,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
 @Configuration
 public class QuerydslConfig {
 
