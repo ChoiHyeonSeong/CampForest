@@ -1,6 +1,5 @@
 package com.campforest.backend.config;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-		// TODO: 공통 예외 처리 만들기
 		Users users = userRepository.findByEmail(userEmail).orElseThrow(() ->
 			new UsernameNotFoundException("User not found with userEmail: " + userEmail));
 

@@ -11,11 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class CustomUsernamePwdAuthenticationProvider implements AuthenticationProvider {
 
 	private final UserDetailsService userDetailsService;
@@ -26,7 +24,6 @@ public class CustomUsernamePwdAuthenticationProvider implements AuthenticationPr
 		String username = authentication.getName();
 		String password = authentication.getCredentials().toString();
 		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-		log.info("userDetails : {}", userDetails);
 		if(passwordEncoder.matches(password, userDetails.getPassword())) {
 			return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
 		} else {
