@@ -3,7 +3,7 @@ import React from 'react'
 // icon
 import { ReactComponent as StarIcon } from '@assets/icons/star.svg'
 
-function Review() {
+const Review = () => {
   return (
     <div className='mx-auto min-w-[22rem] md:max-w-[40rem] md:my-[2rem] rounded-md px-[1.5rem] md:px-0 py-[2rem] md:pt-[2rem]'>
       <div>
@@ -18,7 +18,7 @@ function Review() {
   )
 }
 
-function ReviewCard(){
+const ReviewCard = () => {
   return (
     <div className='flex justify-between items-center w-full bg-gray-200 rounded-sm px-3 py-4 mb-4'>
       <div className='flex me-10'>

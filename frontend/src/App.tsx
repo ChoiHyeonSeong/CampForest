@@ -8,6 +8,7 @@ import Regist from '@pages/Regist';
 import Main from '@pages/Main';
 import ProfileEdit from '@pages/ProfileEdit';
 import MyPage from '@pages/MyPage';
+import Trade from '@pages/Trade';
 
 function App() {
   return (
@@ -20,11 +21,12 @@ function App() {
           <div className='flex-grow'>
             {/* 여기서 부터 */}
             <Routes>
-              <Route path='/' element={<Main />}/>
+              <Route path='/' element={<Main/>}/>
               <Route path='/user/login' element={<Login/>}/>
               <Route path="/user/regist/*" element={<Regist/>}/>
               <Route path="/user/mypage/*" element={<MyPage/>}/>
               <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
+              <Route path='/trade' element={<Trade/> }/>
             </Routes>
             {/* 여기까지 컨텐츠 */}
           </div> 
