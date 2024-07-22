@@ -1,9 +1,7 @@
 import React from 'react'
 import ProfileImgEX from '@assets/icons/profileimg1.png'
 
-type Props = {}
-
-export default function ProfileTop({}: Props) {
+export default function ProfileTop() {
   return (
     <div className='p-6'>
           <div className='flex'>

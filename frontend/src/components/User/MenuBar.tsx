@@ -7,15 +7,15 @@ const MenuBar = () => {
   return (
     <div>
       <div className='flex text-center border-b'>
-        <div className='w-1/3 py-4 flex justify-center cursor-pointer'>
+        <div className='menu w-1/3 py-4 flex justify-center cursor-pointer'>
           <p className='me-2'>게시물</p>
           <p>12</p>
         </div>
-        <div className='w-1/3 py-4 flex justify-center cursor-pointer'>
+        <div className='menu w-1/3 py-4 flex justify-center cursor-pointer'>
           <p className='me-2'>판매/대여</p>
           <p>12</p>
         </div>
-        <div className='w-1/3 py-4 flex justify-center cursor-pointer'>
+        <div className='menu w-1/3 py-4 flex justify-center cursor-pointer'>
           <p className='me-2'>거래후기</p>
           <p>12</p>
         </div>
