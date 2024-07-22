@@ -156,8 +156,6 @@ class BoardServiceTest {
 		Long boardId = 1L;
 		Long userId = 1L;
 
-		when(boardService.checkLike(boardId, userId)).thenReturn(false);
-
 		ApiResponse<?> response = boardController.likeBoard(boardId, userId);
 
 		assertNotNull(response);
@@ -170,9 +168,7 @@ class BoardServiceTest {
 		Long boardId = 1L;
 		Long userId = 1L;
 
-		when(boardService.checkLike(boardId, userId)).thenReturn(true);
-
-		ApiResponse<?> response = boardController.likeBoard(boardId, userId);
+		ApiResponse<?> response = boardController.deleteLike(boardId, userId);
 
 		assertNotNull(response);
 		assertEquals("게시글 좋아요 삭제 성공하였습니다", response.getMessage());
@@ -197,8 +193,6 @@ class BoardServiceTest {
 		Long boardId = 1L;
 		Long userId = 1L;
 
-		when(boardService.checkSave(boardId, userId)).thenReturn(false);
-
 		ApiResponse<?> response = boardController.saveBoard(boardId, userId);
 
 		assertNotNull(response);
@@ -211,9 +205,7 @@ class BoardServiceTest {
 		Long boardId = 1L;
 		Long userId = 1L;
 
-		when(boardService.checkSave(boardId, userId)).thenReturn(true);
-
-		ApiResponse<?> response = boardController.saveBoard(boardId, userId);
+		ApiResponse<?> response = boardController.deleteSave(boardId, userId);
 
 		assertNotNull(response);
 		assertEquals("저장 삭제 성공하였습니다", response.getMessage());
