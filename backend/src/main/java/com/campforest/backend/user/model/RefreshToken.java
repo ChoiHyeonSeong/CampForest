@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@RedisHash(value = "refreshToken", timeToLive = 14440)
+@RedisHash(value = "refreshToken", timeToLive = 604800)
 public class RefreshToken {
 
 	@Id
