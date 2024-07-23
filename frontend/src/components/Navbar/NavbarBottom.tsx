@@ -9,6 +9,7 @@ import { ReactComponent as MyPageIcon } from '@assets/icons/mypage.svg'
 
 type Props = {
   toggleMenu: () => void;
+  closeMenu: () => void;
 }
 
 const NavbarBottom = (props: Props) => {
@@ -21,7 +22,7 @@ const NavbarBottom = (props: Props) => {
         <SearchIcon className='size-[1.5rem]' stroke={'black'}/>
       </div>    
       <div className='w-11 flex flex-all-center'>
-        <Link to='/'>
+        <Link to='/' onClick={props.closeMenu}>
           <HomeIcon className='size-[1.5rem]' fill={'black'}/>
         </Link>
       </div>

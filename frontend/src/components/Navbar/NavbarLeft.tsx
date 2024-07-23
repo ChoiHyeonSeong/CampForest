@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { RootState } from '@store/store';
 import { Link } from 'react-router-dom';
 
@@ -26,8 +26,11 @@ type Props = {
   isExtendChatOpen: boolean;
   isExtendNotificationOpen: boolean;
   isExtendSearchOpen: boolean;
+  isMenuBlocked: boolean;
   toggleExtendMenu: (param:string) => void;
   toggleMenu: () => void;
+  closeMenu: () => void;
+  handleTransitionEnd: () => void;
   auth: RootState['authStore'];
 }
 
@@ -39,29 +42,17 @@ const NavbarLeft = (props: Props) => {
                                  props.isExtendSearchOpen);
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (props.isMenuOpen) {
-      // 모달이 열릴 때 스크롤 방지
-      document.body.style.overflow = 'hidden';
-    } else {
-      // 모달이 닫힐 때 스크롤 허용
-      document.body.style.overflow = 'unset';
-    }
-
-    // 컴포넌트가 언마운트될 때 스크롤 허용
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [props.isMenuOpen]);
-
   return (
     <div 
       className={`fixed z-40 h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
         transition-all duration-300 ease-in-out
         border-r w-[90vw] bg-white
         ${props.isMenuOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}
-        ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}`
+        ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
+        ${props.isMenuBlocked ? 'block' : 'hidden'}
+        `
       } 
+      onTransitionEnd={props.handleTransitionEnd}
     >
       {/* desktop tablet */}
       <div className='h-full hidden md:flex flex-col justify-between'>
@@ -103,7 +94,7 @@ const NavbarLeft = (props: Props) => {
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
           </div>
-          <Link to='/camping' className='h-[3.5rem] flex cursor-pointer' onClick={props.toggleMenu} >
+          <Link to='/camping' className='h-[3.5rem] flex cursor-pointer' onClick={props.closeMenu} >
             <div className='w-[5rem] flex flex-all-center'>
               <CampingIcon className='fill-[#999999] w-[2rem]'/>
             </div>
@@ -145,7 +136,7 @@ const NavbarLeft = (props: Props) => {
             <BigLogoIcon className='w-[40vw] ps-5 mt-1' fill='black'/>
           </Link>
           <DarkmodeBtn />
-          <div className='cursor-pointer me-3' onClick={props.toggleMenu}>
+          <div className='cursor-pointer me-3' onClick={props.closeMenu}>
             <CloseIcon className={`size-[2rem] ${props.isMenuOpen ? 'block' : 'hidden'}`} fill='black'/>
           </div>
         </div>
@@ -158,7 +149,7 @@ const NavbarLeft = (props: Props) => {
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
-                <Link to='/user/login' onClick={props.toggleMenu}>로그인 해주세요</Link>
+                <Link to='/user/login' onClick={props.closeMenu}>로그인 해주세요</Link>
               </div>
             )}
           </div>

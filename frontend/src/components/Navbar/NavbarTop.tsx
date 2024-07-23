@@ -7,6 +7,7 @@ import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 
 type Props = {
   toggleMenu: () => void;
+  closeMenu: () => void;
 }
 
 const NavbarTop = (props: Props) => {
@@ -19,7 +20,7 @@ const NavbarTop = (props: Props) => {
       <div className='block md:hidden ms-5 w-11'/>
 
       <div className=''>
-        <Link to='/'>
+        <Link to='/' onClick={props.closeMenu}>
           <BigLogoIcon className='pt-1 fill-[#000000] w-[12rem]'/>
         </Link>
       </div>

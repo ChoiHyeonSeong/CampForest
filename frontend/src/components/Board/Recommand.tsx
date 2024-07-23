@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import RecommandUser from './RecommandUser';
 import RecommandTransaction from './RecommandTransaction';
 
