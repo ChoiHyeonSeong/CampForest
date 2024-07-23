@@ -41,16 +41,16 @@ const Dropdown = ({ label, options, isOpen, onToggle }: DropdownProps) => {
       <div>
         <button
           type="button"
-          className={`inline-flex justify-between w-full rounded-md border shadow-sm px-4 py-2 bg-white text-sm font-medium ${
+          className={`inline-flex justify-between items-center w-full rounded-md border shadow-sm px-4 py-2 bg-white text-sm font-medium ${
             shouldChangeIcon ? 'border-[#FF7F50] border-2' : 'border-gray-300'
           } text-gray-700 hover:bg-gray-50 focus:outline-none`}
           onClick={onToggle}
         >
           {selectedOption.name}
           {shouldChangeIcon ? (
-            <RefreshIcon className="w-5 h-5 ml-2 -mr-1 text-gray-400" onClick={handleRefreshClick} />
+            <RefreshIcon className="size-5 ml-2 -mr-1 text-gray-400" onClick={handleRefreshClick} />
           ) : (
-            <ArrowBottomIcon className="w-5 h-5 ml-2 -mr-1 text-gray-400" />
+            <ArrowBottomIcon className="size-3 ml-2 -mr-1 text-gray-400" />
           )}
         </button>
       </div>
@@ -61,7 +61,7 @@ const Dropdown = ({ label, options, isOpen, onToggle }: DropdownProps) => {
             {options.map((option) => (
               <div 
                 key={option.id}
-                className="text-gray-700 block px-4 py-2 text-sm hover:bg-[#FF7F50] font-medium cursor-pointer duration-100"
+                className="text-gray-700 block px-4 py-2 text-sm hover:text-[#FF7F50] font-medium cursor-pointer duration-100"
                 onClick={() => handleSelect(option)}
               >
                 {option.name}

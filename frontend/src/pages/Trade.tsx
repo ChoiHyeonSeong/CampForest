@@ -1,8 +1,6 @@
-import React from 'react'
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ProductList from '@components/Transaction/ProductList';
 import Dropdown from '@components/Transaction/Dropdown';
-
 
 type Option = {
   id: number;
@@ -40,14 +38,16 @@ const locations: Option[] = [
   { id: 8, name: '제주' },
 ];
 
-
-
 function Trade() {
-
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isAccBtnActive, setIsAccBtnActive] = useState<boolean>(false);
 
   const handleToggle = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
+  };
+
+  const handleAccBtnClick = () => {
+    setIsAccBtnActive(!isAccBtnActive);
   };
 
   return (
@@ -57,41 +57,42 @@ function Trade() {
         {/* 페이지명 - 모바일에서는 네브바에 표시됨 */}
         <h3 className='my-6 hidden md:block font-medium md:text-2xl lg:text-3xl'>상품 판매/대여</h3>
 
-
         {/* 카테고리별 정렬 */}
         <div className="mb-6 flex gap-2 items-center relative z-10 flex-wrap">
-        <Dropdown
-          label="카테고리"
-          options={categories}
-          isOpen={openDropdown === 'categories'}
-          onToggle={() => handleToggle('categories')}
-        />
-        <Dropdown
-          label="가격"
-          options={prices}
-          isOpen={openDropdown === 'prices'}
-          onToggle={() => handleToggle('prices')}
-        />
-        <Dropdown
-          label="지역"
-          options={locations}
-          isOpen={openDropdown === 'locations'}
-          onToggle={() => handleToggle('locations')}
-        />
-          <div className='duration-200 hover:bg-[#FF7F50] cursor-pointer bg-[#ccc] rounded-md text-white px-4 py-2 text-sm font-medium'>
-            <p>거래상태</p>
-            {/* text-gray-700 block px-4 py-1 text-sm */}
+          <Dropdown
+            label="카테고리"
+            options={categories}
+            isOpen={openDropdown === 'categories'}
+            onToggle={() => handleToggle('categories')}
+          />
+          <Dropdown
+            label="가격"
+            options={prices}
+            isOpen={openDropdown === 'prices'}
+            onToggle={() => handleToggle('prices')}
+          />
+          <Dropdown
+            label="지역"
+            options={locations}
+            isOpen={openDropdown === 'locations'}
+            onToggle={() => handleToggle('locations')}
+          />
+          <div
+            className={`acc-btn duration-200 cursor-pointer rounded-md border shadow-sm px-4 py-2 text-sm font-medium focus:outline-none ${
+              isAccBtnActive ? 'bg-[#FF7F50] text-white border-[#FF7F50]' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            }`}
+            onClick={handleAccBtnClick}
+          >
+            <p>거래 가능</p>
           </div>
         </div>
 
-
         {/* 거래상품 목록 */}
         <ProductList />
-          
 
       </div>
     </div>
-  )
+  );
 }
 
-export default Trade
+export default Trade;
