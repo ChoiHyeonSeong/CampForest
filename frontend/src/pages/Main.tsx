@@ -10,7 +10,7 @@ function Main() {
     <div className='flex justify-center'>
       <div 
         onClick={() => setIsModalOpen(false)} 
-        className={`${isModalOpen ? '' : 'hidden'} fixed md:items-center w-full h-full bg-black bg-opacity-70`}>
+        className={`${isModalOpen ? '' : 'hidden'} fixed z-10 md:items-center w-full h-full bg-black bg-opacity-70`}>
         <div className="h-full md:w-[40rem] md:h-[90%] md:mx-auto" onClick={(event) => event.stopPropagation()}>
           <Write />
         </div>
