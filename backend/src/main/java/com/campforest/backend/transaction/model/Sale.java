@@ -44,6 +44,9 @@ public class Sale {
 	@Column(name = "seller_id")
 	private Long sellerId;
 
+	@Column(name = "requester_id")
+	private Long requesterId;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "sale_status")
 	private TransactionStatus saleStatus;
@@ -88,6 +91,7 @@ public class Sale {
 			.product(this.product)
 			.buyerId(this.sellerId)
 			.sellerId(this.buyerId)
+			.requesterId(this.requesterId)
 			.saleStatus(TransactionStatus.RECEIVED)
 			.createdAt(LocalDateTime.now())
 			.updatedAt(LocalDateTime.now())

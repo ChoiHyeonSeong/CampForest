@@ -16,6 +16,6 @@ public class SaleRequestDto {
 	private Long productId;
 	private Long sellerId;
 	private Long buyerId;
-	private String requestRole; //이건 판매자인지 구매자인지.
-
+	private String requestRole; //이건 판매자인지 구매자인지. "seller" or "buyer"
+	private Long requesterId;
 }

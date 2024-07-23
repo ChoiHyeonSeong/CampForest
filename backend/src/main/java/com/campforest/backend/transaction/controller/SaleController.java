@@ -1,5 +1,6 @@
 package com.campforest.backend.transaction.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,8 @@ import com.campforest.backend.transaction.dto.Sale.SaleRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleResponseDto;
 import com.campforest.backend.transaction.model.Sale;
 import com.campforest.backend.transaction.service.SaleService;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,18 +23,17 @@ import lombok.RequiredArgsConstructor;
 public class SaleController {
 
 	private final SaleService saleService;
+	private final UserService userService;
 
 	//판매요청 (양방향 판매자 -> 구매자 , 구매자 -> 판매자 가능)
 	@PostMapping("/request")
-	public ApiResponse<?> saleRequest(@RequestBody SaleRequestDto saleRequestDto) {
+	public ApiResponse<?> saleRequest(Authentication authentication, @RequestBody SaleRequestDto saleRequestDto) throws
+		Exception {
 
-		//요청하는 사람 정보를 saleRequestDto에 set해주는 로직 필요
-		//프론트에서 구매자인지 판매자인지를 알려주면 가능함
-		// if(saleRequestDto.getRequestProvider().equals("구매자")) {
-		//
-		// }
-		// else {
-		// }
+		Users users = userService.findByEmail(authentication.getName())
+			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+		saleRequestDto.setRequesterId(users.getUserId());
 
 		saleService.saleRequest(saleRequestDto);
 
