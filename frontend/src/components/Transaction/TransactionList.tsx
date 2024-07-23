@@ -38,7 +38,7 @@ const locations: Option[] = [
   { id: 8, name: '제주' },
 ];
 
-function Trade() {
+const TransactionList = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isAccBtnActive, setIsAccBtnActive] = useState<boolean>(false);
 
@@ -54,9 +54,13 @@ function Trade() {
     <div className='flex justify-center items-center'>
       <div className='p-6 w-full lg:w-[48rem] xl:w-[55rem] lg:p-0'>
 
-        {/* 페이지명 - 모바일에서는 네브바에 표시됨 */}
-        <h3 className='my-6 hidden md:block font-medium md:text-2xl lg:text-3xl'>상품 판매/대여</h3>
-
+        <div className='md:flex justify-between mt-6 mb-10 hidden items-center'>
+          {/* 페이지명 - 모바일에서는 네브바에 표시됨 */}
+          <h3 className='font-medium md:text-2xl lg:text-3xl'>상품 판매/대여</h3>
+          {/* 글쓰기 버튼 */}
+          <div className='cursor-pointer'>작성하기</div>
+        </div>
+        
         {/* 카테고리별 정렬 */}
         <div className="mb-6 flex gap-2 items-center relative z-10 flex-wrap">
           <Dropdown
@@ -95,4 +99,4 @@ function Trade() {
   );
 }
 
-export default Trade;
+export default TransactionList;

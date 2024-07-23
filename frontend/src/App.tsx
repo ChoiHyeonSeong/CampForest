@@ -8,8 +8,8 @@ import Regist from '@pages/Regist';
 import Main from '@pages/Main';
 import ProfileEdit from '@pages/ProfileEdit';
 import MyPage from '@pages/MyPage';
-import Trade from '@pages/Trade';
 import CampingSearch from '@pages/CampingSearch';
+import Transaction from '@pages/Transaction';
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
               <Route path="/user/regist/*" element={<Regist/>}/>
               <Route path="/user/mypage/*" element={<MyPage/>}/>
               <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
-              <Route path='/trade' element={<Trade/> }/>
+              <Route path='/transaction/*' element={<Transaction/> }/>
               <Route path='/camping' element={<CampingSearch/> }/>
             </Routes>
             {/* 여기까지 컨텐츠 */}
