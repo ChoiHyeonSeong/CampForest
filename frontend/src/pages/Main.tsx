@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Board from '@components/Board/Board'
 import Write from '@components/Board/Write'
+import Recommand from '@components/Board/Recommand';
 
 function Main() {
   const [isModalOpen, setIsModalOpen] = useState(true)
@@ -22,6 +23,9 @@ function Main() {
         <Board />
         <Board />
         <Board />
+      </div>
+      <div>
+        <Recommand />
       </div>
     </div>
   )
