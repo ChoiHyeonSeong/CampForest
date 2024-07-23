@@ -15,6 +15,7 @@ public enum ErrorCode {
 	USER_REGISTER_FAILED("U001", HttpStatus.BAD_REQUEST, "사용자 등록에 실패했습니다."),
 	USER_NOT_FOUND("U002", HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 	PASSWORD_NOT_MATCH("U003", HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+	USER_NOT_AUTHORIZED("U004", HttpStatus.FORBIDDEN, "해당 작업을 수행할 권한이 없습니다."),
 
 	// Unauthorized
 	AUTHENTICATION_FAILED("A001", HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),
@@ -24,7 +25,17 @@ public enum ErrorCode {
 	REFRESH_TOKEN_EXPIRED("A005", HttpStatus.UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
 	REFRESH_TOKEN_BLACKLISTED("A006", HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 Refresh Token입니다."),
 
-	//board
+	// Product Error
+	PRODUCT_CREATION_FAILED("P001", HttpStatus.BAD_REQUEST, "제품 생성에 실패했습니다."),
+	PRODUCT_NOT_FOUND("P002", HttpStatus.NOT_FOUND, "제품을 찾을 수 없습니다."),
+	PRODUCT_UPDATE_FAILED("P003", HttpStatus.BAD_REQUEST, "제품 업데이트에 실패했습니다."),
+	PRODUCT_DELETION_FAILED("P004", HttpStatus.BAD_REQUEST, "제품 삭제에 실패했습니다."),
+	INVALID_PRODUCT_CATEGORY("P005", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 카테고리입니다."),
+	INVALID_PRODUCT_PRICE("P006", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 가격 범위입니다."),
+	INVALID_PRODUCT_TYPE("P007", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 유형입니다."),
+	INVALID_PRODUCT_LOCATION("P008", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 위치입니다."),
+	INVALID_AUTHORIZED("P009", HttpStatus.BAD_REQUEST, "인증되지 않은 사용자입니다."),
+	
 	// Board Error
 	BOARD_NOT_FOUND("B001", HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
 	BOARD_CREATION_FAILED("B002", HttpStatus.BAD_REQUEST, "게시글 작성에 실패했습니다."),
@@ -56,9 +67,7 @@ public enum ErrorCode {
 	// Pagination Error
 	INVALID_PAGE_NUMBER("P001", HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 번호입니다."),
 	INVALID_PAGE_SIZE("P002", HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 크기입니다."),
-
-	// User Error (Board-related)
-	USER_NOT_AUTHORIZED("UA001", HttpStatus.FORBIDDEN, "해당 작업을 수행할 권한이 없습니다.");
+	;
 
 	private final String code;
 	private final HttpStatus httpStatus;

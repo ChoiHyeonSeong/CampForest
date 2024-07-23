@@ -2,6 +2,7 @@ package com.campforest.backend.product.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class ProductService {
 		Product savedProduct = productRepository.save(product);
 
 		List<ProductImage> productImages = new ArrayList<>();
-		for (String imageUrl : productRegistDto.getImageUrls()) {
+		for (String imageUrl : productRegistDto.getProductImageUrl()) {
 			ProductImage productImage = new ProductImage();
 			productImage.setProduct(savedProduct);
 			productImage.setImageUrl(imageUrl);
@@ -58,7 +59,6 @@ public class ProductService {
 		List<String> imageUrls = findProduct.getProductImages()
 			.stream().map(ProductImage::getImageUrl)
 			.collect(Collectors.toList());
-		log.info(imageUrls.toString());
 		return new ProductDetailDto(findProduct, imageUrls);
 	}
 
@@ -75,7 +75,7 @@ public class ProductService {
 
 		// 새로운 이미지 추가
 		List<ProductImage> productImages = new ArrayList<>();
-		for (String imageUrl : productUpdateDto.getImageUrls()) {
+		for (String imageUrl : productUpdateDto.getProductImageUrl()) {
 			ProductImage productImage = new ProductImage();
 			productImage.setProduct(product);
 			productImage.setImageUrl(imageUrl);
@@ -121,5 +121,9 @@ public class ProductService {
 		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable) {
 		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, titleKeyword, pageable);
 		return products.map(this::toDto);
+	}
+
+	public Optional<Product> getProductById(Long productId) {
+		return productRepository.findById(productId);
 	}
 }

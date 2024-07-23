@@ -11,12 +11,13 @@ import lombok.Setter;
 @Setter
 public class ProductUpdateDto {
 
+	private Long userId;
 	private Long productId;
 	private String productName;
 	private Long productPrice;
 	private String productContent;
 	private String location;
 	private Category category;
-	private List<String> imageUrls;
+	private List<String> productImageUrl;
 
 }

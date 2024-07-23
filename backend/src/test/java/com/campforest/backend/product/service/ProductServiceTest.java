@@ -54,7 +54,7 @@ class ProductServiceTest {
 
 		List<String> imageUrls = new ArrayList<>();
 		imageUrls.add("DASDAS");
-		productRegistDto.setImageUrls(imageUrls);
+		productRegistDto.setProductImageUrl(imageUrls);
 
 		mockProduct = productRegistDto.toEntity();
 		mockProduct.setId(1L);  // ID 설정
@@ -115,7 +115,7 @@ class ProductServiceTest {
 		productUpdateDto.setProductPrice(6000L);
 		productUpdateDto.setProductContent("수정된 설명");
 		productUpdateDto.setCategory(Category.코펠_식기);
-		productUpdateDto.setImageUrls(Arrays.asList("NEW_URL1", "NEW_URL2"));
+		productUpdateDto.setProductImageUrl(Arrays.asList("NEW_URL1", "NEW_URL2"));
 
 		when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
 

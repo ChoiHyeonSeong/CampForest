@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.campforest.backend.product.dto.ProductUpdateDto;
+import com.campforest.backend.transaction.model.Rent;
+import com.campforest.backend.transaction.model.Sale;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +42,8 @@ public class Product {
 	@Column(name = "product_id")
 	private Long id;
 
-	private Long user_id;
+	@Column(name = "user_id")
+	private Long userId;
 
 	@Enumerated(EnumType.STRING)
 	private Category category;
@@ -74,6 +78,15 @@ public class Product {
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private List<ProductImage> productImages;
+
+	@OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	private Sale sale;
+
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	private List<Rent> rents;
+
+	@Column(name = "is_sold", columnDefinition = "boolean default false")
+	private boolean isSold;
 
 	public void update(ProductUpdateDto productUpdateDto) {
 		this.productName = productUpdateDto.getProductName();
