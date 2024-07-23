@@ -76,7 +76,7 @@ class BoardServiceTest {
 		BoardResponseDto boardResponseDto = new BoardResponseDto();
 		when(boardService.getBoard(boardId)).thenReturn(boardResponseDto);
 
-		ApiResponse<BoardResponseDto> response = boardController.getBoard(boardId);
+		ApiResponse<?> response = boardController.getBoard(boardId);
 
 		assertNotNull(response);
 		assertEquals("게시글 단일 조회 성공", response.getMessage());
@@ -90,7 +90,7 @@ class BoardServiceTest {
 		Page<BoardResponseDto> boardPage = new PageImpl<>(new ArrayList<>());
 		when(boardService.getAllBoards(page, size)).thenReturn(boardPage);
 
-		ApiResponse<Page<BoardResponseDto>> response = boardController.getAllBoard(page, size);
+		ApiResponse<?> response = boardController.getAllBoard(page, size);
 
 		assertNotNull(response);
 		assertEquals("게시글 목록 조회 성공하였습니다", response.getMessage());
@@ -103,7 +103,7 @@ class BoardServiceTest {
 		List<BoardResponseDto> boardList = new ArrayList<>();
 		when(boardService.getUserBoards(userId)).thenReturn(boardList);
 
-		ApiResponse<List<BoardResponseDto>> response = boardController.getUserBoard(userId);
+		ApiResponse<?> response = boardController.getUserBoard(userId);
 
 		assertNotNull(response);
 		assertEquals("게시글 사용자별 조회에 성공하였습니다", response.getMessage());
@@ -116,7 +116,7 @@ class BoardServiceTest {
 		List<BoardResponseDto> boardList = new ArrayList<>();
 		when(boardService.getCategoryBoards(category)).thenReturn(boardList);
 
-		ApiResponse<List<BoardResponseDto>> response = boardController.getCategoryBoard(category);
+		ApiResponse<?> response = boardController.getCategoryBoard(category);
 
 		assertNotNull(response);
 		assertEquals("게시글 카테고리별 조회에 성공하였습니다", response.getMessage());
@@ -181,7 +181,7 @@ class BoardServiceTest {
 		Long likeCount = 5L;
 		when(boardService.countBoardLike(boardId)).thenReturn(likeCount);
 
-		ApiResponse<Long> response = boardController.countBoardLike(boardId);
+		ApiResponse<?> response = boardController.countBoardLike(boardId);
 
 		assertNotNull(response);
 		assertEquals("좋아요 개수 조회 성공하였습니다", response.getMessage());
@@ -230,7 +230,7 @@ class BoardServiceTest {
 		List<CommentResponseDto> commentList = new ArrayList<>();
 		when(boardService.getComment(boardId)).thenReturn(commentList);
 
-		ApiResponse<List<CommentResponseDto>> response = boardController.getComment(boardId);
+		ApiResponse<?> response = boardController.getComment(boardId);
 
 		assertNotNull(response);
 		assertEquals("댓글 게시글별 조회에 성공하였습니다", response.getMessage());
@@ -243,7 +243,7 @@ class BoardServiceTest {
 		List<CommentResponseDto> commentList = new ArrayList<>();
 		when(boardService.getUserComment(commentWriterId)).thenReturn(commentList);
 
-		ApiResponse<List<CommentResponseDto>> response = boardController.getUserComment(commentWriterId);
+		ApiResponse<?> response = boardController.getUserComment(commentWriterId);
 
 		assertNotNull(response);
 		assertEquals("댓글 유저별 조회에 성공하였습니다", response.getMessage());
@@ -267,7 +267,7 @@ class BoardServiceTest {
 		Long commentCount = 3L;
 		when(boardService.countBoardComment(boardId)).thenReturn(commentCount);
 
-		ApiResponse<Long> response = boardController.countBoardComment(boardId);
+		ApiResponse<?> response = boardController.countBoardComment(boardId);
 
 		assertNotNull(response);
 		assertEquals("댓글 개수 조회 성공하였습니다", response.getMessage());
@@ -308,7 +308,7 @@ class BoardServiceTest {
 		Long likeCount = 2L;
 		when(boardService.countCommentLike(commentId)).thenReturn(likeCount);
 
-		ApiResponse<Long> response = boardController.countCommentLike(commentId);
+		ApiResponse<?> response = boardController.countCommentLike(commentId);
 
 		assertNotNull(response);
 		assertEquals("댓글 좋아요 수 조회 성공", response.getMessage());
