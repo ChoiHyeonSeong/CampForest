@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import RecommandUser from './items/RecommandUser';
-import RecommandTransaction from './items/RecommandTransaction';
+import RecommandUser from './RecommandUser';
+import RecommandTransaction from './RecommandTransaction';
 
 const Recommand = () => {
   return (

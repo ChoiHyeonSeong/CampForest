@@ -1,3 +1,4 @@
+import CampingList from '@components/CampingSearch/CampingList';
 import React, { useState } from 'react'
 
 function CampingSearch() {
@@ -14,18 +15,15 @@ function CampingSearch() {
 
   return (
     <div className='lg:h-screen'>
-
       {/* 메인 화면 */}
-      <div className='w-full h-full flex flex-all-center '>
-        <div className='ms-2 me-2 md:mt-[1rem] p-6 lg:p-0 flex flex-all-center flex-col lg:flex-row lg:h-[40rem] w-full lg:max-w-[80rem] md:max-w-3xl'>
-          <div className='bg-black aspect-[1/1] w-full lg:w-[40rem] lg:h-[40rem]'>지도</div>
-          <div className='bg-slate-300 w-full lg:w-[calc(100%-40rem)] lg:min-w-[20rem] h-[calc()] lg:h-full'>
-            <div className='bg-yellow-100 h-[2rem]' onClick={modalOpen}>검색어 (모달확인용 임시 버튼)</div>
+      <div className='flex h-full justify-center items-center'>
+        <div className='ms-2 me-2 md:mt-[1rem] flex flex-all-center flex-col lg:flex-row lg:h-[40rem] w-full lg:max-w-[80rem] md:max-w-3xl'>
+          <div className='bg-black aspect-1 w-full lg:size-[40rem]'>지도</div>
+          <div className='w-full lg:w-[calc(100%-40rem)] lg:min-w-[20rem] h-[calc()] lg:h-full'>
+            <div className='bg-yellow-100 h-[2rem]'>검색어</div>
             <div className='bg-yellow-200 h-[2rem]'>필터</div>
-            <div className='bg-yellow-300 lg:h-[36rem] overflow-y-auto scrollbar-hide'>
-              <div className='bg-gray-500 h-[100rem]'>
-                scroll test
-              </div>
+            <div className='lg:h-[36rem] overflow-y-auto scrollbar-hide'>
+              <CampingList modalOpen={modalOpen} />
             </div>
           </div>
         </div>

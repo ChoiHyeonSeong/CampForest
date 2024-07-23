@@ -1,6 +1,6 @@
 import React from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
-import FollowUser from './items/FollowUser'
+import FollowUser from './FollowUser'
 
 type Props = {
   isFollowing: boolean;

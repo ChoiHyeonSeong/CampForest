@@ -1,5 +1,5 @@
 import React from 'react';
-import ChatUser from './items/ChatUser';
+import ChatUser from './ChatUser';
 
 const ChatUserList = () => {
   return (

@@ -1,5 +1,5 @@
 import React from 'react'
-import Notification from './items/Notification';
+import Notification from './Notification';
 
 const NotificationList = () => {
   return (
