@@ -24,8 +24,8 @@ function Login() {
   };
 
   return (
-    <div className='flex justify-center items-center min-h-screen'>
-      <div className='bg-white p-6 w-full md:max-w-3xl lg:w-[40rem] lg:p-0'>
+    <div className='flex justify-center items-center min-h-screen -mt-[3rem]'>
+      <div className='bg-white p-6 w-full md:max-w-2xl lg:w-[35rem] lg:p-0'>
         <h3 className='text-center pb-[0.75rem] text-[2rem] mb-10'>로그인</h3>
 
         {/* 로그인 폼 */}
@@ -59,7 +59,7 @@ function Login() {
           </div>
 
           {/* 비밀번호 잊으셨나요? */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-[4rem]">
             <a href="/" className="text-gray-400 text-sm text-right w-full font-medium">비밀번호를 잊으셨나요?</a>
           </div>
           <button type="submit" className="w-full bg-black text-white py-2 rounded-lg hover:bg-[#000000c0] duration-200">Login</button>
@@ -69,18 +69,18 @@ function Login() {
         <div className="text-center mt-12">
           <p className="text-gray-700">아직 회원이 아니신가요? 
             <Link to='/user/regist'>
-              <span className="text-red-500 font-medium cursor-pointer">회원가입하세요!</span>
+              <span className="text-red-500 font-medium cursor-pointer"> 회원가입하세요!</span>
             </Link>
           </p>
         </div>
 
         {/* 소셜 로그인 */}
-        <div className="flex justify-center space-x-4 mt-6">
-          <button className="flex flex-all-center items-center bg-[#FEE500] text-black py-2 px-4 rounded-lg w-2/4">
+        <div className="md:flex md:justify-center md:space-x-4 mt-6">
+          <button className="max-md:w-full max-md:mb-[1rem] flex flex-all-center items-center bg-[#FEE500] text-black py-2 px-4 rounded-lg w-2/4">
             <img src={KakaoIcon} alt="카카오톡 로그인" className="size-4 mr-4"/>
             <p>카카오로 로그인</p>
           </button>
-          <button className="flex flex-all-center items-center bg-[#03C75A] text-white py-2 px-4 rounded-lg w-2/4">
+          <button className="max-md:w-full flex flex-all-center items-center bg-[#03C75A] text-white py-2 px-4 rounded-lg w-2/4">
             <img src={NaverIcon} alt="네이버 로그인" className="size-4 mr-4"/>
             <p>네이버로 로그인</p>
           </button>

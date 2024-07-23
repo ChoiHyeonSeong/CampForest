@@ -28,7 +28,11 @@ const Navbar = () => {
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 
   const toggleMenu = (): void => {
-    setIsMenuOpen(!isMenuOpen);
+    if(isMenuOpen) {
+      setIsMenuOpen(false)
+    } else {
+      setIsMenuOpen(true)
+    }
     setIsExtendRentalOpen(false);
     setisExtendCommunityOpen(false);
     setIsExtendChatListOpen(false);

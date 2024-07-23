@@ -23,73 +23,73 @@ const NavbarLeftExtendRental = (props: Props) => {
       title: "전체",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "텐트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "의자",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "침낭/매트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "테이블",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "랜턴",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "코펠/식기",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "안전용품",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "버너/화로",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
     {
       title: "기타",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-24 h-24'
+      imgWd: 'size-[5rem]'
     },
   ]
 
   return (
     <div
-      className={`fixed z-30 w-[25rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-30 w-[22rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
         transition-all duration-300 ease-in-out 
         ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'} 
         bg-white outline outline-1 outline-[#CCCCCC]`
       }
     >
-      <div className='h-20 ps-4 flex items-center'>
+      <div className='h-20 ps-4 flex items-center mb-[1rem]'>
         <LeftArrow className='me-3 cursor-pointer w-5 h-5' onClick={() => props.toggleExtendMenu('rental')}/>
         <p className='text-2xl'>판매 / 대여</p>
       </div>
