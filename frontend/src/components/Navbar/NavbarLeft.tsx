@@ -30,7 +30,6 @@ type Props = {
 
 const NavbarLeft = (props: Props) => {
   const isEitherOpen: boolean = (props.isExtendRentalOpen || props.isExtendCommunityOpen);
-
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 
   useEffect(() => {
@@ -51,11 +50,11 @@ const NavbarLeft = (props: Props) => {
   return (
     <div 
       className={`fixed z-40 h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
-        lg:translate-x-0 transition-all duration-300 ease-in-out
-        lg:outline lg:outline-1 lg:outline-[#CCCCCC] w-[90vw] bg-white
-        ${props.isMenuOpen ? '-translate-x-0 outline outline-1 outline-[#CCCCCC]' : '-translate-x-[100%] outline-none'}
+        transition-all duration-300 ease-in-out
+        border-r w-[90vw] bg-white
+        ${props.isMenuOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}`
-      }
+      } 
     >
       {/* desktop tablet */}
       <div className='h-full hidden md:flex flex-col justify-between'>
@@ -97,12 +96,12 @@ const NavbarLeft = (props: Props) => {
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
           </div>
-          <div className='h-[3.5rem] flex'>
+          <Link to='/camping' className='h-[3.5rem] flex cursor-pointer' onClick={props.toggleMenu} >
             <div className='w-[5rem] flex flex-all-center'>
               <CampingIcon className='fill-[#999999] w-[2rem]'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
-          </div>
+          </Link>
           <div className='h-[3.5rem] flex'>
             <div className='w-[5rem] flex flex-all-center'>
               <ChatIcon className='fill-[#999999] w-[2rem]'/>
@@ -143,13 +142,18 @@ const NavbarLeft = (props: Props) => {
             <CloseIcon className={`size-[2rem] ${props.isMenuOpen ? 'block' : 'hidden'}`} fill='black'/>
           </div>
         </div>
-        <div className='h-[5rem] flex justify-around items-center'>
-          <div className='w-[22vw] flex flex-all-center'>
-            <img src={tempImage} alt="NoImg" className='h-[3rem]'/>
-          </div>
+        <div className='h-[6rem] flex justify-around items-center'>
           <div className='w-[46vw] flex flex-col items-center text-start'>
-            <p className='w-[46vw]'>여기는 닉네임입니다.</p>
-            <p className='w-[46vw]'>그럼 여기는 작성글</p>
+            <div className={`w-[5rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} flex-all-center`}>
+              <img src={tempImage} alt="NoImg" className='h-8'/>
+            </div>
+            {props.auth.isLoggedIn ? (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
+            ) : (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
+                <Link to='/user/login' onClick={props.toggleMenu}>로그인 해주세요</Link>
+              </div>
+            )}
           </div>
           <div className='w-[22vw] flex flex-all-center'>
             <ChatIcon className={`size-[2rem] ${props.isMenuOpen ? 'block' : 'hidden'}`} fill='black'/>
@@ -157,10 +161,10 @@ const NavbarLeft = (props: Props) => {
         </div>
 
         <div className='flex justify-between'>
-          <div className='bg-[#CCCCCC] w-3/6'>
+          <div className='bg-[#EEEEEE] w-3/6'>
             <div className='h-10 mt-6 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu('rental')}>대여 / 판매</div>
             <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu('community')}>커뮤니티</div>
-            <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu(null)}>캠핑장 찾기</div>
+            <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer'>캠핑장 찾기</div>
           </div>
           <div className='bg-white w-3/6 h-[calc(100vh-7.75rem)] overflow-y-auto scrollbar-hide'>
             <NavbarLeftExtendMobile selectedExtendMenu={selectedExtendMenu}/>

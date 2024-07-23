@@ -25,61 +25,61 @@ const NavbarLeftExtendMobile = (props: Props) => {
       title: "전체",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "텐트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "의자",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "침낭/매트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "테이블",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "랜턴",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "코펠/식기",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "안전용품",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "버너/화로",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
     {
       title: "기타",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'w-[15vw] h-[15vw]'
+      imgWd: 'w-[10vw] h-[10vw]'
     },
   ]
 
@@ -111,7 +111,7 @@ const NavbarLeftExtendMobile = (props: Props) => {
 
   if (props.selectedExtendMenu === 'rental') {
     htmlContent = (
-      <div className="grid grid-cols-2 gap-4 m-3">
+      <div className="grid grid-cols-2 gap-2 m-3">
         {rentalCategory.map((eachObj, index) => (
           <EachCategory title={eachObj.title} imgsrc={eachObj.imgsrc} imgBgColor={eachObj.imgBgColor} imgWd={eachObj.imgWd}/>
         ))}

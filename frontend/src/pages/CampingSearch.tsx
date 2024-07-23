@@ -34,13 +34,13 @@ function CampingSearch() {
       {/* 모달 */}
       <div 
         className={`fixed z-20 bg-opacity-75 ${isModalOpen ? 'bg-gray-500 inset-0' : 'bg-none'}`}
+        onClick={modalClose}
       >
       </div>
       <div 
         className={`fixed z-30 right-0 top-0 h-full w-[30%] bg-yellow-500 shadow-lg transform transition-transform duration-300 ease-in-out ${
           isModalOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
-        onClick={modalClose}
       >
       </div>
 
