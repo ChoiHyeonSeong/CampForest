@@ -23,13 +23,20 @@ type Props = {
   isMenuOpen: boolean;
   isExtendRentalOpen: boolean;
   isExtendCommunityOpen: boolean;
+  isExtendChatOpen: boolean;
+  isExtendNotificationOpen: boolean;
+  isExtendSearchOpen: boolean;
   toggleExtendMenu: (param:string) => void;
   toggleMenu: () => void;
   auth: RootState['authStore'];
 }
 
 const NavbarLeft = (props: Props) => {
-  const isEitherOpen: boolean = (props.isExtendRentalOpen || props.isExtendCommunityOpen);
+  const isEitherOpen: boolean = (props.isExtendRentalOpen ||
+                                 props.isExtendCommunityOpen || 
+                                 props.isExtendChatOpen ||
+                                 props.isExtendNotificationOpen ||
+                                 props.isExtendSearchOpen);
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 
   useEffect(() => {
@@ -102,19 +109,19 @@ const NavbarLeft = (props: Props) => {
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
           </Link>
-          <div className='h-[3.5rem] flex'>
+          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('chat')}>
             <div className='w-[5rem] flex flex-all-center'>
               <ChatIcon className='fill-[#999999] w-[2rem]'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
           </div>
-          <div className='h-[3.5rem] hidden lg:flex'>
+          <div className='h-[3.5rem] hidden lg:flex cursor-pointer' onClick={() => props.toggleExtendMenu('notification')}>
             <div className='w-[5rem] flex flex-all-center'>
               <PushIcon className='stroke-[#999999] w-[2rem]'/>
             </div>
             <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>알림</div>
           </div>
-          <div className='h-[3.5rem] flex'>
+          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('search')}>
             <div className='w-[5rem] flex flex-all-center'>
               <SearchIcon className='stroke-[#999999] w-[2rem]'/>
             </div>
