@@ -18,20 +18,20 @@ const Navbar = () => {
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isMenuBlocked, setIsMenuBlocked] = useState<boolean>(true);
   // 확장 Menu 상태 관리 (확장메뉴 열기, 닫기)
   const [isExtendRentalOpen, setIsExtendRentalOpen] = useState<boolean>(false);
   const [isExtendCommunityOpen, setisExtendCommunityOpen] = useState<boolean>(false);
   const [isExtendChatListOpen, setIsExtendChatListOpen] = useState<boolean>(false);
   const [isExtendNotificationOpen, setIsExtendNotificationOpen] = useState<boolean>(false);
   const [isExtendSearchOpen, setIsExtendSearchOpen] = useState<boolean>(false);
-  // 선택된 확장 Menu 카테고리
-  const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
 
   const toggleMenu = (): void => {
     if(isMenuOpen) {
-      setIsMenuOpen(false)
+      setIsMenuOpen(false);
     } else {
-      setIsMenuOpen(true)
+      // setIsMenuOpen(true)
+      setIsMenuBlocked(true);
     }
     setIsExtendRentalOpen(false);
     setisExtendCommunityOpen(false);
@@ -40,9 +40,16 @@ const Navbar = () => {
     setIsExtendSearchOpen(false);
   };
 
-  const toggleExtendMenu = (selectedCategory: string): void => {
-    setSelectedExtendMenu(selectedCategory);
+  const closeMenu = (): void => {
+    setIsMenuOpen(false)
+    setIsExtendRentalOpen(false);
+    setisExtendCommunityOpen(false);
+    setIsExtendChatListOpen(false);
+    setIsExtendNotificationOpen(false);
+    setIsExtendSearchOpen(false);
+  }
 
+  const toggleExtendMenu = (selectedCategory: string): void => {
     if (selectedCategory === 'rental') {
       if (isExtendRentalOpen) {
         setIsExtendRentalOpen(false)
@@ -97,6 +104,8 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    const lgQuery = window.matchMedia('(min-width: 1024px)');
+
     // 화면 줄어들면 Menu 강제로 닫기
     const handleResize = () => {
       setIsMenuOpen(false);
@@ -105,7 +114,14 @@ const Navbar = () => {
       setIsExtendChatListOpen(false);
       setIsExtendNotificationOpen(false);
       setIsExtendSearchOpen(false);
+      if (lgQuery.matches) {
+        setIsMenuBlocked(true);
+      } else {
+        setIsMenuBlocked(false);
+      }
     };
+
+    handleResize();
 
     window.addEventListener('resize', handleResize);
     return () => {
@@ -114,21 +130,49 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
+    const lgQuery = window.matchMedia('(min-width: 1024px)');
 
-  }, [selectedExtendMenu]);
+    if (isMenuBlocked && !lgQuery.matches) {
+      setIsMenuOpen(true);
+    }
+  }, [isMenuBlocked]);
+
+  const handleTransitionEnd = () => {
+    const lgQuery = window.matchMedia('(min-width: 1024px)');
+
+    if (!isMenuOpen && !lgQuery.matches) {
+      setIsMenuBlocked(false);
+    }
+  };
+
+  // 스크롤 방지
+  useEffect(() => {
+    if (isMenuOpen) {
+      // 모달이 열릴 때 스크롤 방지
+      document.body.style.overflow = 'hidden';
+    } else {
+      // 모달이 닫힐 때 스크롤 허용
+      document.body.style.overflow = 'unset';
+    }
+
+    // 컴포넌트가 언마운트될 때 스크롤 허용
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   return (
     <div className='h-11 lg:h-0'>
 
       {/* 상단 네비게이션바 */}
-      <NavbarTop toggleMenu={toggleMenu}/>
+      <NavbarTop toggleMenu={toggleMenu} closeMenu={closeMenu}/>
 
       {/* 좌측 메뉴바 */}
       <NavbarLeft 
-        isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} auth={auth}
+        isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} auth={auth} closeMenu={closeMenu}
         toggleMenu={toggleMenu} isExtendRentalOpen={isExtendRentalOpen} isExtendCommunityOpen={isExtendCommunityOpen}
         isExtendChatOpen={isExtendChatListOpen} isExtendNotificationOpen={isExtendNotificationOpen}
-        isExtendSearchOpen={isExtendSearchOpen} 
+        isExtendSearchOpen={isExtendSearchOpen} isMenuBlocked={isMenuBlocked} handleTransitionEnd={handleTransitionEnd}
       />
 
       {/* 좌측 메뉴바 확장 */}
@@ -139,7 +183,7 @@ const Navbar = () => {
       <NavbarLeftExtendNotification isExtendMenuOpen={isExtendNotificationOpen} toggleExtendMenu={toggleExtendMenu} />
       <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} />
       {/* 모바일용 하단 네비게이션바 */}
-      <NavbarBottom toggleMenu={toggleMenu}/>
+      <NavbarBottom toggleMenu={toggleMenu} closeMenu={closeMenu}/>
 
       {/* 우측 하단 고정사이드바 */}
       <Aside />
