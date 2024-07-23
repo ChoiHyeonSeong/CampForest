@@ -2,6 +2,7 @@ package com.campforest.backend.product.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,6 @@ public class ProductService {
 		List<String> imageUrls = findProduct.getProductImages()
 			.stream().map(ProductImage::getImageUrl)
 			.collect(Collectors.toList());
-		log.info(imageUrls.toString());
 		return new ProductDetailDto(findProduct, imageUrls);
 	}
 
@@ -121,5 +121,9 @@ public class ProductService {
 		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable) {
 		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, titleKeyword, pageable);
 		return products.map(this::toDto);
+	}
+
+	public Optional<Product> getProductById(Long productId) {
+		return productRepository.findById(productId);
 	}
 }

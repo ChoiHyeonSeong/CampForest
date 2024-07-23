@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class ProductRegistDto {
 
+	private Long userId;
 	private String productName;
 	private Long productPrice;
 	private String productContent;
@@ -26,7 +27,7 @@ public class ProductRegistDto {
 
 	public Product toEntity() {
 		return Product.builder()
-			.user_id(1L)
+			.userId(userId)
 			.category(category)
 			.productName(productName)
 			.productPrice(productPrice)

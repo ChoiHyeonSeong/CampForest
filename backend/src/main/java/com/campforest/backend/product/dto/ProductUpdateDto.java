@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class ProductUpdateDto {
 
+	private Long userId;
 	private Long productId;
 	private String productName;
 	private Long productPrice;

@@ -43,7 +43,7 @@ public class Product {
 	private Long id;
 
 	@Column(name = "user_id")
-	private Long user_id;
+	private Long userId;
 
 	@Enumerated(EnumType.STRING)
 	private Category category;

@@ -23,7 +23,19 @@ public enum ErrorCode {
 	ACCESS_TOKEN_EXPIRED("A004", HttpStatus.UNAUTHORIZED, "Access Token이 만료되었습니다."),
 	REFRESH_TOKEN_EXPIRED("A005", HttpStatus.UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
 	REFRESH_TOKEN_BLACKLISTED("A006", HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 Refresh Token입니다."),
+
+	//product
+	PRODUCT_CREATION_FAILED("P001", HttpStatus.BAD_REQUEST, "제품 생성에 실패했습니다."),
+	PRODUCT_NOT_FOUND("P002", HttpStatus.NOT_FOUND, "제품을 찾을 수 없습니다."),
+	PRODUCT_UPDATE_FAILED("P003", HttpStatus.BAD_REQUEST, "제품 업데이트에 실패했습니다."),
+	PRODUCT_DELETION_FAILED("P004", HttpStatus.BAD_REQUEST, "제품 삭제에 실패했습니다."),
+	INVALID_PRODUCT_CATEGORY("P005", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 카테고리입니다."),
+	INVALID_PRODUCT_PRICE("P006", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 가격 범위입니다."),
+	INVALID_PRODUCT_TYPE("P007", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 유형입니다."),
+	INVALID_PRODUCT_LOCATION("P008", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 위치입니다."),
+	INVALID_AUTHORIZED("P009", HttpStatus.BAD_REQUEST, "인증되지 않은 사용자입니다.");
 	;
+
 
 	private final String code;
 	private final HttpStatus httpStatus;
