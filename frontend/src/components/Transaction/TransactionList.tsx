@@ -52,7 +52,7 @@ const TransactionList = () => {
 
   return (
     <div className='flex justify-center items-center'>
-      <div className='p-6 w-full lg:w-[48rem] xl:w-[55rem] lg:p-0'>
+      <div className='p-6 w-full lg:w-[60rem] xl:w-[70rem] lg:p-0'>
 
         <div className='md:flex justify-between mt-6 mb-10 hidden items-center'>
           {/* 페이지명 - 모바일에서는 네브바에 표시됨 */}
