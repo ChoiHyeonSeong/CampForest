@@ -46,6 +46,8 @@ public enum ErrorCode {
 	// File Error
 	FILE_UPLOAD_FAILED("F001", HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
 	INVALID_FILE_FORMAT("F002", HttpStatus.BAD_REQUEST, "유효하지 않은 파일 형식입니다."),
+	FILE_DOWNLOAD_FAILED("F003", HttpStatus.INTERNAL_SERVER_ERROR, "파일 다운로드에 실패했습니다"),
+	S3_SERVER_ERROR("F004", HttpStatus.INTERNAL_SERVER_ERROR, "S3 서버에 문제가 발생하였습니다"),
 
 	// Like Error
 	LIKE_ALREADY_EXISTS("L001", HttpStatus.BAD_REQUEST, "이미 좋아요를 누른 게시글입니다."),
