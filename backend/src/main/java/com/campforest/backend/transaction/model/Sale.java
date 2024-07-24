@@ -34,8 +34,8 @@ public class Sale {
 	@Column(name = "sale_id")
 	private Long id;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", unique = true)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id")
 	private Product product;
 
 	@Column(name = "buyer_id")
@@ -46,6 +46,9 @@ public class Sale {
 
 	@Column(name = "requester_id")
 	private Long requesterId;
+
+	@Column(name = "receiver_id")
+	private Long receiverId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "sale_status")
@@ -89,9 +92,10 @@ public class Sale {
 	public Sale toEntityInverse() {
 		return Sale.builder()
 			.product(this.product)
-			.buyerId(this.sellerId)
-			.sellerId(this.buyerId)
-			.requesterId(this.requesterId)
+			.buyerId(this.buyerId)
+			.sellerId(this.sellerId)
+			.requesterId(this.receiverId)
+			.receiverId(this.requesterId)
 			.saleStatus(TransactionStatus.RECEIVED)
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())

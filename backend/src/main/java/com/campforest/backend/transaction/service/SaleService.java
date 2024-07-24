@@ -14,58 +14,61 @@ import com.campforest.backend.transaction.model.TransactionStatus;
 import com.campforest.backend.transaction.repository.SaleRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SaleService {
 
 	private final ProductRepository productRepository;
 	private final SaleRepository saleRepository;
 
-	//판매 요청
 	@Transactional
 	public void saleRequest(SaleRequestDto saleRequestDto) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
-		saleRepository.findByProductIdAndBuyerId(saleRequestDto.getProductId(), saleRequestDto.getBuyerId())
+		saleRepository.findByProductIdAndRequesterId(saleRequestDto.getProductId(), saleRequestDto.getRequesterId())
 			.ifPresent(sale -> {
+				log.info("이미 구매 요청을 보냈습니다.");
 				throw new RuntimeException("이미 구매 요청을 보냈습니다.");
 			});
 
-		if (saleRequestDto.getRequesterId().equals(product.getUserId())) {
-			throw new RuntimeException("자기 자신에게 구매 요청을 보낼 수 없습니다.");
-		}
-
 		Sale sale = Sale.builder()
 			.product(product)
-			.buyerId(saleRequestDto.getBuyerId())
 			.requesterId(saleRequestDto.getRequesterId())
+			.receiverId(saleRequestDto.getReceiverId())
 			.sellerId(saleRequestDto.getSellerId())
+			.buyerId(saleRequestDto.getBuyerId())
 			.saleStatus(TransactionStatus.REQUESTED)
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.build();
 		sale.requestSale();
 
-		Sale savedSale = saleRepository.save(sale);
+		saleRepository.save(sale);
 
-		// 역방향 요청 생성 및 저장
-		Sale reverseSale = sale.toEntityInverse();
+		Sale reverseSale = Sale.builder()
+			.product(product)
+			.requesterId(saleRequestDto.getReceiverId())
+			.receiverId(saleRequestDto.getRequesterId())
+			.sellerId(saleRequestDto.getSellerId())
+			.buyerId(saleRequestDto.getBuyerId())
+			.saleStatus(TransactionStatus.RECEIVED)
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
 		reverseSale.receiveSale();
-		Sale savedReverseSale = saleRepository.save(reverseSale);
+
+		saleRepository.save(reverseSale);
 	}
 
-	//판매 승낙 후 -> 예약
 	@Transactional
 	public void acceptSale(SaleRequestDto saleRequestDto) {
-
-		//두 개의 요청 다 가져오기
-		Sale sale1 = saleRepository.findSaleBySellerIdAndBuyerId(saleRequestDto.getSellerId(),
-				saleRequestDto.getBuyerId())
+		Sale sale1 = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
-		Sale sale2 = saleRepository.findSaleBySellerIdAndBuyerId(saleRequestDto.getBuyerId(),
-				saleRequestDto.getSellerId())
+		Sale sale2 = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getReceiverId(), saleRequestDto.getRequesterId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
 
 		sale1.acceptSale();
@@ -75,15 +78,11 @@ public class SaleService {
 		saleRepository.save(sale2);
 	}
 
-	//판매 거절
+	@Transactional
 	public void denySale(SaleRequestDto saleRequestDto) {
-
-		//두 개의 요청 다 가져오기
-		Sale sale1 = saleRepository.findSaleBySellerIdAndBuyerId(saleRequestDto.getSellerId(),
-				saleRequestDto.getBuyerId())
+		Sale sale1 = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
-		Sale sale2 = saleRepository.findSaleBySellerIdAndBuyerId(saleRequestDto.getBuyerId(),
-				saleRequestDto.getSellerId())
+		Sale sale2 = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getReceiverId(), saleRequestDto.getRequesterId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
 
 		saleRepository.delete(sale1);
@@ -92,11 +91,10 @@ public class SaleService {
 
 	@Transactional
 	public void confirmSale(SaleRequestDto saleRequestDto) {
-
-		Sale sale = saleRepository.findSaleBySellerIdAndBuyerId(saleRequestDto.getSellerId(), saleRequestDto.getBuyerId())
+		Sale sale = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
 
-		Sale reverseSale = saleRepository.findSaleBySellerIdAndBuyerId(saleRequestDto.getBuyerId(), saleRequestDto.getSellerId())
+		Sale reverseSale = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getReceiverId(), saleRequestDto.getRequesterId())
 			.orElseThrow(() -> new IllegalArgumentException("상대방 요청을 찾을 수 없습니다."));
 
 		sale.confirmSale(saleRequestDto.getRequestRole());
@@ -115,11 +113,11 @@ public class SaleService {
 		saleRepository.save(reverseSale);
 	}
 
-	public SaleResponseDto getSale(SaleRequestDto saleRequestDto) {
-		Sale sale = saleRepository.findByProductIdAndSellerIdAndBuyerId(saleRequestDto.getProductId(),
-			saleRequestDto.getSellerId(), saleRequestDto.getBuyerId())
-			.orElseThrow(() ->  new IllegalArgumentException("없다요"));
 
+	public SaleResponseDto getSale(SaleRequestDto saleRequestDto) {
+		Sale sale = saleRepository.findByProductIdAndRequesterIdAndReceiverId(saleRequestDto.getRequesterId(),
+			saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId())
+			.orElseThrow(() ->  new IllegalArgumentException("없다요"));
 		return new SaleResponseDto(sale);
 	}
 }
