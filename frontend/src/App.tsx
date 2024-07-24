@@ -17,8 +17,8 @@ function App() {
       <div className="App">
         <Navbar />
         {/* 상단 Navbar 공간 확보 */}
-        <div className='h-[3.2rem]'></div>
-        
+        <div className='h-[3.5rem] md:h-[3.2rem]'></div>
+
         <div className='flex'>
           {/* Desktop Navigation bar용 공간 */}
           <div className='hidden lg:block w-[15rem]'/>

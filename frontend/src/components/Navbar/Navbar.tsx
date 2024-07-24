@@ -162,7 +162,7 @@ const Navbar = () => {
   }, [isMenuOpen]);
 
   return (
-    <div className='h-11 lg:h-0'>
+    <div>
 
       {/* 상단 네비게이션바 */}
       <NavbarTop toggleMenu={toggleMenu} closeMenu={closeMenu}/>
