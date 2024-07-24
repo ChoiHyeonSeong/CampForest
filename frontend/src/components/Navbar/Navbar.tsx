@@ -176,12 +176,14 @@ const Navbar = () => {
       />
 
       {/* 좌측 메뉴바 확장 */}
-      <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu}/>
-      <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu}/>
-      <NavbarLeftExtendChatList isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
-      <Chat isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
-      <NavbarLeftExtendNotification isExtendMenuOpen={isExtendNotificationOpen} toggleExtendMenu={toggleExtendMenu} />
-      <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} />
+      <div className='pt-[3.2rem]'>
+        <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu}/>
+        <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu}/>
+        <NavbarLeftExtendChatList isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
+        <Chat isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
+        <NavbarLeftExtendNotification isExtendMenuOpen={isExtendNotificationOpen} toggleExtendMenu={toggleExtendMenu} />
+        <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} />
+      </div>
       {/* 모바일용 하단 네비게이션바 */}
       <NavbarBottom toggleMenu={toggleMenu} closeMenu={closeMenu}/>
 
