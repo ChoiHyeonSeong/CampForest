@@ -71,14 +71,19 @@ public enum ErrorCode {
 	INVALID_PAGE_SIZE("P002", HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 크기입니다."),
 
 	// Sale Error
-	SALE_REQUEST_FAILED("S001", HttpStatus.BAD_REQUEST, "판매 요청에 실패했습니다."),
-	SALE_ACCEPT_FAILED("S002", HttpStatus.BAD_REQUEST, "판매 수락에 실패했습니다."),
-	SALE_DENY_FAILED("S003", HttpStatus.BAD_REQUEST, "판매 거절에 실패했습니다."),
-	SALE_CONFIRM_FAILED("S004", HttpStatus.BAD_REQUEST, "구매 확정에 실패했습니다."),
-	SALE_NOT_FOUND("S005", HttpStatus.NOT_FOUND, "판매 정보를 찾을 수 없습니다."),
+	SALE_REQUEST_FAILED("S003", HttpStatus.BAD_REQUEST, "판매 요청에 실패했습니다."),
+	SALE_ACCEPT_FAILED("S004", HttpStatus.BAD_REQUEST, "판매 수락에 실패했습니다."),
+	SALE_DENY_FAILED("S005", HttpStatus.BAD_REQUEST, "판매 거절에 실패했습니다."),
+	SALE_CONFIRM_FAILED("S006", HttpStatus.BAD_REQUEST, "구매 확정에 실패했습니다."),
+	SALE_NOT_FOUND("S007", HttpStatus.NOT_FOUND, "판매 정보를 찾을 수 없습니다."),
 
 	// Rent Error
-	
+	RENT_REQUEST_FAILED("R001", HttpStatus.BAD_REQUEST, "판매 요청에 실패했습니다."),
+	RENT_ACCEPT_FAILED("R002", HttpStatus.BAD_REQUEST, "판매 수락에 실패했습니다."),
+	RENT_DENY_FAILED("R003", HttpStatus.BAD_REQUEST, "판매 거절에 실패했습니다."),
+	RENT_CONFIRM_FAILED("R004", HttpStatus.BAD_REQUEST, "구매 확정에 실패했습니다."),
+	RENT_NOT_FOUND("R005", HttpStatus.NOT_FOUND, "판매 정보를 찾을 수 없습니다."),
+	RENT_RESERVED_FAILED("R006", HttpStatus.BAD_REQUEST, "예약된 정보를 가져올 수 없습니다."),
 	;
 
 	private final String code;
