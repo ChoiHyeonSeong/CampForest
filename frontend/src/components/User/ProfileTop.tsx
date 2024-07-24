@@ -1,5 +1,5 @@
 import React from 'react'
-import ProfileImgEX from '@assets/icons/profileimg1.png'
+import ProfileImgEX from '@assets/images/profileimg1.png'
 import FireGif from '@assets/images/fire.gif'
 import { Link } from 'react-router-dom';
 

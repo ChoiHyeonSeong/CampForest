@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { registOptional } from '@store/registSlice';
 
-import ProfileImg from '@assets/icons/profileimg.png'
+import ProfileImg from '@assets/images/profileimg2.png'
 
 const UserInformation = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -1,6 +1,5 @@
 import React from 'react';
-import { ReactComponent as HeartOutline } from '@assets/icons/heart-outline.svg';
-
+// import { ReactComponent as HeartOutline } from '@assets/icons/heart-outline.svg';
 import FireGif from '@assets/images/fire.gif';
 
 function Detail() {
@@ -16,7 +15,7 @@ function Detail() {
           <div className="flex text-sm mt-[1rem] mb-[0.5rem] text-[#555555]">
             <div className="me-6">캠핑 장비 {'>'} 텐트</div>
             <div className="text-[#FF7F50] font-bold">대여</div>
-            <div className="ms-auto">게시물 신고하기</div>
+            <div className="ms-auto cursor-pointer">게시물 신고하기</div>
           </div>
           <div className="text-2xl font-bold">텐트 대여합니다.</div>
           {/* <div className='flex items-center text-[0.75rem] text-[#555555]'>

@@ -16,7 +16,7 @@ function Detail () {
         <div className='flex text-sm mt-4 text-[#555555]'>
           <div className='me-6'>캠핑 장비 {'>'} 텐트</div>
           <div className='text-[#FF7F50] font-bold'>대여</div>
-          <div className='ms-auto'>게시물 신고하기</div>
+          <div className='ms-auto cursor-pointer'>게시물 신고하기</div>
         </div>
         <div className='text-lg font-bold'>텐트 대여합니다.</div>
         <div className='flex text-lg font-bold'>

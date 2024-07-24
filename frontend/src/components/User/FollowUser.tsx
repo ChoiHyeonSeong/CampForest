@@ -1,5 +1,5 @@
 import React from 'react';
-import ProfileImgEX from '@assets/icons/profileimg1.png'
+import ProfileImgEX from '@assets/images/profileimg1.png'
 
 const FollowUser = () => {
   return (
