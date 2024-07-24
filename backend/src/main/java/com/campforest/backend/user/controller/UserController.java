@@ -4,7 +4,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -144,6 +146,27 @@ public class UserController {
 			return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
+		}
+	}
+
+	@DeleteMapping
+	public ApiResponse<?> withdrawUser(Authentication authentication, HttpServletResponse response) {
+		try {
+			String userEmail = authentication.getName();
+			userService.deleteByEmail(userEmail);
+
+			Cookie cookie = new Cookie("refreshToken", null);
+			cookie.setMaxAge(0);
+			cookie.setPath("/");
+			cookie.setSecure(true);
+			cookie.setHttpOnly(true);
+
+			response.addCookie(cookie);
+			return ApiResponse.createSuccess(null, "회원 탈퇴가 완료되었습니다.");
+		} catch (UsernameNotFoundException e) {
+			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_DELETE_FAILED);
 		}
 	}
 
