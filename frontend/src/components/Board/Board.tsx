@@ -5,7 +5,7 @@ import { ReactComponent as MoreDot} from '@assets/icons/more-dots.svg'
 
 const Board = () => {
   return (
-    <div className='mx-auto min-w-[22rem] md:max-w-[40rem] my-[1.5rem] border-b border-[#EEEEEE] px-[1.5rem] py-[0.5rem]'>
+    <div className='min-w-[22rem] my-[1.5rem] border-b border-[#EEEEEE] mx-[1.5rem] py-[0.5rem]'>
       <div className='flex items-center h-[3.5rem] mb-[2rem] md:mb-[1rem]'>
         <div className='rounded-full size-[4rem] md:size-[3rem] shadow-md overflow-hidden'></div>
         <div className='ms-[1rem]'>

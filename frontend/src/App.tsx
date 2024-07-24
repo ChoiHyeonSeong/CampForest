@@ -10,6 +10,7 @@ import MyPage from '@pages/MyPage';
 import ProfileEdit from '@pages/ProfileEdit';
 import CampingSearch from '@pages/CampingSearch';
 import Transaction from '@pages/Transaction';
+import FindPassword from '@pages/FindPassword';
 
 function App() {
   return (
@@ -21,7 +22,6 @@ function App() {
 
         <div className='flex'>
           {/* Desktop Navigation bar용 공간 */}
-          <div className='hidden lg:block w-[15rem]'/>
           <div className='flex-grow'>
             {/* 여기서 부터 */}
             <Routes>
@@ -32,6 +32,7 @@ function App() {
               <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
               <Route path='/transaction/*' element={<Transaction/> }/>
               <Route path='/camping' element={<CampingSearch/> }/>
+              <Route path='/user/password/*' element={<FindPassword />}/>
             </Routes>
             {/* 여기까지 컨텐츠 */}
           </div> 
