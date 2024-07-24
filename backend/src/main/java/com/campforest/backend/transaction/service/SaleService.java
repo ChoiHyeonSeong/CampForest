@@ -33,17 +33,18 @@ public class SaleService {
 				throw new RuntimeException("이미 구매 요청을 보냈습니다.");
 			});
 
-		if (saleRequestDto.getBuyerId().equals(product.getUser_id())) {
+		if (saleRequestDto.getRequesterId().equals(product.getUserId())) {
 			throw new RuntimeException("자기 자신에게 구매 요청을 보낼 수 없습니다.");
 		}
 
 		Sale sale = Sale.builder()
 			.product(product)
 			.buyerId(saleRequestDto.getBuyerId())
+			.requesterId(saleRequestDto.getRequesterId())
 			.sellerId(saleRequestDto.getSellerId())
 			.saleStatus(TransactionStatus.REQUESTED)
 			.createdAt(LocalDateTime.now())
-			.updatedAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
 			.build();
 		sale.requestSale();
 

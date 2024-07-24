@@ -21,6 +21,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.common.ErrorCode;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +77,7 @@ public class S3Service {
 		return Optional.of(convertFile);
 	}
 
-	public ApiResponse<byte[]> download(String fileName) {
+	public ApiResponse<?> download(String fileName) {
 		try {
 			S3Object awsS3Object = amazonS3.getObject(new GetObjectRequest(bucket, DIR_NAME + "/" + fileName));
 			S3ObjectInputStream s3is = awsS3Object.getObjectContent();
@@ -90,9 +91,9 @@ public class S3Service {
 
 			return ApiResponse.createSuccess(bytes, "File downloaded successfully");
 		} catch (IOException e) {
-			return (ApiResponse<byte[]>)ApiResponse.createError("Failed to download file: " + e.getMessage());
+			return ApiResponse.createError(ErrorCode.FILE_DOWNLOAD_FAILED);
 		} catch (AmazonS3Exception e) {
-			return (ApiResponse<byte[]>)ApiResponse.createError("AWS S3 error: " + e.getMessage());
+			return ApiResponse.createError(ErrorCode.S3_SERVER_ERROR);
 		}
 	}
 }

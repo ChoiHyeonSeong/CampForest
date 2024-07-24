@@ -44,6 +44,9 @@ public class Sale {
 	@Column(name = "seller_id")
 	private Long sellerId;
 
+	@Column(name = "requester_id")
+	private Long requesterId;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "sale_status")
 	private TransactionStatus saleStatus;
@@ -51,8 +54,8 @@ public class Sale {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+	@Column(name = "modified_at")
+	private LocalDateTime modifiedAt;
 
 	@Column(columnDefinition = "boolean default false")
 	private boolean confirmedByBuyer; // 추가된 필드: 구매자가 확인했는지 여부
@@ -66,12 +69,12 @@ public class Sale {
 
 	public void receiveSale() {
 		this.saleStatus = TransactionStatus.RECEIVED;
-		this.updatedAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public void acceptSale() {
 		this.saleStatus = TransactionStatus.RESERVED;
-		this.updatedAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public void confirmSale(String requestRole) {
@@ -80,7 +83,7 @@ public class Sale {
 		} else if ("seller".equals(requestRole)) {
 			this.confirmedBySeller = true;
 		}
-		this.updatedAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public Sale toEntityInverse() {
@@ -88,9 +91,10 @@ public class Sale {
 			.product(this.product)
 			.buyerId(this.sellerId)
 			.sellerId(this.buyerId)
+			.requesterId(this.requesterId)
 			.saleStatus(TransactionStatus.RECEIVED)
 			.createdAt(LocalDateTime.now())
-			.updatedAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
 			.build();
 	}
 

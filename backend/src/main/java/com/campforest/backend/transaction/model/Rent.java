@@ -43,6 +43,9 @@ public class Rent {
 	@Column(name = "owner_id")
 	private Long ownerId;
 
+	@Column(name = "requester_id")
+	private Long requesterId;
+
 	@Column(name = "rent_start_date")
 	private LocalDateTime rentStartDate;
 
@@ -56,8 +59,17 @@ public class Rent {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+	@Column(name = "deposit")
+	private Long deposit;
+
+	@Column(name = "modified_at")
+	private LocalDateTime modifiedAt;
+
+	@Column(columnDefinition = "boolean default false")
+	private boolean confirmedByBuyer; // 추가된 필드: 구매자가 확인했는지 여부
+
+	@Column(columnDefinition = "boolean default false")
+	private boolean confirmedBySeller; // 추가된 필드: 판매자가 확인했는지 여부
 
 	public void requestRent() {
 		this.rentStatus = TransactionStatus.REQUESTED;
@@ -65,13 +77,39 @@ public class Rent {
 
 	public void receiveRent() {
 		this.rentStatus = TransactionStatus.RECEIVED;
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public void acceptRent() {
 		this.rentStatus = TransactionStatus.RESERVED;
+		this.modifiedAt = LocalDateTime.now();
 	}
 
-	public void confirmRent() {
-		this.rentStatus = TransactionStatus.CONFIRMED;
+	public void confirmRent(String requestRole) {
+		if ("buyer".equals(requestRole)) {
+			this.confirmedByBuyer = true;
+		} else if ("seller".equals(requestRole)) {
+			this.confirmedBySeller = true;
+		}
+		this.modifiedAt = LocalDateTime.now();
+	}
+
+	public Rent toEntityInverse() {
+		return Rent.builder()
+			.product(this.product)
+			.renterId(this.ownerId)
+			.ownerId(this.renterId)
+			.requesterId(this.requesterId)
+			.rentStatus(TransactionStatus.RECEIVED)
+			.rentStartDate(this.rentStartDate)
+			.deposit(this.deposit)
+			.rentEndDate(this.rentEndDate)
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
+
+	public boolean isFullyConfirmed() {
+		return this.confirmedByBuyer && this.confirmedBySeller;
 	}
 }
