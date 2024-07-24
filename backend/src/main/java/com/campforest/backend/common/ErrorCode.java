@@ -69,6 +69,16 @@ public enum ErrorCode {
 	// Pagination Error
 	INVALID_PAGE_NUMBER("P001", HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 번호입니다."),
 	INVALID_PAGE_SIZE("P002", HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 크기입니다."),
+
+	// Sale Error
+	SALE_REQUEST_FAILED("S001", HttpStatus.BAD_REQUEST, "판매 요청에 실패했습니다."),
+	SALE_ACCEPT_FAILED("S002", HttpStatus.BAD_REQUEST, "판매 수락에 실패했습니다."),
+	SALE_DENY_FAILED("S003", HttpStatus.BAD_REQUEST, "판매 거절에 실패했습니다."),
+	SALE_CONFIRM_FAILED("S004", HttpStatus.BAD_REQUEST, "구매 확정에 실패했습니다."),
+	SALE_NOT_FOUND("S005", HttpStatus.NOT_FOUND, "판매 정보를 찾을 수 없습니다."),
+
+	// Rent Error
+	
 	;
 
 	private final String code;
