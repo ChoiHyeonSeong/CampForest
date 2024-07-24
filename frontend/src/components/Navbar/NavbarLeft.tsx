@@ -44,7 +44,7 @@ const NavbarLeft = (props: Props) => {
 
   return (
     <div 
-      className={`fixed z-40 h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-40 h-full lg:mt-0 mb-11 md:mb-0 
         transition-all duration-300 ease-in-out
         border-r w-[90vw] bg-white
         ${props.isMenuOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}
@@ -58,71 +58,65 @@ const NavbarLeft = (props: Props) => {
       <div className='h-full hidden md:flex flex-col justify-between'>
         {/* main menu */}
         <div>
-          <div className='h-[7rem] flex flex-all-center'>
-            <Link to='/' onClick={props.closeMenu}>
-              <div className={`${isEitherOpen ? 'block' : 'hidden'} w-[5rem] flex flex-all-center`}>
-                <img src={shortLogoImg} alt="NoImg" className={`${isEitherOpen ? 'h-8' : 'h-0'} h-8`}/>
-              </div>
-              <div className={`${isEitherOpen ? 'hidden' : 'block'} flex truncate`}>
-                <BigLogoIcon className='fill-[#000000] w-[180]'/>
-              </div>
-            </Link>
-          </div>
 
-          <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-full' : 'translate-x-0'} transition-all duration-300 ease-in-out`}>
-            <div className={`w-[5rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} flex-all-center`}>
-              <img src={tempImage} alt="NoImg" className='h-8'/>
+          {/* NavbarTop 공간확보용 div */}
+          <div className='h-[3.5rem]'></div>
+
+          <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-1000 ease-in-out rounded-3xl aspect-1 p-[1rem] ps-[2rem]`}>
+            <div className={`w-[4rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
+              <img src={tempImage} alt="NoImg" className='size-[3rem]'/>
             </div>
             {props.auth.isLoggedIn ? (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
             ) : (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[11rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
                 <Link to='/user/login'>로그인 해주세요</Link>
               </div>
             )}
           </div>
-
-          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
-            <div className='w-[5rem] flex flex-all-center'>
-              <RentalIcon className='stroke-[#999999] w-[2rem]'/>
+          <div className='space-y-2'>
+            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
+              <div className='w-[5rem] flex flex-all-center'>
+                <RentalIcon className='stroke-[#999999] w-[2rem]'/>
+              </div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>대여 / 판매</div>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>대여 / 판매</div>
-          </div>
-          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('community')}>
-            <div className='w-[5rem] flex flex-all-center'>
-              <CommunityIcon className='stroke-[#999999] w-[2rem]'/>
+            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('community')}>
+              <div className='w-[5rem] flex flex-all-center'>
+                <CommunityIcon className='stroke-[#999999] w-[2rem]'/>
+              </div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
-          </div>
-          <Link to='/camping' className='h-[3.5rem] flex cursor-pointer' onClick={props.closeMenu} >
-            <div className='w-[5rem] flex flex-all-center'>
-              <CampingIcon className='fill-[#999999] w-[2rem]'/>
+            <Link to='/camping' className='h-[3.5rem] flex cursor-pointer' onClick={props.closeMenu} >
+              <div className='w-[5rem] flex flex-all-center'>
+                <CampingIcon className='fill-[#999999] w-[2rem]'/>
+              </div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
+            </Link>
+            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('chat')}>
+              <div className='w-[5rem] flex flex-all-center'>
+                <ChatIcon className='fill-[#999999] w-[2rem]'/>
+              </div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
-          </Link>
-          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('chat')}>
-            <div className='w-[5rem] flex flex-all-center'>
-              <ChatIcon className='fill-[#999999] w-[2rem]'/>
+            <div className='h-[3.5rem] hidden lg:flex cursor-pointer' onClick={() => props.toggleExtendMenu('notification')}>
+              <div className='w-[5rem] flex flex-all-center'>
+                <PushIcon className='stroke-[#999999] w-[2rem]'/>
+              </div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>알림</div>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
-          </div>
-          <div className='h-[3.5rem] hidden lg:flex cursor-pointer' onClick={() => props.toggleExtendMenu('notification')}>
-            <div className='w-[5rem] flex flex-all-center'>
-              <PushIcon className='stroke-[#999999] w-[2rem]'/>
+            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('search')}>
+              <div className='w-[5rem] flex flex-all-center'>
+                <SearchIcon className='stroke-[#999999] w-[2rem]'/>
+              </div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>검색</div>
             </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>알림</div>
-          </div>
-          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('search')}>
-            <div className='w-[5rem] flex flex-all-center'>
-              <SearchIcon className='stroke-[#999999] w-[2rem]'/>
-            </div>
-            <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>검색</div>
           </div>
         </div>
         {/* darkmode */}
         <div className='mb-16 lg:mb-5'>
-          <div className={`flex flex-all-center ${isEitherOpen ? 'hidden' : 'block'}`}>
-            <p className={`me-5 ${isEitherOpen ? 'w-[0rem]' : 'w-[4rem]'} transition-all duration-300 truncate`}>다크모드</p>
+          <div className={`flex flex-all-center ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out`}>
+            <p className='me-5'>다크모드</p>
             <DarkmodeBtn />
           </div>
         </div>      

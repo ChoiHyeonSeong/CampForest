@@ -12,20 +12,18 @@ type Props = {
 
 const NavbarTop = (props: Props) => {
   return (
-    <div className='fixed z-30 md:z-50 lg:z-30 w-full h-11 flex lg:hidden justify-between bg-white outline outline-1 outline-[#CCCCCC]'>
-      <div className='cursor-pointer hidden md:flex flex-all-center ms-11 w-11' onClick={props.toggleMenu}>
-        <HamMenuIcon className='size-[2rem]' stroke={'black'}/>
+    <div className='fixed py-1 z-30 h-[3.2rem] md:z-50 w-full flex justify-between bg-white border-b border-[#EEEEEE] px-[1rem]'>
+      <div className='cursor-pointer flex flex-all-center w-11 me-[1rem]' onClick={props.toggleMenu}>
+        <HamMenuIcon className=' size-[2rem]' stroke={'black'}/>
       </div>
-      {/* 모바일용 공간 */}
-      <div className='block md:hidden ms-5 w-11'/>
 
-      <div className=''>
+      <div className='max-md:hidden'>
         <Link to='/' onClick={props.closeMenu}>
-          <BigLogoIcon className='pt-1 fill-[#000000] w-[12rem]'/>
+          <BigLogoIcon className='fill-[#000000] w-[10rem]'/>
         </Link>
       </div>
 
-      <div className='cursor-pointer flex flex-all-center me-5 md:me-11 w-11'>
+      <div className='lg:ms-auto cursor-pointer flex flex-all-center w-11'>
         <PushIcon className='size-[1.5rem]' stroke={'black'}/>
       </div>
     </div>
