@@ -50,7 +50,7 @@ public class RentService {
 			.rentStartDate(rentRequestDto.getRentStartDate())
 			.deposit(rentRequestDto.getDeposit())
 			.createdAt(LocalDateTime.now())
-			.updatedAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
 			.build();
 		rent.requestRent();
 

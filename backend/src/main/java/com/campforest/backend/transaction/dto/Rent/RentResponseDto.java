@@ -22,7 +22,7 @@ public class RentResponseDto {
 	private LocalDateTime rentEndDate;
 	private TransactionStatus rentStatus;
 	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+	private LocalDateTime modifiedAt;
 	private String productName;
 	private ProductType productType;
 	private Long productPrice;
@@ -38,7 +38,7 @@ public class RentResponseDto {
 		this.rentEndDate = rent.getRentEndDate();
 		this.rentStatus = rent.getRentStatus();
 		this.createdAt = rent.getCreatedAt();
-		this.updatedAt = rent.getUpdatedAt();
+		this.modifiedAt = rent.getModifiedAt();
 		this.productName = rent.getProduct().getProductName();
 		this.productType = rent.getProduct().getProductType();
 		this.productPrice = rent.getProduct().getProductPrice();

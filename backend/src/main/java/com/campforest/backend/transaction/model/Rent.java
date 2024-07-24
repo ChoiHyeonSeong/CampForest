@@ -62,8 +62,8 @@ public class Rent {
 	@Column(name = "deposit")
 	private Long deposit;
 
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+	@Column(name = "modified_at")
+	private LocalDateTime modifiedAt;
 
 	@Column(columnDefinition = "boolean default false")
 	private boolean confirmedByBuyer; // 추가된 필드: 구매자가 확인했는지 여부
@@ -77,12 +77,12 @@ public class Rent {
 
 	public void receiveRent() {
 		this.rentStatus = TransactionStatus.RECEIVED;
-		this.updatedAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public void acceptRent() {
 		this.rentStatus = TransactionStatus.RESERVED;
-		this.updatedAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public void confirmRent(String requestRole) {
@@ -91,7 +91,7 @@ public class Rent {
 		} else if ("seller".equals(requestRole)) {
 			this.confirmedBySeller = true;
 		}
-		this.updatedAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public Rent toEntityInverse() {
@@ -105,7 +105,7 @@ public class Rent {
 			.deposit(this.deposit)
 			.rentEndDate(this.rentEndDate)
 			.createdAt(LocalDateTime.now())
-			.updatedAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
 			.build();
 	}
 

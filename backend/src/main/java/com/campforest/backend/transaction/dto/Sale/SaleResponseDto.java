@@ -19,7 +19,7 @@ public class SaleResponseDto {
 	private Long sellerId;
 	private TransactionStatus saleStatus;
 	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+	private LocalDateTime modifiedAt;
 	private String productName;
 	private ProductType productType;
 	private Long productPrice;
@@ -32,7 +32,7 @@ public class SaleResponseDto {
 		this.sellerId = sale.getSellerId();
 		this.saleStatus = sale.getSaleStatus();
 		this.createdAt = sale.getCreatedAt();
-		this.updatedAt = sale.getUpdatedAt();
+		this.modifiedAt = sale.getModifiedAt();
 		this.productName = sale.getProduct().getProductName();
 		this.productType = sale.getProduct().getProductType();
 		this.productPrice = sale.getProduct().getProductPrice();

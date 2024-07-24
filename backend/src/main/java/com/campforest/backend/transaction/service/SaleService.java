@@ -44,7 +44,7 @@ public class SaleService {
 			.sellerId(saleRequestDto.getSellerId())
 			.saleStatus(TransactionStatus.REQUESTED)
 			.createdAt(LocalDateTime.now())
-			.updatedAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
 			.build();
 		sale.requestSale();
 
