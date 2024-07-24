@@ -46,6 +46,9 @@ public class Rent {
 	@Column(name = "requester_id")
 	private Long requesterId;
 
+	@Column(name = "receiver_id")
+	private Long receiverId;
+
 	@Column(name = "rent_start_date")
 	private LocalDateTime rentStartDate;
 
@@ -97,9 +100,10 @@ public class Rent {
 	public Rent toEntityInverse() {
 		return Rent.builder()
 			.product(this.product)
-			.renterId(this.ownerId)
-			.ownerId(this.renterId)
-			.requesterId(this.requesterId)
+			.renterId(this.renterId)
+			.ownerId(this.ownerId)
+			.requesterId(this.receiverId)
+			.receiverId(this.requesterId)
 			.rentStatus(TransactionStatus.RECEIVED)
 			.rentStartDate(this.rentStartDate)
 			.deposit(this.deposit)
