@@ -59,7 +59,7 @@ const NavbarLeft = (props: Props) => {
         {/* main menu */}
         <div>
           <div className='h-[7rem] flex flex-all-center'>
-            <Link to='/'>
+            <Link to='/' onClick={props.closeMenu}>
               <div className={`${isEitherOpen ? 'block' : 'hidden'} w-[5rem] flex flex-all-center`}>
                 <img src={shortLogoImg} alt="NoImg" className={`${isEitherOpen ? 'h-8' : 'h-0'} h-8`}/>
               </div>

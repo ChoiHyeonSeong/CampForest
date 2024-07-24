@@ -6,8 +6,8 @@ import Navbar from '@components/Navbar/Navbar';
 import Login from '@pages/Login';
 import Regist from '@pages/Regist';
 import Main from '@pages/Main';
-import ProfileEdit from '@pages/ProfileEdit';
 import MyPage from '@pages/MyPage';
+import ProfileEdit from '@pages/ProfileEdit';
 import CampingSearch from '@pages/CampingSearch';
 import Transaction from '@pages/Transaction';
 

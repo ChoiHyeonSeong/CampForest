@@ -1,6 +1,7 @@
 import React from 'react'
 import ProfileImgEX from '@assets/icons/profileimg1.png'
 import FireGif from '@assets/images/fire.gif'
+import { Link } from 'react-router-dom';
 
 type Props = {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,7 +31,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
                   </div>
                 </div>
                 
-                <div className='font-light text-xs md:text-sm lg:text-base mt-2 cursor-pointer'>프로필 수정하기</div>
+                <Link to='/user/profile/edit' className='font-light text-xs md:text-sm lg:text-base mt-2 cursor-pointer'>프로필 수정하기</Link>
               </div>
 
               <div className="mt-2">
