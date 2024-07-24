@@ -2,18 +2,18 @@ import React from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
 import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
+import { useDispatch } from 'react-redux'
+import { setIsBoardWriteModal } from '@store/modalSlice'
 
-type Props = {
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const Write = () => {
+  let dispatch = useDispatch()
 
-const Write = (props: Props) => {
   return (
     <div className='overflow-auto md:mx-auto h-[85%] md:mt-[8%] md:w-[35rem] bg-white md:rounded-md p-4 md:px-[2rem] md:py-[3rem]'>
       <div className='flex items-center mb-[2rem]'>
-        <div><ArrowLeftIcon onClick={() => props.setIsModalOpen(false)} className='md:hidden md:size-8 cursor-pointer' fill='000000' /></div>
+        <div><ArrowLeftIcon onClick={() => dispatch(setIsBoardWriteModal(false))} className='md:hidden md:size-8 cursor-pointer' fill='000000' /></div>
         <div className='ms-4 font-bold text-2xl'>글 쓰기</div>
-        <div className='ms-auto'><CloseIcon onClick={() => props.setIsModalOpen(false)} className='hidden md:block md:size-[1.5rem] cursor-pointer' fill='000000' /></div>
+        <div className='ms-auto'><CloseIcon onClick={() => dispatch(setIsBoardWriteModal(false))} className='hidden md:block md:size-[1.5rem] cursor-pointer' fill='000000' /></div>
       </div>
       <div className='flex items-baseline'>
         <div className='ms-4 border-b md:border border-black md:rounded-md md:px-4 py-[0.3rem]'>

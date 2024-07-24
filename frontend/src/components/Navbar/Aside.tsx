@@ -6,8 +6,12 @@ import { ReactComponent as TopBtnIcon } from '@assets/icons/top-btn.svg'
 import { ReactComponent as DotIcon } from '@assets/icons/more-dots.svg'
 import { ReactComponent as RentalIcon } from '@assets/icons/nav-rental.svg'
 import { ReactComponent as CommunityIcon } from '@assets/icons/nav-community.svg'
+import { useDispatch } from 'react-redux'
+import { setIsBoardWriteModal } from '@store/modalSlice'
 
 const Aside = () => {
+  const dispatch = useDispatch();
+
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const toggleExpand = (): void => {
@@ -34,6 +38,7 @@ const Aside = () => {
             <RentalIcon className='stroke-white'/>
           </div>
           <div 
+            onClick={() => dispatch(setIsBoardWriteModal(true))}
             className={`w-11 h-11 bg-black rounded-full flex flex-all-center ml-2 transition-all duration-300 ease-in-out 
               ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}`}
           >

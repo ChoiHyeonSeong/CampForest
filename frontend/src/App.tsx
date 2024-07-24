@@ -22,7 +22,7 @@ function App() {
           <div className='flex-grow'>
             {/* 여기서 부터 */}
             <Routes>
-              <Route path='/' element={<Main/>}/>
+              <Route path='/' element={<Main />}/>
               <Route path='/user/login' element={<Login/>}/>
               <Route path="/user/regist/*" element={<Regist/>}/>
               <Route path="/user/mypage/*" element={<MyPage/>}/>
