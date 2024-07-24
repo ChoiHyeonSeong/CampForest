@@ -18,7 +18,7 @@ const Navbar = () => {
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isMenuBlocked, setIsMenuBlocked] = useState<boolean>(true);
+  const [isMenuBlocked, setIsMenuBlocked] = useState<boolean>(false);
   // 확장 Menu 상태 관리 (확장메뉴 열기, 닫기)
   const [isExtendRentalOpen, setIsExtendRentalOpen] = useState<boolean>(false);
   const [isExtendCommunityOpen, setisExtendCommunityOpen] = useState<boolean>(false);
@@ -30,7 +30,6 @@ const Navbar = () => {
     if(isMenuOpen) {
       setIsMenuOpen(false);
     } else {
-      // setIsMenuOpen(true)
       setIsMenuBlocked(true);
     }
     setIsExtendRentalOpen(false);
@@ -104,8 +103,6 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-
     // 화면 줄어들면 Menu 강제로 닫기
     const handleResize = () => {
       setIsMenuOpen(false);
@@ -114,14 +111,8 @@ const Navbar = () => {
       setIsExtendChatListOpen(false);
       setIsExtendNotificationOpen(false);
       setIsExtendSearchOpen(false);
-      if (lgQuery.matches) {
-        setIsMenuBlocked(true);
-      } else {
-        setIsMenuBlocked(false);
-      }
+      setIsMenuBlocked(false);
     };
-
-    handleResize();
 
     window.addEventListener('resize', handleResize);
     return () => {
@@ -130,24 +121,23 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-
-    if (isMenuBlocked && !lgQuery.matches) {
+    if (isMenuBlocked) {
       setIsMenuOpen(true);
     }
   }, [isMenuBlocked]);
 
   const handleTransitionEnd = () => {
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-
-    if (!isMenuOpen && !lgQuery.matches) {
+    if (!isMenuOpen) {
       setIsMenuBlocked(false);
     }
   };
 
   // 스크롤 방지
   useEffect(() => {
-    if (isMenuOpen) {
+    // 스크롤 방지는 media width가 1024 이하일때만
+    const lgQuery = window.matchMedia('(min-width: 1024px)');
+
+    if (isMenuOpen && !lgQuery.matches) {
       // 모달이 열릴 때 스크롤 방지
       document.body.style.overflow = 'hidden';
     } else {
@@ -189,6 +179,13 @@ const Navbar = () => {
 
       {/* 우측 하단 고정사이드바 */}
       <Aside />
+
+      {/* 태블릿 이하 사이즈에서 메뉴 열때 배경 회색처리 */}
+      <div
+        className={`fixed z-20 bg-opacity-70 lg:hidden ${isMenuOpen ? 'bg-black inset-0 block' : 'bg-none hidden'}`}
+        onClick={closeMenu}
+      >
+      </div>
     </div>
   )
 }

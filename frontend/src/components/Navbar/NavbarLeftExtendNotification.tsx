@@ -12,7 +12,7 @@ const NavbarLeftExtendCommunity = (props: Props) => {
 
   return (
     <div
-      className={`fixed z-30 w-[25rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-30 w-[25rem] h-full
         transition-all duration-300 ease-in-out 
         ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'} 
         bg-white outline outline-1 outline-[#CCCCCC]`

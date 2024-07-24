@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
-
 import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
+
+import CampingDetail from '@components/CampingSearch/CampingDetail';
+
+const { kakao } = window;
 
 function CampingSearch() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -36,18 +39,47 @@ function CampingSearch() {
 
   // 다른 페이지로 이동할때는 항상 Modal Blocked 비활성화하기
   useEffect(() => {
+    try {
+      const container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+      const options = { //지도를 생성할 때 필요한 기본 옵션
+        center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+        level: 3 //지도의 레벨(확대, 축소 정도)
+      };
+
+      const map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+    } catch {
+      console.log("Kakao map not loaded")
+    }
+
     return () => {
       setIsModalOpen(false);
       setIsModalBlocked(false);
     };
   }, []);
 
+  useEffect(() => {
+    if (isModalOpen) {
+      // 모달이 열릴 때 스크롤 방지
+      document.body.style.overflow = 'hidden';
+    } else {
+      // 모달이 닫힐 때 스크롤 허용
+      document.body.style.overflow = 'unset';
+    }
+
+    // 컴포넌트가 언마운트될 때 스크롤 허용
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
+
   return (
-    <div className="lg:h-screen">
+    <div className="lg:h-[calc(100vh-3.2rem)]">
       {/* 메인 화면 */}
       <div className="flex h-[calc(100%-3.2rem)] justify-center items-center">
-        <div className="ms-2 me-2 flex flex-all-center flex-col lg:flex-row lg:h-[40rem] w-full lg:max-w-[80rem] md:max-w-3xl">
-          <div className="bg-black aspect-[4/3] w-full lg:size-[40rem]">지도</div>
+        <div className="ms-2 me-2 mt-5 lg:mt-0 flex flex-all-center flex-col lg:flex-row lg:h-[40rem] w-full lg:max-w-[80rem] md:max-w-3xl">
+
+          <div className="bg-black aspect-[4/3] w-full lg:size-[40rem]" id="map">지도</div>
+
           <div className="w-full my-3 lg:my-0 lg:w-[calc(100%-40rem)] lg:min-w-[20rem] lg:h-full">
             <div className="h-[3rem]">
               <div className="relative w-[calc(100%-2rem)] mx-[1rem]">
@@ -72,71 +104,12 @@ function CampingSearch() {
               <CampingList modalOpen={modalOpen} />
             </div>
           </div>
+
         </div>
       </div>
 
       {/* 모달 */}
-      <div>
-        <div
-          className={`fixed z-20 bg-opacity-75 ${isModalOpen ? 'bg-gray-500 inset-0 block' : 'bg-none hidden'}`}
-          onClick={modalClose}
-        ></div>
-        <div
-          className={`fixed z-30 md:px-[10%] md:py-[5%] lg:p-[5rem]
-            overflow-y-auto scrollbar-hide
-            w-full h-[80vh] bottom-0 md:w-full md:h-[50vh] 
-            lg:right-0 lg:top-0 lg:h-full lg:w-[60rem] bg-[#EEEEEE] transform transition-transform duration-300 ease-in-out lg:translate-y-0 
-            ${isModalOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'}
-            ${isModalBlocked ? 'block' : 'hidden'}
-            `}
-          onTransitionEnd={handleTransitionEnd}
-        >
-          <div className="bg-gray-400 w-full aspect-[1.8] mb-[1rem]"></div>
-          <div className='max-md:p-[1rem]'>
-            <div className="text-3xl my-[0.75rem]">힐링피아 카라반 글램핑 풀 캠핑장</div>
-            <div className="text-xl mb-[0.5rem]">경기 가평군 설악면 유명산길 61-75</div>
-            <div className="flex mb-[0.75rem]">
-              <div>별점 ----------------</div>
-            </div>
-            <div className="space-y-[1rem] mb-[5rem]">
-              <div className="flex">
-                <div className="w-[5rem]">타입</div>
-                <div>일반야영장</div>
-              </div>
-              <div className="flex">
-                <div className="w-[5rem]">태그</div>
-                <div className="flex space-x-[0.5rem]">
-                  <div className="bg-[#CCCCCC] px-[0.25rem] rounded-md text-sm">계곡</div>
-                  <div className="bg-[#CCCCCC] px-[0.25rem] rounded-md text-sm">
-                    반려견 동반 가능
-                  </div>
-                  <div className="bg-[#CCCCCC] px-[0.25rem] rounded-md text-sm">전기</div>
-                  <div className="bg-[#CCCCCC] px-[0.25rem] rounded-md text-sm">마트</div>
-                </div>
-              </div>
-              <div className="flex">
-                <div className="w-[5rem]">정보</div>
-                <div className="w-[calc(100%-5rem)]">
-                  이 편지는 영국에서 시작되어 ..이 편지는 영국에서 시작되어 ..이 편지는 영국에서
-                  시작되어 ..이 편지는 영국에서 시작되어 ..이 편지는 영국에서 시작되어 ..이 편지는
-                  영국에서 시작되어 ..이 편지는 영국에서 시작되어 ..
-                </div>
-              </div>
-              <div className="flex">
-                <div className="w-[5rem]">문의전화</div>
-                <div>033-345-1234</div>
-              </div>
-            </div>
-            <div className="container">
-              <div className="flex justify-end space-x-[0.75rem] items-center">
-                <div>날씨</div>
-                <button className="bg-[#CCCCCC] px-[1rem] py-[0.5rem] rounded-md">홈페이지</button>
-                <button className="bg-[#CCCCCC] px-[1rem] py-[0.5rem] rounded-md">예약하기</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CampingDetail isModalOpen={isModalOpen} isModalBlocked={isModalBlocked} modalClose={modalClose} handleTransitionEnd={handleTransitionEnd}/>
     </div>
   );
 }
