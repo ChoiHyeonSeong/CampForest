@@ -50,6 +50,18 @@ public class CommunityChatServiceImpl implements CommunityChatService {
 
     }
 
+    @Transactional
+    @Override
+    public void markMessagesAsRead(Long roomId, Long userId) {
+        List<CommunityChatMessage> unreadMessages = communityChatMessageRepository.findUnreadMessagesForUser(roomId, userId);
+        unreadMessages.forEach(message -> message.setRead(true));
+        communityChatMessageRepository.saveAll(unreadMessages);
+
+        CommunityChatRoom chatRoom = communityChatRoomRepository.findById(roomId).orElseThrow();
+        chatRoom.setUnreadCount(0L);
+        communityChatRoomRepository.save(chatRoom);
+    }
+
     private CommunityChatDto convertToDto(CommunityChatRoom room) {
         CommunityChatDto dto = new CommunityChatDto();
         dto.setRoomId(room.getRoomId());

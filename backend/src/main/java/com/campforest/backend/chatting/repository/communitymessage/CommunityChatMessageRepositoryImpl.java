@@ -39,4 +39,15 @@ package com.campforest.backend.chatting.repository.communitymessage;// package c
                  .fetchOne();
      }
 
+     @Override
+     public List<CommunityChatMessage> findUnreadMessagesForUser(Long roomId, Long userId) {
+
+         return queryFactory
+                 .selectFrom(communityChatMessage)
+                 .where(communityChatMessage.roomId.eq(roomId)
+                         .and(communityChatMessage.senderId.ne(userId))
+                         .and(communityChatMessage.isRead.eq(false)))
+                 .fetch();
+     }
+
  }

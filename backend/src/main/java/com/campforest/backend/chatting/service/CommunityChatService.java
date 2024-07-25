@@ -15,4 +15,6 @@ public interface CommunityChatService {
     List<CommunityChatMessage> getChatHistory(Long roomId);
 
     Long getUnreadMessageCount(Long roomId, Long userId);
+
+    void markMessagesAsRead(Long roomId, Long userId);
 }

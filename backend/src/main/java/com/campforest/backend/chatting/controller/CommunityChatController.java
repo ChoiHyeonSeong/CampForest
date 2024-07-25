@@ -41,6 +41,14 @@ public class CommunityChatController {
         List<CommunityChatMessage> messages = communityChatService.getChatHistory(roomId);
         return ResponseEntity.ok(messages);
     }
+
+    //userID가 보낸걸 read로 바꿔줌
+    @PostMapping("/room/{roomId}/markAsRead")
+    public ResponseEntity<Void> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
+        communityChatService.markMessagesAsRead(roomId, userId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/room/{roomId}/unreadCount")
     public ResponseEntity<Long> getUnreadMessageCount(@PathVariable Long roomId, @RequestParam Long userId) {
         Long unreadCount = communityChatService.getUnreadMessageCount(roomId, userId);
