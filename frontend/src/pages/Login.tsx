@@ -26,7 +26,6 @@ function Login() {
       ...values,
       [event.target.name]: event.target.value,
     })
-    console.log(values)
   };
 
   const handleLogin = async (e: React.FormEvent) => {

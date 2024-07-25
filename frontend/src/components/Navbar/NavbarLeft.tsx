@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { RootState } from '@store/store';
 import { Link } from 'react-router-dom';
+import api from '@services/axiosInterceptor'
 
 import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
 
@@ -17,6 +18,8 @@ import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
+import { clearToken } from '@store/authSlice';
+import { useDispatch } from 'react-redux';
 
 type Props = {
   isMenuOpen: boolean;
@@ -34,12 +37,23 @@ type Props = {
 }
 
 const NavbarLeft = (props: Props) => {
+  const dispatch = useDispatch();
   const isEitherOpen: boolean = (props.isExtendRentalOpen ||
                                  props.isExtendCommunityOpen || 
                                  props.isExtendChatOpen ||
                                  props.isExtendNotificationOpen ||
                                  props.isExtendSearchOpen);
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
+  
+  const handleLogout = async () => {
+    try {
+      const response = await api.post('/user/logout');
+      dispatch(clearToken());
+      console.log(response);
+    } catch (error) {
+      console.error('로그아웃 오류: ', error);
+    }
+  }
 
   return (
     <div 
@@ -62,7 +76,10 @@ const NavbarLeft = (props: Props) => {
               <img src={props.auth.profileImage} alt={tempImage} className='size-[3rem]'/>
             </div>
             {props.auth.userName ? (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.userName}</div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex flex-col justify-center gap-y-[0.25rem] truncate`}>
+                <div>{props.auth.userName}</div>
+                <div onClick={handleLogout} className='text-sm cursor-pointer'>로그아웃</div>
+                </div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[11rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
                 <Link to='/user/login'>로그인 해주세요</Link>
