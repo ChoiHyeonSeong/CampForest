@@ -2,7 +2,11 @@ import React, { useState } from 'react'
 
 import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
+import { userApi } from '@services/userApi.js'
+import { login } from '@store/authSlice'
+import { useDispatch } from 'react-redux'
 
 type LoginForm = {
   userEmail: string,
@@ -10,6 +14,8 @@ type LoginForm = {
 }
 
 function Login() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [values, setValues] = useState<LoginForm>({
     userEmail: "",
     userPassword: ""
@@ -29,7 +35,19 @@ function Login() {
         <h3 className='text-center pb-[0.75rem] text-[2rem] mb-10'>로그인</h3>
 
         {/* 로그인 폼 */}
-        <form>
+        <form onSubmit={async (event) => {
+          event.preventDefault();
+          try {
+            const response = await userApi.login(values)
+            dispatch(login({
+              userData: response.data.data,
+              token: response.headers.authorization
+            }))
+            navigate('/');
+          } catch (error) {
+            console.error('Login error:', error);
+          }
+        }}>
           {/* 이메일 */}
           <div className="mb-6">
             <label htmlFor="email" className="block text-gray-700 text-left mb-2">이메일</label>

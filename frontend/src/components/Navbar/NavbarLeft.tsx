@@ -60,10 +60,10 @@ const NavbarLeft = (props: Props) => {
         <div>
           <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out rounded-3xl aspect-1 p-[1rem] ps-[2rem]`}>
             <div className={`w-[4rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
-              <img src={tempImage} alt="NoImg" className='size-[3rem]'/>
+              <img src={props.auth.userData?.profileImage} alt={tempImage} className='size-[3rem]'/>
             </div>
             {props.auth.isLoggedIn ? (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.userData?.userName}</div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[11rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
                 <Link to='/user/login'>로그인 해주세요</Link>
@@ -134,10 +134,10 @@ const NavbarLeft = (props: Props) => {
         <div className='h-[6rem] flex justify-around items-center'>
           <div className='w-[46vw] flex flex-col items-center text-start'>
             <div className={`w-[5rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} flex-all-center`}>
-              <img src={tempImage} alt="NoImg" className='h-8'/>
+              <img src={props.auth.userData?.profileImage} alt={tempImage} className='h-8'/>
             </div>
             {props.auth.isLoggedIn ? (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.userData?.userName}</div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
                 <Link to='/user/login' onClick={props.closeMenu}>로그인 해주세요</Link>

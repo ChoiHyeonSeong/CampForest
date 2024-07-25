@@ -1,20 +1,36 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+type UserData = {
+  userId: number,
+  userName: string,
+  email: string,
+  role: string,
+  birthdate: string,
+  gender: string,
+  nickname: string,
+  phoneNumber: string,
+  introduction: string,
+  profileImage: string,
+  createdAt: string,
+  modifiedAt: string,
+  open: boolean
+}
+
 type AuthState = {
   isLoggedIn: boolean;
-  user: string | null;
-  key: string | null;
+  userData: UserData | null;
+  token: string | null;
 }
 
 type AuthPayload = {
-  user: string;
-  key: string;
+  userData: UserData;
+  token: string;
 }
 
 const Auth: AuthState = {
   isLoggedIn: false,
-  user: null,
-  key: null,
+  userData: null,
+  token: null,
 };
 
 const authSlice = createSlice({
@@ -23,13 +39,13 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action: PayloadAction<AuthPayload>) => {
       state.isLoggedIn = true;
-      state.user = action.payload.user;
-      state.key = action.payload.key;
+      state.userData = action.payload.userData;
+      state.token = action.payload.token;
     },
     logout: (state) => {
       state.isLoggedIn = false;
-      state.user = null;
-      state.key = null;
+      state.userData = null;
+      state.token = null;
     },
   },
 });
