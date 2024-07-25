@@ -4,9 +4,9 @@ import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { userApi } from '@services/userApi.js'
-import { login } from '@store/authSlice'
+import axios from 'axios'
 import { useDispatch } from 'react-redux'
+import { setToken, setUserName, setProfileImage } from '@store/authSlice'
 
 type LoginForm = {
   userEmail: string,
@@ -29,25 +29,33 @@ function Login() {
     console.log(values)
   };
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://192.168.100.203:8080/user/login', {
+        email: values.userEmail,
+        password: values.userPassword,
+      });
+      const token = response.headers.authorization;
+      const userName = response.data.data.userName;
+      const profileImage = response.data.data.profileImage;
+
+      dispatch(setToken(token));
+      dispatch(setUserName(userName));
+      dispatch(setProfileImage(profileImage))
+      navigate('/');
+    } catch (error) {
+      console.error('로그인 오류:', error);
+    }
+  };
+
   return (
     <div className='flex justify-center items-center min-h-screen -mt-[3rem]'>
       <div className='bg-white p-6 w-full md:max-w-2xl lg:w-[35rem] lg:p-0'>
         <h3 className='text-center pb-[0.75rem] text-[2rem] mb-10'>로그인</h3>
 
         {/* 로그인 폼 */}
-        <form onSubmit={async (event) => {
-          event.preventDefault();
-          try {
-            const response = await userApi.login(values)
-            dispatch(login({
-              userData: response.data.data,
-              token: response.headers.authorization
-            }))
-            navigate('/');
-          } catch (error) {
-            console.error('Login error:', error);
-          }
-        }}>
+        <form onClick={handleLogin}>
           {/* 이메일 */}
           <div className="mb-6">
             <label htmlFor="email" className="block text-gray-700 text-left mb-2">이메일</label>

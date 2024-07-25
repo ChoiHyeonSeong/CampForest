@@ -1,54 +1,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type UserData = {
-  userId: number,
-  userName: string,
-  email: string,
-  role: string,
-  birthdate: string,
-  gender: string,
-  nickname: string,
-  phoneNumber: string,
-  introduction: string,
-  profileImage: string,
-  createdAt: string,
-  modifiedAt: string,
-  open: boolean
-}
-
 type AuthState = {
-  isLoggedIn: boolean;
-  userData: UserData | null;
   token: string | null;
+  refreshToken: string | null;
+  userName: string | null;
+  profileImage: string | undefined;
 }
 
-type AuthPayload = {
-  userData: UserData;
-  token: string;
-}
-
-const Auth: AuthState = {
-  isLoggedIn: false,
-  userData: null,
+const initialState: AuthState = {
   token: null,
+  refreshToken: null,
+  userName: null,
+  profileImage: undefined,
 };
 
 const authSlice = createSlice({
   name: 'authStore',
-  initialState: Auth,
+  initialState,
   reducers: {
-    login: (state, action: PayloadAction<AuthPayload>) => {
-      state.isLoggedIn = true;
-      state.userData = action.payload.userData;
-      state.token = action.payload.token;
+    setToken(state, action: PayloadAction<string>) {
+      state.token = action.payload;
     },
-    logout: (state) => {
-      state.isLoggedIn = false;
-      state.userData = null;
+    setRefreshToken(state, action: PayloadAction<string>) {
+      state.refreshToken = action.payload;
+    },
+    clearToken(state) {
       state.token = null;
+      state.userName = null;
+      state.profileImage = undefined;
     },
+    setUserName(state, action: PayloadAction<string>) {
+      state.userName =  action.payload;
+    },
+    setProfileImage(state, action: PayloadAction<string>) {
+      state.profileImage = action.payload;
+    }
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { setToken, setRefreshToken, clearToken, setUserName, setProfileImage } = authSlice.actions;
 export default authSlice.reducer;
