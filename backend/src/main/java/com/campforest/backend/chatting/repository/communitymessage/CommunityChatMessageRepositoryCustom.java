@@ -10,4 +10,6 @@ public interface CommunityChatMessageRepositoryCustom {
 
 
     List<CommunityChatMessage> findByChatRoom(Long roomId);
+
+    Long countUnreadMessagesForUser(Long roomId, Long userId);
 }

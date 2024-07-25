@@ -41,5 +41,10 @@ public class CommunityChatController {
         List<CommunityChatMessage> messages = communityChatService.getChatHistory(roomId);
         return ResponseEntity.ok(messages);
     }
+    @GetMapping("/room/{roomId}/unreadCount")
+    public ResponseEntity<Long> getUnreadMessageCount(@PathVariable Long roomId, @RequestParam Long userId) {
+        Long unreadCount = communityChatService.getUnreadMessageCount(roomId, userId);
+        return ResponseEntity.ok(unreadCount);
+    }
 
 }

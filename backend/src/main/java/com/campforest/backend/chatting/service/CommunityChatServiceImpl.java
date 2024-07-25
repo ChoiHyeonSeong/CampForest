@@ -43,6 +43,12 @@ public class CommunityChatServiceImpl implements CommunityChatService {
     public List<CommunityChatMessage> getChatHistory(Long roomId) {
         return communityChatMessageRepository.findByChatRoom(roomId);
     }
+    @Transactional
+    @Override
+    public Long getUnreadMessageCount(Long roomId, Long userId) {
+        return communityChatMessageRepository.countUnreadMessagesForUser(roomId, userId);
+
+    }
 
     private CommunityChatDto convertToDto(CommunityChatRoom room) {
         CommunityChatDto dto = new CommunityChatDto();

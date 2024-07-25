@@ -27,4 +27,16 @@ package com.campforest.backend.chatting.repository.communitymessage;// package c
                  .fetch();
      }
 
+     @Override
+     public Long countUnreadMessagesForUser(Long roomId, Long userId) {
+
+         return  queryFactory
+                 .select(communityChatMessage.count())
+                 .from(communityChatMessage)
+                 .where(communityChatMessage.roomId.eq(roomId)
+                         .and(communityChatMessage.senderId.ne(userId))
+                         .and(communityChatMessage.isRead.eq(false)))
+                 .fetchOne();
+     }
+
  }

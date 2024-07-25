@@ -13,4 +13,6 @@ public interface CommunityChatService {
     CommunityChatMessage saveMessage(Long roomId, CommunityChatMessage message);
 
     List<CommunityChatMessage> getChatHistory(Long roomId);
+
+    Long getUnreadMessageCount(Long roomId, Long userId);
 }
