@@ -11,6 +11,8 @@ import com.campforest.backend.chatting.repository.communitychatroom.CommunityCha
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommunityChatServiceImpl implements CommunityChatService {
@@ -34,6 +36,12 @@ public class CommunityChatServiceImpl implements CommunityChatService {
                 .senderId(message.getSenderId())
                 .build();
         return communityChatMessageRepository.save(message);
+    }
+
+    @Transactional
+    @Override
+    public List<CommunityChatMessage> getChatHistory(Long roomId) {
+        return communityChatMessageRepository.findByChatRoom(roomId);
     }
 
     private CommunityChatDto convertToDto(CommunityChatRoom room) {

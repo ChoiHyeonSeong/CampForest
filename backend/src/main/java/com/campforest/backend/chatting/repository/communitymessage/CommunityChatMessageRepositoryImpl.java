@@ -1,6 +1,8 @@
 package com.campforest.backend.chatting.repository.communitymessage;// package com.blog.chatting.repository.chatmessage;
 
 
+ import com.campforest.backend.chatting.entity.CommunityChatMessage;
+ import com.campforest.backend.chatting.entity.QCommunityChatMessage;
  import com.querydsl.jpa.impl.JPAQueryFactory;
  import jakarta.persistence.EntityManager;
 
@@ -11,10 +13,18 @@ package com.campforest.backend.chatting.repository.communitymessage;// package c
 
 
      private final JPAQueryFactory queryFactory;
-
+    QCommunityChatMessage communityChatMessage = QCommunityChatMessage.communityChatMessage;
      public CommunityChatMessageRepositoryImpl(EntityManager entityManager) {
          this.queryFactory = new JPAQueryFactory(entityManager);
      }
+     @Override
+     public List<CommunityChatMessage> findByChatRoom(Long roomId) {
 
+         return queryFactory
+                 .selectFrom(communityChatMessage)
+                 .where(communityChatMessage.roomId.eq(roomId))
+                 .orderBy(communityChatMessage.createdAt.asc())
+                 .fetch();
+     }
 
  }

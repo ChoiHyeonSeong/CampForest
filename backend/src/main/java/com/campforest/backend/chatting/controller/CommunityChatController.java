@@ -9,10 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.campforest.backend.chatting.dto.CommunityChatDto;
 import com.campforest.backend.chatting.service.CommunityChatService;
@@ -38,6 +35,11 @@ public class CommunityChatController {
     public CommunityChatMessage sendMessage(@DestinationVariable Long roomId, @Payload CommunityChatMessage message) {
 
         return communityChatService.saveMessage(roomId, message);
+    }
+    @GetMapping("/room/{roomId}/messages")
+    public ResponseEntity<List<CommunityChatMessage>> getChatHistory(@PathVariable Long roomId) {
+        List<CommunityChatMessage> messages = communityChatService.getChatHistory(roomId);
+        return ResponseEntity.ok(messages);
     }
 
 }
