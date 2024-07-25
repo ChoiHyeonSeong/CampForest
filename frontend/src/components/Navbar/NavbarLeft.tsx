@@ -44,10 +44,10 @@ const NavbarLeft = (props: Props) => {
 
   return (
     <div 
-      className={`fixed z-40 h-full lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-40 h-full pt-[3.2rem] mb-11
         transition-all duration-300 ease-in-out
         border-r w-[90vw] bg-white
-        ${props.isMenuOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}
+        ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
         ${props.isMenuBlocked ? 'block' : 'hidden'}
         `
@@ -58,11 +58,7 @@ const NavbarLeft = (props: Props) => {
       <div className='h-full hidden md:flex flex-col justify-between'>
         {/* main menu */}
         <div>
-
-          {/* NavbarTop 공간확보용 div */}
-          <div className='h-[3.5rem]'></div>
-
-          <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-1000 ease-in-out rounded-3xl aspect-1 p-[1rem] ps-[2rem]`}>
+          <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out rounded-3xl aspect-1 p-[1rem] ps-[2rem]`}>
             <div className={`w-[4rem] ${props.auth.isLoggedIn ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
               <img src={tempImage} alt="NoImg" className='size-[3rem]'/>
             </div>
@@ -74,6 +70,7 @@ const NavbarLeft = (props: Props) => {
               </div>
             )}
           </div>
+
           <div className='space-y-2'>
             <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
               <div className='w-[5rem] flex flex-all-center'>

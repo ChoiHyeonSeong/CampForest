@@ -1,4 +1,5 @@
 import '@styles/App.css';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Navbar from '@components/Navbar/Navbar';
@@ -12,7 +13,29 @@ import CampingSearch from '@pages/CampingSearch';
 import Transaction from '@pages/Transaction';
 import FindPassword from '@pages/FindPassword';
 
+import Write from '@components/Board/Write';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 function App() {
+  const isAnyModalOpen = useSelector((state: RootState) => state.modalStore.isAnyModalOpen)
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      // 모달이 열릴 때 스크롤 방지
+      document.body.style.overflow = 'hidden';
+    } else {
+      // 모달이 닫힐 때 스크롤 허용
+      document.body.style.overflow = 'unset';
+    }
+
+    // 컴포넌트가 언마운트될 때 스크롤 허용
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isAnyModalOpen]);
+
   return (
     <BrowserRouter>
       <div className="App">
@@ -34,6 +57,9 @@ function App() {
             {/* 여기까지 컨텐츠 */}
           </div> 
         </div>
+
+        {/* 모달은 이 아래부터 */}
+        <Write />
       </div>
     </BrowserRouter>
   );

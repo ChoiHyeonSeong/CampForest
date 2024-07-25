@@ -11,7 +11,7 @@ type Props = {
 const Chat = (props: Props) => {
   return (
     // 데스크탑, 태블릿
-    <div className={`fixed z-30 w-[calc(100%-25rem)] max-w-[40rem] h-full md:mt-11 lg:mt-0 mb-11 md:mb-0 
+    <div className={`fixed z-30 w-[calc(100%-25rem)] max-w-[40rem] h-full
         transition-all duration-300 ease-in-out max-md:hidden
         ${props.isExtendMenuOpen ? 'translate-x-[25rem]' : '-translate-x-full'} 
         bg-white outline outline-1 outline-[#CCCCCC]`
