@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
-import { setToken, setUserName, setProfileImage } from '@store/authSlice'
+import { setAccessToken, setUserName, setProfileImage } from '@store/authSlice'
 
 type LoginForm = {
   userEmail: string,
@@ -35,11 +35,11 @@ function Login() {
         email: values.userEmail,
         password: values.userPassword,
       });
-      const token = response.headers.authorization;
+      const accessToken = response.headers.authorization;
       const userName = response.data.data.userName;
       const profileImage = response.data.data.profileImage;
 
-      dispatch(setToken(token));
+      dispatch(setAccessToken(accessToken));
       dispatch(setUserName(userName));
       dispatch(setProfileImage(profileImage))
       navigate('/');

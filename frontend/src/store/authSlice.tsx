@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type AuthState = {
-  token: string | null;
+  accessToken: string | null;
   refreshToken: string | null;
   userName: string | null;
   profileImage: string | undefined;
-}
+};
 
 const initialState: AuthState = {
-  token: null,
+  accessToken: null,
   refreshToken: null,
   userName: null,
   profileImage: undefined,
@@ -18,25 +18,26 @@ const authSlice = createSlice({
   name: 'authStore',
   initialState,
   reducers: {
-    setToken(state, action: PayloadAction<string>) {
-      state.token = action.payload;
+    setAccessToken(state, action: PayloadAction<string>) {
+      state.accessToken = action.payload;
     },
     setRefreshToken(state, action: PayloadAction<string>) {
       state.refreshToken = action.payload;
     },
     clearToken(state) {
-      state.token = null;
+      state.accessToken = null;
       state.userName = null;
       state.profileImage = undefined;
     },
     setUserName(state, action: PayloadAction<string>) {
-      state.userName =  action.payload;
+      state.userName = action.payload;
     },
     setProfileImage(state, action: PayloadAction<string>) {
       state.profileImage = action.payload;
-    }
+    },
   },
 });
 
-export const { setToken, setRefreshToken, clearToken, setUserName, setProfileImage } = authSlice.actions;
+export const { setAccessToken, setRefreshToken, clearToken, setUserName, setProfileImage } =
+  authSlice.actions;
 export default authSlice.reducer;
