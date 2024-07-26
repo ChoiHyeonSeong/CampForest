@@ -2,7 +2,11 @@ import React, { useState } from 'react'
 
 import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
+import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { setAccessToken, setUserName, setProfileImage } from '@store/authSlice'
 
 type LoginForm = {
   userEmail: string,
@@ -10,6 +14,8 @@ type LoginForm = {
 }
 
 function Login() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [values, setValues] = useState<LoginForm>({
     userEmail: "",
     userPassword: ""
@@ -20,7 +26,26 @@ function Login() {
       ...values,
       [event.target.name]: event.target.value,
     })
-    console.log(values)
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://192.168.100.203:8080/user/login', {
+        email: values.userEmail,
+        password: values.userPassword,
+      });
+      const accessToken = response.headers.authorization;
+      const userName = response.data.data.userName;
+      const profileImage = response.data.data.profileImage;
+
+      dispatch(setAccessToken(accessToken));
+      dispatch(setUserName(userName));
+      dispatch(setProfileImage(profileImage))
+      navigate('/');
+    } catch (error) {
+      console.error('로그인 오류:', error);
+    }
   };
 
   return (
@@ -29,7 +54,7 @@ function Login() {
         <h3 className='text-center pb-[0.75rem] text-[2rem] mb-10'>로그인</h3>
 
         {/* 로그인 폼 */}
-        <form>
+        <form onClick={handleLogin}>
           {/* 이메일 */}
           <div className="mb-6">
             <label htmlFor="email" className="block text-gray-700 text-left mb-2">이메일</label>
