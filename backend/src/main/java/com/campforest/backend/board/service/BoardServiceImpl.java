@@ -153,6 +153,7 @@ public class BoardServiceImpl implements BoardService {
 			.boardId(boardId)
 			.userId(userId)
 			.build();
+		boardRepository.plusLikeCount(boardId);
 		likeRepository.save(likes);
 
 	}
@@ -160,6 +161,7 @@ public class BoardServiceImpl implements BoardService {
 	@Transactional
 	@Override
 	public void deleteLike(Long boardId, Long userId) {
+		boardRepository.minusLikeCount(boardId);
 		likeRepository.deleteByBoardIdAndUserId(boardId, userId);
 	}
 
