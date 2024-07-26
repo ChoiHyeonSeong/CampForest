@@ -17,6 +17,9 @@ import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
+import { logout } from '@services/authService';
+import { useDispatch } from 'react-redux';
+import { clearUser } from '@store/userSlice';
 
 type Props = {
   isMenuOpen: boolean;
@@ -30,7 +33,7 @@ type Props = {
   toggleMenu: () => void;
   closeMenu: () => void;
   handleTransitionEnd: () => void;
-  auth: RootState['authStore'];
+  user: RootState['userStore'];
 }
 
 const NavbarLeft = (props: Props) => {
@@ -40,6 +43,16 @@ const NavbarLeft = (props: Props) => {
                                  props.isExtendNotificationOpen ||
                                  props.isExtendSearchOpen);
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      dispatch(clearUser());
+      console.log('Logout successful');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }
 
   return (
     <div 
@@ -58,13 +71,13 @@ const NavbarLeft = (props: Props) => {
         {/* main menu */}
         <div>
           <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out rounded-3xl mt-[3rem] p-[1rem] ps-[2rem]`}>
-            <div className={`w-[4rem] ${props.auth.user ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
+            <div className={`w-[4rem] ${props.user.isLoggedIn ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
               <img src={tempImage} alt={tempImage} className='size-[3rem]'/>
             </div>
-            {props.auth.user ? (
+            {props.user.isLoggedIn ? (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex flex-col justify-center gap-y-[0.25rem] truncate`}>
-                <div>{props.auth.user}</div>
-                <div className='text-sm cursor-pointer'>로그아웃</div>
+                <div>{props.user.nickname}</div>
+                <div onClick={handleLogout} className='text-sm cursor-pointer'>로그아웃</div>
                 </div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[11rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
@@ -134,11 +147,11 @@ const NavbarLeft = (props: Props) => {
         </div>
         <div className='h-[6rem] flex justify-around items-center'>
           <div className='w-[46vw] flex flex-col items-center text-start'>
-            <div className={`w-[5rem] ${props.auth.user ? 'flex' : 'hidden'} flex-all-center`}>
+            <div className={`w-[5rem] ${props.user.isLoggedIn ? 'flex' : 'hidden'} flex-all-center`}>
               <img src={tempImage} alt={tempImage} className='h-8'/>
             </div>
-            {props.auth.user ? (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
+            {props.user.isLoggedIn ? (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.user.nickname}</div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
                 <Link to='/user/login' onClick={props.closeMenu}>로그인 해주세요</Link>

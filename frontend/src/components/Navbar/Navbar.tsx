@@ -14,7 +14,7 @@ import NavbarBottom from './NavbarBottom';
 import Aside from './Aside';
 
 const Navbar = () => {
-  const auth = useSelector((state: RootState) => state.authStore);
+  const user = useSelector((state: RootState) => state.userStore);
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -169,7 +169,7 @@ const Navbar = () => {
 
       {/* 좌측 메뉴바 */}
       <NavbarLeft 
-        isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} auth={auth} closeMenu={closeMenu}
+        isMenuOpen={isMenuOpen} toggleExtendMenu={toggleExtendMenu} user={user} closeMenu={closeMenu}
         toggleMenu={toggleMenu} isExtendRentalOpen={isExtendRentalOpen} isExtendCommunityOpen={isExtendCommunityOpen}
         isExtendChatOpen={isExtendChatListOpen} isExtendNotificationOpen={isExtendNotificationOpen}
         isExtendSearchOpen={isExtendSearchOpen} isMenuBlocked={isMenuBlocked} handleTransitionEnd={handleTransitionEnd}

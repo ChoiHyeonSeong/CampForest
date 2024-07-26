@@ -2,29 +2,28 @@ import React, { useState } from 'react'
 
 import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
-import { Link } from 'react-router-dom'
-
-type LoginForm = {
-  userEmail: string,
-  userPassword: string
-}
+import { Link, useNavigate } from 'react-router-dom'
+import { login } from '@services/authService'
+import { setUser } from '@store/userSlice'
+import { useDispatch } from 'react-redux'
 
 function Login() {
-  const [values, setValues] = useState<LoginForm>({
-    userEmail: "",
-    userPassword: ""
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    })
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = await login(email, password);
+      dispatch(setUser(data.user));
+      console.log('Login successful');
+      navigate('/');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
-
-  const handleLogin = () => {
-    console.log('ㅠㅠ')
-  }
 
   return (
     <div className='flex justify-center items-center min-h-screen -mt-[3rem]'>
@@ -32,17 +31,15 @@ function Login() {
         <h3 className='text-center pb-[0.75rem] text-[2rem] mb-10'>로그인</h3>
 
         {/* 로그인 폼 */}
-        <form onClick={handleLogin}>
+        <form onSubmit={handleLogin}>
           {/* 이메일 */}
           <div className="mb-6">
             <label htmlFor="email" className="block text-gray-700 text-left mb-2">이메일</label>
             <input 
               type="email" 
-              id="email" 
-              name="userEmail"
               className="w-full px-4 py-2 border-b focus:outline-none rounded-md" 
               placeholder="이메일을 입력하세요."
-              onChange={handleChange}
+              onChange={(e) => setEmail(e.target.value)}
               required 
             />
           </div>
@@ -56,7 +53,7 @@ function Login() {
               name="userPassword"
               className="w-full px-4 py-2 border-b focus:outline-none rounded-md" 
               placeholder="비밀번호를 입력하세요." 
-              onChange={handleChange}
+              onChange={(e) => setPassword(e.target.value)}
               required 
             />
           </div>
