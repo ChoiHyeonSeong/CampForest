@@ -41,6 +41,7 @@ const locations: Option[] = [
 const TransactionList = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isAccBtnActive, setIsAccBtnActive] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<number>(1);
 
   const handleToggle = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
@@ -50,19 +51,39 @@ const TransactionList = () => {
     setIsAccBtnActive(!isAccBtnActive);
   };
 
+  const handleTabClick = (tabIndex: number) => {
+    setActiveTab(tabIndex);
+  };
+
   return (
     <div className='flex justify-center items-center'>
-      <div className='p-6 w-full lg:w-[60rem] xl:w-[70rem] lg:p-0'>
+      <div className='p-6 w-full lg:w-[60rem] xl:w-[66rem] lg:p-0'>
 
         <div className='md:flex justify-between mt-6 mb-10 hidden items-center'>
-          {/* 페이지명 - 모바일에서는 네브바에 표시됨 */}
           <h3 className='font-medium md:text-2xl lg:text-3xl'>상품 판매/대여</h3>
-          {/* 글쓰기 버튼 */}
-          <div className='cursor-pointer'>작성하기</div>
+          <div className='cursor-pointer px-2 py-1 bg-[#FF7F50] text-white rounded-sm text-sm'>작성하기</div>
         </div>
-        
-        {/* 카테고리별 정렬 */}
-        <div className="mb-6 flex gap-2 items-center relative z-10 flex-wrap">
+
+        <div className='w-full flex mb-10 h-12'>
+          <div
+            onClick={() => handleTabClick(1)}
+            className={`w-1/2 cursor-pointer flex items-center md:text-lg font-medium text-center border-b-2 transition-all duration-200 ${
+              activeTab === 1 ? 'border-[#FF7F50]' : 'border-[#eee]'
+            }`}
+          >
+            <div className='w-full text-center'>판매</div>
+          </div>
+          <div
+            onClick={() => handleTabClick(2)}
+            className={`w-1/2 cursor-pointer flex items-center md:text-lg font-medium text-center border-b-2 transition-all duration-200 ${
+              activeTab === 2 ? ' border-[#FF7F50]' : 'border-[#eee]'
+            }`}
+          >
+            <div className='w-full text-center'>대여</div>
+          </div>
+        </div>
+
+        <div className="mb-3 flex gap-2 items-center relative z-10 flex-wrap ps-3">
           <Dropdown
             label="카테고리"
             options={categories}
@@ -91,12 +112,10 @@ const TransactionList = () => {
           </div>
         </div>
 
-        {/* 거래상품 목록 */}
         <ProductList />
-
       </div>
     </div>
   );
-}
+};
 
 export default TransactionList;
