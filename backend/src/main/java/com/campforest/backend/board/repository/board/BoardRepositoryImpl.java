@@ -30,4 +30,22 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 			.where(boards.category.eq(category))
 			.fetch();
 	}
+
+	@Override
+	public void plusLikeCount(Long boardId) {
+		queryFactory
+			.update(boards)
+			.where(boards.boardId.eq(boardId))
+			.set(boards.likeCount, boards.likeCount.add(1))
+			.execute();
+	}
+
+	@Override
+	public void minusLikeCount(Long boardId) {
+		queryFactory
+			.update(boards)
+			.where(boards.boardId.eq(boardId))
+			.set(boards.likeCount, boards.likeCount.subtract(1))
+			.execute();
+	}
 }
