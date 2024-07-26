@@ -9,4 +9,8 @@ public interface BoardRepositoryCustom {
 
 	List<Boards> findByCategory(String category);
 
+	void plusLikeCount(Long boardId);
+
+	void minusLikeCount(Long boardId);
+
 }

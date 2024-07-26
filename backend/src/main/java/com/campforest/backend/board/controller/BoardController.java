@@ -50,10 +50,13 @@ public class BoardController {
 		try {
 
 			List<String> imageUrls = new ArrayList<>();
-			for (MultipartFile file : files) {
-				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-				String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
-				imageUrls.add(fileUrl);
+			if (files != null) {
+				for (MultipartFile file : files) {
+					String extension = file.getOriginalFilename()
+						.substring(file.getOriginalFilename().lastIndexOf("."));
+					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
+					imageUrls.add(fileUrl);
+				}
 			}
 			boardRequestDto.setImageUrls(imageUrls);
 			boardService.writeBoard(boardRequestDto);
@@ -150,7 +153,7 @@ public class BoardController {
 				return ApiResponse.createError(ErrorCode.LIKE_ALREADY_EXISTS);
 			}
 			boardService.likeBoard(boardId, userId);
-			return ApiResponse.createSuccessWithNoContent("게시글 좋아요 성공하였습니다");
+			return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(),"게시글 좋아요 성공하였습니다");
 		} catch (Exception e) {
 			log.error("Like operation failed", e);
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -160,13 +163,14 @@ public class BoardController {
 	//게시글 좋아요 삭제
 	@DeleteMapping("like")
 	public ApiResponse<?> deleteLike(@RequestParam Long boardId, @RequestParam Long userId) {
-		try {
+
+			if (!boardService.checkLike(boardId, userId)) {
+				return ApiResponse.createError(ErrorCode.LIKE_NOT_FOUND);
+			}
 			boardService.deleteLike(boardId, userId);
-			return ApiResponse.createSuccessWithNoContent("게시글 좋아요 삭제 성공하였습니다");
-		} catch (Exception e) {
-			log.error("Failed to delete like", e);
-			return ApiResponse.createError(ErrorCode.LIKE_NOT_FOUND);
-		}
+
+			return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(),"게시글 좋아요 삭제 성공하였습니다");
+
 	}
 
 	//게시글별 좋아요 갯수 조회
