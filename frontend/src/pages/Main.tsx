@@ -1,15 +1,20 @@
-import React from 'react';
-import Board from '@components/Board/Board'
+import React, { useEffect, useState } from 'react';
 import Write from '@components/Board/Write'
 import Recommand from '@components/Board/Recommand';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import { RootState } from '@store/store';
+import { list, detail } from '@services/boardService';
+import BoardList from '@components/Board/BoardList';
 
 function Main() {
   let isBoardWriteModal = useSelector((state: RootState) => state.modalStore.isBoardWriteModal)
   let dispatch = useDispatch()
 
+  const getDetail = () => {
+    detail(1);
+  }
+  
   return (
     <div className='flex justify-center'>
       <div className='hidden lg:block w-[15rem]'/>
@@ -21,13 +26,8 @@ function Main() {
         </div>
       </div>
       <div className='w-full md:w-[40rem]'>
-        <Board />
-        <Board />
-        <Board />
-        <Board />
-        <Board />
-        <Board />
-        <Board />
+        <div onClick={getDetail} className='cursor-pointer'>1번 게시글 자세히 보기</div>
+        <BoardList />
       </div>
       <div>
         <Recommand />

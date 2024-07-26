@@ -30,8 +30,6 @@ function MyPage() {
           {/* 목록 */}
           <div className='w-full h-56'>
             <Routes>
-              <Route path='/' element={<Board />} />
-              <Route path='/review' element={<Review />} />
             </Routes>
           </div>
 
