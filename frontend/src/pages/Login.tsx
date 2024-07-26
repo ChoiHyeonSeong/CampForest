@@ -2,11 +2,7 @@ import React, { useState } from 'react'
 
 import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
-import { Link, useNavigate } from 'react-router-dom'
-
-import axios from 'axios'
-import { useDispatch } from 'react-redux'
-import { setAccessToken, setUserName, setProfileImage } from '@store/authSlice'
+import { Link } from 'react-router-dom'
 
 type LoginForm = {
   userEmail: string,
@@ -14,8 +10,6 @@ type LoginForm = {
 }
 
 function Login() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [values, setValues] = useState<LoginForm>({
     userEmail: "",
     userPassword: ""
@@ -28,25 +22,9 @@ function Login() {
     })
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://192.168.100.203:8080/user/login', {
-        email: values.userEmail,
-        password: values.userPassword,
-      });
-      const accessToken = response.headers.authorization;
-      const userName = response.data.data.userName;
-      const profileImage = response.data.data.profileImage;
-
-      dispatch(setAccessToken(accessToken));
-      dispatch(setUserName(userName));
-      dispatch(setProfileImage(profileImage))
-      navigate('/');
-    } catch (error) {
-      console.error('로그인 오류:', error);
-    }
-  };
+  const handleLogin = () => {
+    console.log('ㅠㅠ')
+  }
 
   return (
     <div className='flex justify-center items-center min-h-screen -mt-[3rem]'>

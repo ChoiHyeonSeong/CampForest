@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { RootState } from '@store/store';
 import { Link } from 'react-router-dom';
-import api from '@services/axiosInterceptor'
 
 import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
 
@@ -18,8 +17,6 @@ import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { clearToken } from '@store/authSlice';
-import { useDispatch } from 'react-redux';
 
 type Props = {
   isMenuOpen: boolean;
@@ -37,23 +34,12 @@ type Props = {
 }
 
 const NavbarLeft = (props: Props) => {
-  const dispatch = useDispatch();
   const isEitherOpen: boolean = (props.isExtendRentalOpen ||
                                  props.isExtendCommunityOpen || 
                                  props.isExtendChatOpen ||
                                  props.isExtendNotificationOpen ||
                                  props.isExtendSearchOpen);
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
-  
-  const handleLogout = async () => {
-    try {
-      const response = await api.post('/user/logout');
-      dispatch(clearToken());
-      console.log(response);
-    } catch (error) {
-      console.error('로그아웃 오류: ', error);
-    }
-  }
 
   return (
     <div 
@@ -71,14 +57,14 @@ const NavbarLeft = (props: Props) => {
       <div className='h-full hidden md:flex flex-col justify-between'>
         {/* main menu */}
         <div>
-          <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out rounded-3xl aspect-1 p-[1rem] ps-[2rem]`}>
-            <div className={`w-[4rem] ${props.auth.profileImage ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
-              <img src={props.auth.profileImage} alt={tempImage} className='size-[3rem]'/>
+          <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out rounded-3xl mt-[3rem] p-[1rem] ps-[2rem]`}>
+            <div className={`w-[4rem] ${props.auth.user ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
+              <img src={tempImage} alt={tempImage} className='size-[3rem]'/>
             </div>
-            {props.auth.userName ? (
+            {props.auth.user ? (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex flex-col justify-center gap-y-[0.25rem] truncate`}>
-                <div>{props.auth.userName}</div>
-                <div onClick={handleLogout} className='text-sm cursor-pointer'>로그아웃</div>
+                <div>{props.auth.user}</div>
+                <div className='text-sm cursor-pointer'>로그아웃</div>
                 </div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[11rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
@@ -148,11 +134,11 @@ const NavbarLeft = (props: Props) => {
         </div>
         <div className='h-[6rem] flex justify-around items-center'>
           <div className='w-[46vw] flex flex-col items-center text-start'>
-            <div className={`w-[5rem] ${props.auth.profileImage ? 'flex' : 'hidden'} flex-all-center`}>
-              <img src={props.auth.profileImage} alt={tempImage} className='h-8'/>
+            <div className={`w-[5rem] ${props.auth.user ? 'flex' : 'hidden'} flex-all-center`}>
+              <img src={tempImage} alt={tempImage} className='h-8'/>
             </div>
-            {props.auth.userName ? (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.userName}</div>
+            {props.auth.user ? (
+              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-100 flex items-center truncate`}>{props.auth.user}</div>
             ) : (
               <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
                 <Link to='/user/login' onClick={props.closeMenu}>로그인 해주세요</Link>

@@ -1,43 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type AuthState = {
-  accessToken: string | null;
-  refreshToken: string | null;
-  userName: string | null;
-  profileImage: string | undefined;
-};
+  isLoggedIn: boolean;
+  user: string | null;
+  key: string | null;
+}
 
-const initialState: AuthState = {
-  accessToken: null,
-  refreshToken: null,
-  userName: null,
-  profileImage: undefined,
+type AuthPayload = {
+  user: string;
+  key: string;
+}
+
+const Auth: AuthState = {
+  isLoggedIn: false,
+  user: null,
+  key: null,
 };
 
 const authSlice = createSlice({
   name: 'authStore',
-  initialState,
+  initialState: Auth,
   reducers: {
-    setAccessToken(state, action: PayloadAction<string>) {
-      state.accessToken = action.payload;
+    login: (state, action: PayloadAction<AuthPayload>) => {
+      state.isLoggedIn = true;
+      state.user = action.payload.user;
+      state.key = action.payload.key;
     },
-    setRefreshToken(state, action: PayloadAction<string>) {
-      state.refreshToken = action.payload;
-    },
-    clearToken(state) {
-      state.accessToken = null;
-      state.userName = null;
-      state.profileImage = undefined;
-    },
-    setUserName(state, action: PayloadAction<string>) {
-      state.userName = action.payload;
-    },
-    setProfileImage(state, action: PayloadAction<string>) {
-      state.profileImage = action.payload;
+    logout: (state) => {
+      state.isLoggedIn = false;
+      state.user = null;
+      state.key = null;
     },
   },
 });
 
-export const { setAccessToken, setRefreshToken, clearToken, setUserName, setProfileImage } =
-  authSlice.actions;
+export const { login, logout } = authSlice.actions;
 export default authSlice.reducer;
