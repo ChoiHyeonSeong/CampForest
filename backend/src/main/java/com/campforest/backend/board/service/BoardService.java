@@ -16,7 +16,7 @@ public interface BoardService {
 
 	Page<BoardResponseDto> getAllBoards(int page, int size);
 
-	List<BoardResponseDto> getUserBoards(Long userId);
+	Page<BoardResponseDto> getUserBoards(Long userId,int page, int size);
 
 	List<BoardResponseDto> getCategoryBoards(String category);
 

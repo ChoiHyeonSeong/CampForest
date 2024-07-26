@@ -99,15 +99,40 @@ public class BoardController {
 
 	//사용자별 게시글 조회
 	@GetMapping("/user")
-	public ApiResponse<?> getUserBoard(@RequestParam Long userId) {
+	public ApiResponse<?> getUserBoard(
+		@RequestParam Long userId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+
 		try {
-			List<BoardResponseDto> boardResponseDtoList = boardService.getUserBoards(userId);
-			return ApiResponse.createSuccess(boardResponseDtoList, "게시글 사용자별 조회에 성공하였습니다");
+			if (page < 0 || size <= 0) {
+				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
+			}
+			Page<BoardResponseDto> boardResponseDtos = boardService.getUserBoards(userId,page,size);
+			return ApiResponse.createSuccess(boardResponseDtos, "게시글 사용자별 조회에 성공하였습니다");
 		} catch (Exception e) {
 			log.error("Failed to retrieve user boards", e);
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}
 	}
+	// @GetMapping
+	// public ApiResponse<?> getAllBoard(
+	// 	@RequestParam(defaultValue = "0") int page,
+	// 	@RequestParam(defaultValue = "10") int size
+	// ) {
+	// 	try {
+	// 		if (page < 0 || size <= 0) {
+	// 			return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
+	// 		}
+	// 		Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(page, size);
+	// 		return ApiResponse.createSuccess(boardResponseDtos, "게시글 목록 조회 성공하였습니다");
+	// 	} catch (Exception e) {
+	// 		return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
+	// 	}
+	// }
+
+
 
 	//카테고리별 게시글 조회
 	@GetMapping("/category")
