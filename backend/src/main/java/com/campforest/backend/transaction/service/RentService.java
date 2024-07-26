@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.transaction.dto.Rent.RentGetRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
 import com.campforest.backend.transaction.model.Rent;
@@ -31,19 +32,17 @@ public class RentService {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
-		rentRepository.findByProductIdAndRenterId(rentRequestDto.getProductId(), rentRequestDto.getRenterId())
+		rentRepository.findByProductIdAndRequesterId(rentRequestDto.getProductId(), rentRequestDto.getRequesterId())
 			.ifPresent(rent -> {
 				throw new RuntimeException("이미 구매 요청을 보냈습니다.");
 			});
 
-		if (rentRequestDto.getRequesterId().equals(product.getUserId())) {
-			throw new RuntimeException("자기 자신에게 구매 요청을 보낼 수 없습니다.");
-		}
 
 		Rent rent = Rent.builder()
 			.product(product)
 			.renterId(rentRequestDto.getRenterId())
 			.requesterId(rentRequestDto.getRequesterId())
+			.receiverId(rentRequestDto.getReceiverId())
 			.ownerId(rentRequestDto.getOwnerId())
 			.rentStatus(TransactionStatus.REQUESTED)
 			.rentEndDate(rentRequestDto.getRentEndDate())
@@ -67,11 +66,11 @@ public class RentService {
 	public void acceptRent(RentRequestDto rentRequestDto) {
 
 		//두 개의 요청 다 가져오기
-		Rent rent1 = rentRepository.findRentByRenterIdAndOwnerId(rentRequestDto.getRenterId(),
-				rentRequestDto.getOwnerId())
+		Rent rent1 = rentRepository.findByRequesterIdAndReceiverId(rentRequestDto.getRequesterId(),
+				rentRequestDto.getReceiverId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
-		Rent rent2 = rentRepository.findRentByRenterIdAndOwnerId(rentRequestDto.getOwnerId(),
-				rentRequestDto.getRenterId())
+		Rent rent2 = rentRepository.findByRequesterIdAndReceiverId(rentRequestDto.getReceiverId(),
+				rentRequestDto.getRequesterId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
 
 		rent1.acceptRent();
@@ -85,11 +84,11 @@ public class RentService {
 	public void denyRent(RentRequestDto rentRequestDto) {
 
 		//두 개의 요청 다 가져오기
-		Rent rent1 = rentRepository.findRentByRenterIdAndOwnerId(rentRequestDto.getRenterId(),
-				rentRequestDto.getOwnerId())
+		Rent rent1 = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(), rentRequestDto.getRequesterId(),
+				rentRequestDto.getReceiverId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
-		Rent rent2 = rentRepository.findRentByRenterIdAndOwnerId(rentRequestDto.getOwnerId(),
-				rentRequestDto.getRenterId())
+		Rent rent2 = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(), rentRequestDto.getReceiverId(),
+				rentRequestDto.getRequesterId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
 
 		rentRepository.delete(rent1);
@@ -99,11 +98,12 @@ public class RentService {
 	@Transactional
 	public void confirmRent(RentRequestDto rentRequestDto) {
 
-		Rent rent = rentRepository.findRentByRenterIdAndOwnerId(rentRequestDto.getRenterId(), rentRequestDto.getOwnerId())
+		Rent rent = rentRepository.findByRequesterIdAndReceiverId(rentRequestDto.getRequesterId(),
+				rentRequestDto.getReceiverId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
-
-		Rent reverserent = rentRepository.findRentByRenterIdAndOwnerId(rentRequestDto.getOwnerId(), rentRequestDto.getRenterId())
-			.orElseThrow(() -> new IllegalArgumentException("상대방 요청을 찾을 수 없습니다."));
+		Rent reverserent = rentRepository.findByRequesterIdAndReceiverId(rentRequestDto.getReceiverId(),
+				rentRequestDto.getRequesterId())
+			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
 
 		rent.confirmRent(rentRequestDto.getRequestRole());
 		reverserent.confirmRent(rentRequestDto.getRequestRole().equals("buyer") ? "seller" : "buyer");
@@ -121,9 +121,9 @@ public class RentService {
 		rentRepository.save(reverserent);
 	}
 
-	public RentResponseDto getRent(RentRequestDto rentRequestDto) {
-		Rent rent = rentRepository.findByProductIdAndRenterIdAndOwnerId(rentRequestDto.getProductId(),
-				rentRequestDto.getRenterId(), rentRequestDto.getOwnerId())
+	public RentResponseDto getRent(RentGetRequestDto rentRequestDto) {
+		Rent rent = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(),
+				rentRequestDto.getRequesterId(), rentRequestDto.getReceiverId())
 			.orElseThrow(() ->  new IllegalArgumentException("없다요"));
 
 		return new RentResponseDto(rent);
