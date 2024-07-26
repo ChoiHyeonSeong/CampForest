@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import com.campforest.backend.product.dto.ProductUpdateDto;
 import com.campforest.backend.transaction.model.Rent;
 import com.campforest.backend.transaction.model.Sale;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,15 +19,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -62,11 +59,9 @@ public class Product {
 	@Enumerated(EnumType.STRING)
 	private ProductType productType;
 
-	//관심수
 	@ColumnDefault("0")
 	private Long interest_hit;
 
-	//조회수
 	@ColumnDefault("0")
 	private Long hit;
 
@@ -77,12 +72,15 @@ public class Product {
 	private LocalDateTime updatedAt;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JsonManagedReference
 	private List<ProductImage> productImages;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JsonManagedReference
 	private List<Sale> sale;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JsonManagedReference
 	private List<Rent> rents;
 
 	@Column(name = "is_sold", columnDefinition = "boolean default false")
