@@ -188,7 +188,7 @@ const Navbar = () => {
       <NavbarBottom toggleMenu={toggleMenu} closeMenu={closeMenu}/>
 
       {/* 우측 하단 고정사이드바 */}
-      <Aside />
+      <Aside user={user} />
     </div>
   )
 }

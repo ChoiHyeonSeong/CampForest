@@ -9,6 +9,7 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
 type LoginResponse = {
   accessToken: string,
   user: {
+    userId: number,
     nickname: string,
     profileImage: string
   }
@@ -23,28 +24,35 @@ axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('accessToken');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      axiosInstance.defaults.headers['Authorization'] = token;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.log('Request interceptor error:', error);
+    return Promise.reject(error)
+  }
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   async (error: AxiosError) => {
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
-    if (originalRequest && error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await refreshToken();
+        const newToken = await refreshToken();
+        console.log('axiosInstance.interceptors.response에서 headers를 바꿉니다 - ', newToken);
+        originalRequest.headers['Authorization'] = newToken;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         await logout();
         return Promise.reject(refreshError);
       }
     }
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
 );
 
@@ -52,10 +60,15 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   try {
     const response = await axiosInstance.post('/user/login', { email, password });
     const data = response.data.data;
-    const accessToken = response.headers.Authorization;
-    const user = { nickname: data.nickname, profileImage: data.profileImage }
-
-    localStorage.setItem('accessToken', accessToken);
+    const accessToken = response.headers.authorization;
+    const user = { userId: data.userId, nickname: data.nickname, profileImage: data.profileImage }
+    
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+      axiosInstance.defaults.headers['Authorization'] = accessToken;
+    } else {
+      console.error('No access token received from server');
+    }
 
     return { accessToken, user };
   } catch (error) {
@@ -65,17 +78,15 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 };
 
 export const refreshToken = async() => {
-  try {
-    const response = await axiosInstance.post<LoginResponse>('/user/refreshToken');
-    const { accessToken } = response.data;
-
-    localStorage.setItem('accessToken', accessToken);
-
-    return accessToken;
-  } catch (error) {
-    console.error('Token refresh failed:', error);
-    throw error;
-  }
+ // refreshToken 요청에는 인터셉터를 적용하지 않음
+ const response = await axios.post<LoginResponse>(`${API_URL}/user/refreshToken`, {}, {
+    withCredentials: true
+  });
+  const accessToken = response.headers['Authorization'];
+  localStorage.setItem('accessToken', accessToken);
+  axiosInstance.defaults.headers['Authorization'] = accessToken;
+  
+  return accessToken;
 };
 
 export const logout = async () => {
@@ -84,6 +95,8 @@ export const logout = async () => {
 
     // 토큰 제거
     localStorage.removeItem('accessToken');
+    delete axiosInstance.defaults.headers['Authorization'];
+
   } catch (error) {
     console.error('Logout failed:', error);
     throw error;

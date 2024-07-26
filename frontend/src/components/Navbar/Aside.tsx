@@ -8,8 +8,13 @@ import { ReactComponent as RentalIcon } from '@assets/icons/nav-rental.svg'
 import { ReactComponent as CommunityIcon } from '@assets/icons/nav-community.svg'
 import { useDispatch } from 'react-redux'
 import { setIsBoardWriteModal } from '@store/modalSlice'
+import { RootState } from '@store/store'
 
-const Aside = () => {
+type Props = {
+  user: RootState['userStore'];
+}
+
+const Aside = (props: Props) => {
   const dispatch = useDispatch();
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -27,7 +32,7 @@ const Aside = () => {
 
   return (
     <aside className='fixed bottom-14 right-5 md:bottom-8 md:right-5'>
-      <div className='flex items-center mb-2 relative'>
+      <div className={`${props.user.isLoggedIn ? '' : 'hidden'} flex items-center mb-2 relative`}>
         <div className='flex absolute right-2'>
           <div 
             className={`w-11 h-11 bg-black rounded-full flex flex-all-center transition-all duration-300 ease-in-out 
