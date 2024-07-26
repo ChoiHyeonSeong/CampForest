@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 public interface BoardRepositoryCustom {
 	Page<Boards> findByUserId(Long userId, Pageable pageable);
 
-	List<Boards> findByCategory(String category);
+	Page<Boards> findByCategory(String category, Pageable pageable);
 
 	void plusLikeCount(Long boardId);
 

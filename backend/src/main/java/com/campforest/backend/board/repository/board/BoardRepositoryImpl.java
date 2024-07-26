@@ -39,11 +39,19 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 	}
 
 	@Override
-	public List<Boards> findByCategory(String category) {
-		return queryFactory
+	public Page<Boards> findByCategory(String category,Pageable pageable) {
+		List<Boards> content= queryFactory
 			.selectFrom(boards)
 			.where(boards.category.eq(category))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(boards.createdAt.desc())
 			.fetch();
+		long total = queryFactory
+			.selectFrom(boards)
+			.where(boards.category.eq(category))
+			.fetchCount();
+		return new PageImpl<>(content, pageable, total);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public interface BoardService {
 
 	Page<BoardResponseDto> getUserBoards(Long userId,int page, int size);
 
-	List<BoardResponseDto> getCategoryBoards(String category);
+	Page<BoardResponseDto> getCategoryBoards(String category,int page, int size);
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 

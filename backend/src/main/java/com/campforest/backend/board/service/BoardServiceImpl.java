@@ -91,20 +91,16 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public Page<BoardResponseDto> getUserBoards(Long userId,int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-		Page<Boards> boardsList = boardRepository.findByUserId(userId,pageable);
+		Page<Boards> boardsPage = boardRepository.findByUserId(userId,pageable);
 
-		return  boardsList.map(this::convertToDto);
+		return  boardsPage.map(this::convertToDto);
 	}
 
 	@Override
-	public List<BoardResponseDto> getCategoryBoards(String category) {
-		List<Boards> boardsList = boardRepository.findByCategory(category);
-		List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
-		for (Boards board : boardsList) {
-			BoardResponseDto dto = convertToDto(board);
-			boardResponseDtos.add(dto);
-		}
-		return boardResponseDtos;
+	public Page<BoardResponseDto> getCategoryBoards(String category,int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+		Page<Boards> boardsPage = boardRepository.findByCategory(category,pageable);
+		return boardsPage.map(this::convertToDto);
 	}
 
 	@Transactional
