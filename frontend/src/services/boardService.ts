@@ -44,3 +44,8 @@ export const detail = (boardId: number) => {
   const response = axios.get(`${API_URL}/board/detail`, {params});
   console.log(response);
 }
+
+export const like = (boardId: number, userId: number) => {
+  const response = axios.post(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+  console.log(response);
+}

@@ -20,7 +20,7 @@ const BoardList = () => {
   return (
     <div>
       {boards?.map((board) => (
-        <Board board={board} />
+        <Board key={board.boardId} board={board} />
       ))}
     </div>
   )
