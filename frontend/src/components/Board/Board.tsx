@@ -38,8 +38,16 @@ const Board = (props: Props) => {
           <div className='text-xl md:text-lg'>{props.board.userId}</div>
           <div className='md:text-sm'>캠핑 후기 {'>'} 경기</div>
         </div>
-        <div className='ms-auto mb-auto'>
-         <MoreDot className='size-8'/>
+        <div className='ms-auto mb-auto relative'>
+         <MoreDot className='size-8 absolute right-0 top-0'/>
+         <div className='absolute z-10 right-4 top-8 bg-pink-300 px-1 w-28 rounded-sm'>
+            <div className='w-full text-center border-b'>
+              <button className='py-2 ps-2 pe-5'>수정하기</button>
+            </div>
+            <div className='w-full text-center'>
+              <button className='py-2 ps-2 pe-5'>삭제하기</button>
+            </div>
+         </div>
         </div>
       </div>
       <div className='-mx-[1.5rem] md:mx-0'>

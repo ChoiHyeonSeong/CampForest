@@ -35,7 +35,7 @@ const ProductCard = () => {
        {/* 상품사진 */}
        <div className='relative mb-3 w-full aspect-1 rounded-md overflow-hidden'>
         {/* 기본 이미지 - 상시 */}
-        <div className='bg-yellow-200 size-full  absolute z-1'>
+        <div className='size-full  absolute z-1 overflow-hidden'>
           <img src={ProfileImgEX} alt='ProductImg' className='size-full  hover:scale-[1.05] transition-all duration-300'/>
         </div>
         
@@ -49,7 +49,7 @@ const ProductCard = () => {
         {/* 찜 - 상시 */}
         <div onClick={toggleLike} className='absolute z-3 top-1 right-1 cursor-pointer'>
           {isLiked ? (
-            <FillHeartIcon className='size-4 md:size-5' />
+            <FillHeartIcon className='size-4 md:size-5 fill-red-500' />
           ) : (
             <HeartOutlineIcon className='size-4 md:size-5' />
           )}
@@ -67,7 +67,7 @@ const ProductCard = () => {
             <span className='text-sm'>14</span>
           </div>
           <div className='flex items-center'>
-            <FillHeartIcon className=' size-3 md:size-4 me-1' />
+            <FillHeartIcon className=' size-3 md:size-4 me-1 fill-gray-700' />
             <span className='text-sm'>43</span>
           </div>
         </div>
@@ -104,7 +104,7 @@ const ProductCard2 = () => {
         {/* 찜 - 상시 */}
         <div onClick={toggleLike} className='absolute z-3 top-1 right-1 cursor-pointer'>
           {isLiked ? (
-            <FillHeartIcon className='size-4 md:size-5' />
+            <FillHeartIcon className='size-4 md:size-5 fill-red-500'/>
           ) : (
             <HeartOutlineIcon className='size-4 md:size-5' />
           )}
@@ -122,7 +122,7 @@ const ProductCard2 = () => {
             <span className='text-sm'>14</span>
           </div>
           <div className='flex items-center'>
-            <FillHeartIcon className=' size-3 md:size-4 me-1' />
+            <FillHeartIcon className=' size-3 md:size-4 me-1 fill-gray-700' />
             <span className='text-sm'>43</span>
           </div>
         </div>
