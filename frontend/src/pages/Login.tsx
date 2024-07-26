@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@services/authService'
 import { setUser } from '@store/userSlice'
 import { useDispatch } from 'react-redux'
+import axios from 'axios'
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -18,6 +19,9 @@ function Login() {
     try {
       const data = await login(email, password);
       dispatch(setUser(data.user));
+      axios.post(`http://192.168.100.203:8080/user/refreshToken`, {}, {
+        withCredentials: true
+      });
       console.log('Login successful');
       navigate('/');
     } catch (error) {

@@ -38,13 +38,13 @@ axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error: AxiosError) => {
+  async (error) => {
+    const status = error.response?.data.status;
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (status === 'A004' && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const newToken = await refreshToken();
-        console.log('axiosInstance.interceptors.response에서 headers를 바꿉니다 - ', newToken);
         originalRequest.headers['Authorization'] = newToken;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
@@ -79,13 +79,13 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 
 export const refreshToken = async() => {
  // refreshToken 요청에는 인터셉터를 적용하지 않음
- const response = await axios.post<LoginResponse>(`${API_URL}/user/refreshToken`, {}, {
+ const response = await axios.post(`${API_URL}/user/refreshToken`, {}, {
     withCredentials: true
   });
   const accessToken = response.headers['Authorization'];
   localStorage.setItem('accessToken', accessToken);
   axiosInstance.defaults.headers['Authorization'] = accessToken;
-  
+
   return accessToken;
 };
 
