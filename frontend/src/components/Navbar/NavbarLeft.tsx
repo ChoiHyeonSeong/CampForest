@@ -57,10 +57,10 @@ const NavbarLeft = (props: Props) => {
 
   return (
     <div 
-      className={`fixed z-40 h-full pt-[3.2rem] mb-11
+      className={`fixed z-40 h-full lg:mt-0 mb-11 md:mb-0 
         transition-all duration-300 ease-in-out
         border-r w-[90vw] bg-white
-        ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${props.isMenuOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
         ${props.isMenuBlocked ? 'block' : 'hidden'}
         `
@@ -86,7 +86,6 @@ const NavbarLeft = (props: Props) => {
               </div>
             )}
           </div>
-
           <div className='space-y-2'>
             <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
               <div className='w-[5rem] flex flex-all-center'>
