@@ -31,12 +31,12 @@ const ProductCard = () => {
   };
 
   return (
-    <div className='cursor-pointer bg-white w-1/3 md:w-1/4 xl:w-1/5 pt-3 pb-6 px-3 rounded-md hover:shadow-md hover:scale-[1.005] transition-all duration-300'>
+    <div className='cursor-pointer bg-white w-1/3 md:w-1/4 xl:w-1/5 pt-3 pb-6 px-3 rounded-md hover:shadow-md transition-all duration-300'>
        {/* 상품사진 */}
        <div className='relative mb-3 w-full aspect-1 rounded-md overflow-hidden'>
         {/* 기본 이미지 - 상시 */}
         <div className='bg-yellow-200 size-full  absolute z-1'>
-          <img src={ProfileImgEX} alt='ProductImg' className='size-full '/>
+          <img src={ProfileImgEX} alt='ProductImg' className='size-full  hover:scale-[1.05] transition-all duration-300'/>
         </div>
         
         {/* 판매완료 - 완료상품에만 띄움(기본 hidden처리) */}

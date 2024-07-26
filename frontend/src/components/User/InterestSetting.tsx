@@ -60,16 +60,16 @@ const InterestSetting = (props: Props) => {
 
   return (
     <div className="mb-6">
-      <label className="block text-gray-70 text-left font-medium text-lg">관심사 설정</label>
-        <p className='text-left font-light mt-1'>원하는 유형의 캠핑태그를 선택해주세요 (중복선택가능)</p>
+      <label className="block text-gray-70 text-left font-medium text-lg">관심사 설정<span className='text-red-500 text-md'> *</span></label>
+        <p className='text-left font-light mt-1'>원하는 유형의 캠핑태그를 <span className='font-medium'>최소 1개이상</span> 선택해주세요. (중복선택가능)</p>
         <div className="flex flex-wrap gap-2 mt-4">
           {interestTagList.map(tag => (
           <span 
             key={tag} 
             className={`duration-200 px-3 py-1 border-[1.5px] rounded cursor-pointer ${
               interestChecking[tag.slice(1) as InterestTag] 
-                ? 'bg-[#ff7f50cb] text-white' 
-                : 'hover:bg-[#ff7f50cb] hover:text-white text-gray-700'
+                ? 'border-[#ff7f50]' 
+                : 'hover:border-[#ff7f50]'
             }`}
             onClick={() => handleTagClick(tag)}
           >
