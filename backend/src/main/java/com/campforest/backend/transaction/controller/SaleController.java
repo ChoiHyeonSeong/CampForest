@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.transaction.dto.Sale.SaleGetRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleResponseDto;
 import com.campforest.backend.transaction.service.SaleService;
@@ -79,7 +80,7 @@ public class SaleController {
 
 	//현재 판매 거래 정보 가져오기
 	@GetMapping
-	public ApiResponse<?> getSale(@RequestBody SaleRequestDto saleRequestDto) {
+	public ApiResponse<?> getSale(@RequestBody SaleGetRequestDto saleRequestDto) {
 		try {
 			SaleResponseDto saleResponseDto = saleService.getSale(saleRequestDto);
 			log.info(saleResponseDto.toString());

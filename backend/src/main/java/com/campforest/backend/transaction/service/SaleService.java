@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.transaction.dto.Sale.SaleGetRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleResponseDto;
 import com.campforest.backend.transaction.model.Sale;
@@ -80,9 +81,9 @@ public class SaleService {
 
 	@Transactional
 	public void denySale(SaleRequestDto saleRequestDto) {
-		Sale sale1 = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId())
+		Sale sale1 = saleRepository.findByProductIdAndRequesterIdAndReceiverId(saleRequestDto.getProductId(), saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
-		Sale sale2 = saleRepository.findByRequesterIdAndReceiverId(saleRequestDto.getReceiverId(), saleRequestDto.getRequesterId())
+		Sale sale2 = saleRepository.findByProductIdAndRequesterIdAndReceiverId(saleRequestDto.getProductId(), saleRequestDto.getReceiverId(), saleRequestDto.getRequesterId())
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
 
 		saleRepository.delete(sale1);
@@ -114,7 +115,7 @@ public class SaleService {
 	}
 
 
-	public SaleResponseDto getSale(SaleRequestDto saleRequestDto) {
+	public SaleResponseDto getSale(SaleGetRequestDto saleRequestDto) {
 		Sale sale = saleRepository.findByProductIdAndRequesterIdAndReceiverId(saleRequestDto.getRequesterId(),
 			saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId())
 			.orElseThrow(() ->  new IllegalArgumentException("없다요"));

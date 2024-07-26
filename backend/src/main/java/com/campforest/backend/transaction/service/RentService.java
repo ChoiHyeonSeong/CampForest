@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.transaction.dto.Rent.RentGetRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
 import com.campforest.backend.transaction.model.Rent;
@@ -120,7 +121,7 @@ public class RentService {
 		rentRepository.save(reverserent);
 	}
 
-	public RentResponseDto getRent(RentRequestDto rentRequestDto) {
+	public RentResponseDto getRent(RentGetRequestDto rentRequestDto) {
 		Rent rent = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(),
 				rentRequestDto.getRequesterId(), rentRequestDto.getReceiverId())
 			.orElseThrow(() ->  new IllegalArgumentException("없다요"));
