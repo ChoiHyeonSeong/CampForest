@@ -50,10 +50,13 @@ public class BoardController {
 		try {
 
 			List<String> imageUrls = new ArrayList<>();
-			for (MultipartFile file : files) {
-				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-				String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
-				imageUrls.add(fileUrl);
+			if (files != null) {
+				for (MultipartFile file : files) {
+					String extension = file.getOriginalFilename()
+						.substring(file.getOriginalFilename().lastIndexOf("."));
+					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
+					imageUrls.add(fileUrl);
+				}
 			}
 			boardRequestDto.setImageUrls(imageUrls);
 			boardService.writeBoard(boardRequestDto);
