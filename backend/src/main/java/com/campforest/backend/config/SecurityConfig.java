@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.filter.JwtAuthenticationFilter;
+import com.campforest.backend.oauth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final JwtTokenProvider jwtTokenProvider;
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
 	@Value("${cors.allowed-origin}")
 	private String allowedOrigin;
@@ -53,8 +56,12 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("user/regist/**", "user/login", "user/logout", "user/refreshToken", "email/**").permitAll()
+				.requestMatchers("user/regist/**", "user/login", "user/logout", "user/refreshToken", "email/**", "login/**").permitAll()
 				.anyRequest().authenticated())
+			.oauth2Login(oauth2 -> oauth2
+				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+				.successHandler(oAuth2AuthenticationSuccessHandler)
+			)
 			.exceptionHandling(exception ->
 				exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
 			.formLogin(AbstractHttpConfigurer::disable);
