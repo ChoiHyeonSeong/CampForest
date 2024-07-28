@@ -66,6 +66,9 @@ public class Sale {
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
 
+	@Column(name = "meeting_time")
+	private LocalDateTime meetingTime;
+
 	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
 	private List<Review> reviews;
