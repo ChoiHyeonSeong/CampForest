@@ -56,10 +56,10 @@ const NavbarLeft = (props: Props) => {
 
   return (
     <div 
-      className={`fixed z-40 h-full lg:mt-0 mb-11 md:mb-0 
+      className={`fixed z-[60] md:z-40 h-full mb-11 pt-0 md:pt-[3.2rem]
         transition-all duration-300 ease-in-out
         border-r w-[90vw] bg-white
-        ${props.isMenuOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}
+        ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
         ${props.isMenuBlocked ? 'block' : 'hidden'}
         `
@@ -137,7 +137,7 @@ const NavbarLeft = (props: Props) => {
       <div className='flex md:hidden flex-col bg-white'>
         {/* main menu */}
         <div className='flex justify-between items-center h-11'>
-          <Link to='/'>
+          <Link to='/' onClick={props.closeMenu}>
             <BigLogoIcon className='w-[40vw] ps-5 mt-1' fill='black'/>
           </Link>
           <DarkmodeBtn />
@@ -167,7 +167,9 @@ const NavbarLeft = (props: Props) => {
           <div className='bg-[#EEEEEE] w-3/6'>
             <div className='h-10 mt-6 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu('rental')}>대여 / 판매</div>
             <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer' onClick={() => setSelectedExtendMenu('community')}>커뮤니티</div>
-            <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer'>캠핑장 찾기</div>
+            <Link to='/camping' onClick={props.closeMenu}>
+              <div className='h-10 mb-10 flex flex-all-center text-xl cursor-pointer'>캠핑장 찾기</div>
+            </Link>
           </div>
           <div className='bg-white w-3/6 h-[calc(100vh-7.75rem)] overflow-y-auto scrollbar-hide'>
             <NavbarLeftExtendMobile selectedExtendMenu={selectedExtendMenu}/>

@@ -18,7 +18,7 @@ const Navbar = () => {
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isMenuBlocked, setIsMenuBlocked] = useState<boolean>(true);
+  const [isMenuBlocked, setIsMenuBlocked] = useState<boolean>(false);
   // 확장 Menu 상태 관리 (확장메뉴 열기, 닫기)
   const [isExtendRentalOpen, setIsExtendRentalOpen] = useState<boolean>(false);
   const [isExtendCommunityOpen, setisExtendCommunityOpen] = useState<boolean>(false);
@@ -30,7 +30,6 @@ const Navbar = () => {
     if(isMenuOpen) {
       setIsMenuOpen(false);
     } else {
-      // setIsMenuOpen(true)
       setIsMenuBlocked(true);
     }
     setIsExtendRentalOpen(false);
@@ -104,61 +103,66 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-
     // 화면 줄어들면 Menu 강제로 닫기
-    const handleResize = () => {
+    const handleAllMenu = () => {
       setIsMenuOpen(false);
       setIsExtendRentalOpen(false);
       setisExtendCommunityOpen(false);
       setIsExtendChatListOpen(false);
       setIsExtendNotificationOpen(false);
       setIsExtendSearchOpen(false);
-      if (lgQuery.matches) {
-        setIsMenuBlocked(true);
-      } else {
-        setIsMenuBlocked(false);
-      }
+      setIsMenuBlocked(false);
     };
 
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    contentBox.addEventListener('click', closeMenu);
+    
+    window.addEventListener('resize', handleAllMenu);
   }, []);
 
   useEffect(() => {
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-
-    if (isMenuBlocked && !lgQuery.matches) {
+    if (isMenuBlocked) {
       setIsMenuOpen(true);
     }
   }, [isMenuBlocked]);
 
   const handleTransitionEnd = () => {
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-
-    if (!isMenuOpen && !lgQuery.matches) {
+    if (!isMenuOpen) {
       setIsMenuBlocked(false);
     }
   };
 
   // 스크롤 방지
   useEffect(() => {
-    if (isMenuOpen) {
-      // 모달이 열릴 때 스크롤 방지
-      document.body.style.overflow = 'hidden';
-    } else {
-      // 모달이 닫힐 때 스크롤 허용
-      document.body.style.overflow = 'unset';
-    }
+    // 스크롤 방지는 media width가 1024 이하일때만
+    const lgQuery = window.matchMedia('(min-width: 1024px)');
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
 
-    // 컴포넌트가 언마운트될 때 스크롤 허용
-    return () => {
-      document.body.style.overflow = 'unset';
+    let currentScrollY: number;
+    let isAnyModalOpened: boolean;
+
+    if (!contentBox.style.top) {
+      currentScrollY = window.scrollY;
+      isAnyModalOpened = false
+    } else {
+      currentScrollY = parseInt(contentBox.style.top.replace('-', '').replace('px', ''));
+      isAnyModalOpened = true
     };
+
+    if (isMenuOpen && !lgQuery.matches) {
+      // 모달이 열릴 때 스크롤 방지
+      contentBox.classList.add('no-scroll');
+      contentBox.style.top = `-${currentScrollY}px`;
+    } else if (!lgQuery.matches) {
+      // 모달이 닫힐 때 스크롤 허용
+      const scrollY = parseInt(contentBox.style.top || '0') * -1;
+      if (!isAnyModalOpened) {
+        contentBox.classList.remove('no-scroll');
+        contentBox.style.top = '';
+      };
+      window.scrollTo(0, scrollY || currentScrollY);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [isMenuOpen]);
 
   return (
@@ -176,7 +180,7 @@ const Navbar = () => {
       />
 
       {/* 좌측 메뉴바 확장 */}
-      <div className='pt-[3.2rem]'>
+      <div>
         <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu}/>
         <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu}/>
         <NavbarLeftExtendChatList isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
@@ -189,6 +193,13 @@ const Navbar = () => {
 
       {/* 우측 하단 고정사이드바 */}
       <Aside user={user} />
+
+      {/* 태블릿 이하 사이즈에서 메뉴 열때 배경 회색처리 */}
+      <div
+        className={`fixed z-[30] bg-opacity-70 lg:hidden ${isMenuOpen ? 'bg-black inset-0 block' : 'bg-none hidden'}`}
+        onClick={closeMenu}
+      >
+      </div>
     </div>
   )
 }

@@ -10,7 +10,7 @@ const Notification = () => {
           <img src={userImage} alt="NoImg" className='fit'/>
       </div>
       {/* 팔로잉 알림 */}
-      <div className='hidden grid grid-cols-4 w-5/6 items-center'>
+      <div className='hidden grid-cols-4 w-5/6 items-center'> {/* 사용하고싶으면 hidden -> grid */}
         <div className='col-span-3 px-3 text-sm'>
           <span className='font-bold'>사용자 아이디</span>
           <span>님이 회원님을 팔로우하기 시작했습니다.</span>

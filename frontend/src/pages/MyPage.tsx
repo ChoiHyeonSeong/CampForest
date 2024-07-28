@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import { Route, Routes } from 'react-router-dom';
+import { Routes } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
-import Board from '@components/Board/Board';
-import Review from '@components/Transaction/Review';
 import FollowUsers from '@components/User/FollowUsers';
 
 function MyPage() {
