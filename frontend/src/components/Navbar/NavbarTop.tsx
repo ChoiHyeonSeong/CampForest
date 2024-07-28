@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom';
 
 import { ReactComponent as BigLogoIcon } from '@assets/logo/logo.svg'
 import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
@@ -11,10 +11,25 @@ type Props = {
 }
 
 const NavbarTop = (props: Props) => {
+  const [locPath, setLocPath] = useState<string | null>(null);
+  const currentLoc = useLocation();
+
+  useEffect(() => {
+    setLocPath(currentLoc.pathname)
+  }, [currentLoc]);
+
   return (
     <div className='fixed py-1 h-[3.2rem] z-50 w-full flex justify-between bg-white border-b border-[#EEEEEE] px-[1rem]'>
-      <div className='cursor-pointer flex flex-all-center w-11 me-[1rem]' onClick={props.toggleMenu}>
-        <HamMenuIcon className=' size-[2rem]' stroke={'black'}/>
+      <div>
+        <div className='cursor-pointer flex-all-center w-11 h-full me-[1rem] hidden md:flex' onClick={props.toggleMenu}>
+          <HamMenuIcon className='size-[2rem]' stroke={'black'}/>
+        </div>
+        <div className='w-[10rem] h-full me-[1rem] bl flex md:hidden items-center'>
+          { locPath === '/' ?
+            <BigLogoIcon className='fill-[#000000] w-[10rem]' /> :
+            <div className='text-xl'>{locPath}</div>
+          }
+        </div>
       </div>
 
       <div className='max-md:hidden'>

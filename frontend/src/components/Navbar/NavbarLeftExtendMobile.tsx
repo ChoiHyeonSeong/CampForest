@@ -113,7 +113,7 @@ const NavbarLeftExtendMobile = (props: Props) => {
     htmlContent = (
       <div className="grid grid-cols-2 gap-2 m-3">
         {rentalCategory.map((eachObj, index) => (
-          <EachCategory title={eachObj.title} imgsrc={eachObj.imgsrc} imgBgColor={eachObj.imgBgColor} imgWd={eachObj.imgWd}/>
+          <EachCategory key={index} title={eachObj.title} imgsrc={eachObj.imgsrc} imgBgColor={eachObj.imgBgColor} imgWd={eachObj.imgWd}/>
         ))}
       </div>
     )
@@ -121,7 +121,7 @@ const NavbarLeftExtendMobile = (props: Props) => {
     htmlContent = (
       <div className='text-start p-4 ps-10'>
         {communityCategory.map((eachObj, index) => (
-          <div className="pb-6">{eachObj.title}</div>
+          <div key={index} className="pb-6">{eachObj.title}</div>
         ))}
       </div>
     )

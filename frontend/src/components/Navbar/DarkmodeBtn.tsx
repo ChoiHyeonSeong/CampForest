@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
 
 const DarkmodeBtn = () => {
   const [isDarkmode, setIsDarkmode] = useState<boolean>(false)
