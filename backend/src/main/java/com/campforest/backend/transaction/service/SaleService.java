@@ -118,8 +118,8 @@ public class SaleService {
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
 
 		// 판매 상태가 CONFIRMED인지 확인
-		if (sales[0].getSaleStatus() != TransactionStatus.CONFIRMED || sales[1].getSaleStatus() != TransactionStatus.CONFIRMED) {
-			throw new IllegalArgumentException("거래 상태가 CONFIRMED가 아닙니다. 약속 시간을 수정할 수 없습니다.");
+		if (sales[0].getSaleStatus() == TransactionStatus.CONFIRMED || sales[1].getSaleStatus() == TransactionStatus.CONFIRMED) {
+			throw new IllegalArgumentException("거래 상태가 CONFIRM입니다. 약속 시간을 수정할 수 없습니다.");
 		}
 
 		sales[0].setMeetingTime(saleRequestDto.getMeetingTime());
