@@ -55,5 +55,13 @@ public class CommunityChatRoomRepositoryImpl implements CommunityChatRoomReposit
                                 .and(communityChatRoom.user2.eq(user1Id))))
                 .fetchFirst());
     }
+    @Override
+    public List<CommunityChatRoom> findByUser1IdOrUser2Id(Long user1Id, Long user2Id) {
+        return queryFactory
+                .selectFrom(communityChatRoom)
+                .where(communityChatRoom.user1.eq(user1Id)
+                        .or(communityChatRoom.user2.eq(user2Id)))
+                .fetch();
+    }
 
 }

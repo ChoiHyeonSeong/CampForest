@@ -2,6 +2,7 @@ package com.campforest.backend.chatting.controller;
 
 import java.util.List;
 
+import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
 import com.campforest.backend.chatting.entity.CommunityChatMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -42,7 +43,7 @@ public class CommunityChatController {
         return ResponseEntity.ok(messages);
     }
 
-    //userID가 보낸걸 read로 바꿔줌
+    //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
     @PostMapping("/room/{roomId}/markAsRead")
     public ResponseEntity<Void> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
         communityChatService.markMessagesAsRead(roomId, userId);
@@ -53,6 +54,14 @@ public class CommunityChatController {
     public ResponseEntity<Long> getUnreadMessageCount(@PathVariable Long roomId, @RequestParam Long userId) {
         Long unreadCount = communityChatService.getUnreadMessageCount(roomId, userId);
         return ResponseEntity.ok(unreadCount);
+    }
+
+    //user가 속한 채팅방 목록 가져옴.
+    // 각 채팅방 별 최근 메시지와, 안읽은 메세지 수 가져옴
+    @GetMapping("/rooms")
+    public ResponseEntity<List<CommunityChatRoomListDto>> getChatRoomsForUser(@RequestParam Long userId) {
+        List<CommunityChatRoomListDto> rooms = communityChatService.getChatRoomsForUser(userId);
+        return ResponseEntity.ok(rooms);
     }
 
 }
