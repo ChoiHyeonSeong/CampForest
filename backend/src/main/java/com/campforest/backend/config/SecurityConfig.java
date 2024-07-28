@@ -53,7 +53,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("user/regist/**", "user/login", "user/logout", "user/refreshToken").permitAll()
+				.requestMatchers("user/regist/**", "user/login", "user/logout", "user/refreshToken", "email/**").permitAll()
 				.anyRequest().authenticated())
 			.exceptionHandling(exception ->
 				exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))

@@ -5,17 +5,11 @@ import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.campforest.backend.common.JwtTokenProvider;
-import com.campforest.backend.config.CustomUserDetailsService;
-import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
-import com.campforest.backend.user.model.RefreshToken;
 import com.campforest.backend.user.model.Users;
-import com.campforest.backend.user.repository.RefreshTokenRepository;
 import com.campforest.backend.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService{
 
 	private final UserRepository userRepository;
+	private final TokenService tokenService;
 	private final AuthenticationManager authenticationManager;
 
 	@Override
@@ -38,6 +33,16 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Optional<Users> findByEmail(String email) {
 		return userRepository.findByEmail(email);
+	}
+
+	@Override
+	@Transactional
+	public void deleteByEmail(String email) {
+		Users users = userRepository.findByEmail(email)
+			.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+		userRepository.delete(users);
+		tokenService.invalidateAllUserTokens(email);
 	}
 
 	@Override

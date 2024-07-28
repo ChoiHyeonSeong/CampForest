@@ -12,4 +12,6 @@ public interface TokenService {
 	void blacklistRefreshToken(String refreshToken);
 
 	boolean isRefreshTokenBlacklisted(String refreshToken);
+
+	void invalidateAllUserTokens(String email);
 }
