@@ -7,7 +7,7 @@ import ProductWrite from '@components/Product/ProductWrite';
 const Product = () => {
   return (
     <Routes>
-      <Route path='/' element={<ProductList />} />
+      <Route path='/list' element={<ProductList />} />
       <Route path='/detail' element={<Detail />} />
       <Route path='/write' element={<ProductWrite />} />
     </Routes>
