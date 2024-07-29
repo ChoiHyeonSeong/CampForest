@@ -75,7 +75,6 @@ public class BoardController {
 			BoardResponseDto board = boardService.getBoard(boardId);
 			return ApiResponse.createSuccess(board, "게시글 단일 조회 성공");
 		} catch (Exception e) {
-			log.error("Board not found", e);
 			return ApiResponse.createError(ErrorCode.BOARD_NOT_FOUND);
 		}
 	}
@@ -99,24 +98,36 @@ public class BoardController {
 
 	//사용자별 게시글 조회
 	@GetMapping("/user")
-	public ApiResponse<?> getUserBoard(@RequestParam Long userId) {
+	public ApiResponse<?> getUserBoard(
+		@RequestParam Long userId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+
 		try {
-			List<BoardResponseDto> boardResponseDtoList = boardService.getUserBoards(userId);
-			return ApiResponse.createSuccess(boardResponseDtoList, "게시글 사용자별 조회에 성공하였습니다");
+			if (page < 0 || size <= 0) {
+				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
+			}
+			Page<BoardResponseDto> boardResponseDtos = boardService.getUserBoards(userId,page,size);
+			return ApiResponse.createSuccess(boardResponseDtos, "게시글 사용자별 조회에 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to retrieve user boards", e);
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}
 	}
 
 	//카테고리별 게시글 조회
 	@GetMapping("/category")
-	public ApiResponse<?> getCategoryBoard(@RequestParam String category) {
+	public ApiResponse<?> getCategoryBoard(
+		@RequestParam String category,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
 		try {
-			List<BoardResponseDto> boardResponseDtoList = boardService.getCategoryBoards(category);
-			return ApiResponse.createSuccess(boardResponseDtoList, "게시글 카테고리별 조회에 성공하였습니다");
+			if (page < 0 || size <= 0) {
+				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
+			}
+			Page<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(category,page,size);
+			return ApiResponse.createSuccess(boardResponseDtos, "게시글 카테고리별 조회에 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to retrieve category boards", e);
 			return ApiResponse.createError(ErrorCode.INVALID_BOARD_CATEGORY);
 		}
 	}
@@ -128,7 +139,6 @@ public class BoardController {
 			boardService.modifyBoard(boardId, boardRequestDto);
 			return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다.");
 		} catch (Exception e) {
-			log.error("Board update failed", e);
 			return ApiResponse.createError(ErrorCode.BOARD_UPDATE_FAILED);
 		}
 	}
@@ -140,7 +150,6 @@ public class BoardController {
 			boardService.deleteBoard(boardId);
 			return ApiResponse.createSuccessWithNoContent("게시글 삭제 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Board deletion failed", e);
 			return ApiResponse.createError(ErrorCode.BOARD_DELETE_FAILED);
 		}
 	}
@@ -155,7 +164,6 @@ public class BoardController {
 			boardService.likeBoard(boardId, userId);
 			return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(),"게시글 좋아요 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Like operation failed", e);
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -180,7 +188,6 @@ public class BoardController {
 			Long count = boardService.countBoardLike(boardId);
 			return ApiResponse.createSuccess(count, "좋아요 개수 조회 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to count board likes", e);
 			return ApiResponse.createError(ErrorCode.BOARD_NOT_FOUND);
 		}
 	}
@@ -195,7 +202,6 @@ public class BoardController {
 			boardService.saveBoard(boardId, userId);
 			return ApiResponse.createSuccessWithNoContent("게시글 저장 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to save board", e);
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -206,7 +212,6 @@ public class BoardController {
 			boardService.deleteSave(boardId, userId);
 			return ApiResponse.createSuccessWithNoContent("저장 삭제 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to delete save", e);
 			return ApiResponse.createError(ErrorCode.SAVE_NOT_FOUND);
 		}
 	}
@@ -218,7 +223,6 @@ public class BoardController {
 			boardService.writeComment(boardId, commentRequestDto);
 			return ApiResponse.createSuccessWithNoContent("댓글 작성 성공");
 		} catch (Exception e) {
-			log.error("Failed to write comment", e);
 			return ApiResponse.createError(ErrorCode.COMMENT_CREATION_FAILED);
 		}
 	}
@@ -230,7 +234,6 @@ public class BoardController {
 			List<CommentResponseDto> commentResponseDtos = boardService.getComment(boardId);
 			return ApiResponse.createSuccess(commentResponseDtos, "댓글 게시글별 조회에 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to retrieve comments", e);
 			return ApiResponse.createError(ErrorCode.BOARD_NOT_FOUND);
 		}
 	}
@@ -242,7 +245,6 @@ public class BoardController {
 			List<CommentResponseDto> commentResponseDtos = boardService.getUserComment(commentWriterId);
 			return ApiResponse.createSuccess(commentResponseDtos, "댓글 유저별 조회에 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to retrieve user comments", e);
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}
 	}
@@ -265,7 +267,6 @@ public class BoardController {
 			Long count = boardService.countBoardComment(boardId);
 			return ApiResponse.createSuccess(count, "댓글 개수 조회 성공하였습니다");
 		} catch (Exception e) {
-			log.error("Failed to count board comment", e);
 			return ApiResponse.createError(ErrorCode.BOARD_NOT_FOUND);
 		}
 	}
@@ -303,7 +304,6 @@ public class BoardController {
 			Long count = boardService.countCommentLike(commentId);
 			return ApiResponse.createSuccess(count, "댓글 좋아요 수 조회 성공");
 		} catch (Exception e) {
-			log.error("Failed to count comment likes", e);
 			return ApiResponse.createError(ErrorCode.COMMENT_NOT_FOUND);
 		}
 	}

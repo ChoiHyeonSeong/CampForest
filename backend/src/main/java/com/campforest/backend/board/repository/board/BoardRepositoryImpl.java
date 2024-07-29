@@ -6,6 +6,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
@@ -15,20 +19,39 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 		this.queryFactory = queryFactory;
 	}
 
+
 	@Override
-	public List<Boards> findByUserId(Long userId) {
-		return queryFactory
+	public Page<Boards> findByUserId(Long userId, Pageable pageable) {
+		List<Boards> content = queryFactory
 			.selectFrom(boards)
 			.where(boards.userId.eq(userId))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(boards.createdAt.desc())
 			.fetch();
+
+		long total = queryFactory
+			.selectFrom(boards)
+			.where(boards.userId.eq(userId))
+			.fetchCount();
+
+		return new PageImpl<>(content, pageable, total);
 	}
 
 	@Override
-	public List<Boards> findByCategory(String category) {
-		return queryFactory
+	public Page<Boards> findByCategory(String category,Pageable pageable) {
+		List<Boards> content= queryFactory
 			.selectFrom(boards)
 			.where(boards.category.eq(category))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(boards.createdAt.desc())
 			.fetch();
+		long total = queryFactory
+			.selectFrom(boards)
+			.where(boards.category.eq(category))
+			.fetchCount();
+		return new PageImpl<>(content, pageable, total);
 	}
 
 	@Override
