@@ -6,6 +6,7 @@ package com.campforest.backend.chatting.repository.communitymessage;// package c
  import com.querydsl.jpa.impl.JPAQueryFactory;
  import jakarta.persistence.EntityManager;
 
+ import java.time.LocalDateTime;
  import java.util.List;
  import java.util.Optional;
 
@@ -48,6 +49,28 @@ package com.campforest.backend.chatting.repository.communitymessage;// package c
                          .and(communityChatMessage.senderId.ne(userId))
                          .and(communityChatMessage.isRead.eq(false)))
                  .fetch();
+     }
+
+     @Override
+     public CommunityChatMessage findTopByChatRoom_RoomIdOrderByCreatedAtDesc(Long roomId) {
+         QCommunityChatMessage message = QCommunityChatMessage.communityChatMessage;
+
+         CommunityChatMessage latestMessage = queryFactory
+                 .selectFrom(message)
+                 .where(message.roomId.eq(roomId))
+                 .orderBy(message.createdAt.desc())
+                 .fetchFirst();
+
+         return latestMessage != null ? latestMessage : createEmptyMessage(roomId);
+     }
+
+     private CommunityChatMessage createEmptyMessage(Long roomId) {
+         return CommunityChatMessage.builder()
+                 .roomId(roomId)
+                 .content("")
+                 .senderId(null)
+                 .createdAt(LocalDateTime.now())
+                 .build();
      }
 
  }

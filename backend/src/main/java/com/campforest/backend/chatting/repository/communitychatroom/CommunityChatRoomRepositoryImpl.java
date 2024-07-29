@@ -45,15 +45,23 @@ public class CommunityChatRoomRepositoryImpl implements CommunityChatRoomReposit
 
         return room;
     }
+    // @Override
+    // public Optional<CommunityChatRoom> findByUser1IdAndUser2Id(Long user1Id, Long user2Id) {
+    //     return Optional.ofNullable(queryFactory
+    //             .selectFrom(communityChatRoom)
+    //             .where(communityChatRoom.user1.eq(user1Id)
+    //                     .and(communityChatRoom.user2.eq(user2Id))
+    //                     .or(communityChatRoom.user1.eq(user2Id)
+    //                             .and(communityChatRoom.user2.eq(user1Id))))
+    //             .fetchFirst());
+    // }
     @Override
-    public Optional<CommunityChatRoom> findByUser1IdAndUser2Id(Long user1Id, Long user2Id) {
-        return Optional.ofNullable(queryFactory
+    public List<CommunityChatRoom> findByUser1IdOrUser2Id(Long user1Id, Long user2Id) {
+        return queryFactory
                 .selectFrom(communityChatRoom)
                 .where(communityChatRoom.user1.eq(user1Id)
-                        .and(communityChatRoom.user2.eq(user2Id))
-                        .or(communityChatRoom.user1.eq(user2Id)
-                                .and(communityChatRoom.user2.eq(user1Id))))
-                .fetchFirst());
+                        .or(communityChatRoom.user2.eq(user2Id)))
+                .fetch();
     }
 
 }
