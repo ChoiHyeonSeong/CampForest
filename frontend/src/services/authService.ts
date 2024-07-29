@@ -22,7 +22,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('accessToken');
+    const token = sessionStorage.getItem('accessToken');
     if (token) {
       axiosInstance.defaults.headers['Authorization'] = token;
     }
@@ -64,7 +64,11 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     const user = { userId: data.userId, nickname: data.nickname, profileImage: data.profileImage }
     
     if (accessToken) {
-      localStorage.setItem('accessToken', accessToken);
+      sessionStorage.setItem('accessToken', accessToken);
+      sessionStorage.setItem('userId', data.userId);
+      sessionStorage.setItem('nickname', data.nickname);
+      sessionStorage.setItem('profileImage', data.profileImage);
+      sessionStorage.setItem('isLoggedIn', 'true');
       axiosInstance.defaults.headers['Authorization'] = accessToken;
     } else {
       console.error('No access token received from server');
@@ -83,7 +87,7 @@ export const refreshToken = async() => {
     withCredentials: true
   });
   const accessToken = response.headers['Authorization'];
-  localStorage.setItem('accessToken', accessToken);
+  sessionStorage.setItem('accessToken', accessToken);
   axiosInstance.defaults.headers['Authorization'] = accessToken;
 
   return accessToken;
@@ -94,7 +98,11 @@ export const logout = async () => {
     await axiosInstance.post('/user/auth/logout');
 
     // 토큰 제거
-    localStorage.removeItem('accessToken');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('nickname');
+    sessionStorage.removeItem('profileImage');
+    sessionStorage.removeItem('isLoggedIn');
     delete axiosInstance.defaults.headers['Authorization'];
 
   } catch (error) {
