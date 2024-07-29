@@ -62,7 +62,6 @@ public class ReviewService {
 			}
 			review.setRent(rent);
 		} else {
-			log.info("여기서 문제");
 			throw new IllegalArgumentException("유효하지 않은 ProductType입니다.");
 		}
 
