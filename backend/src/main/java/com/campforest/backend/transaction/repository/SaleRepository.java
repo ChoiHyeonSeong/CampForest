@@ -8,10 +8,9 @@ import com.campforest.backend.transaction.model.Sale;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 
-	Optional<Sale> findByProductIdAndBuyerId(Long productId, Long buyerId);
+	Optional<Sale> findByProductIdAndRequesterId(Long productId, Long requesterId);
 
-	Optional<Sale> findSaleBySellerIdAndBuyerId(Long sellerId, Long buyerId);
+	Optional<Sale> findByRequesterIdAndReceiverId(Long requesterId, Long receiverId);
 
-	Optional<Sale> findByProductIdAndSellerIdAndBuyerId(Long productId, Long sellerId, Long buyerId);
-
+	Optional<Sale> findByProductIdAndRequesterIdAndReceiverId(Long productId, Long requesterId, Long receiverId);
 }

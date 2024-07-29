@@ -1,9 +1,14 @@
 package com.campforest.backend.transaction.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.campforest.backend.product.model.Product;
+import com.campforest.backend.review.model.Review;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,8 +39,9 @@ public class Sale {
 	@Column(name = "sale_id")
 	private Long id;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", unique = true)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id")
+	@JsonBackReference
 	private Product product;
 
 	@Column(name = "buyer_id")
@@ -47,6 +53,9 @@ public class Sale {
 	@Column(name = "requester_id")
 	private Long requesterId;
 
+	@Column(name = "receiver_id")
+	private Long receiverId;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "sale_status")
 	private TransactionStatus saleStatus;
@@ -57,11 +66,18 @@ public class Sale {
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
 
-	@Column(columnDefinition = "boolean default false")
-	private boolean confirmedByBuyer; // 추가된 필드: 구매자가 확인했는지 여부
+	@Column(name = "meeting_time")
+	private LocalDateTime meetingTime;
+
+	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JsonManagedReference
+	private List<Review> reviews;
 
 	@Column(columnDefinition = "boolean default false")
-	private boolean confirmedBySeller; // 추가된 필드: 판매자가 확인했는지 여부
+	private boolean confirmedByBuyer;
+
+	@Column(columnDefinition = "boolean default false")
+	private boolean confirmedBySeller;
 
 	public void requestSale() {
 		this.saleStatus = TransactionStatus.REQUESTED;
@@ -89,9 +105,10 @@ public class Sale {
 	public Sale toEntityInverse() {
 		return Sale.builder()
 			.product(this.product)
-			.buyerId(this.sellerId)
-			.sellerId(this.buyerId)
-			.requesterId(this.requesterId)
+			.buyerId(this.buyerId)
+			.sellerId(this.sellerId)
+			.requesterId(this.receiverId)
+			.receiverId(this.requesterId)
 			.saleStatus(TransactionStatus.RECEIVED)
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
