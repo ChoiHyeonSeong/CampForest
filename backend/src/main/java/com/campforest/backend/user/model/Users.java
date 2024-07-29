@@ -44,18 +44,24 @@ public class Users {
 	@Column(name = "user_email", nullable = false, unique = true)
 	private String email;
 
-	@Column(name = "user_password", nullable = false)
+	@Column(name = "user_password")
 	private String password;
+
+	@Column(name = "provider")
+	private String provider;
+
+	@Column(name = "provider_id")
+	private String providerId;
 
 	@Column(name = "user_role", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@Column(name = "user_Birthdate", nullable = false)
+	@Column(name = "user_Birthdate")
 	@Temporal(TemporalType.DATE)
 	private Date birthdate;
 
-	@Column(name = "gender", nullable = false)
+	@Column(name = "gender")
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -65,7 +71,7 @@ public class Users {
 	@Column(name = "nickname", nullable = false)
 	private String nickname;
 
-	@Column(name = "phone_number", nullable = false)
+	@Column(name = "phone_number")
 	private String phoneNumber;
 
 	@Column(name = "introduction")
@@ -91,4 +97,9 @@ public class Users {
 		columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedAt;
+
+	public void updateOAuthInfo(String provider, String providerId) {
+		this.provider = provider;
+		this.providerId = providerId;
+	}
 }
