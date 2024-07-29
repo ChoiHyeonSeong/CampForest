@@ -75,6 +75,9 @@ public class Rent {
 	@Column(name = "meeting_time")
 	private LocalDateTime meetingTime;
 
+	@Column(name = "meeting_place")
+	private String meetingPlace;
+
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
 
