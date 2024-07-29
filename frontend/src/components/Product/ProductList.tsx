@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import ProductList from '@components/Transaction/ProductList';
-import Dropdown from '@components/Transaction/Dropdown';
+import React, { useState } from 'react'
+
+// Component
+import ProductCard from './ProductCard'
+import ProductCard2 from './ProductCard2'
+import Dropdown from './Dropdown';
+
 
 type Option = {
   id: number;
@@ -38,7 +42,7 @@ const locations: Option[] = [
   { id: 8, name: '제주' },
 ];
 
-const TransactionList = () => {
+const ProductList = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isAccBtnActive, setIsAccBtnActive] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -111,11 +115,19 @@ const TransactionList = () => {
             <p>거래 가능</p>
           </div>
         </div>
-
-        <ProductList />
+        <div className='w-full flex flex-wrap'>
+        <ProductCard />
+        <ProductCard2 />
+        <ProductCard />
+        <ProductCard />
+        <ProductCard2 />
+        <ProductCard2 />
+        <ProductCard />
+        <ProductCard />
+    </div>
       </div>
     </div>
   );
 };
 
-export default TransactionList;
+export default ProductList;

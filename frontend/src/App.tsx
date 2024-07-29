@@ -12,7 +12,6 @@ import Main from '@pages/Main';
 import MyPage from '@pages/MyPage';
 import ProfileEdit from '@pages/ProfileEdit';
 import CampingSearch from '@pages/CampingSearch';
-import Transaction from '@pages/Transaction';
 import FindPassword from '@pages/FindPassword';
 
 import Write from '@components/Board/Write';
@@ -20,6 +19,7 @@ import Write from '@components/Board/Write';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
+import Product from '@pages/Product';
 
 function App() {
   const dispatch = useDispatch()
@@ -61,7 +61,7 @@ function App() {
             <Route path="/user/regist/*" element={<Regist/>}/>
             <Route path="/user/mypage/*" element={<MyPage/>}/>
             <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
-            <Route path='/transaction/*' element={<Transaction/> }/>
+            <Route path='/product/*' element={<Product />}/>
             <Route path='/camping' element={<CampingSearch/> }/>
             <Route path='/user/password/*' element={<FindPassword />}/>
           </Routes>
