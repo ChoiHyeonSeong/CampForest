@@ -1,5 +1,7 @@
 package com.campforest.backend.review.dto;
 
+import java.util.List;
+
 import com.campforest.backend.product.model.ProductType;
 
 import lombok.Getter;
@@ -15,5 +17,6 @@ public class ReviewRequestDto {
 	private String content;
 	private int rating;
 	private ProductType productType; // SALE 또는 RENT
+	private List<String> reviewImageUrl;  // 이미지 URL 리스트 추가
 
 }
