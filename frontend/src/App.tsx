@@ -15,6 +15,7 @@ import CampingSearch from '@pages/CampingSearch';
 import FindPassword from '@pages/FindPassword';
 
 import Write from '@components/Board/Write';
+import LoadingModal from '@components/LoadingModal'
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
@@ -70,6 +71,8 @@ function App() {
       </div>
       {/* 모달은 이 아래부터 */}
       <Write />
+      <LoadingModal />
+
     </div>
   );
 }
