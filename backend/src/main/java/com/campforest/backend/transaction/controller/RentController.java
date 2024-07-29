@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.transaction.dto.Rent.RentGetRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
 import com.campforest.backend.transaction.service.RentService;
@@ -73,9 +74,9 @@ public class RentController {
 
 	//현재 대여 거래 정보 가져오기
 	@GetMapping()
-	public ApiResponse<?> getRent(@RequestBody RentRequestDto rentRequestDto) {
+	public ApiResponse<?> getRent(@RequestBody RentGetRequestDto rentGetRequestDto) {
 		try {
-			RentResponseDto rentResponseDto = rentService.getRent(rentRequestDto);
+			RentResponseDto rentResponseDto = rentService.getRent(rentGetRequestDto);
 			return ApiResponse.createSuccess(rentResponseDto, "거래 정보 입니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.RENT_NOT_FOUND);

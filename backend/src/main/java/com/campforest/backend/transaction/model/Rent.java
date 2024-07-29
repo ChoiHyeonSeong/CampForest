@@ -1,9 +1,14 @@
 package com.campforest.backend.transaction.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.campforest.backend.product.model.Product;
+import com.campforest.backend.review.model.Review;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +41,7 @@ public class Rent {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
+	@JsonBackReference
 	private Product product;
 
 	@Column(name = "renter_id")
@@ -45,6 +52,9 @@ public class Rent {
 
 	@Column(name = "requester_id")
 	private Long requesterId;
+
+	@Column(name = "receiver_id")
+	private Long receiverId;
 
 	@Column(name = "rent_start_date")
 	private LocalDateTime rentStartDate;
@@ -65,11 +75,15 @@ public class Rent {
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
 
-	@Column(columnDefinition = "boolean default false")
-	private boolean confirmedByBuyer; // 추가된 필드: 구매자가 확인했는지 여부
+	@OneToMany(mappedBy = "rent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JsonManagedReference
+	private List<Review> reviews;
 
 	@Column(columnDefinition = "boolean default false")
-	private boolean confirmedBySeller; // 추가된 필드: 판매자가 확인했는지 여부
+	private boolean confirmedByBuyer;
+
+	@Column(columnDefinition = "boolean default false")
+	private boolean confirmedBySeller;
 
 	public void requestRent() {
 		this.rentStatus = TransactionStatus.REQUESTED;
@@ -97,9 +111,10 @@ public class Rent {
 	public Rent toEntityInverse() {
 		return Rent.builder()
 			.product(this.product)
-			.renterId(this.ownerId)
-			.ownerId(this.renterId)
-			.requesterId(this.requesterId)
+			.renterId(this.renterId)
+			.ownerId(this.ownerId)
+			.requesterId(this.receiverId)
+			.receiverId(this.requesterId)
 			.rentStatus(TransactionStatus.RECEIVED)
 			.rentStartDate(this.rentStartDate)
 			.deposit(this.deposit)

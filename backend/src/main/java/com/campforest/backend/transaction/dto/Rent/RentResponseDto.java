@@ -20,6 +20,8 @@ public class RentResponseDto {
 	private Long deposit;
 	private LocalDateTime rentStartDate;
 	private LocalDateTime rentEndDate;
+	private Long requesterId;
+	private Long receiverId;
 	private TransactionStatus rentStatus;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
@@ -35,6 +37,8 @@ public class RentResponseDto {
 		this.ownerId = rent.getOwnerId();
 		this.deposit = rent.getDeposit();
 		this.rentStartDate = rent.getRentStartDate();
+		this.requesterId = rent.getRequesterId();
+		this.receiverId = rent.getReceiverId();
 		this.rentEndDate = rent.getRentEndDate();
 		this.rentStatus = rent.getRentStatus();
 		this.createdAt = rent.getCreatedAt();

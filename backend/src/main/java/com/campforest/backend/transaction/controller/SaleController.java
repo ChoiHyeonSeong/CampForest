@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.transaction.dto.Sale.SaleGetRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleResponseDto;
 import com.campforest.backend.transaction.service.SaleService;
@@ -16,10 +17,12 @@ import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/sale")
 @RequiredArgsConstructor
+@Slf4j
 public class SaleController {
 
 	private final SaleService saleService;
@@ -77,9 +80,10 @@ public class SaleController {
 
 	//현재 판매 거래 정보 가져오기
 	@GetMapping
-	public ApiResponse<?> getSale(@RequestBody SaleRequestDto saleRequestDto) {
+	public ApiResponse<?> getSale(@RequestBody SaleGetRequestDto saleRequestDto) {
 		try {
 			SaleResponseDto saleResponseDto = saleService.getSale(saleRequestDto);
+			log.info(saleResponseDto.toString());
 			return ApiResponse.createSuccess(saleResponseDto, "거래 정보 입니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.SALE_NOT_FOUND);

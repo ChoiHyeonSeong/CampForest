@@ -17,6 +17,8 @@ public class SaleResponseDto {
 	private Long productId;
 	private Long buyerId;
 	private Long sellerId;
+	private Long requesterId;
+	private Long receiverId;
 	private TransactionStatus saleStatus;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
@@ -30,6 +32,8 @@ public class SaleResponseDto {
 		this.productId = sale.getProduct().getId();
 		this.buyerId = sale.getBuyerId();
 		this.sellerId = sale.getSellerId();
+		this.requesterId = sale.getRequesterId();
+		this.receiverId = sale.getReceiverId();
 		this.saleStatus = sale.getSaleStatus();
 		this.createdAt = sale.getCreatedAt();
 		this.modifiedAt = sale.getModifiedAt();
