@@ -10,14 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.campforest.backend.common.ApiResponse;
@@ -78,8 +71,8 @@ public class ProductController {
 	}
 
 	//게시물 정보 가져오기
-	@GetMapping
-	public ApiResponse<?> getProduct(@RequestParam Long productId) {
+	@GetMapping("/{productId}")
+	public ApiResponse<?> getProduct(@PathVariable Long productId) {
 		ProductDetailDto findProduct;
 		try {
 			findProduct = productService.getProduct(productId);
@@ -133,7 +126,7 @@ public class ProductController {
 
 	//게시물 삭제
 	@DeleteMapping()
-	public ApiResponse<?> deleteProduct(Authentication authentication, @RequestParam Long productId) throws Exception {
+	public ApiResponse<?> deleteProduct(Authentication authentication, @PathVariable Long productId) throws Exception {
 
 		Users user = userService.findByEmail(authentication.getName())
 			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
