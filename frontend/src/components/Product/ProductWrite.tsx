@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import Dropdown from './Dropdown';
 import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
+import { write } from '@services/productService';
 
 type Option = {
   id: number;
@@ -23,7 +24,17 @@ const categories: Option[] = [
 const ProductWrite = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Option>(categories[0]);
-  const buttons = [{label: '대여'}, {label: '판매'}, {label: '나눔'}];
+  const [selectedButton, setSelectedButton] = useState<string>('대여');
+  const buttons = ['대여', '판매', '나눔'];
+
+  const [formData, setFormData]= useState({
+    productName: '',
+    productPrice: 0,
+    productContent: '',
+    location: '구미리미리시 인도로동동',
+    deposit: 0,
+    productImageUrl: ''
+  })
 
   const handleToggle = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
@@ -33,14 +44,41 @@ const ProductWrite = () => {
     setSelectedCategory(option);
   };
 
+  const handleButtonClick = (button: string) => {
+    setSelectedButton(button);
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const submitData = {
+      ...formData,
+      productType: selectedButton,
+      category: selectedCategory.name,
+    };
+
+    write(submitData);
+  }
+
   return (
     <div className='flex justify-center'>
       <div className='w-[40rem]'>
-        <form className='mt-[2rem]'>
+        <form className='mt-[2rem]' onSubmit={handleSubmit}>
           {/* 제목, 카테고리 */}
           <div className='flex'>
             <input
               type='text'
+              name='productName'
+              value={formData.productName}
+              onChange={handleInputChange}
               placeholder='제목을 입력하세요.'
               className='w-[31rem] border-b px-[0.5rem] py-[0.25rem] me-[2rem] focus:outline-none' 
             />
@@ -62,16 +100,21 @@ const ProductWrite = () => {
           {/* 상품 설명 */}
           <div className='mb-[1.5rem]'>
             <div className='mb-[0.25rem] font-medium'>상품 설명</div>
-            <textarea 
-             className='resize-none border border-[#999999] min-h-[10rem] w-full focus:outline-none p-[1rem]'
-             placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉' />
+            <textarea
+              name='productContent'
+              value={formData.productContent}
+              onChange={handleInputChange}
+              className='resize-none border border-[#999999] min-h-[10rem] w-full focus:outline-none p-[1rem]'
+              placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉' />
           </div>
           {/* 거래 유형 */}
           <div className='mb-[1.5rem]'>
             <div className='my-[0.25rem] font-medium'>거래 유형</div>
             <div className='flex'>
               {buttons.map((button) => (
-                <div className='border me-[1rem] px-[2rem] py-[0.15rem] cursor-pointer'>{button.label}</div>
+                <div key={button} className={`border me-[1rem] px-[2rem] py-[0.15rem] cursor-pointer
+                  ${selectedButton === button ? 'bg-[#FF7F50] text-white' : ''}`}
+                  onClick={() => handleButtonClick(button)}>{button}</div>
               ))}
             </div>
           </div>
@@ -81,7 +124,10 @@ const ProductWrite = () => {
               <div className='my-[0.25rem] font-medium'>금액</div>
               <div className='flex'>
                 <input 
-                  className='w-[90%] px-[0.5rem] border-b me-[0.75rem] focus:outline-none' 
+                  name='productPrice'
+                  value={formData.productPrice}
+                  onChange={handleInputChange}
+                  className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
                 />
                 <div>원</div>
               </div>
@@ -90,7 +136,10 @@ const ProductWrite = () => {
               <div className='my-[0.25rem] font-medium'>보증금</div>
               <div className='flex'>
                 <input 
-                  className='w-[90%] px-[0.5rem] border-b me-[0.75rem] focus:outline-none' 
+                  name='deposit'
+                  value={formData.deposit}
+                  onChange={handleInputChange}
+                  className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
                 />
                 <div>원</div>
               </div>
@@ -107,7 +156,7 @@ const ProductWrite = () => {
             </div>
           </div>
           <div className='text-end'>
-            <button className='w-1/2 text-center bg-black text-white py-[0.35rem]'>작성 완료</button>
+            <button type='submit' className='w-1/2 text-center bg-black text-white py-[0.35rem]'>작성 완료</button>
           </div>
         </form>
       </div>
