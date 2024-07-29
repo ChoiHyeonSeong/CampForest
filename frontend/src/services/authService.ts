@@ -7,7 +7,7 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 type LoginResponse = {
-  accessToken: string,
+  Authorization: string,
   user: {
     userId: number,
     nickname: string,
@@ -20,17 +20,22 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
+const token = sessionStorage.getItem('accessToken');
+if (token) {
+  axiosInstance.defaults.headers['Authorization'] = token;
+}
+
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = sessionStorage.getItem('accessToken');
     if (token) {
-      axiosInstance.defaults.headers['Authorization'] = token;
+      config.headers['Authorization'] = token;
     }
     return config;
   },
   (error) => {
     console.log('Request interceptor error:', error);
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 );
 
@@ -52,7 +57,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 );
 
@@ -60,21 +65,22 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   try {
     const response = await axiosInstance.post('/user/auth/login', { email, password });
     const data = response.data.data;
-    const accessToken = response.headers.authorization;
+    const Authorization = response.headers.authorization;
     const user = { userId: data.userId, nickname: data.nickname, profileImage: data.profileImage }
     
-    if (accessToken) {
-      sessionStorage.setItem('accessToken', accessToken);
+    if (Authorization) {
+      sessionStorage.setItem('accessToken', Authorization);
       sessionStorage.setItem('userId', data.userId);
       sessionStorage.setItem('nickname', data.nickname);
       sessionStorage.setItem('profileImage', data.profileImage);
       sessionStorage.setItem('isLoggedIn', 'true');
-      axiosInstance.defaults.headers['Authorization'] = accessToken;
+      axiosInstance.defaults.headers['Authorization'] = Authorization;
+      console.log(axiosInstance.defaults.headers)
     } else {
       console.error('No access token received from server');
     }
 
-    return { accessToken, user };
+    return { Authorization, user };
   } catch (error) {
     console.error('Login failed:', error);
     throw error;

@@ -10,8 +10,8 @@ type ProductRegistDto = {
   location: string,
   productType: string,
   category: string,
-  productImageUrl: {},
-  deposit: number | undefined
+  // productImageUrl: {},
+  // deposit: number | undefined
 }
 
 type SearchParams = {

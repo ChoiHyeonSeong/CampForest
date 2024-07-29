@@ -16,8 +16,8 @@ type ProductRegistDto = {
   location: string,
   productType: string,
   category: string,
-  productImageUrl: {}
-  deposit: number | undefined
+  // productImageUrl: {}
+  // deposit: number | undefined
 }
 
 const categories: Option[] = [
@@ -48,8 +48,8 @@ const ProductWrite = () => {
     location: '구미리미리시 인도로동동',
     productType: 'RENT',
     category: '',
-    deposit: undefined,
-    productImageUrl: ''
+    // deposit: undefined,
+    // productImageUrl: ''
   })
 
   const handleToggle = (dropdown: string) => {
@@ -85,9 +85,9 @@ const ProductWrite = () => {
     
     const submitData = {
       ...formData,
-      productType: selectedButton,
+      productType: selectedButton === '대여' ? 'RENT' : 'SALE',
       category: selectedCategory.name,
-      productImageUrl: productImages
+      // productImageUrl: productImages
     };
 
     console.log(submitData);
@@ -212,7 +212,7 @@ const ProductWrite = () => {
                 <input 
                   type='number'
                   name='deposit'
-                  value={formData.deposit || ""}
+                  // value={formData.deposit || ""}
                   onChange={handleInputChange}
                   className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
                 />
