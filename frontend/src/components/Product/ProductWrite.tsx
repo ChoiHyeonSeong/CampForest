@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import Dropdown from './Dropdown';
 import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
+import { write } from '@services/productService';
+import MultiImageUpload from './multiImageUpload';
 
 type Option = {
   id: number;
   name: string;
 };
+
+type ProductRegistDto = {
+  productName: string,
+  productPrice: number | undefined,
+  productContent: string,
+  location: string,
+  productType: string,
+  category: string,
+  productImageUrl: {}
+  deposit: number | undefined
+}
 
 const categories: Option[] = [
   { id: 1, name: '분류 전체' },
@@ -23,7 +36,21 @@ const categories: Option[] = [
 const ProductWrite = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Option>(categories[0]);
-  const buttons = [{label: '대여'}, {label: '판매'}, {label: '나눔'}];
+  const [selectedButton, setSelectedButton] = useState<string>('대여');
+  const [productImages, setProductImages] = useState<File[]>([]);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const buttons = ['대여', '판매', '나눔'];
+
+  const [formData, setFormData]= useState<ProductRegistDto>({
+    productName: '',
+    productPrice: undefined,
+    productContent: '',
+    location: '구미리미리시 인도로동동',
+    productType: 'RENT',
+    category: '',
+    deposit: undefined,
+    productImageUrl: ''
+  })
 
   const handleToggle = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
@@ -33,64 +60,161 @@ const ProductWrite = () => {
     setSelectedCategory(option);
   };
 
+  const handleButtonClick = (button: string) => {
+    setSelectedButton(button);
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleImagesChange = (images: File[]) => {
+    setProductImages(images);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+    
+    const submitData = {
+      ...formData,
+      productType: selectedButton,
+      category: selectedCategory.name,
+      productImageUrl: productImages
+    };
+
+    console.log(submitData);
+
+    try { 
+      await write(submitData);
+    } catch (error) {
+
+    }
+  }
+
+  const validateForm = (): boolean => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (!formData.productName.trim()) {
+      newErrors.productName = '제목을 입력해주세요.';
+    }
+
+    if (!formData.productContent.trim()) {
+      newErrors.productContent = '상품 설명을 입력해주세요.';
+    }
+
+    if (formData.productPrice === undefined || formData.productPrice <= 0) {
+      newErrors.productPrice = '올바른 금액을 입력해주세요.';
+    }
+
+    if (selectedCategory.id === 1) {
+      newErrors.category = '카테고리를 선택해주세요.';
+    }
+
+    if (productImages.length === 0) {
+      newErrors.productImages = '최소 1개의 상품 사진을 업로드해주세요.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   return (
     <div className='flex justify-center'>
       <div className='w-[40rem]'>
-        <form className='mt-[2rem]'>
+        <form className='mt-[2rem]' onSubmit={handleSubmit}>
           {/* 제목, 카테고리 */}
-          <div className='flex'>
-            <input
-              type='text'
-              placeholder='제목을 입력하세요.'
-              className='w-[31rem] border-b px-[0.5rem] py-[0.25rem] me-[2rem] focus:outline-none' 
-            />
-            <div className='w-[7rem]'>
-            <Dropdown
-              label='Write'
-              options={categories}
-              isOpen={openDropdown === 'categories'}
-              onToggle={() => handleToggle('categories')}
-              onSelect={handleCategorySelect}
-              selectedOption={selectedCategory}
-            />
+          <div className='flex flex-col'>
+            <div className='flex'>
+              <input
+                type='text'
+                name='productName'
+                value={formData.productName}
+                onChange={handleInputChange}
+                placeholder='제목을 입력하세요.'
+                className='w-[31rem] border-b px-[0.5rem] py-[0.25rem] me-[2rem] focus:outline-none' 
+              />
+              <div className='w-[7rem]'>
+                <Dropdown
+                  label='Write'
+                  options={categories}
+                  isOpen={openDropdown === 'categories'}
+                  onToggle={() => handleToggle('categories')}
+                  onSelect={handleCategorySelect}
+                  selectedOption={selectedCategory}
+                />
+              </div>
+            </div>
+            <div className='flex justify-between'>
+              {errors.productName && <p className='text-red-500 text-xs mt-1'>{errors.productName}</p>}
+              {errors.category && <p className='text-red-500 text-xs mt-1'>{errors.category}</p>}
             </div>
           </div>
+          
           {/* 상품 사진 */}
-          <div className='w-[7.5rem] aspect-1 border my-[1.5rem]'>
-
+          <div className='my-[1.5rem]'>
+            <div className='mb-[0.25rem] font-medium'>상품 사진</div>
+            <MultiImageUpload onImagesChange={handleImagesChange} />
+            {errors.productImages && <p className='text-red-500 text-xs mt-1'>{errors.productImages}</p>}
           </div>
+          
           {/* 상품 설명 */}
           <div className='mb-[1.5rem]'>
             <div className='mb-[0.25rem] font-medium'>상품 설명</div>
-            <textarea 
-             className='resize-none border border-[#999999] min-h-[10rem] w-full focus:outline-none p-[1rem]'
-             placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉' />
+            <textarea
+              name='productContent'
+              value={formData.productContent}
+              onChange={handleInputChange}
+              className='resize-none border border-[#999999] min-h-[10rem] w-full focus:outline-none p-[1rem]'
+              placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉'
+            />
+            {errors.productContent && <p className='text-red-500 text-xs mt-1'>{errors.productContent}</p>}
           </div>
           {/* 거래 유형 */}
           <div className='mb-[1.5rem]'>
             <div className='my-[0.25rem] font-medium'>거래 유형</div>
             <div className='flex'>
               {buttons.map((button) => (
-                <div className='border me-[1rem] px-[2rem] py-[0.15rem] cursor-pointer'>{button.label}</div>
+                <div key={button} className={`border me-[1rem] px-[2rem] py-[0.15rem] cursor-pointer
+                  ${selectedButton === button ? 'bg-[#FF7F50] text-white' : ''}`}
+                  onClick={() => handleButtonClick(button)}>{button}</div>
               ))}
             </div>
           </div>
           {/* 금액, 보증금 */}
-          <div className='grid grid-cols-2 gap-[3rem] mb-[2rem]'>
+          <div className={`grid ${selectedButton === '대여' ? 'grid-cols-2' : ''} gap-[3rem] mb-[2rem]`}>
             <div>
               <div className='my-[0.25rem] font-medium'>금액</div>
-              <div className='flex'>
-                <input 
-                  className='w-[90%] px-[0.5rem] border-b me-[0.75rem] focus:outline-none' 
-                />
-                <div>원</div>
+              <div className='flex flex-col'>
+                <div className='flex'>
+                  <input
+                    type='number'
+                    name='productPrice'
+                    value={formData.productPrice || ""}
+                    onChange={handleInputChange}
+                    className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
+                  />
+                  <div>원</div>
+                </div>
+                {errors.productPrice && <p className='text-red-500 text-xs mt-1'>{errors.productPrice}</p>}
               </div>
             </div>
-            <div>
+            <div className={`${selectedButton === '대여' ? '' : 'hidden'}`}>
               <div className='my-[0.25rem] font-medium'>보증금</div>
               <div className='flex'>
                 <input 
-                  className='w-[90%] px-[0.5rem] border-b me-[0.75rem] focus:outline-none' 
+                  type='number'
+                  name='deposit'
+                  value={formData.deposit || ""}
+                  onChange={handleInputChange}
+                  className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
                 />
                 <div>원</div>
               </div>
@@ -107,7 +231,7 @@ const ProductWrite = () => {
             </div>
           </div>
           <div className='text-end'>
-            <button className='w-1/2 text-center bg-black text-white py-[0.35rem]'>작성 완료</button>
+            <button type='submit' className='w-1/2 text-center mb-[2rem] bg-black text-white py-[0.35rem]'>작성 완료</button>
           </div>
         </form>
       </div>

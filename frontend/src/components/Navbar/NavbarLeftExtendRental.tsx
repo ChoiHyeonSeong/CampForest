@@ -4,10 +4,12 @@ import EachCategory from './EachCategory';
 
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import campfire from '@assets/images/campfire.png'
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   isExtendMenuOpen: boolean;
-  toggleExtendMenu: (param:string) => void;
+  toggleExtendMenu:  (param:string) => void;
+  closeMenu: () => void;
 }
 
 type RentalCategoryObj = {
@@ -15,69 +17,86 @@ type RentalCategoryObj = {
   imgsrc: string;
   imgBgColor: string;
   imgWd: string;
+  linkUrl: string;
 }
 
 const NavbarLeftExtendRental = (props: Props) => {
+  const navigate = useNavigate();
+  const handleCategoryClick = (linkUrl: string) => {
+    props.closeMenu();
+    navigate(linkUrl);
+  }
+
   const rentalCategory: RentalCategoryObj[] = [
     {
       title: "전체",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "텐트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "의자",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "침낭/매트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "테이블",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "랜턴",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "코펠/식기",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "안전용품",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "버너/화로",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
     {
       title: "기타",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
-      imgWd: 'size-[5rem]'
+      imgWd: 'size-[5rem]',
+      linkUrl: 'product/list'
     },
   ]
 
@@ -96,7 +115,14 @@ const NavbarLeftExtendRental = (props: Props) => {
       <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide p-2 mx-10'>
         <div className="grid grid-cols-2 gap-4">
           {rentalCategory.map((eachObj, index) => (
-            <EachCategory key={index} title={eachObj.title} imgsrc={eachObj.imgsrc} imgBgColor={eachObj.imgBgColor} imgWd={eachObj.imgWd}/>
+            <div className='cursor-pointer' onClick={() => handleCategoryClick(eachObj.linkUrl)} >
+            <EachCategory
+              key={index} 
+              title={eachObj.title} 
+              imgsrc={eachObj.imgsrc} 
+              imgBgColor={eachObj.imgBgColor} 
+              imgWd={eachObj.imgWd}/>
+            </div>
           ))}
         </div>
       </div>

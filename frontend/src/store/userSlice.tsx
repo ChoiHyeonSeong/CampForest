@@ -25,6 +25,8 @@ const userSlice = createSlice({
       state.isLoggedIn = true;
     },
     clearUser: (state) => {
+      state.userId = 0;
+      state.nickname = '';
       state.profileImage = '';
       state.isLoggedIn = false;
     },

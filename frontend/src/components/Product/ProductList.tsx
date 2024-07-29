@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Component
 import ProductCard from './ProductCard';
 import ProductCard2 from './ProductCard2';
 import Dropdown from './Dropdown';
+import { list } from '@services/productService';
+import { Link } from 'react-router-dom';
 
 type Option = {
   id: number;
@@ -42,6 +44,7 @@ const locations: Option[] = [
 ];
 
 const ProductList = () => {
+
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isAccBtnActive, setIsAccBtnActive] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -81,9 +84,9 @@ const ProductList = () => {
       <div className="p-6 w-full lg:w-[60rem] xl:w-[66rem] lg:p-0">
         <div className="md:flex justify-between mt-6 mb-10 hidden items-center">
           <h3 className="font-medium md:text-2xl lg:text-3xl">상품 판매/대여</h3>
-          <div className="cursor-pointer px-2 py-1 bg-[#FF7F50] text-white rounded-sm text-sm">
+          <Link to='/product/write' className="cursor-pointer px-2 py-1 bg-[#FF7F50] text-white rounded-sm text-sm">
             작성하기
-          </div>
+          </Link>
         </div>
 
         <div className="w-full flex mb-10 h-12">
@@ -141,6 +144,7 @@ const ProductList = () => {
             <p>거래 가능</p>
           </div>
         </div>
+          <div onClick={() => list({productType: 'SALE'})}>게시글 목록 불러와보깅</div>
         <div className="w-full flex flex-wrap">
           <ProductCard />
           <ProductCard2 />

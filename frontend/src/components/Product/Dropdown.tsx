@@ -1,5 +1,4 @@
 import React from 'react';
-import { useState } from 'react';
 import { ReactComponent as RefreshIcon } from '@assets/icons/refresh.svg';
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg';
 

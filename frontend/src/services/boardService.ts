@@ -3,7 +3,7 @@ import axiosInstance from './authService';
 
 const API_URL = 'http://192.168.100.203:8080';
 
-export const write = async (userId: number, title: string, content: string, category: string, boardOpen: boolean) => {
+export const write = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
   const formData = new FormData();
   const value = {
     userId: userId,
@@ -14,6 +14,20 @@ export const write = async (userId: number, title: string, content: string, cate
   }
   const blob = new Blob([JSON.stringify(value)], {type: "application/json"})
   formData.append('boardRequestDto', blob);
+
+  if (images.length > 0) {
+    images.forEach((base64String, index) => {
+      const binaryString = window.atob(base64String.split(',')[1]);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const imageBlob = new Blob([bytes], { type: "image/png" })
+      formData.append(`files`, imageBlob, `${userId}_image_${index}.png`);
+    });
+  }
   
   try {
     console.log('write', axiosInstance.defaults.headers['Authorization'] );
@@ -30,12 +44,11 @@ export const write = async (userId: number, title: string, content: string, cate
   }
 }
 
-export const list = (page: number, size: number) => {
+export const getboardlist = (page: number, size: number) => {
   const params = { page: page, size: size };
   
   const response = axios.get(`${API_URL}/board`, {params});
   return response;
-  
 }
 
 export const detail = (boardId: number) => {
@@ -49,3 +62,4 @@ export const like = (boardId: number, userId: number) => {
   const response = axios.post(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
 }
+

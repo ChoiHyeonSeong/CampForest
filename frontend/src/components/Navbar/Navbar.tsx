@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
+import { setUser, clearUser } from '@store/userSlice';
 
 import NavbarTop from './NavbarTop';
 import NavbarLeft from './NavbarLeft';
@@ -15,6 +16,7 @@ import Aside from './Aside';
 
 const Navbar = () => {
   const user = useSelector((state: RootState) => state.userStore);
+  const dispatch = useDispatch();
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -118,6 +120,20 @@ const Navbar = () => {
     contentBox.addEventListener('click', closeMenu);
     
     window.addEventListener('resize', handleAllMenu);
+
+    const storedIsLoggedIn = sessionStorage.getItem('isLoggedIn');
+    if (storedIsLoggedIn === 'true') {
+      const storageObj = {
+        userId: Number(sessionStorage.getItem('userId')),
+        nickname: sessionStorage.getItem('nickname') || '',
+        profileImage: sessionStorage.getItem('profileImage') || ''
+      }
+      dispatch(setUser(storageObj));
+    } else {
+      dispatch(clearUser());
+    }
+    
+    console.log('페이지 접속')
   }, []);
 
   useEffect(() => {
@@ -181,7 +197,7 @@ const Navbar = () => {
 
       {/* 좌측 메뉴바 확장 */}
       <div>
-        <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu}/>
+        <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
         <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu}/>
         <NavbarLeftExtendChatList isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
         <Chat isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
