@@ -1,5 +1,4 @@
 import React from 'react';
-// import { ReactComponent as HeartOutline } from '@assets/icons/heart-outline.svg';
 import FireGif from '@assets/images/fire.gif';
 
 function Detail() {

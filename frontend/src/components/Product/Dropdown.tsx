@@ -13,13 +13,14 @@ type DropdownProps = {
   options: Option[];
   isOpen: boolean;
   onToggle: () => void;
+  onSelect: (option: Option) => void;
+  selectedOption: Option;
 };
 
-const Dropdown = ({ label, options, isOpen, onToggle }: DropdownProps) => {
-  const [selectedOption, setSelectedOption] = useState<Option>(options[0]);
+const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }: DropdownProps) => {
 
   const handleSelect = (option: Option) => {
-    setSelectedOption(option);
+    onSelect(option);
     onToggle();
   };
 
@@ -27,22 +28,22 @@ const Dropdown = ({ label, options, isOpen, onToggle }: DropdownProps) => {
     e.stopPropagation(); // Prevent triggering onToggle
     const optionOne = options.find(option => option.id === 1);
     if (optionOne) {
-      setSelectedOption(optionOne);
+      onSelect(optionOne);
     }
     if (isOpen) {
       onToggle(); // Close the dropdown if it's open
     }
   };
 
-  const shouldChangeIcon = selectedOption.id !== 1;
+  const shouldChangeIcon = label !== 'Write' && selectedOption.id !== 1;
 
   return (
     <div className="relative inline-block text-left">
       <div>
         <button
           type="button"
-          className={`inline-flex justify-between items-center w-full rounded-md border shadow-sm px-4 py-2 bg-white text-sm font-medium ${
-            shouldChangeIcon ? 'border-[#FF7F50] border-2' : 'border-gray-300'
+          className={`inline-flex justify-between items-center min-w-[7rem] w-full rounded-md border shadow-sm px-4 py-2 text-sm font-medium ${
+            shouldChangeIcon ? 'border-[#FF7F50]' : 'border-gray-300'
           } text-gray-700 hover:bg-gray-50 focus:outline-none`}
           onClick={onToggle}
         >
