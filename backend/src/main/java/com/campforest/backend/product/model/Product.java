@@ -59,6 +59,9 @@ public class Product {
 	@Enumerated(EnumType.STRING)
 	private ProductType productType;
 
+	@Column(name = "deposit")
+	private Long deposit;
+
 	@ColumnDefault("0")
 	private Long interest_hit;
 

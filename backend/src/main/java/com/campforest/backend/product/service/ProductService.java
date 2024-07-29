@@ -38,7 +38,9 @@ public class ProductService {
 	public void createProduct(ProductRegistDto productRegistDto) {
 
 		Product product = productRegistDto.toEntity();
-
+		if(productRegistDto.getProductType()==ProductType.RENT) {
+			product.setDeposit(product.getDeposit());
+		}
 		Product savedProduct = productRepository.save(product);
 
 		List<ProductImage> productImages = new ArrayList<>();
@@ -69,6 +71,10 @@ public class ProductService {
 			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
 
 		product.update(productUpdateDto);
+
+		if(product.getProductType()==ProductType.RENT) {
+			product.setDeposit(productUpdateDto.getDeposit());
+		}
 
 		// 기존 이미지 삭제
 		productImageRepository.deleteByProductId(productId);
@@ -114,6 +120,9 @@ public class ProductService {
 		dto.setLocation(product.getLocation());
 		List<ProductImage> productImages = product.getProductImages();
 		dto.setImageUrl(productImages.get(0).getImageUrl());
+		if(product.getProductType()==ProductType.RENT) {
+			dto.setDeposit(product.getDeposit());
+		}
 		return dto;
 	}
 

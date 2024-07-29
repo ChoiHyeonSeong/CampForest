@@ -19,5 +19,6 @@ public class ProductUpdateDto {
 	private String location;
 	private Category category;
 	private List<String> productImageUrl;
+	private Long deposit;
 
 }
