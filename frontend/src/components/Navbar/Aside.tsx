@@ -32,7 +32,7 @@ const Aside = (props: Props) => {
 
   return (
     <aside className='fixed bottom-14 right-5 md:bottom-8 md:right-5 z-10'>
-      <div className={`${props.user.isLoggedIn ? '' : 'block'} flex items-center mb-2 relative`}>
+      <div className={`${props.user.isLoggedIn ? '' : 'hidden'} flex items-center mb-2 relative`}>
         <div className='flex absolute right-2'>
           <div 
             className={`w-11 h-11 bg-black rounded-full flex flex-all-center transition-all duration-300 ease-in-out 
