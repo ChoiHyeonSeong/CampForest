@@ -76,6 +76,7 @@ public enum ErrorCode {
 	SALE_DENY_FAILED("S005", HttpStatus.BAD_REQUEST, "판매 거절에 실패했습니다."),
 	SALE_CONFIRM_FAILED("S006", HttpStatus.BAD_REQUEST, "구매 확정에 실패했습니다."),
 	SALE_NOT_FOUND("S007", HttpStatus.NOT_FOUND, "판매 정보를 찾을 수 없습니다."),
+	SALE_UPDATE_FAILED("S008", HttpStatus.BAD_REQUEST, "판매 업데이트를 할 수 없습니다"),
 
 	// Rent Error
 	RENT_REQUEST_FAILED("R001", HttpStatus.BAD_REQUEST, "판매 요청에 실패했습니다."),
@@ -84,6 +85,21 @@ public enum ErrorCode {
 	RENT_CONFIRM_FAILED("R004", HttpStatus.BAD_REQUEST, "구매 확정에 실패했습니다."),
 	RENT_NOT_FOUND("R005", HttpStatus.NOT_FOUND, "판매 정보를 찾을 수 없습니다."),
 	RENT_RESERVED_FAILED("R006", HttpStatus.BAD_REQUEST, "예약된 정보를 가져올 수 없습니다."),
+
+	// Chat Error
+	CHAT_ROOM_CREATION_FAILED("CH001", HttpStatus.BAD_REQUEST, "채팅방 생성에 실패했습니다."),
+	CHAT_ROOM_NOT_FOUND("CH002", HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
+	CHAT_MESSAGE_SEND_FAILED("CH003", HttpStatus.BAD_REQUEST, "메시지 전송에 실패했습니다."),
+	CHAT_HISTORY_NOT_FOUND("CH004", HttpStatus.NOT_FOUND, "채팅 기록을 찾을 수 없습니다."),
+	CHAT_MARK_READ_FAILED("CH005", HttpStatus.BAD_REQUEST, "메시지 읽음 처리에 실패했습니다."),
+	CHAT_UNREAD_COUNT_FAILED("CH006", HttpStatus.BAD_REQUEST, "읽지 않은 메시지 수 조회에 실패했습니다."),
+	CHAT_ROOM_LIST_FAILED("CH007", HttpStatus.BAD_REQUEST, "채팅방 목록 조회에 실패했습니다."),
+	RENT_UPDATE_FAILED("R007", HttpStatus.BAD_REQUEST, "예약 업데이트 불가능합니다."),
+
+	// Review Error
+	REVIEW_CREATION_FAILED("R008", HttpStatus.BAD_REQUEST, "리뷰 생성에 실패하였습니다."),
+	REVIEW_DELETE_FAILED("R009", HttpStatus.BAD_REQUEST, "리뷰 삭제에 실패하였습니다"),
+	REVIEW_READ_FAILED("R010", HttpStatus.BAD_REQUEST, "리뷰를 불러오는 데 실패하였습니다"),
 	;
 
 	private final String code;

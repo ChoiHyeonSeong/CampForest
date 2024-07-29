@@ -89,25 +89,18 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<BoardResponseDto> getUserBoards(Long userId) {
-		List<Boards> boardsList = boardRepository.findByUserId(userId);
-		List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
-		for (Boards board : boardsList) {
-			BoardResponseDto dto = convertToDto(board);
-			boardResponseDtos.add(dto);
-		}
-		return boardResponseDtos;
+	public Page<BoardResponseDto> getUserBoards(Long userId,int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+		Page<Boards> boardsPage = boardRepository.findByUserId(userId,pageable);
+
+		return  boardsPage.map(this::convertToDto);
 	}
 
 	@Override
-	public List<BoardResponseDto> getCategoryBoards(String category) {
-		List<Boards> boardsList = boardRepository.findByCategory(category);
-		List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
-		for (Boards board : boardsList) {
-			BoardResponseDto dto = convertToDto(board);
-			boardResponseDtos.add(dto);
-		}
-		return boardResponseDtos;
+	public Page<BoardResponseDto> getCategoryBoards(String category,int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+		Page<Boards> boardsPage = boardRepository.findByCategory(category,pageable);
+		return boardsPage.map(this::convertToDto);
 	}
 
 	@Transactional
@@ -153,6 +146,7 @@ public class BoardServiceImpl implements BoardService {
 			.boardId(boardId)
 			.userId(userId)
 			.build();
+		boardRepository.plusLikeCount(boardId);
 		likeRepository.save(likes);
 
 	}
@@ -160,6 +154,7 @@ public class BoardServiceImpl implements BoardService {
 	@Transactional
 	@Override
 	public void deleteLike(Long boardId, Long userId) {
+		boardRepository.minusLikeCount(boardId);
 		likeRepository.deleteByBoardIdAndUserId(boardId, userId);
 	}
 

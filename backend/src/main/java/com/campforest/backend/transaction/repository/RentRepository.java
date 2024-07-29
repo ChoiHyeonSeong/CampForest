@@ -11,11 +11,11 @@ import com.campforest.backend.transaction.model.Sale;
 
 public interface RentRepository extends JpaRepository<Rent, Long> {
 
-	Optional<Rent> findByProductIdAndRenterId(Long productId, Long renterId);
+	Optional<Rent> findByProductIdAndRequesterId(Long productId, Long requesterId);
 
-	Optional<Rent> findRentByRenterIdAndOwnerId(Long renterId, Long ownerId);
+	Optional<Rent> findByRequesterIdAndReceiverId(Long requesterId, Long receiverId);
 
-	Optional<Rent> findByProductIdAndRenterIdAndOwnerId(Long productId, Long renterId, Long ownerId);
+	Optional<Rent> findByProductIdAndRequesterIdAndReceiverId(Long productId, Long requesterId, Long receiverId);
 
 	List<Rent> findByProductIdAndRentStartDateAfter(Long productId, LocalDate currentDate);
 
