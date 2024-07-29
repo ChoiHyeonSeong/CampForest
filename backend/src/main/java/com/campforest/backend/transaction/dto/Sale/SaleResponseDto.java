@@ -23,6 +23,7 @@ public class SaleResponseDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 	private String productName;
+	private LocalDateTime meetingTime;
 	private ProductType productType;
 	private Long productPrice;
 	private String location;
@@ -36,6 +37,7 @@ public class SaleResponseDto {
 		this.receiverId = sale.getReceiverId();
 		this.saleStatus = sale.getSaleStatus();
 		this.createdAt = sale.getCreatedAt();
+		this.meetingTime = sale.getMeetingTime();
 		this.modifiedAt = sale.getModifiedAt();
 		this.productName = sale.getProduct().getProductName();
 		this.productType = sale.getProduct().getProductType();

@@ -72,6 +72,9 @@ public class Rent {
 	@Column(name = "deposit")
 	private Long deposit;
 
+	@Column(name = "meeting_time")
+	private LocalDateTime meetingTime;
+
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
 

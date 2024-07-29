@@ -14,8 +14,8 @@ public class RentRequestDto {
 	private Long ownerId;
 	private LocalDateTime rentStartDate;
 	private LocalDateTime rentEndDate;
+	private LocalDateTime meetingTime;
 	private Long deposit;
-	private String requestRole; //이건 판매자인지 구매자인지. "seller" or "buyer"
 	private Long requesterId;
 	private Long receiverId;
 
