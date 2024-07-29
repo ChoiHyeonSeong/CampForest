@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as WhiteLogoIcon } from '@assets/logo/logo-darkmode.svg'
+// import { ReactComponent as WhiteLogoIcon } from '@assets/logo/logo-darkmode.svg'
 
 
 const LoadingModal= () => {
