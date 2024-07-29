@@ -85,10 +85,10 @@ public class Rent {
 	@JsonManagedReference
 	private List<Review> reviews;
 
-	@Column(columnDefinition = "boolean default false")
+	@Column(name = "confirmed_by_buyer", columnDefinition = "boolean default false")
 	private boolean confirmedByBuyer;
 
-	@Column(columnDefinition = "boolean default false")
+	@Column(name = "confirmed_by_seller", columnDefinition = "boolean default false")
 	private boolean confirmedBySeller;
 
 	public void requestRent() {
@@ -105,11 +105,11 @@ public class Rent {
 		this.modifiedAt = LocalDateTime.now();
 	}
 
-	public void confirmRent(String requestRole) {
-		if ("buyer".equals(requestRole)) {
-			this.confirmedByBuyer = true;
-		} else if ("seller".equals(requestRole)) {
+	public void confirmRent(boolean isOwner) {
+		if (isOwner) {
 			this.confirmedBySeller = true;
+		} else {
+			this.confirmedByBuyer = true;
 		}
 		this.modifiedAt = LocalDateTime.now();
 	}

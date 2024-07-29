@@ -17,9 +17,11 @@ import com.campforest.backend.transaction.model.TransactionStatus;
 import com.campforest.backend.transaction.repository.RentRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RentService {
 
 	private final RentRepository rentRepository;
@@ -82,10 +84,9 @@ public class RentService {
 
 		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
 
-		boolean isRequesterOwner = requesterId.equals(product.getUserId());
-
-		rents[0].confirmRent(isRequesterOwner ? "owner" : "renter");
-		rents[1].confirmRent(isRequesterOwner ? "renter" : "owner");
+		boolean isRequesterOwner = requesterId.equals(rentRequestDto.getOwnerId());
+		rents[0].confirmRent(isRequesterOwner); // 소유자가 요청자일 경우
+		rents[1].confirmRent(!isRequesterOwner); // 소유자가 아닌 경우
 
 		if (rents[0].isFullyConfirmed() && rents[1].isFullyConfirmed()) {
 			rents[0].setRentStatus(TransactionStatus.CONFIRMED);
@@ -176,7 +177,7 @@ public class RentService {
 	}
 
 	private Long determineReceiverId(Product product, Long requesterId, RentRequestDto rentRequestDto) {
-		return requesterId.equals(product.getUserId()) ? rentRequestDto.getRenterId() : product.getUserId();
+		return requesterId.equals(product.getUserId()) ? rentRequestDto.getOwnerId() : rentRequestDto.getRenterId();
 	}
 
 	private Rent[] getRents(RentRequestDto rentRequestDto, Long requesterId, Long receiverId) {

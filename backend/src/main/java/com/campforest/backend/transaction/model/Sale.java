@@ -96,11 +96,11 @@ public class Sale {
 		this.modifiedAt = LocalDateTime.now();
 	}
 
-	public void confirmSale(String requestRole) {
-		if ("buyer".equals(requestRole)) {
-			this.confirmedByBuyer = true;
-		} else if ("seller".equals(requestRole)) {
+	public void confirmSale(boolean isOwner) {
+		if (isOwner) {
 			this.confirmedBySeller = true;
+		} else {
+			this.confirmedByBuyer = true;
 		}
 		this.modifiedAt = LocalDateTime.now();
 	}

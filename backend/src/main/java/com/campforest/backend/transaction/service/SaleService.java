@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleRequestDto;
 import com.campforest.backend.transaction.dto.Sale.SaleResponseDto;
 import com.campforest.backend.transaction.model.Sale;
@@ -80,10 +81,9 @@ public class SaleService {
 
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
 
-		boolean isRequesterSeller = requesterId.equals(product.getUserId());
-
-		sales[0].confirmSale(isRequesterSeller ? "seller" : "buyer");
-		sales[1].confirmSale(isRequesterSeller ? "buyer" : "seller");
+		boolean isRequesterSeller = requesterId.equals(saleRequestDto.getSellerId());
+		sales[0].confirmSale(isRequesterSeller); // 소유자가 요청자일 경우
+		sales[1].confirmSale(!isRequesterSeller); // 소유자가 아닌 경우
 
 		if (sales[0].isFullyConfirmed() && sales[1].isFullyConfirmed()) {
 			sales[0].setSaleStatus(TransactionStatus.CONFIRMED);
@@ -158,8 +158,9 @@ public class SaleService {
 	}
 
 	private Long determineReceiverId(Product product, Long requesterId, SaleRequestDto saleRequestDto) {
-		return requesterId.equals(product.getUserId()) ? saleRequestDto.getBuyerId() : product.getUserId();
+		return requesterId.equals(product.getUserId()) ? saleRequestDto.getSellerId() :saleRequestDto.getBuyerId();
 	}
+
 
 	private Sale[] getSales(SaleRequestDto saleRequestDto, Long requesterId, Long receiverId) {
 		Sale sale1 = saleRepository.findByProductIdAndRequesterIdAndReceiverId(saleRequestDto.getProductId(),
