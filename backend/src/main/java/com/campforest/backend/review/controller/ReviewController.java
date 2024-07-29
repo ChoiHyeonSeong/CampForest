@@ -16,9 +16,7 @@ import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.review.dto.ReviewRequestDto;
 import com.campforest.backend.review.model.Review;
 import com.campforest.backend.review.service.ReviewService;
-import com.campforest.backend.transaction.dto.Rent.RentGetRequestDto;
-import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
-import com.campforest.backend.transaction.model.Rent;
+
 import com.campforest.backend.transaction.service.RentService;
 import com.campforest.backend.transaction.service.SaleService;
 import com.campforest.backend.user.model.Users;
