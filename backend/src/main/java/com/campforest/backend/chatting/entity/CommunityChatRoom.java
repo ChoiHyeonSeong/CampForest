@@ -31,15 +31,11 @@ public class CommunityChatRoom {
 	@Column(name = "user2_id")
 	private Long user2;
 
-	@Column(name = "unread_count")
-	private Long unreadCount;
-
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
 	@PrePersist
 	protected void onCreate() {
-		unreadCount=0L;
 		createdAt = LocalDateTime.now();
 	}
 }

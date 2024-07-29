@@ -61,7 +61,6 @@ public class CommunityChatServiceImpl implements CommunityChatService {
         communityChatMessageRepository.saveAll(unreadMessages);
 
         CommunityChatRoom chatRoom = communityChatRoomRepository.findById(roomId).orElseThrow();
-        chatRoom.setUnreadCount(0L);
         communityChatRoomRepository.save(chatRoom);
     }
     @Override

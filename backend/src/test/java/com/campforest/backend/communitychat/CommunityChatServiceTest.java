@@ -44,10 +44,10 @@ class CommunityChatServiceTest {
         when(communityChatService.createOrGetChatRoom(user1Id, user2Id)).thenReturn(chatDto);
 
         ApiResponse<?> response = communityChatController.createChatRoom(user1Id, user2Id);
-
         assertNotNull(response);
+        assertEquals("C000", response.getStatus());
         assertEquals("채팅방 생성 성공하였습니다", response.getMessage());
-    }
+ }
 
     @Test
     void testSendMessage() {
@@ -67,10 +67,11 @@ class CommunityChatServiceTest {
         List<CommunityChatMessage> messages = new ArrayList<>();
         when(communityChatService.getChatHistory(roomId)).thenReturn(messages);
 
-        ApiResponse<List<CommunityChatMessage>> response = communityChatController.getChatHistory(roomId);
+        ApiResponse<?> response = communityChatController.getChatHistory(roomId);
 
         assertNotNull(response);
-        assertEquals("메시지 조회 성공", response.getMessage());
+        assertEquals("C000", response.getStatus());
+        assertEquals("채팅 메시지 조회 성공", response.getMessage());
         assertEquals(messages, response.getData());
     }
 
@@ -82,7 +83,8 @@ class CommunityChatServiceTest {
         ApiResponse<?> response = communityChatController.markMessagesAsRead(roomId, userId);
 
         assertNotNull(response);
-        assertEquals("메세지 읽음처리 성공", response.getMessage());
+        assertEquals("C000", response.getStatus());
+        assertEquals("메시지를 읽음 처리 성공.", response.getMessage());
         verify(communityChatService, times(1)).markMessagesAsRead(roomId, userId);
     }
 
@@ -93,11 +95,12 @@ class CommunityChatServiceTest {
         Long unreadCount = 5L;
         when(communityChatService.getUnreadMessageCount(roomId, userId)).thenReturn(unreadCount);
 
-        ResponseEntity<Long> response = communityChatController.getUnreadMessageCount(roomId, userId);
+        ApiResponse<?> response = communityChatController.getUnreadMessageCount(roomId, userId);
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(unreadCount, response.getBody());
+        assertEquals("C000", response.getStatus());
+        assertEquals("읽지 않은 메시지 수를 가져오기 성공.", response.getMessage());
+        assertEquals(unreadCount, response.getData());
     }
 
     @Test
@@ -106,10 +109,11 @@ class CommunityChatServiceTest {
         List<CommunityChatRoomListDto> rooms = new ArrayList<>();
         when(communityChatService.getChatRoomsForUser(userId)).thenReturn(rooms);
 
-        ResponseEntity<List<CommunityChatRoomListDto>> response = communityChatController.getChatRoomsForUser(userId);
+        ApiResponse<?> response = communityChatController.getChatRoomsForUser(userId);
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(rooms, response.getBody());
+        assertEquals("C000", response.getStatus());
+        assertEquals("채팅방 목록 가져오기 성공", response.getMessage());
+        assertEquals(rooms, response.getData());
     }
 }
