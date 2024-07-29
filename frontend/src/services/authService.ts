@@ -58,7 +58,7 @@ axiosInstance.interceptors.response.use(
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    const response = await axiosInstance.post('/user/login', { email, password });
+    const response = await axiosInstance.post('/user/auth/login', { email, password });
     const data = response.data.data;
     const accessToken = response.headers.authorization;
     const user = { userId: data.userId, nickname: data.nickname, profileImage: data.profileImage }
@@ -79,7 +79,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 
 export const refreshToken = async() => {
  // refreshToken 요청에는 인터셉터를 적용하지 않음
- const response = await axios.post(`${API_URL}/user/refreshToken`, {}, {
+ const response = await axios.post(`${API_URL}/user/auth/refreshToken`, {}, {
     withCredentials: true
   });
   const accessToken = response.headers['Authorization'];
@@ -91,7 +91,7 @@ export const refreshToken = async() => {
 
 export const logout = async () => {
   try {
-    await axiosInstance.post('/user/logout');
+    await axiosInstance.post('/user/auth/logout');
 
     // 토큰 제거
     localStorage.removeItem('accessToken');

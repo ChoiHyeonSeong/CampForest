@@ -5,12 +5,13 @@ const API_URL = 'http://192.168.100.203:8080';
 
 type ProductRegistDto = {
   productName: string,
-  productPrice: number,
+  productPrice: number | undefined,
   productContent: string,
   location: string,
   productType: string,
   category: string,
-  productImageUrl: {}
+  productImageUrl: {},
+  deposit: number | undefined
 }
 
 export const write = async (productRegistDto: ProductRegistDto) => {
