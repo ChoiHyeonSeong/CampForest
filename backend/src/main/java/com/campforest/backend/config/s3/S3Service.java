@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Optional;
+import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,7 +23,6 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,26 +38,36 @@ public class S3Service {
 
 	private final String DIR_NAME = "picture";
 
-	public String upload(String fileName, MultipartFile multipartFile, String extend) throws
-		IOException { // dirName의 디렉토리가 S3 Bucket 내부에 생성됨
+	public String upload(String fileName, MultipartFile multipartFile, String extend) throws IOException {
 		File uploadFile = convert(multipartFile)
 			.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
 		return upload(fileName, uploadFile, extend);
 	}
 
 	private String upload(String fileName, File uploadFile, String extend) {
-		String newFileName = DIR_NAME + "/" + fileName + extend;
+		String newFileName = buildFileName(fileName, extend);
+		log.info(newFileName);
 		String uploadImageUrl = putS3(uploadFile, newFileName);
-		removeNewFile(uploadFile);  // convert()함수로 인해서 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
-		return uploadImageUrl;      // 업로드된 파일의 S3 URL 주소 반환
+		removeNewFile(uploadFile);
+		return uploadImageUrl;
+	}
+
+	private String buildFileName(String fileName, String extend) {
+		String uuid = UUID.randomUUID().toString();
+		if (fileName.endsWith(extend)) {
+			return DIR_NAME + "/" + uuid + "_" + fileName;
+		}
+		return DIR_NAME + "/" + uuid + "_" + fileName + extend;
 	}
 
 	private String putS3(File uploadFile, String fileName) {
 		amazonS3.putObject(
 			new PutObjectRequest(bucket, fileName, uploadFile)
-				.withCannedAcl(CannedAccessControlList.PublicRead)    // PublicRead 권한으로 업로드 됨
+				.withCannedAcl(CannedAccessControlList.PublicRead)
 		);
-		return amazonS3.getUrl(bucket, fileName).toString();
+		String s3Url = amazonS3.getUrl(bucket, fileName).toString();
+		log.info(s3Url);
+		return s3Url;
 	}
 
 	private void removeNewFile(File targetFile) {
