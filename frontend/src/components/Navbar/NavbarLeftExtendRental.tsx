@@ -115,13 +115,13 @@ const NavbarLeftExtendRental = (props: Props) => {
       <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide p-2 mx-10'>
         <div className="grid grid-cols-2 gap-4">
           {rentalCategory.map((eachObj, index) => (
-            <div className='cursor-pointer' onClick={() => handleCategoryClick(eachObj.linkUrl)} >
-            <EachCategory
-              key={index} 
-              title={eachObj.title} 
-              imgsrc={eachObj.imgsrc} 
-              imgBgColor={eachObj.imgBgColor} 
-              imgWd={eachObj.imgWd}/>
+            <div key={index} className='cursor-pointer' onClick={() => handleCategoryClick(eachObj.linkUrl)} >
+              <EachCategory
+                title={eachObj.title} 
+                imgsrc={eachObj.imgsrc} 
+                imgBgColor={eachObj.imgBgColor} 
+                imgWd={eachObj.imgWd}/
+              >
             </div>
           ))}
         </div>

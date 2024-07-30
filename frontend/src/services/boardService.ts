@@ -1,9 +1,10 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = 'http://192.168.100.203:8080';
+// const API_URL = 'http://192.168.100.203:8080';
+const API_URL = 'http://192.168.100.167:8080';
 
-export const write = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
+export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
   const formData = new FormData();
   const value = {
     userId: userId,
@@ -44,21 +45,42 @@ export const write = async (userId: number, title: string, content: string, cate
   }
 }
 
-export const getboardlist = (page: number, size: number) => {
+export const boardList = (page: number, size: number) => {
   const params = { page: page, size: size };
   
   const response = axios.get(`${API_URL}/board`, {params});
   return response;
 }
 
-export const detail = (boardId: number) => {
+export const filteredBoardList = (category: string, page: number, size: number) => {
+  const params = { category: category, page: page, size: size };
+  
+  const response = axios.get(`${API_URL}/board/category`, {params});
+  return response;
+}
+
+export const boardDetail = (boardId: number) => {
   const params = { boardId: boardId };
 
   const response = axios.get(`${API_URL}/board/detail`, {params});
-  console.log(response);
+  return response;
 }
 
-export const like = (boardId: number, userId: number) => {
+// export const boardUpdate = (boardId: number) => {
+//   const params = { boardId: boardId };
+
+//   const response = axios.delete(`${API_URL}/board`, {params});
+//   return response;
+// }
+
+export const boardDelete = (boardId: number) => {
+  const params = { boardId: boardId };
+
+  const response = axios.delete(`${API_URL}/board`, {params});
+  return response;
+}
+
+export const boardLike = (boardId: number, userId: number) => {
   const response = axios.post(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
 }

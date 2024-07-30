@@ -4,7 +4,7 @@ import { ReactComponent as BookmarkEmpty } from '@assets/icons/bookmark-empty.sv
 import { ReactComponent as MoreDot} from '@assets/icons/more-dots.svg'
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
-import { like } from '@services/boardService'
+import { boardLike, boardDelete } from '@services/boardService'
 
 type Board = {
   boardId: number;
@@ -27,7 +27,7 @@ const Board = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
   const handleLike = () => {
     console.log(props.board.boardId, user.userId)
-    like(props.board.boardId, user.userId);
+    boardLike(props.board.boardId, user.userId);
   }
 
   return (
@@ -45,7 +45,7 @@ const Board = (props: Props) => {
               <button className='py-2 ps-2 pe-5'>수정하기</button>
             </div>
             <div className='w-full text-center'>
-              <button className='py-2 ps-2 pe-5'>삭제하기</button>
+              <button className='py-2 ps-2 pe-5' onClick={() => boardDelete(props.board.boardId)}>삭제하기</button>
             </div>
          </div>
         </div>
@@ -53,7 +53,8 @@ const Board = (props: Props) => {
       <div className='-mx-[1.5rem] md:mx-0'>
         <img 
           src={props.board.imageUrls[0]} 
-          className={`${props.board.imageUrls.length == 0 ? 'hidden' : ''} 
+          alt='NOIMG'
+          className={`${props.board.imageUrls.length === 0 ? 'hidden' : ''} 
           inline-block w-full static aspect-w-4 aspect-h-3`} 
         />
         <div className='mx-[1.5rem] md:mx-0 py-[1rem] px-[0.5rem]'>

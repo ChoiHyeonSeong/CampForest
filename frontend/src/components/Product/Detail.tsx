@@ -1,6 +1,6 @@
 import React from 'react';
 import FireGif from '@assets/images/fire.gif';
-import MoreOptionsMenu from '@components/MoreOptionsMenu';
+import MoreOptionsMenu from '@components/Public/MoreOptionsMenu';
 import ProductCard from '@components/Product/ProductCard';
 import ProfileImgEX from '@assets/images/productExample.png'
 

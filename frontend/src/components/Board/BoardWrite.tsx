@@ -4,21 +4,26 @@ import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.sv
 import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsBoardWriteModal } from '@store/modalSlice'
-import { write } from '@services/boardService'
+import { boardWrite } from '@services/boardService'
 import { RootState } from '@store/store'
 
-type BoardOpen = {
+type CategoryType = {
+  text: string;
+  value: string;
+}
+
+type BoardOpenType = {
   text: string;
   bool: boolean;
 }
 
-const Write = () => {
+const BoardWrite = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const user = useSelector((state: RootState) => state.userStore);
   const isBoardWriteModal = useSelector((state: RootState) => state.modalStore.isBoardWriteModal)
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
-  const [category, setCategory] = useState<string>('카테고리');
+  const [category, setCategory] = useState<CategoryType>({text: '캠핑장 후기', value: 'place'});
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState<boolean>(false);
   const [boardOpen, setBoardOpen] = useState<boolean>(true);
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
@@ -28,26 +33,41 @@ const Write = () => {
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
     try {
-      await write(user.userId, title, content, category, boardOpen, uploadedImage);
+      await boardWrite(user.userId, title, content, category.value, boardOpen, uploadedImage);
       dispatch(setIsBoardWriteModal(false));
     } catch (error) {
       console.log(error)
     }
   }
 
-  const categories: string[] = [
-    '카테고리1', 
-    '카테고리2', 
-    '카테고리3', 
-    '카테고리4', 
-    '카테고리5', 
-    '카테고리6', 
-    '카테고리7', 
-    '카테고리8', 
-    '카테고리9'
+  const categories: CategoryType[] = [
+    {
+      text: '캠핑장 후기',
+      value: 'place'
+    },
+    {
+      text: '장비 후기',
+      value: 'equipment'
+    },
+    {
+      text: '레시피 추천',
+      value: 'recipe'
+    },
+    {
+      text: '캠핑장 양도',
+      value: 'assign'
+    },
+    {
+      text: '자유게시판',
+      value: 'free'
+    },
+    {
+      text: '질문게시판',
+      value: 'question'
+    },
   ];
 
-  const boradOpenBoolean: BoardOpen[] = [
+  const boradOpenBoolean: BoardOpenType[] = [
     {
       text: '공개',
       bool: true
@@ -63,7 +83,7 @@ const Write = () => {
     setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
   };
 
-  const selectCategory = (cat: string) => {
+  const selectCategory = (cat: CategoryType) => {
     setCategory(cat);
     setIsCategoryDropdownOpen(false);
   }
@@ -89,10 +109,15 @@ const Write = () => {
     }
   };
 
+  const handleRemoveImage = (index: number) => {
+    setUploadedImage(prev => prev.filter((_, i) => i !== index));
+  };
+
+
   const formClear = () => {
     setTitle('');
     setContent('');
-    setCategory('카테고리');
+    setCategory({text: '캠핑장 후기', value: 'place'});
     setIsCategoryDropdownOpen(false);
     setBoardOpen(true);
     setIsBoardOpenDropdownOpen(false);
@@ -122,7 +147,7 @@ const Write = () => {
             <div className='flex items-baseline justify-between mb-[1rem]'>
               <div className='relative'>
                 <div className='w-[10rem] flex justify-between items-center ms-2 border-b md:border border-black md:rounded-md md:px-4 py-[0.3rem]' onClick={toggleCategoryDropdown}>
-                  {category}
+                  {category.text}
                   <ArrowBottomIcon className='ms-6 inline size-[1rem]'/>
                 </div>
                 <div 
@@ -136,7 +161,7 @@ const Write = () => {
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => selectCategory(eachCategory)}
                     >
-                      {eachCategory}
+                      {eachCategory.text}
                     </div>
                   ))}
                 </div>
@@ -189,9 +214,10 @@ const Write = () => {
               {uploadedImage.map((eachImage, index) => (
                 <div 
                   key={index} 
-                  className="size-[6rem] flex-shrink-0 rounded-md bg-gray-300 md:mb-[2rem] me-5"
+                  className="size-[6rem] cursor-pointer flex-shrink-0 rounded-md bg-gray-300 md:mb-[2rem] me-5"
+                  onClick={() => handleRemoveImage(index)}
                 >
-                  <img src={eachImage} alt="NOIMG" className='w-full h-full'/>
+                  <img src={eachImage} alt="NOIMG" className='w-full h-full rounded-md'/>
                 </div>
               ))}
 
@@ -228,4 +254,4 @@ const Write = () => {
   )
 }
 
-export default Write;
+export default BoardWrite;
