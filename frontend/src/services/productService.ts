@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = 'http://192.168.100.203:8080';
+const API_URL = 'http://192.168.100.167:8080';
 
 type ProductRegistDto = {
   productName: string,
@@ -10,8 +10,7 @@ type ProductRegistDto = {
   location: string,
   productType: string,
   category: string,
-  // productImageUrl: {},
-  // deposit: number | undefined
+  deposit: number | undefined
 }
 
 type SearchParams = {
@@ -25,10 +24,14 @@ type SearchParams = {
   size?: number
 }
 
-export const write = async (productRegistDto: ProductRegistDto) => {
+export const write = async (productRegistDto: ProductRegistDto, productImages: File[]) => {
   const formData = new FormData();
   const blob = new Blob([JSON.stringify(productRegistDto)], {type: 'application/json'});
   formData.append('productRegistDto', blob);
+
+  productImages.forEach((file, index) => {
+    formData.append(`files`, file);
+  });
 
   try {
     const response = await axiosInstance.post('/product', formData, {

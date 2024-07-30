@@ -6,6 +6,19 @@ import { useInView } from 'react-intersection-observer';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
 
+type BoardType = {
+  boardId: number;
+  userId: number;
+  title: string;
+  content: string;
+  category: string;
+  likeCount: number;
+  createdAt: string;
+  modifiedAt: string;
+  imageUrls: string[];
+  boardOpen: boolean;
+}
+
 function Main() {
   const dispatch = useDispatch();
 

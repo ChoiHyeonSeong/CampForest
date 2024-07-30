@@ -22,6 +22,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
+import BoardDetail from '@components/Board/BoardDetail';
 
 function App() {
   const dispatch = useDispatch()
