@@ -7,7 +7,7 @@ type Props = {}
 
 const ProfileEdit = (props: Props) => {
   return (
-    <div className='md:mt-[1rem] lg:mt-[3rem] mx-auto p-6 md:w-[40rem] lg:p-0'>
+    <div className='md:mt-[1rem] lg:mt-[3rem] mx-auto p-6 md:w-[40rem] lg:p-0 mb-10'>
       <div className='flex md:justify-center items-center pb-[0.75rem] md:text-[2rem] md:border-b-2 border-[#333] text-[#333] mb-3 md:mb-10'>
         <LeftArrow className='md:hidden me-3 cursor-pointer w-5 h-5'/>
         <div className='max-md:text-[1.5rem]'>프로필 수정</div>

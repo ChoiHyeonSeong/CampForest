@@ -5,10 +5,23 @@ import Board from '@components/Board/Board';
 import { getboardlist } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
 
+type BoardType = {
+  boardId: number;
+  userId: number;
+  title: string;
+  content: string;
+  category: string;
+  likeCount: number;
+  createdAt: string;
+  modifiedAt: string;
+  imageUrls: string[];
+  boardOpen: boolean;
+}
+
 function Main() {
   const [ref, inView] = useInView();
 
-  const [boards, setBoards] = useState<Board[]>([]);
+  const [boards, setBoards] = useState<BoardType[]>([]);
   const [boardsPage, setboardPage] = useState<number>(0);
 
   const fetchBoards = async () => {

@@ -21,6 +21,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
+import BoardDetail from '@components/Board/BoardDetail';
 
 function App() {
   const dispatch = useDispatch()
@@ -65,6 +66,7 @@ function App() {
             <Route path='/product/*' element={<Product />}/>
             <Route path='/camping' element={<CampingSearch/> }/>
             <Route path='/user/password/*' element={<FindPassword />}/>
+            <Route path='/board/detail' element={<BoardDetail />}/>
           </Routes>
           {/* 여기까지 컨텐츠 */}
         </div> 

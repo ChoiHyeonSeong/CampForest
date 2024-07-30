@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { ReactComponent as EyeIcon } from '@assets/icons/eyes.svg'
 import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
+import { ReactComponent as BlackHeartIcon } from '@assets/icons/heart-black.svg'
+
 import ProfileImgEX from '@assets/images/productExample.png'
 
 // 판매완료 보기용 임시 컴포넌트
@@ -52,7 +54,7 @@ const ProductCard2 = () => {
             <span className='text-sm'>14</span>
           </div>
           <div className='flex items-center'>
-            <FillHeartIcon className=' size-3 md:size-4 me-1 fill-gray-700' />
+            <BlackHeartIcon className=' size-3 md:size-4 me-1 fill-gray-700' />
             <span className='text-sm'>43</span>
           </div>
         </div>
