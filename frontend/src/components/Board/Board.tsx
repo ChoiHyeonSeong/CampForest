@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ReactComponent as HeartOutline } from '@assets/icons/heart-outline.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 import { ReactComponent as BookmarkEmpty } from '@assets/icons/bookmark-empty.svg'
-// import { ReactComponent as BookmarkFill } from '@assets/icons/bookmark-fill.svg'
+import { ReactComponent as BookmarkFill } from '@assets/icons/bookmark-fill.svg'
 import { ReactComponent as CommentIcon} from '@assets/icons/comment.svg'
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
@@ -103,10 +103,10 @@ const Board = (props: Props) => {
   }, [props.board.createdAt]); // modifiedAt이 변경될 때마다 실행
 
   return (
-    <div className='w-full min-w-[22rem] border-b border-[#EEEEEE]'>
+    <div className='w-full lg:h-fit min-w-[22rem] min-h-[40rem] border-b border-[#EEEEEE] bg-white shadow-lg'>
 
       {/* 포스팅 상단바 */}
-      <div className='flex justify-between items-center h-[3.5rem] mb-4'>
+      <div className='flex justify-between h-20 px-2 py-4'>
         <div className='flex '>
           <div className='rounded-full size-11 md:size-12 shadow-md overflow-hidden'></div>
           <div className='ms-[1rem]'>
@@ -123,13 +123,13 @@ const Board = (props: Props) => {
       </div>
 
       {/* 사진 및 내용 */}
-      <div className='mb-2' onClick={goBoardDetail}>
+      <div className='mb-2 w-full' onClick={goBoardDetail}>
         {/* 사진 */}
-        <div className={`relative w-full pb-[75%] ${props.board.imageUrls.length > 0 ? '' : 'bg-gray-300'}`}>
+        <div className={`relative flex justify-center w-full pb-[75%] overflow-hidden ${props.board.imageUrls.length > 0 ? '' : 'bg-gray-300'}`}>
           {props.board.imageUrls.length > 0 && (
             <img 
               src={props.board.imageUrls[0]} 
-              alt="NOIMG"
+              alt="프로필 사진"
               className='absolute top-0 left-0 w-full h-full object-cover' 
             />
           )}
