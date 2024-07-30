@@ -70,6 +70,7 @@
     ]
   },
   "devDependencies": {
+    "@types/navermaps": "^3.7.5",
     "@types/react-datepicker": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
     "@typescript-eslint/parser": "^7.16.1",

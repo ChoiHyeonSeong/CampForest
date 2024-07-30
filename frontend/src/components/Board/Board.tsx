@@ -1,12 +1,15 @@
 import React from 'react'
 import { ReactComponent as HeartOutline } from '@assets/icons/heart-outline.svg'
+// import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 import { ReactComponent as BookmarkEmpty } from '@assets/icons/bookmark-empty.svg'
-import { ReactComponent as MoreDot} from '@assets/icons/more-dots.svg'
+// import { ReactComponent as BookmarkFill } from '@assets/icons/bookmark-fill.svg'
+import { ReactComponent as CommentIcon} from '@assets/icons/comment.svg'
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
-import { like } from '@services/boardService'
+import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
 
-type Board = {
+
+export type BoardType = {
   boardId: number;
   userId: number;
   title: string;
@@ -20,58 +23,65 @@ type Board = {
 }
 
 type Props = {
-  board: Board;
+  board: BoardType;
 }
 
 const Board = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
-  const handleLike = () => {
-    console.log(props.board.boardId, user.userId)
-    like(props.board.boardId, user.userId);
-  }
+
+  const isUserPost = user.userId === props.board.userId
 
   return (
-    <div className='min-w-[22rem] my-[1.5rem] border-b border-[#EEEEEE] mx-[1.5rem] py-[0.5rem]'>
-      <div className='flex items-center h-[3.5rem] mb-[2rem] md:mb-[1rem]'>
-        <div className='rounded-full size-[4rem] md:size-[3rem] shadow-md overflow-hidden'></div>
-        <div className='ms-[1rem]'>
-          <div className='text-xl md:text-lg'>{props.board.userId}</div>
-          <div className='md:text-sm'>캠핑 후기 {'>'} 경기</div>
+    <div className='min-w-[22rem] border-b border-[#EEEEEE]'>
+
+      {/* 포스팅 상단바 */}
+      <div className='flex justify-between items-center h-[3.5rem] mb-4'>
+        <div className='flex '>
+          <div className='rounded-full size-11 md:size-12 shadow-md overflow-hidden'></div>
+          <div className='ms-[1rem]'>
+            <div className='text-xl md:text-lg'>{props.board.userId}</div>
+            <div className='md:text-sm'>캠핑 후기 {'>'} 경기</div>
+          </div>
         </div>
-        <div className='ms-auto mb-auto relative'>
-         <MoreDot className='size-8 absolute right-0 top-0'/>
-         <div className='absolute z-10 right-4 top-8 bg-pink-300 px-1 w-28 rounded-sm'>
-            <div className='w-full text-center border-b'>
-              <button className='py-2 ps-2 pe-5'>수정하기</button>
-            </div>
-            <div className='w-full text-center'>
-              <button className='py-2 ps-2 pe-5'>삭제하기</button>
-            </div>
-         </div>
+        <MoreOptionsMenu isUserPost={isUserPost}/>
+      </div>
+
+      {/* 사진 및 내용 */}
+      <div className='mb-2'>
+        {/* 사진 */}
+        <div className='relative w-full pb-[75%]'>
+          {props.board.imageUrls.length > 0 && (
+            <img 
+              src={props.board.imageUrls[0]} 
+              alt="NOIMG"
+              className='absolute top-0 left-0 w-full h-full object-cover' 
+            />
+          )}
+        </div>
+        {/* 내용 및 포스팅 시간 */}
+        <div className='py-[1rem] px-[0.5rem]'>
+          {/* 제목 */}
+          <div className='md:text-xl text-lg break-all mb-2'>게시글 제목이요</div>
+          {/* 내용 */}
+          <div className='md:text-base text-xl break-all'>
+            {props.board.content}
+          </div>
+          <div className='my-2 text-xs md:text-sm text-gray-500'>50분 전</div>
         </div>
       </div>
-      <div className='-mx-[1.5rem] md:mx-0'>
-        <img 
-          src={props.board.imageUrls[0]} 
-          className={`${props.board.imageUrls.length == 0 ? 'hidden' : ''} 
-          inline-block w-full static aspect-w-4 aspect-h-3`} 
-        />
-        <div className='mx-[1.5rem] md:mx-0 py-[1rem] px-[0.5rem]'>
-          <div className='text-xl md:text-lg'>{props.board.content}</div>
-          <div className='my-[0.5rem] md:text-xs'>_분 전</div>
+
+      {/* 좋아요, 댓글, 북마크 아이콘 */}
+      <div className='flex justify-between text-center mb-[1rem]'>
+        <div className='w-1/3'>
+          <HeartOutline className='inline size-7 cursor-pointer'/>
+          <span className='mx-2 md:text-sm'>{props.board.likeCount}</span>
         </div>
-      </div>
-      <div className='flex text-center mb-[1rem]'>
-        <div>
-          <HeartOutline onClick={handleLike} className='inline md:size-[1.25rem] cursor-pointer'/>
-          <span className='mx-[0.5rem] md:text-sm'>{props.board.likeCount}</span>
+        <div className='w-1/3'>
+          <CommentIcon className='inline size-6 cursor-pointer'/>
+          <span className='mx-2 md:text-sm'>3</span>
         </div>
-        <div>
-          <HeartOutline className='inline md:size-[1.25rem]'/>
-          <span className='mx-[0.5rem] md:text-sm'>3</span>
-        </div>
-        <div>
-          <BookmarkEmpty className='inline md:size-[1.5rem]'/>
+        <div className='w-1/3'>
+          <BookmarkEmpty className='inline size-7 cursor-pointer'/>
         </div>
       </div>
     </div>

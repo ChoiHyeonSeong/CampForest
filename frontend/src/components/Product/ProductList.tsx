@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 // Component
 import ProductCard from './ProductCard';
 import ProductCard2 from './ProductCard2';
-import Dropdown from './Dropdown';
+import Dropdown from '../Public/Dropdown';
 import { list } from '@services/productService';
 import { Link } from 'react-router-dom';
 

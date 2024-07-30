@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ReactComponent as EyeIcon } from '@assets/icons/eyes.svg'
 import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
+import { ReactComponent as BlackHeartIcon } from '@assets/icons/heart-black.svg'
 import ProfileImgEX from '@assets/images/productExample.png'
 
 const ProductCard = () => {
@@ -33,7 +34,7 @@ const ProductCard = () => {
         {/* 찜 - 상시 */}
         <div onClick={toggleLike} className='absolute z-3 top-1 right-1 cursor-pointer'>
           {isLiked ? (
-            <FillHeartIcon className='size-4 md:size-5 fill-red-500' />
+            <FillHeartIcon className='size-4 md:size-5' />
           ) : (
             <HeartOutlineIcon className='size-4 md:size-5' />
           )}
@@ -51,7 +52,7 @@ const ProductCard = () => {
             <span className='text-sm'>14</span>
           </div>
           <div className='flex items-center'>
-            <FillHeartIcon className=' size-3 md:size-4 me-1 fill-gray-700' />
+            <BlackHeartIcon className=' size-3 md:size-4 me-1 fill' />
             <span className='text-sm'>43</span>
           </div>
         </div>
