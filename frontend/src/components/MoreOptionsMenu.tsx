@@ -1,16 +1,52 @@
 import React from 'react'
-
+import { useState } from 'react';
 import { ReactComponent as MoreDotIcon } from '@assets/icons/more-dots.svg'
 
+type MoreOptionsMenuProps = {
+  isUserPost: boolean;
+};
 
-const MoreOptionsMenu = () => {
+const MoreOptionsMenu = ({ isUserPost }: MoreOptionsMenuProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const copyLink = () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl);
+    alert('링크가 복사되었습니다!');
+  };
+
   return (
-    <div className='size-6 relative cursor-pointer'>
-      <MoreDotIcon className='size-full absolute top-0 left-0' />
-      <div className='font-medium text-left flex flex-col ps-1 pe-5 absolute z-10 top-6 right-4 w-28 rounded-sm border border-gray-400 bg-white'>
-        <button className='py-2 hover:text-[#FF7F50]'>수정하기</button>
-        <button className='py-2 hover:text-[#FF7F50]'>삭제하기</button>
+    <div className="relative cursor-pointer">
+      <div onClick={toggleMenu}>
+        <MoreDotIcon className="absolute top-0 right-0 size-8" />
       </div>
+      {isMenuOpen && (
+        <div className="toggle-menu font-medium text-left flex flex-col px-1 absolute z-10 top-6 right-6 w-32 rounded-md border border-[#FF7F50] bg-white">
+          {isUserPost ? (
+            <>
+              <div className='w-full border-b ps-3'>
+              <button className="py-3 text-base hover:text-[#FF7F50]">수정하기</button>
+              </div>
+              <div className='w-full border-b ps-3'>
+              <button className="py-3 text-base hover:text-[#FF7F50]">삭제하기</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className='w-full border-b ps-3'>
+              <button className="py-3 text-base hover:text-[#FF7F50]">신고하기</button>
+              </div>
+              <div className='w-full border-b ps-3'>
+              <button className="py-3 text-base hover:text-[#FF7F50]" onClick={copyLink}>링크복사</button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }
