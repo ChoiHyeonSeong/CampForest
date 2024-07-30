@@ -5,23 +5,23 @@ import ProductCard from '@components/Product/ProductCard';
 import ProfileImgEX from '@assets/images/productExample.png'
 
 // swiper
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper-bundle.css';
+// import { Swiper, SwiperSlide } from 'swiper/react';
+// import 'swiper/swiper-bundle.css';
 
 function Detail() {
-  const isUserPost = true; // 예시로 사용자 게시물 여부를 나타내는 값
+  const isUserPost = false; // 예시로 사용자 게시물 여부를 나타내는 값
 
   return (
     <div className="flex justify-center mb-20">
       <div className="p-6 w-full lg:w-[60rem] xl:w-[66rem] lg:p-0 lg:pt-6">
         {/* 상단 */}
-        <div className="flex md:flex-row flex-col w-full mb-[2rem] bg-white">
+        <div className="flex lg:flex-row flex-col w-full mb-[2rem] bg-white overflow-hidden">
           {/* 이미지 */}
-          <div className="rounded-lg overflow-hidden w-full md:w-2/5 aspect-1 flex-shrink-0 ">
+          <div className="rounded-lg overflow-hidden w-full lg:w-2/5 aspect-1 flex-shrink-0 ">
             <img src={ProfileImgEX} alt='ProductImg' className='bg-slate-300 rounded-lg w-full aspect-1'></img>
           </div>
           {/* 내용 */}
-          <div className="md:ps-6 w-full md:w-3/5">
+          <div className="md:ps-6 w-full lg:w-3/5">
             <div className="flex justify-between text-sm mt-[1rem] mb-[0.5rem] text-[#555555]">
               <div className='flex'>
                 <div className="me-6">캠핑 장비 {'>'} 텐트</div>
@@ -98,14 +98,14 @@ function Detail() {
         {/* 판매자의 추가거래 상품 받아오기 */}
         <div>
           <div className='mb-3 text-lg'><span className='font-medium'>사용자1</span>의 다른 거래 상품 구경하기</div>
-          {/* <div className="w-full flex overflow-x-auto space-x-4">
+          <div className="w-full flex flex-wrap">
             <ProductCard />
             <ProductCard />
             <ProductCard />
             <ProductCard />
             <ProductCard />
-          </div> */}
-          <Swiper
+          </div>
+          {/* <Swiper
             spaceBetween={2}
             slidesPerView={1}
             freeMode={true}
@@ -113,7 +113,7 @@ function Detail() {
             <SwiperSlide>
               <ProductCard />
             </SwiperSlide>
-          </Swiper>
+          </Swiper> */}
         </div>
       </div>
     </div>    
