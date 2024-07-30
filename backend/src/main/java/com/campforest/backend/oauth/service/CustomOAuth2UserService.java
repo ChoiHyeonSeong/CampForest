@@ -1,6 +1,8 @@
 package com.campforest.backend.oauth.service;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -10,7 +12,10 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.campforest.backend.common.JwtTokenProvider;
+import com.campforest.backend.oauth.repository.TempUserRepository;
 import com.campforest.backend.oauth.model.OAuthAttributes;
+import com.campforest.backend.oauth.model.TempUser;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.repository.UserRepository;
 
@@ -20,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
+	private final JwtTokenProvider jwtTokenProvider;
+	private final TempUserRepository tempUserRepository;
 	private final UserRepository userRepository;
 
 	@Override
@@ -33,31 +40,41 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			.getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
 		OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-		Users user = saveOrUpdate(attributes, registrationId);
+		Users user = userRepository.findByEmail(attributes.getEmail()).orElse(null);
 
-		return new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())),
-			attributes.getAttributes(),
-			attributes.getNameAttributeKey());
-	}
+		if (user == null) {
+			// 새로운 사용자인 경우, 임시 토큰 생성
+			String tempToken = jwtTokenProvider.generateOAuthSignUpToken(attributes.getEmail(), attributes.getName());
 
-	private Users saveOrUpdate(OAuthAttributes attributes, String registrationId) {
-		Users user = userRepository.findByEmail(attributes.getEmail())
-			.map(entity -> {
-				// 변경 사항이 있는 경우만 업데이트
-				if(!registrationId.equals(entity.getProvider())
-					|| !attributes.getProviderId().equals(entity.getProviderId())) {
-					entity.updateOAuthInfo(attributes.getProviderId(), registrationId);
-					return userRepository.save(entity);
-				}
-				// 변경 사항이 없으면 기존 Entity 반환
-				return entity;
-			})
-			.orElseGet(() -> {
-				Users newUser = attributes.toEntity(registrationId);
-				return userRepository.save(newUser);
-			});
+			// Redis에 임시 사용자 정보 저장
+			TempUser tempUser = TempUser.builder()
+				.token(tempToken)
+				.email(attributes.getEmail())
+				.name(attributes.getName())
+				.provider(registrationId)
+				.providerId(attributes.getProviderId())
+				.build();
+			tempUserRepository.save(tempUser);
 
-		return user;
+			// 임시 사용자 정보 생성
+			Map<String, Object> tempAttributes = new HashMap<>();
+			tempAttributes.put("tempToken", tempToken);
+
+			return new DefaultOAuth2User(
+				Collections.singleton(new SimpleGrantedAuthority("ROLE_TEMP")),
+				tempAttributes,
+				"tempToken");
+		} else {
+			// 기존 사용자 처리
+			if (!registrationId.equals(user.getProvider()) || !attributes.getProviderId().equals(user.getProviderId())) {
+				user.updateOAuthInfo(attributes.getProviderId(), registrationId);
+				user = userRepository.save(user);
+			}
+
+			return new DefaultOAuth2User(
+				Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())),
+				attributes.getAttributes(),
+				attributes.getNameAttributeKey());
+		}
 	}
 }

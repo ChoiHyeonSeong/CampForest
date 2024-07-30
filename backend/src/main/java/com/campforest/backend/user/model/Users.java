@@ -3,6 +3,8 @@ package com.campforest.backend.user.model;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.campforest.backend.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -48,6 +50,7 @@ public class Users {
 	private String password;
 
 	@Column(name = "provider")
+	@ColumnDefault(value = "local")
 	private String provider;
 
 	@Column(name = "provider_id")
