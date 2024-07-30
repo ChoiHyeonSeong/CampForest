@@ -27,10 +27,10 @@ public class CommunityChatController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/room")
-    public ApiResponse<?> createChatRoom(@RequestParam Long user1Id,
-                                                           @RequestParam Long user2Id) {
+    public ApiResponse<?> createChatRoom(@RequestParam Long user1,
+                                        @RequestParam Long user2) {
         try {
-        CommunityChatDto room = communityChatService.createOrGetChatRoom(user1Id, user2Id);
+        CommunityChatDto room = communityChatService.createOrGetChatRoom(user1, user2);
         return ApiResponse.createSuccessWithNoContent("채팅방 생성 성공하였습니다");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
