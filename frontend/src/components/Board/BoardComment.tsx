@@ -10,7 +10,7 @@ const BoardComment = () => {
         {/* 프로필 이미지 */}
         <div className='bg-orange-400 rounded-full size-10 md:size-12 me-2 shrink-0'>
           {/* 사용자 프로필 이미지 받아와서 넣을 곳 ! */}
-          <img></img>
+          <img src='' alt='NOIMG'></img>
         </div>
 
         {/* 닉네임 및 글 */}

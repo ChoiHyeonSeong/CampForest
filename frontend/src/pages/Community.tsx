@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom'
 import { boardList, filteredBoardList } from '@services/boardService';
-import Board from '@components/Board/Board';
+import Board, { BoardType } from '@components/Board/Board';
 import { useInView } from 'react-intersection-observer';
 
 const Community = () => {
@@ -10,7 +10,7 @@ const Community = () => {
 
   const [ref, inView] = useInView();
 
-  const [boards, setBoards] = useState<Board[]>([]);
+  const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
 
   const isFirstLoadRef = useRef(true);
@@ -52,11 +52,13 @@ const Community = () => {
       console.log(inView, '무한 스크롤 요청');
       fetchBoards();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
 
   useEffect(() => {
     isFirstLoadRef.current = true
     fetchBoards(true)
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [category])
 
   return (

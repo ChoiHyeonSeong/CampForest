@@ -6,11 +6,10 @@ import { ReactComponent as BookmarkEmpty } from '@assets/icons/bookmark-empty.sv
 import { ReactComponent as CommentIcon} from '@assets/icons/comment.svg'
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
-import { like } from '@services/boardService'
-import MoreOptionsMenu from '@components/MoreOptionsMenu'
+import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
 
 
-type BoardType = {
+export type BoardType = {
   boardId: number;
   userId: number;
   title: string;
@@ -31,11 +30,6 @@ const Board = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
 
   const isUserPost = user.userId === props.board.userId
-
-  const handleLike = () => {
-    console.log(props.board.boardId, user.userId)
-    boardLike(props.board.boardId, user.userId);
-  }
 
   return (
     <div className='min-w-[22rem] border-b border-[#EEEEEE]'>
@@ -79,7 +73,7 @@ const Board = (props: Props) => {
       {/* 좋아요, 댓글, 북마크 아이콘 */}
       <div className='flex justify-between text-center mb-[1rem]'>
         <div className='w-1/3'>
-          <HeartOutline onClick={handleLike} className='inline size-7 cursor-pointer'/>
+          <HeartOutline className='inline size-7 cursor-pointer'/>
           <span className='mx-2 md:text-sm'>{props.board.likeCount}</span>
         </div>
         <div className='w-1/3'>
