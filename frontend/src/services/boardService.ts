@@ -85,3 +85,7 @@ export const boardLike = (boardId: number, userId: number) => {
   console.log(response);
 }
 
+export const boardDislike = (boardId: number, userId: number) => {
+  const response = axios.delete(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+  console.log(response);
+}

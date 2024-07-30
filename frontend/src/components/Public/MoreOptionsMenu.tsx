@@ -4,6 +4,9 @@ import { ReactComponent as MoreDotIcon } from '@assets/icons/more-dots.svg'
 
 type Props = {
   isUserPost: boolean;
+  deleteFunction: (param:number) => void;
+  deleteId: number;
+  copyURL:string;
 };
 
 const MoreOptionsMenu = (props: Props) => {
@@ -15,8 +18,8 @@ const MoreOptionsMenu = (props: Props) => {
 
   const copyLink = () => {
     const currentUrl = window.location.href;
-    navigator.clipboard.writeText(currentUrl);
-    console.log(props.isUserPost)
+    navigator.clipboard.writeText(currentUrl+props.copyURL);
+    console.log(currentUrl+props.copyURL)
     alert('링크가 복사되었습니다!');
   };
 
@@ -32,8 +35,8 @@ const MoreOptionsMenu = (props: Props) => {
               <div className='w-full border-b ps-3'>
               <button className="py-3 text-base hover:text-[#FF7F50]">수정하기</button>
               </div>
-              <div className='w-full border-b ps-3'>
-              <button className="py-3 text-base hover:text-[#FF7F50]">삭제하기</button>
+              <div className='w-full border-b ps-3' onClick={() => props.deleteFunction(props.deleteId)}>
+                <button className="py-3 text-base hover:text-[#FF7F50]">삭제하기</button>
               </div>
             </>
           ) : (
