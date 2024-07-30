@@ -3,6 +3,7 @@ import Dropdown from './Dropdown';
 import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
 import { write } from '@services/productService';
 import MultiImageUpload from './MultiImageUpload';
+import ProductMap from './ProductMap';
 
 type Option = {
   id: number;
@@ -38,14 +39,15 @@ const ProductWrite = () => {
   const [selectedButton, setSelectedButton] = useState<string>('대여');
   const [productImages, setProductImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [loadMap, setLoadMap] = useState(false);
   const buttons = ['대여', '판매', '나눔'];
 
   const [formData, setFormData]= useState<ProductRegistDto>({
     productName: '',
     productPrice: undefined,
     productContent: '',
-    location: '구미리미리시 인도로동동',
-    productType: 'RENT',
+    location: '장소를 선택하세요.',
+    productType: '',
     category: '',
     deposit: undefined,
   })
@@ -67,6 +69,13 @@ const ProductWrite = () => {
     setFormData(prevData => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleLocation = (dongName: string) => {
+    setFormData(prevData => ({
+      ...prevData,
+      location: dongName
     }));
   };
 
@@ -119,9 +128,17 @@ const ProductWrite = () => {
       newErrors.productImages = '최소 1개의 상품 사진을 업로드해주세요.';
     }
 
+    if (formData.location === '장소를 선택하세요.') {
+      newErrors.location = '장소를 선택하세요.'
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const openMap = (value: boolean) => {
+    setLoadMap(value);
+  }
 
   return (
     <div className='flex justify-center'>
@@ -220,18 +237,22 @@ const ProductWrite = () => {
           {/* 거래 희망 장소 */}
           <div className='mb-[5em]'>
             <div className='my-[0.25rem] font-medium'>거래 희망 장소</div>
-            <div className='flex border px-[0.5rem] py-[0.25rem] w-1/2'>
+            <div onClick={() => openMap(true)}  className='flex border px-[0.5rem] py-[0.25rem] w-1/2'>
               <LocationIcon fill='333333' className='me-[0.5rem]'/>
-              <div className='text-[#999999]'>
-                위치를 선택하세요.
+              <div className={`${formData.location === '장소를 선택하세요.' ? 'text-[#999999]' : 'text-black'}`}>
+                {formData.location}
               </div>
             </div>
+          {errors.location && <p className='text-red-500 text-xs mt-1'>{errors.location}</p>}
           </div>
           <div className='text-end'>
             <button type='submit' className='w-1/2 text-center mb-[2rem] bg-black text-white py-[0.35rem]'>작성 완료</button>
           </div>
         </form>
       </div>
+      {loadMap && <div className='fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2'>
+      <ProductMap handleLocation={handleLocation} openMap={openMap} />
+      </div>}
     </div>
   )
 }
