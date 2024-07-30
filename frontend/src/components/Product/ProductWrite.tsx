@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import Dropdown from '../Public/Dropdown';
 import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
-import { write } from '@services/productService';
+import { productWrite } from '@services/productService';
 import MultiImageUpload from '@components/Public/MultiImageUpload';
 import ProductMap from './ProductMap';
 
@@ -99,7 +99,7 @@ const ProductWrite = () => {
     console.log(submitData);
 
     try { 
-      await write(submitData, productImages);
+      await productWrite(submitData, productImages);
     } catch (error) {
 
     }

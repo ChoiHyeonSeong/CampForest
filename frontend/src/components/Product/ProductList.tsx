@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Component
-import ProductCard from './ProductCard';
-import ProductCard2 from './ProductCard2';
+import ProductCard, { ProductType } from './ProductCard';
 import Dropdown from '../Public/Dropdown';
-import { list } from '@services/productService';
+import { productList } from '@services/productService';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from '@store/modalSlice';
+import { useInView } from 'react-intersection-observer';
 
 type Option = {
   id: number;
@@ -44,10 +46,14 @@ const locations: Option[] = [
 ];
 
 const ProductList = () => {
-
+  const dispatch = useDispatch();
+  const [ref, inView] = useInView();
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [nextPageExist, setNextPageExist] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [isAccBtnActive, setIsAccBtnActive] = useState<boolean>(false);
+  const [isAccBtnActive, setIsAccBtnActive] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(1);
+  const productPageRef = useRef(0);
 
   // 각 Dropdown에 대한 상태 추가
   const [selectedCategory, setSelectedCategory] = useState<Option>(categories[0]);
@@ -78,6 +84,30 @@ const ProductList = () => {
   const handleLocationSelect = (option: Option) => {
     setSelectedLocation(option);
   };
+
+  const fetchProducts = async () => {
+    try {
+      dispatch(setIsLoading(true));
+      const result = await productList({productType: activeTab === 1 ? 'SALE' : 'RENT', page: productPageRef.current, size: 10});
+      dispatch(setIsLoading(false));
+      productPageRef.current += 1;
+      if (result.data) {
+        setNextPageExist(false);
+      }
+      console.log(result.data)
+      setProducts((prevProducts) => [...prevProducts, ...result.data.data.content]);
+    } catch (error) {
+      console.error('판매/대여 게시글 불러오기 실패: ', error);
+    }
+  };
+
+  useEffect(() => {
+    // inView가 true일 때만 실행한다.
+    if (inView && nextPageExist) {
+      console.log(inView, '무한 스크롤 요청')
+      fetchProducts()
+    }
+}, [inView]);
 
   return (
     <div className="flex justify-center items-center">
@@ -144,18 +174,15 @@ const ProductList = () => {
             <p>거래 가능</p>
           </div>
         </div>
-          <div onClick={() => list({productType: 'SALE'})}>게시글 목록 불러와보깅</div>
         <div className="w-full flex flex-wrap">
-          <ProductCard />
-          <ProductCard2 />
-          <ProductCard />
-          <ProductCard />
-          <ProductCard2 />
-          <ProductCard2 />
-          <ProductCard />
-          <ProductCard />
+          {products?.map((product) => (
+            <ProductCard key={product.productId} product={product} />
+            ))}
         </div>
       </div>
+
+      {/* intersection observer */}
+      <div ref={ref} className='h-1'></div>
     </div>
   );
 };

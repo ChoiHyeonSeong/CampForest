@@ -40,17 +40,12 @@ function Main() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
-
-  const getDetail = () => {
-    boardDetail(1);
-  }
   
   return (
     <div>
       <div className='flex justify-center'>
         <div className='hidden lg:block w-[15rem]'/>
         <div className='w-full md:w-[40rem]'>
-          <div onClick={getDetail} className='cursor-pointer'>1번 게시글 자세히 보기</div>
           {boards?.map((board) => (
             <Board key={board.boardId} board={board} />
           ))}

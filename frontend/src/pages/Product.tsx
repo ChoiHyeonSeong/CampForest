@@ -8,7 +8,7 @@ const Product = () => {
   return (
     <Routes>
       <Route path='/list' element={<ProductList />} />
-      <Route path='/detail' element={<ProductDetail />} />
+      <Route path='/detail/:productId' element={<ProductDetail />} />
       <Route path='/write' element={<ProductWrite />} />
     </Routes>
   )

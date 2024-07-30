@@ -1,15 +1,61 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FireGif from '@assets/images/fire.gif';
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu';
 import ProductCard from '@components/Product/ProductCard';
 import ProfileImgEX from '@assets/images/productExample.png'
+import { productDetail } from '@services/productService';
+import { useParams } from 'react-router-dom';
 
 // swiper
 // import { Swiper, SwiperSlide } from 'swiper/react';
 // import 'swiper/swiper-bundle.css';
 
+type ProductDetailType = {
+  category: string;
+  deposit: number | null;
+  hit: number;
+  imageUrls: string[];
+  interestHit: number;
+  location: string;
+  productContent: string;
+  productId: number;
+  productName: string;
+  productPrice: number;
+  productType: string;
+  usreId: string;
+}
+
+
 function Detail() {
   const isUserPost = false; // 예시로 사용자 게시물 여부를 나타내는 값
+  const productId = Number(useParams().productId);
+  const [product, setProduct] = useState<ProductDetailType>({
+    category: '',
+    deposit: 0,
+    hit: 0,
+    imageUrls: [],
+    interestHit: 0,
+    location: '',
+    productContent: '',
+    productId: 0,
+    productName: '',
+    productPrice: 0,
+    productType: '',
+    usreId: '',
+  });
+  const fetchProduct = async () => {
+    try {
+      const result = await productDetail(productId);
+      console.log(result)
+      setProduct(result);
+    } catch (error) {
+      console.error('판매 상세 페이지 불러오기 실패: ', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchProduct();
+  }, [])
 
   return (
     <div className="flex justify-center mb-20">
@@ -18,46 +64,45 @@ function Detail() {
         <div className="flex lg:flex-row flex-col w-full mb-[2rem] bg-white overflow-hidden">
           {/* 이미지 */}
           <div className="rounded-lg overflow-hidden w-full lg:w-2/5 aspect-1 flex-shrink-0 ">
-            <img src={ProfileImgEX} alt='ProductImg' className='bg-slate-300 rounded-lg w-full aspect-1'></img>
+            <img src={product.imageUrls[0]} alt='ProductImg' className='bg-slate-300 rounded-lg w-full aspect-1'></img>
           </div>
           {/* 내용 */}
           <div className="md:ps-6 w-full lg:w-3/5">
             <div className="flex justify-between text-sm mt-[1rem] mb-[0.5rem] text-[#555555]">
               <div className='flex'>
-                <div className="me-6">캠핑 장비 {'>'} 텐트</div>
-                <div className="text-[#FF7F50] font-semibold">대여</div>
+                <div className="me-6">캠핑 장비 {'>'} {product.category}</div>
+                <div className="text-[#FF7F50] font-semibold">{product.productType === 'SALE' ? '판매' : '대여'}</div>
               </div>
               <MoreOptionsMenu isUserPost={isUserPost} />
             </div>
-            <div className="text-2xl font-medium">텐트 대여합니다.</div>
+            <div className="text-2xl font-medium">{product.productName}</div>
             <div className="mt-[1.5rem] text-sm border-b border-[#EEEEEE] relative">
               <div className='w-full break-all'>
-                이 곳은 판매자가 상품에 대한 설명을 적는 곳입니다. 아주아주 잘 적어주시면 좋아요! 이 곳은 판매자가 상품에 대한 설명을 적는 곳입니다. 아주아주 잘 적어주시면 좋아요! 이 곳은 판매자가 상품에 대한 설명을 적는 곳입니다. 아주아주 잘 적어주시면 좋아요!
+                {product.productContent}
               </div>
               <div className="flex my-6">
                 <div>조회</div>
-                <div className="ms-1 me-2">1,200</div>
+                <div className="ms-1 me-2">{product.hit}</div>
                 <div>관심</div>
-                <div className="ms-1 me-2">3</div>
+                <div className="ms-1 me-2">{product.interestHit}</div>
               </div>
             </div>
             <div className="flex justify-between pt-6">
               <div>
                 <div className="text-[#555555] font-medium">픽업 | 반납 장소</div>
                 <div className="p-2 text-sm ">
-                  <div>경상북도 구미시 옥계북로 6-23</div>
-                  <div>경상북도 구미시 진평동 12번지</div>
+                  <div>{product.location}</div>
                 </div>
               </div>
               {/* 가격 */}
               <div className='mt-4'>
                 <div className='flex justify-between text-lg md:text-xl mb-2'>
                   <div className='me-5 font-semibold'>가격</div>
-                  <div className='font-bold'>15,000 원/일</div>
+                  <div className='font-bold'>{product.productPrice} 원<span className={`${product.productType === 'SALE' ? 'hidden' : ''}`}>/일</span></div>
                 </div>
-                <div className='flex justify-between text-base text-gray-500 md:text-lg'>
+                <div className={`${product.productType === 'SALE' ? 'hidden' : ''} flex justify-between text-base text-gray-500 md:text-lg`}>
                   <div className='me-5 font-semibold 0'>보증금</div>
-                  <div className='font-bold'>10,000 원</div>
+                  <div className='font-bold'>{product.deposit} 원</div>
                 </div>
               </div>
             </div>
@@ -99,11 +144,6 @@ function Detail() {
         <div>
           <div className='mb-3 text-lg'><span className='font-medium'>사용자1</span>의 다른 거래 상품 구경하기</div>
           <div className="w-full flex flex-wrap">
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
           </div>
           {/* <Swiper
             spaceBetween={2}

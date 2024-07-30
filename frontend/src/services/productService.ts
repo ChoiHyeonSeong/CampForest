@@ -24,7 +24,7 @@ type SearchParams = {
   size?: number
 }
 
-export const write = async (productRegistDto: ProductRegistDto, productImages: File[]) => {
+export const productWrite = async (productRegistDto: ProductRegistDto, productImages: File[]) => {
   const formData = new FormData();
   const blob = new Blob([JSON.stringify(productRegistDto)], {type: 'application/json'});
   formData.append('productRegistDto', blob);
@@ -46,7 +46,14 @@ export const write = async (productRegistDto: ProductRegistDto, productImages: F
   }
 }
 
-export const list = async (searchParams: SearchParams) => {
+export const productList = async (searchParams: SearchParams) => {
   const response = await axios.get(`${API_URL}/product/search`, { params: searchParams});
   console.log(response.data.data.content);
+
+  return response;
+}
+
+export const productDetail = async (productId: number) => {
+  const response = await axios.get(`${API_URL}/product/${productId}`);
+  return response.data.data;
 }
