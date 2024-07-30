@@ -23,10 +23,12 @@ public class RequestRegisterDTO {
 	private Gender gender;
 	private boolean isOpen;
 	private String nickname;
+	private String provider;
+	private String providerId;
 	private String phoneNumber;
 	private String introduction;
+	@Setter
 	private String profileImage;
-
 
 	public Users toEntity() {
 		return Users.builder()
@@ -38,9 +40,10 @@ public class RequestRegisterDTO {
 			.gender(gender)
 			.isOpen(isOpen)
 			.nickname(nickname)
+			.provider(provider)
+			.providerId(providerId)
 			.phoneNumber(phoneNumber)
 			.introduction(introduction)
-			.profileImage(profileImage)
 			.build();
 	}
 }
