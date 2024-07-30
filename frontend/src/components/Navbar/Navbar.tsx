@@ -134,6 +134,7 @@ const Navbar = () => {
     }
     
     console.log('페이지 접속')
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, []);
 
   useEffect(() => {

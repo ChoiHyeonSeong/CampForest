@@ -1,30 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Recommand from '@components/Board/Recommand';
-import Board from '@components/Board/Board';
+import Board, { BoardType } from '@components/Board/Board';
 import { boardList, boardDetail } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
-
-type BoardType = {
-  boardId: number;
-  userId: number;
-  title: string;
-  content: string;
-  category: string;
-  likeCount: number;
-  createdAt: string;
-  modifiedAt: string;
-  imageUrls: string[];
-  boardOpen: boolean;
-}
 
 function Main() {
   const dispatch = useDispatch();
 
   const [ref, inView] = useInView();
 
-  const [boards, setBoards] = useState<Board[]>([]);
+  const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
 
   const boardPageRef = useRef(0);
@@ -51,6 +38,7 @@ function Main() {
       console.log(inView, '무한 스크롤 요청')
       fetchBoards()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
 
   const getDetail = () => {
