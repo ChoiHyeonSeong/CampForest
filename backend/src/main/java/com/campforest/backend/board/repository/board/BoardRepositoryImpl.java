@@ -55,6 +55,23 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 	}
 
 	@Override
+	public Page<Boards> findByTitle(String title, Pageable pageable) {
+		title = "%" + title + "%";
+		List<Boards> content = queryFactory
+			.selectFrom(boards)
+			.where(boards.title.like(title))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(boards.createdAt.desc())
+			.fetch();
+		long total=queryFactory
+			.selectFrom(boards)
+			.where(boards.category.like(title))
+			.fetchCount();
+		return new PageImpl<>(content,pageable,total);
+	}
+
+	@Override
 	public void plusLikeCount(Long boardId) {
 		queryFactory
 			.update(boards)

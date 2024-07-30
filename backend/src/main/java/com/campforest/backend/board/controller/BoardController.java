@@ -114,6 +114,22 @@ public class BoardController {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}
 	}
+	//제목 검색
+	@GetMapping("/title")
+	public ApiResponse<?> getTitleBoard(
+		@RequestParam String title,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size){
+		try {
+			if (page < 0 || size <= 0) {
+				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
+			}
+			Page<BoardResponseDto> boardResponseDtos = boardService.getTitleBoards(title,page,size);
+			return ApiResponse.createSuccess(boardResponseDtos, "게시글 제목으로 검색에 성공하였습니다");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.INVALID_BOARD_CATEGORY);
+		}
+	}
 
 	//카테고리별 게시글 조회
 	@GetMapping("/category")

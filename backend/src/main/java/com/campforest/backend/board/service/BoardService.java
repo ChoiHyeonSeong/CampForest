@@ -16,9 +16,11 @@ public interface BoardService {
 
 	Page<BoardResponseDto> getAllBoards(int page, int size);
 
-	Page<BoardResponseDto> getUserBoards(Long userId,int page, int size);
+	Page<BoardResponseDto> getUserBoards(Long userId, int page, int size);
 
-	Page<BoardResponseDto> getCategoryBoards(String category,int page, int size);
+	Page<BoardResponseDto> getTitleBoards(String title, int page, int size);
+
+	Page<BoardResponseDto> getCategoryBoards(String category, int page, int size);
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 
@@ -55,4 +57,5 @@ public interface BoardService {
 	boolean checkCommentLike(Long commentId, Long userId);
 
 	Long countCommentLike(Long commentId);
+
 }
