@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,8 +70,8 @@ public class ReviewController {
 	}
 
 	// 리뷰 삭제
-	@DeleteMapping
-	public ApiResponse<?> deleteReview(Authentication authentication, @RequestParam Long reviewId) {
+	@DeleteMapping("/{reviewId}")
+	public ApiResponse<?> deleteReview(Authentication authentication, @PathVariable Long reviewId) {
 		try {
 			Users user = userService.findByEmail(authentication.getName())
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));

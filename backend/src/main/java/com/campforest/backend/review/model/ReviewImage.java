@@ -1,6 +1,7 @@
 package com.campforest.backend.review.model;
 
 import com.campforest.backend.product.model.Product;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,6 +27,7 @@ public class ReviewImage {
 
 	@ManyToOne
 	@JoinColumn(name = "review_id")
+	@JsonBackReference
 	private Review review;
 
 	@Column(name = "image_url")
