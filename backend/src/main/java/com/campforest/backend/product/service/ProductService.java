@@ -113,6 +113,9 @@ public class ProductService {
 	private ProductSearchDto toDto(Product product) {
 		ProductSearchDto dto = new ProductSearchDto();
 		dto.setProductId(product.getId());
+		dto.setUserId(product.getUserId());
+		dto.setHit(product.getHit());
+		dto.setInterestHit(product.getInterest_hit());
 		dto.setProductName(product.getProductName());
 		dto.setProductPrice(product.getProductPrice());
 		dto.setCategory(product.getCategory());
