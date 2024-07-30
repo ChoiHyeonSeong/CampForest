@@ -2,6 +2,7 @@ package com.campforest.backend.chatting.controller;
 
 import java.util.List;
 
+import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
 import com.campforest.backend.chatting.entity.CommunityChatMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import com.campforest.backend.chatting.dto.CommunityChatDto;
 import com.campforest.backend.chatting.service.CommunityChatService;
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.common.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,8 +29,12 @@ public class CommunityChatController {
     @PostMapping("/room")
     public ApiResponse<?> createChatRoom(@RequestParam Long user1Id,
                                                            @RequestParam Long user2Id) {
+        try {
         CommunityChatDto room = communityChatService.createOrGetChatRoom(user1Id, user2Id);
         return ApiResponse.createSuccessWithNoContent("채팅방 생성 성공하였습니다");
+        } catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
+        }
     }
     @MessageMapping("/{roomId}/send")
     @SendTo("/sub/community/{roomId}")
@@ -37,22 +43,46 @@ public class CommunityChatController {
         return communityChatService.saveMessage(roomId, message);
     }
     @GetMapping("/room/{roomId}/messages")
-    public ResponseEntity<List<CommunityChatMessage>> getChatHistory(@PathVariable Long roomId) {
+    public  ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
+        try {
         List<CommunityChatMessage> messages = communityChatService.getChatHistory(roomId);
-        return ResponseEntity.ok(messages);
+        return  ApiResponse.createSuccess(messages, "채팅 메시지 조회 성공");
+        }catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);
+        }
     }
 
-    //userID가 보낸걸 read로 바꿔줌
+    //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
     @PostMapping("/room/{roomId}/markAsRead")
-    public ResponseEntity<Void> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
+    public ApiResponse<?> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
+        try {
         communityChatService.markMessagesAsRead(roomId, userId);
-        return ResponseEntity.ok().build();
+        return ApiResponse.createSuccessWithNoContent("메시지를 읽음 처리 성공.");
+        } catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
+        }
+    }
+    //필요없을듯?
+    @GetMapping("/room/{roomId}/unreadCount")
+    public ApiResponse<?> getUnreadMessageCount(@PathVariable Long roomId, @RequestParam Long userId) {
+       try {
+        Long unreadCount = communityChatService.getUnreadMessageCount(roomId, userId);
+        return ApiResponse.createSuccess(unreadCount, "읽지 않은 메시지 수를 가져오기 성공.");
+       } catch (Exception e) {
+        return ApiResponse.createError(ErrorCode.CHAT_UNREAD_COUNT_FAILED);
+       }
     }
 
-    @GetMapping("/room/{roomId}/unreadCount")
-    public ResponseEntity<Long> getUnreadMessageCount(@PathVariable Long roomId, @RequestParam Long userId) {
-        Long unreadCount = communityChatService.getUnreadMessageCount(roomId, userId);
-        return ResponseEntity.ok(unreadCount);
+    //user가 속한 채팅방 목록 가져옴.
+    // 각 채팅방 별 최근 메시지와, 안읽은 메세지 수 가져옴
+    @GetMapping("/rooms")
+    public ApiResponse<?> getChatRoomsForUser(@RequestParam Long userId) {
+        try {
+        List<CommunityChatRoomListDto> rooms = communityChatService.getChatRoomsForUser(userId);
+        return ApiResponse.createSuccess(rooms,"채팅방 목록 가져오기 성공");
+        }catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.CHAT_ROOM_LIST_FAILED);
+        }
     }
 
 }

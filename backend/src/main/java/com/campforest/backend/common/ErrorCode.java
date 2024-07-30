@@ -16,6 +16,8 @@ public enum ErrorCode {
 	USER_NOT_FOUND("U002", HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 	PASSWORD_NOT_MATCH("U003", HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 	USER_NOT_AUTHORIZED("U004", HttpStatus.FORBIDDEN, "해당 작업을 수행할 권한이 없습니다."),
+	EMAIL_CODE_NOT_MATCH("U005", HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다."),
+	USER_DELETE_FAILED("U006", HttpStatus.BAD_REQUEST, "회원 탈퇴에 실패했습니다."),
 
 	// Unauthorized
 	AUTHENTICATION_FAILED("A001", HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),
@@ -85,6 +87,15 @@ public enum ErrorCode {
 	RENT_CONFIRM_FAILED("R004", HttpStatus.BAD_REQUEST, "구매 확정에 실패했습니다."),
 	RENT_NOT_FOUND("R005", HttpStatus.NOT_FOUND, "판매 정보를 찾을 수 없습니다."),
 	RENT_RESERVED_FAILED("R006", HttpStatus.BAD_REQUEST, "예약된 정보를 가져올 수 없습니다."),
+
+	// Chat Error
+	CHAT_ROOM_CREATION_FAILED("CH001", HttpStatus.BAD_REQUEST, "채팅방 생성에 실패했습니다."),
+	CHAT_ROOM_NOT_FOUND("CH002", HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
+	CHAT_MESSAGE_SEND_FAILED("CH003", HttpStatus.BAD_REQUEST, "메시지 전송에 실패했습니다."),
+	CHAT_HISTORY_NOT_FOUND("CH004", HttpStatus.NOT_FOUND, "채팅 기록을 찾을 수 없습니다."),
+	CHAT_MARK_READ_FAILED("CH005", HttpStatus.BAD_REQUEST, "메시지 읽음 처리에 실패했습니다."),
+	CHAT_UNREAD_COUNT_FAILED("CH006", HttpStatus.BAD_REQUEST, "읽지 않은 메시지 수 조회에 실패했습니다."),
+	CHAT_ROOM_LIST_FAILED("CH007", HttpStatus.BAD_REQUEST, "채팅방 목록 조회에 실패했습니다."),
 	RENT_UPDATE_FAILED("R007", HttpStatus.BAD_REQUEST, "예약 업데이트 불가능합니다."),
 
 	// Review Error

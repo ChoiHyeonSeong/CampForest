@@ -12,5 +12,7 @@ public interface UserService {
 
 	Optional<Users> findByEmail(String email);
 
+	void deleteByEmail(String email);
+
 	Authentication authenticateUser(String email, String password);
 }

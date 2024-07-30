@@ -17,6 +17,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +36,15 @@ public class JwtTokenProvider {
 	@Value("${jwt.refreshToken-expiration}")
 	private long refreshTokenExpiration;
 
+	@Value("${jwt.secret}")
+	private String secretKeyString;
+
 	private SecretKey secretKey;
 
 	@PostConstruct
 	protected void init() {
-		this.secretKey = Jwts.SIG.HS256.key().build();
+		byte[] keyBytes = Decoders.BASE64.decode(secretKeyString);
+		this.secretKey = Keys.hmacShaKeyFor(keyBytes);
 	}
 
 	public String generateAccessToken(String userEmail) {

@@ -4,10 +4,13 @@ import com.campforest.backend.board.entity.Boards;
 
 import java.util.List;
 
-public interface BoardRepositoryCustom {
-	List<Boards> findByUserId(Long userId);
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-	List<Boards> findByCategory(String category);
+public interface BoardRepositoryCustom {
+	Page<Boards> findByUserId(Long userId, Pageable pageable);
+
+	Page<Boards> findByCategory(String category, Pageable pageable);
 
 	void plusLikeCount(Long boardId);
 
