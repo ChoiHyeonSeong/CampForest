@@ -69,6 +69,11 @@ const ProductList = () => {
   };
 
   const handleTabClick = (tabIndex: number) => {
+    if (tabIndex !== activeTab) {
+      setProducts([]);
+      setNextPageExist(true);
+      productPageRef.current = 0;
+    }
     setActiveTab(tabIndex);
   };
 
@@ -88,13 +93,17 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       dispatch(setIsLoading(true));
-      const result = await productList({productType: activeTab === 1 ? 'SALE' : 'RENT', page: productPageRef.current, size: 10});
+      const result = await productList({
+        productType: activeTab === 1 ? 'SALE' : 'RENT',
+        page: productPageRef.current,
+        size: 10,
+      });
       dispatch(setIsLoading(false));
       productPageRef.current += 1;
       if (result.data) {
         setNextPageExist(false);
       }
-      console.log(result.data)
+      console.log(result.data);
       setProducts((prevProducts) => [...prevProducts, ...result.data.data.content]);
     } catch (error) {
       console.error('판매/대여 게시글 불러오기 실패: ', error);
@@ -104,17 +113,20 @@ const ProductList = () => {
   useEffect(() => {
     // inView가 true일 때만 실행한다.
     if (inView && nextPageExist) {
-      console.log(inView, '무한 스크롤 요청')
-      fetchProducts()
+      console.log(inView, '무한 스크롤 요청');
+      fetchProducts();
     }
-}, [inView]);
+  }, [inView, activeTab]);
 
   return (
     <div className="flex justify-center items-center">
       <div className="p-6 w-full lg:w-[60rem] xl:w-[66rem] lg:p-0">
         <div className="md:flex justify-between mt-6 mb-10 hidden items-center">
           <h3 className="font-medium md:text-2xl lg:text-3xl">상품 판매/대여</h3>
-          <Link to='/product/write' className="cursor-pointer px-2 py-1 bg-[#FF7F50] text-white rounded-sm text-sm">
+          <Link
+            to="/product/write"
+            className="cursor-pointer px-2 py-1 bg-[#FF7F50] text-white rounded-sm text-sm"
+          >
             작성하기
           </Link>
         </div>
@@ -175,14 +187,17 @@ const ProductList = () => {
           </div>
         </div>
         <div className="w-full flex flex-wrap">
-          {products?.map((product) => (
-            <ProductCard key={product.productId} product={product} />
-            ))}
+          {products?.map(
+            (product) =>
+              (!product.sold || !isAccBtnActive) && (
+                <ProductCard key={product.productId} product={product} />
+              ),
+          )}
         </div>
       </div>
 
       {/* intersection observer */}
-      <div ref={ref} className='h-1'></div>
+      <div ref={ref} className="h-1"></div>
     </div>
   );
 };
