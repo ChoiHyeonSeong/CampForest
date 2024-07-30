@@ -34,7 +34,7 @@ public class SecurityConfig {
 	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
 	@Value("${cors.allowed-origin}")
-	private String allowedOrigin;
+	private String[] allowedOrigins;
 
 	@Value("${cors.allowed-methods}")
 	private String[] allowedMethods;
@@ -44,11 +44,10 @@ public class SecurityConfig {
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.cors(cors -> cors.configurationSource(request -> {
 				CorsConfiguration config = new CorsConfiguration();
-				config.setAllowedOrigins(Collections.singletonList(allowedOrigin));
+				config.setAllowedOrigins(Arrays.asList(allowedOrigins));
 				config.setAllowedMethods(Arrays.asList(allowedMethods));
 				config.setAllowCredentials(true);
-				// TODO : 필요한 Header 만을 설정하도록 변경
-				config.setAllowedHeaders(Collections.singletonList("*"));
+				config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 				config.setExposedHeaders(List.of("Authorization"));
 				config.setMaxAge(3600L);
 				return config;

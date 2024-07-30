@@ -4,11 +4,12 @@ import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 
+import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.model.Users;
 
 public interface UserService {
 
-	void registByEmail(Users users);
+	void registUser(RequestRegisterDTO requestDTO);
 
 	Optional<Users> findByEmail(String email);
 

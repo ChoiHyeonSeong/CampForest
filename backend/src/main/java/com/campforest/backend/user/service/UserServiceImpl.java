@@ -9,7 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.model.UserImage;
 import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.UserImageRepository;
 import com.campforest.backend.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,13 +24,21 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService{
 
 	private final UserRepository userRepository;
+	private final UserImageRepository userImageRepository;
 	private final TokenService tokenService;
 	private final AuthenticationManager authenticationManager;
 
 	@Override
 	@Transactional
-	public void registByEmail(Users users) {
-		userRepository.save(users);
+	public void registUser(RequestRegisterDTO requestDTO) {
+		Users users = requestDTO.toEntity();
+		Users savedUser = userRepository.save(users);
+
+		UserImage userImage = UserImage.builder()
+			.user(savedUser)
+			.imageUrl(requestDTO.getProfileImage())
+			.build();
+		userImageRepository.save(userImage);
 	}
 
 	@Override

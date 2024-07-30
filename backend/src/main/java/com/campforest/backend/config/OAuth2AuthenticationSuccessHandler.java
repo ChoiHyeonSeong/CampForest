@@ -2,18 +2,22 @@ package com.campforest.backend.config;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.campforest.backend.common.JwtTokenProvider;
-import com.campforest.backend.user.model.RefreshToken;
-import com.campforest.backend.user.repository.RefreshTokenRepository;
+import com.campforest.backend.oauth.model.OAuthCodeToken;
+import com.campforest.backend.oauth.repository.OAuthCodeTokenRepository;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.UserRepository;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,34 +29,51 @@ import lombok.RequiredArgsConstructor;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private final JwtTokenProvider jwtTokenProvider;
-	private final RefreshTokenRepository refreshTokenRepository;
+	private final OAuthCodeTokenRepository oAuthCodeTokenRepository;
+	private final UserRepository userRepository;
+
+	@Value("${frontend.url}")
+	private String frontendUrl;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
 
+		String targetUrl = null;
+		String providerType = determineProviderType(request);
 		OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-		String providerType = determineProviderType(request);
-		String email = extractEmail(oAuth2User, providerType);
+		if (oAuth2User.getAttribute("tempToken") != null) {
+			// 임시 토큰이 존재하는 경우 := 새로운 사용자인 경우
+			String tempToken = oAuth2User.getAttribute("tempToken");
+			targetUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/user/regist/information")
+				.queryParam("token", tempToken)
+				.build().toUriString();
+		} else {
+			// 사용자가 이미 존재하는 경우
+			String email = extractEmail(oAuth2User, providerType);
+			Optional<Users> userOptional = userRepository.findByEmail(email);
 
-		String accessToken = jwtTokenProvider.generateAccessToken(email);
-		String refreshToken = jwtTokenProvider.generateRefreshToken(email);
+			if (userOptional.isPresent()) {
+				Users user = userOptional.get();
 
-		refreshTokenRepository.save(new RefreshToken(email, refreshToken, jwtTokenProvider.getRefreshTokenExpiration()));
+				String tempCode = UUID.randomUUID().toString();
+				String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
+				String refreshToken = jwtTokenProvider.generateRefreshToken(user.getEmail());
 
-		ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-			.httpOnly(true)
-			.secure(true)
-			.maxAge(jwtTokenProvider.getRefreshTokenExpiration())
-			.sameSite("None")
-			.path("/")
-			.build();
+				OAuthCodeToken oAuthCodeToken = OAuthCodeToken.builder()
+					.code(tempCode)
+					.accessToken(accessToken)
+					.refreshToken(refreshToken)
+					.build();
+				oAuthCodeTokenRepository.save(oAuthCodeToken);
 
-		response.addHeader("Authorization", "Bearer " + accessToken);
-		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-		// TODO : Redirect URL 설정
+				targetUrl = UriComponentsBuilder.fromUriString(frontendUrl)
+					.queryParam("code", tempCode)
+					.build().toUriString();
+			}
+		}
+		getRedirectStrategy().sendRedirect(request, response, targetUrl);
 	}
 
 	private String determineProviderType(HttpServletRequest request) {

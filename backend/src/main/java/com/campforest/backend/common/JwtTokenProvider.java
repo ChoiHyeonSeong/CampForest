@@ -36,6 +36,9 @@ public class JwtTokenProvider {
 	@Value("${jwt.refreshToken-expiration}")
 	private long refreshTokenExpiration;
 
+	@Value("${jwt.oauth-sign-up-expiration}")
+	private long oauthTokenExpiration;
+
 	@Value("${jwt.secret}")
 	private String secretKeyString;
 
@@ -55,13 +58,14 @@ public class JwtTokenProvider {
 		return generateToken(userEmail, refreshTokenExpiration);
 	}
 
-	private String generateToken(String userEmail, long expiration) {
+	public String generateOAuthSignUpToken(String userEmail, String userName) {
 		return Jwts.builder()
 			.issuer("CampForest")
 			.subject("JWT Token")
-			.claim("userEmail", userEmail)
+			.claim("email", userEmail)
+			.claim("name", userName)
 			.issuedAt(new Date())
-			.expiration(new Date(new Date().getTime() + expiration))
+			.expiration(new Date(new Date().getTime() + oauthTokenExpiration))
 			.signWith(secretKey)
 			.compact();
 	}
@@ -94,7 +98,18 @@ public class JwtTokenProvider {
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
-	public String getUserEmail(String token) {
+	private String getUserEmail(String token) {
 		return getClaims(token).get("userEmail", String.class);
+	}
+
+	private String generateToken(String userEmail, long expiration) {
+		return Jwts.builder()
+			.issuer("CampForest")
+			.subject("JWT Token")
+			.claim("userEmail", userEmail)
+			.issuedAt(new Date())
+			.expiration(new Date(new Date().getTime() + expiration))
+			.signWith(secretKey)
+			.compact();
 	}
 }

@@ -37,21 +37,4 @@ public class OAuthAttributes {
 			.nameAttributeKey(userNameAttributeName)
 			.build();
 	}
-
-	public Users toEntity(String registrationId) {
-		return Users.builder()
-			.userName(name)
-			.email(email)
-			.providerId(providerId)
-			.provider(registrationId)
-			.role(Role.ROLE_USER)
-			.nickname(name) // TODO : 닉네임 어떻게 설정?
-			.isOpen(true)
-			.profileImage(null)
-			.password("")
-			.birthdate(null)
-			.gender(null)
-			.phoneNumber("")
-			.build();
-	}
 }

@@ -3,6 +3,8 @@ package com.campforest.backend.user.model;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.campforest.backend.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -16,6 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -48,6 +51,7 @@ public class Users {
 	private String password;
 
 	@Column(name = "provider")
+	@ColumnDefault(value = "local")
 	private String provider;
 
 	@Column(name = "provider_id")
@@ -77,8 +81,9 @@ public class Users {
 	@Column(name = "introduction")
 	private String introduction;
 
-	@Column(name = "profile_image")
-	private String profileImage;
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	private UserImage userImage;
 
 	@OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
