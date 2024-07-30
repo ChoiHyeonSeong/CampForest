@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import Dropdown from '../Public/Dropdown';
 import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
 import { write } from '@services/productService';
-import MultiImageUpload from './MultiImageUpload';
+import MultiImageUpload from '@components/Public/MultiImageUpload';
 import ProductMap from './ProductMap';
 
 type Option = {
