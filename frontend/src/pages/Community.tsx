@@ -3,8 +3,12 @@ import { useParams } from 'react-router-dom'
 import { boardList, filteredBoardList } from '@services/boardService';
 import Board, { BoardType } from '@components/Board/Board';
 import { useInView } from 'react-intersection-observer';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from '@store/modalSlice';
 
 const Community = () => {
+  const dispatch = useDispatch();
+
   const params = useParams();
   const category = params.category ?? 'all'
 
@@ -24,14 +28,14 @@ const Community = () => {
         setNextPageExist(true);
       }
 
+      dispatch(setIsLoading(true))
       let result: any;
-      
       if (category === 'all') {
         result = await boardList(boardPageRef.current, 10);
       } else {
         result = await filteredBoardList(category, boardPageRef.current, 10);
       }
-
+      dispatch(setIsLoading(false))
       if (!result.data.data.empty && !result.data.data.last) {
         boardPageRef.current += 1
       }
@@ -43,6 +47,7 @@ const Community = () => {
       }
       setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
     } catch (error) {
+      dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);
     }
   };
@@ -61,13 +66,18 @@ const Community = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [category])
 
+  const pageReload = () => {
+    isFirstLoadRef.current = true
+    fetchBoards(true)
+  }
+
   return (
     <div>
       <div className='flex justify-center'>
         <div className='hidden lg:block w-[15rem]'/>
         <div className='w-full md:w-[40rem]'>
           {boards?.map((board, index) => (
-            <Board key={index} board={board} />
+            <Board key={index} board={board} deleteFunction={pageReload}/>
           ))}
         </div>
       </div>

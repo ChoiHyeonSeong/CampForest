@@ -73,7 +73,7 @@ function Detail() {
                 <div className="me-6">캠핑 장비 {'>'} {product.category}</div>
                 <div className="text-[#FF7F50] font-semibold">{product.productType === 'SALE' ? '판매' : '대여'}</div>
               </div>
-              <MoreOptionsMenu isUserPost={isUserPost} />
+              <MoreOptionsMenu isUserPost={isUserPost} deleteId={0} deleteFunction={() => {console.log("test")}} copyURL=''/>
             </div>
             <div className="text-2xl font-medium">{product.productName}</div>
             <div className="mt-[1.5rem] text-sm border-b border-[#EEEEEE] relative">

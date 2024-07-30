@@ -21,7 +21,7 @@ const BoardDetail = () => {
   return (
     <div className='flex justify-center'>
       <div className='p-6 w-full lg:w-[50rem] lg:p-0 mb-20'>
-        <Board board={boardData} />
+        <Board board={boardData} deleteFunction={()=>{}}/>
 
         {/* 게시물 상세 */}
         <div className='w-full h-60 min-w-[22rem] p-2'>

@@ -68,7 +68,7 @@ function App() {
             <Route path='/camping' element={<CampingSearch/> }/>
             <Route path='/user/password/*' element={<FindPassword/>}/>
             <Route path="/community/:category" element={<Community/>}/>
-            <Route path="/board/detail" element={<BoardDetail/>}/>
+            <Route path="/board/detail/:boardId" element={<BoardDetail/>}/>
           </Routes>
           {/* 여기까지 컨텐츠 */}
         </div> 
