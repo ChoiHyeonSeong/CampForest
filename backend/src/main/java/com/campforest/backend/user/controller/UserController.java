@@ -43,7 +43,7 @@ public class UserController {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 
-	@PostMapping("/regist/email")
+	@PostMapping("/auth/regist/email")
 	public ApiResponse<?> registByEmail(@RequestBody RequestRegisterDTO requestDTO) {
 		try {
 			String encodedPassword = passwordEncoder.encode(requestDTO.getPassword());
@@ -56,7 +56,7 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/login")
+	@PostMapping("/auth/login")
 	public ApiResponse<?> login(@RequestBody RequestLoginDTO requestDTO, HttpServletResponse response) {
 		Authentication authentication = userService.authenticateUser(requestDTO.getEmail(), requestDTO.getPassword());
 
@@ -87,7 +87,7 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 	}
 
-	@PostMapping("/logout")
+	@PostMapping("/auth/logout")
 	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
 		String refreshToken = extractRefreshToken(request);
 
@@ -118,7 +118,7 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/refreshToken")
+	@PostMapping("/auth/refreshToken")
 	public ApiResponse<?> refreshToken(@RequestBody RequestRefreshTokenDTO requestDTO, HttpServletResponse response) {
 		try {
 			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(requestDTO.getRefreshToken());
