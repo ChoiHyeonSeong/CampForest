@@ -23,6 +23,7 @@ public class ProductDetailDto {
 	private ProductType productType;
 	private Long interestHit;
 	private Long hit;
+	private Long deposit;
 	private List<String> imageUrls;
 
 	public ProductDetailDto(Product product, List<String> imageUrls) {

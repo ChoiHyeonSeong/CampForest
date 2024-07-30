@@ -38,7 +38,9 @@ public class ProductService {
 	public void createProduct(ProductRegistDto productRegistDto) {
 
 		Product product = productRegistDto.toEntity();
-
+		if(productRegistDto.getProductType()==ProductType.RENT) {
+			product.setDeposit(productRegistDto.getDeposit());
+		}
 		Product savedProduct = productRepository.save(product);
 
 		List<ProductImage> productImages = new ArrayList<>();
@@ -67,6 +69,10 @@ public class ProductService {
 	public void updateProduct(Long productId, ProductUpdateDto productUpdateDto) {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
+
+		if(product.getProductType()==ProductType.RENT) {
+			product.setDeposit(productUpdateDto.getDeposit());
+		}
 
 		product.update(productUpdateDto);
 
@@ -107,6 +113,9 @@ public class ProductService {
 	private ProductSearchDto toDto(Product product) {
 		ProductSearchDto dto = new ProductSearchDto();
 		dto.setProductId(product.getId());
+		dto.setUserId(product.getUserId());
+		dto.setHit(product.getHit());
+		dto.setInterestHit(product.getInterest_hit());
 		dto.setProductName(product.getProductName());
 		dto.setProductPrice(product.getProductPrice());
 		dto.setCategory(product.getCategory());
@@ -114,6 +123,12 @@ public class ProductService {
 		dto.setLocation(product.getLocation());
 		List<ProductImage> productImages = product.getProductImages();
 		dto.setImageUrl(productImages.get(0).getImageUrl());
+		if(product.getProductType()==ProductType.RENT) {
+			dto.setDeposit(product.getDeposit());
+		}
+		else{
+			dto.setSold(product.isSold());
+		}
 		return dto;
 	}
 

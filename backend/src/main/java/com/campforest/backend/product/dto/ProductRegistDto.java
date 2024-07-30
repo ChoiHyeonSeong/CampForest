@@ -22,6 +22,7 @@ public class ProductRegistDto {
 	private String location;
 	private ProductType productType;
 	private Category category;
+	private Long deposit;
 	private List<String> productImageUrl;
 
 

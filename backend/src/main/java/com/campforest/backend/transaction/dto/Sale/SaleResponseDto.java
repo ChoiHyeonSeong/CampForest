@@ -27,6 +27,7 @@ public class SaleResponseDto {
 	private ProductType productType;
 	private Long productPrice;
 	private String location;
+	private String meetingPlace;
 
 	public SaleResponseDto(Sale sale) {
 		this.saleId = sale.getId();
@@ -43,5 +44,6 @@ public class SaleResponseDto {
 		this.productType = sale.getProduct().getProductType();
 		this.productPrice = sale.getProduct().getProductPrice();
 		this.location = sale.getProduct().getLocation();
+		this.meetingPlace = sale.getMeetingPlace();
 	}
 }
