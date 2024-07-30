@@ -1,5 +1,7 @@
 package com.campforest.backend.user.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.common.JwtTokenProvider;
@@ -66,6 +68,15 @@ public class TokenServiceImpl implements TokenService{
 	@Override
 	public boolean isRefreshTokenBlacklisted(String refreshToken) {
 		return tokenBlacklistRepository.existsById(refreshToken);
+	}
+
+	@Override
+	public void invalidateAllUserTokens(String email) {
+		List<RefreshToken> userTokens = refreshTokenRepository.findAllByUserEmail(email);
+		for (RefreshToken token : userTokens) {
+			blacklistRefreshToken(token.getToken());
+			refreshTokenRepository.delete(token);
+		}
 	}
 
 	private void saveRefreshToken(String userEmail, String refreshToken) {
