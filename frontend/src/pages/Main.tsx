@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Recommand from '@components/Board/Recommand';
-import { detail } from '@services/boardService';
 import Board from '@components/Board/Board';
-import { getboardlist } from '@services/boardService';
+import { boardList, boardDetail } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from '@store/modalSlice';
 
 type BoardType = {
   boardId: number;
@@ -19,18 +20,26 @@ type BoardType = {
 }
 
 function Main() {
+  const dispatch = useDispatch();
+
   const [ref, inView] = useInView();
 
-  const [boards, setBoards] = useState<BoardType[]>([]);
-  const [boardsPage, setboardPage] = useState<number>(0);
+  const [boards, setBoards] = useState<Board[]>([]);
+  const [nextPageExist, setNextPageExist] = useState(true);
+
+  const boardPageRef = useRef(0);
 
   const fetchBoards = async () => {
     try {
-      const result = await getboardlist(boardsPage, 10);
-      setboardPage(boardsPage+1)
-      console.log(result)
-      // setBoards((prevBoards) => [...prevBoards, result.data.data.content]);
-      setBoards(result.data.data.content);
+      dispatch(setIsLoading(true))
+      const result = await boardList(boardPageRef.current, 10);
+      dispatch(setIsLoading(false))
+      boardPageRef.current += 1
+      if (result.data.data.last) {
+        setNextPageExist(false);
+      }
+      console.log(result.data)
+      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
     } catch (error) {
       console.error('게시글 불러오기 실패: ', error);
     }
@@ -38,15 +47,14 @@ function Main() {
 
   useEffect(() => {
     // inView가 true 일때만 실행한다.
-    if (inView) {
+    if (inView && nextPageExist) {
       console.log(inView, '무한 스크롤 요청')
       fetchBoards()
-      console.log(boards, boardsPage)
     }
   }, [inView]);
 
   const getDetail = () => {
-    detail(1);
+    boardDetail(1);
   }
   
   return (
@@ -65,7 +73,7 @@ function Main() {
       </div>
 
       {/* intersection observer */}
-      <div ref={ref}></div>
+      <div ref={ref} className='h-1'></div>
     </div> 
   )
 }

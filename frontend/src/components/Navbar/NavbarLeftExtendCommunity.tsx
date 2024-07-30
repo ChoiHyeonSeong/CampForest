@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 
@@ -9,30 +10,38 @@ type Props = {
 
 type CommunityCategoryObj = {
   title: string;
+  path: string;
 }
 
 const NavbarLeftExtendCommunity = (props: Props) => {
   const communityCategory: CommunityCategoryObj[] = [
     {
-      title: '전체보기'
+      title: '전체보기',
+      path: 'all'
     },
     {
-      title: '캠핑장 후기'
+      title: '캠핑장 후기',
+      path: 'place'
     },
     {
-      title: '캠핑장비 후기'
+      title: '장비 후기',
+      path: 'equipment'
     },
     {
-      title: '레시피 추천'
+      title: '레시피 추천',
+      path: 'recipe'
     },
     {
-      title: '캠핑장 양도'
+      title: '캠핑장 양도',
+      path: 'assign'
     },
     {
-      title: '자유게시판'
+      title: '자유게시판',
+      path: 'free'
     },
     {
-      title: '질문게시판'
+      title: '질문게시판',
+      path: 'question'
     },
   ]
 
@@ -50,7 +59,9 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       </div>
       <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide flex flex-col text-left ps-10'>
         {communityCategory.map((eachObj, index) => (
-          <div key={index} className="p-6">{eachObj.title}</div>
+          <Link key={index} to={`/community/${eachObj.path}`}>
+            <div className="p-6">{eachObj.title}</div>
+          </Link>
         ))}
       </div>
     </div>

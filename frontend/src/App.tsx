@@ -13,9 +13,10 @@ import MyPage from '@pages/MyPage';
 import ProfileEdit from '@pages/ProfileEdit';
 import CampingSearch from '@pages/CampingSearch';
 import FindPassword from '@pages/FindPassword';
+import Community from '@pages/Community';
 
-import Write from '@components/Board/Write';
-import LoadingModal from '@components/LoadingModal'
+import BoardWrite from '@components/Board/BoardWrite';
+import LoadingModal from '@components/Public/LoadingModal';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
@@ -63,18 +64,17 @@ function App() {
             <Route path="/user/regist/*" element={<Regist/>}/>
             <Route path="/user/mypage/*" element={<MyPage/>}/>
             <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
-            <Route path='/product/*' element={<Product />}/>
+            <Route path='/product/*' element={<Product/>}/>
             <Route path='/camping' element={<CampingSearch/> }/>
-            <Route path='/user/password/*' element={<FindPassword />}/>
-            <Route path='/board/detail' element={<BoardDetail />}/>
+            <Route path='/user/password/*' element={<FindPassword/>}/>
+            <Route path="/community/:category" element={<Community/>}/>
           </Routes>
           {/* 여기까지 컨텐츠 */}
         </div> 
       </div>
       {/* 모달은 이 아래부터 */}
-      <Write />
+      <BoardWrite />
       <LoadingModal />
-
     </div>
   );
 }

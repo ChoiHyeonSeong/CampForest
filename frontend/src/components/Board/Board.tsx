@@ -34,7 +34,7 @@ const Board = (props: Props) => {
 
   const handleLike = () => {
     console.log(props.board.boardId, user.userId)
-    like(props.board.boardId, user.userId);
+    boardLike(props.board.boardId, user.userId);
   }
 
   return (
