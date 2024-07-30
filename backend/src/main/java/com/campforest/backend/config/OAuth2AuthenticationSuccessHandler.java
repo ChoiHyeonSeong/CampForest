@@ -35,9 +35,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		String providerType = determineProviderType(request);
 		String email = extractEmail(oAuth2User, providerType);
-		System.out.println(
-			"OAuth2AuthenticationSuccessHandler.onAuthenticationSuccess email = " + email
-		);
 
 		String accessToken = jwtTokenProvider.generateAccessToken(email);
 		String refreshToken = jwtTokenProvider.generateRefreshToken(email);
