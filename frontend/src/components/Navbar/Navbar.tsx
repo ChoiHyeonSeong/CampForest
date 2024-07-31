@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 import { setUser, clearUser } from '@store/userSlice';
@@ -150,34 +150,35 @@ const Navbar = () => {
   };
 
   // 스크롤 방지
+  const currentScrollY = useRef(0);
+  const isAnyModalOpened = useRef(false);
   useEffect(() => {
     // 스크롤 방지는 media width가 1024 이하일때만
     const lgQuery = window.matchMedia('(min-width: 1024px)');
     const contentBox = document.querySelector('#contentBox') as HTMLElement;
 
-    let currentScrollY: number;
-    let isAnyModalOpened: boolean;
-
-    if (!contentBox.style.top) {
-      currentScrollY = window.scrollY;
-      isAnyModalOpened = false
-    } else {
-      currentScrollY = parseInt(contentBox.style.top.replace('-', '').replace('px', ''));
-      isAnyModalOpened = true
+    if (isMenuOpen) {
+      if (!contentBox.style.top) {
+        currentScrollY.current = window.scrollY;
+        isAnyModalOpened.current = false
+      } else {
+        currentScrollY.current = parseInt(contentBox.style.top.replace('-', '').replace('px', ''));
+        isAnyModalOpened.current = true
+      };
     };
 
     if (isMenuOpen && !lgQuery.matches) {
       // 모달이 열릴 때 스크롤 방지
       contentBox.classList.add('no-scroll');
-      contentBox.style.top = `-${currentScrollY}px`;
-    } else if (!lgQuery.matches) {
-      // 모달이 닫힐 때 스크롤 허용
-      const scrollY = parseInt(contentBox.style.top || '0') * -1;
-      if (!isAnyModalOpened) {
-        contentBox.classList.remove('no-scroll');
-        contentBox.style.top = '';
-      };
-      window.scrollTo(0, scrollY || currentScrollY);
+      contentBox.style.top = `-${currentScrollY.current}px`;
+    } else if (!isMenuOpen && !lgQuery.matches) {
+        // 모달이 닫힐 때 스크롤 허용
+        const scrollY = parseInt(contentBox.style.top || '0') * -1;
+        if (!isAnyModalOpened.current) {
+          contentBox.classList.remove('no-scroll');
+          contentBox.style.top = '';
+        };
+      window.scrollTo(0, scrollY || currentScrollY.current);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [isMenuOpen]);
@@ -213,7 +214,7 @@ const Navbar = () => {
 
       {/* 태블릿 이하 사이즈에서 메뉴 열때 배경 회색처리 */}
       <div
-        className={`fixed z-[30] bg-opacity-70 lg:hidden ${isMenuOpen ? 'bg-black inset-0 block' : 'bg-none hidden'}`}
+        className={`fixed z-[30] bg-opacity-80 lg:hidden ${isMenuOpen ? 'bg-black inset-0 block' : 'bg-none hidden'}`}
         onClick={closeMenu}
       >
       </div>

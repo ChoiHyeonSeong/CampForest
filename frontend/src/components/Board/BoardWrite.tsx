@@ -131,7 +131,7 @@ const BoardWrite = () => {
   return (
     <div 
     onClick={() => dispatch(setIsBoardWriteModal(false))} 
-    className={`${isBoardWriteModal ? 'block' : 'hidden'} fixed z-20 md:items-center w-full h-full bg-black bg-opacity-70 inset-0`}>
+    className={`${isBoardWriteModal ? 'block' : 'hidden'} fixed z-[100] md:items-center w-full h-full bg-black bg-opacity-80 inset-0`}>
       <div className="h-full md:w-[40rem] md:h-[90%] md:mx-auto" onClick={(event) => event.stopPropagation()}>
         
         <div className='overflow-auto md:mx-auto h-[calc(100vh-5.95rem)] mt-[3.2rem] md:h-[85%] md:mt-[15%] md:w-[35rem] bg-white md:rounded-md p-4 md:px-[2rem] md:py-[3rem] flex flex-col justify-between'>
