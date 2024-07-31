@@ -1,14 +1,53 @@
 import React, { useEffect, useState } from 'react'
-import { Routes, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import FollowUsers from '@components/User/FollowUsers';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from '@store/modalSlice';
+import { productList } from '@services/productService';
+import ProductCard from '@components/Product/ProductCard';
+import { boardUserList } from '@services/boardService';
+import Board from '@components/Board/Board';
 
 const UserPage = () => {
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState('게시물');
+  const [products, setProducts] = useState({ content: [], totalElements: 0 });
+  const [boards, setBoards] = useState({ content: [], totalElements: 0 });
   const userId = Number(useParams().userId);
+
+  const pageReload = () => {
+  }
+
+  async function fetchBoards() {
+    try {
+      const boardData = await boardUserList(userId);
+      setBoards(boardData);
+    } catch (error) {
+      console.error("Failed to fetch boards: ", error);
+    } finally {
+      dispatch(setIsLoading(false));
+    }
+  }
+
+  async function fetchProducts() {
+    try {
+      dispatch(setIsLoading(true));
+      const productData = await productList({userId: userId});
+      setProducts(productData);
+    } catch (error) {
+      console.error("Failed to fetch products: ", error);
+    }
+  }
+
+  useEffect(() => {
+
+    fetchProducts();
+    fetchBoards();
+  }, [])
 
   return (
     <div className='flex justify-center min-h-screen'>
@@ -24,17 +63,21 @@ const UserPage = () => {
         <ProfileTop userId={userId} setIsModalOpen={setIsModalOpen} setIsFollowing={setIsFollowing}/>
         <div>
           {/* 목록전환박스 */}
-          <MenuBar selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu}/>
+          <MenuBar boardCount={boards.totalElements} productCount={products?.totalElements} selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu}/>
 
           {/* 목록 */}
           <div className='w-full h-56'>
             {/* 게시물 목록 */}
-            <div className={`${selectedMenu === '게시물' ? '' : 'hidden'}`}>
-            
+            <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
+            {boards?.content.map((board: any) => (
+                  <Board board={board} deleteFunction={pageReload} />
+              ))}
             </div>
             {/* 판매/대여 목록 */}
-            <div className={`${selectedMenu === '판매/대여' ? '' : 'hidden'}`}>
-      
+            <div className={`${selectedMenu === '판매/대여' ? '' : 'hidden'} grid grid-cols-2 md:grid-cols-3`}>
+              {products?.content.map((product: any) => (
+                  <ProductCard product={product}/>
+              ))}
             </div>
             {/* 거래후기 목록 */}
             <div className={`${selectedMenu === '거래후기' ? '' : 'hidden'}`}>

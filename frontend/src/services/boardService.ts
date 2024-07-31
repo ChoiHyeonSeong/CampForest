@@ -52,6 +52,14 @@ export const boardList = (page: number, size: number) => {
   return response;
 }
 
+export const boardUserList = async (userId: number, page?: number, size?: number) => {
+  const params = { userId: userId, page: page, size: size };
+
+  const response = await axios.get(`${API_URL}/board/user`, {params});
+
+  return response.data.data;
+}
+
 export const filteredBoardList = (category: string, page: number, size: number) => {
   const params = { category: category, page: page, size: size };
   

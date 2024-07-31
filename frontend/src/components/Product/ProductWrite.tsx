@@ -110,7 +110,8 @@ const ProductWrite = () => {
       dispatch(setIsLoading(false));
       navigate('/product/list');
     } catch (error) {
-      
+      console.error('Failed to Product Write: ', error);
+      dispatch(setIsLoading(false));
     }
   }
 

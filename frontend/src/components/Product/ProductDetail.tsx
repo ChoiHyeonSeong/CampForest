@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import FireGif from '@assets/images/fire.gif';
 import { ReactComponent as LeftArrowIcon } from '@assets/icons/arrow-left.svg';
 import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
-import { Navigation, Pagination } from 'swiper/modules';
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu';
 import ProductCard from '@components/Product/ProductCard';
 import { productDetail } from '@services/productService';
@@ -11,6 +10,7 @@ import { priceComma } from '@utils/priceComma';
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';

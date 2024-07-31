@@ -37,7 +37,7 @@ const ProductCard = (props: Props) => {
   };
 
   return (
-    <div className='cursor-pointer bg-white w-1/3 md:w-1/4 xl:w-1/5 pt-3 pb-6 px-3 rounded-md hover:shadow-md transition-all duration-300'>
+    <div className='cursor-pointer bg-white pt-3 pb-6 px-3 rounded-md hover:shadow-md transition-all duration-300'>
       <Link to={`/product/detail/${props.product.productId}`}>
        {/* 상품사진 */}
        <div className='relative mb-3 w-full aspect-1 rounded-md overflow-hidden'>

@@ -15,7 +15,8 @@ type ProductRegistDto = {
 
 type SearchParams = {
   category?: string,
-  productType: string,
+  userId?: number,
+  productType?: string,
   minPrice?: number,
   maxPrice?: number,
   locations?: {},
@@ -41,16 +42,14 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
     });
     console.log(response);
   } catch (error) {
-    console.error('Product Write failed:', error);
     throw error;
   }
 }
 
 export const productList = async (searchParams: SearchParams) => {
   const response = await axios.get(`${API_URL}/product/search`, { params: searchParams});
-  console.log(response.data.data.content);
 
-  return response;
+  return response.data.data;
 }
 
 export const productDetail = async (productId: number) => {

@@ -103,8 +103,7 @@ const ProductList = () => {
       if (result.data) {
         setNextPageExist(false);
       }
-      console.log(result.data);
-      setProducts((prevProducts) => [...prevProducts, ...result.data.data.content]);
+      setProducts((prevProducts) => [...prevProducts, ...result.content]);
     } catch (error) {
       dispatch(setIsLoading(false));
       console.error('판매/대여 게시글 불러오기 실패: ', error);
@@ -187,7 +186,7 @@ const ProductList = () => {
             <p>거래 가능</p>
           </div>
         </div>
-        <div className="w-full flex flex-wrap">
+        <div className="w-full grid lg:grid-cols-5 md:grid-cols-4 grid-cols-3">
           {products?.map(
             (product) =>
               (!product.sold || !isAccBtnActive) && (

@@ -24,18 +24,21 @@ type Props = {
 export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: Props) {
   const dispatch = useDispatch();
   const [userinfo, setUserInfo] = useState<UserInfo>();
+  const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
 
   useEffect(() => {
+    if (userId === loginUserId) {
+      setMyPage(true);
+    } else {
+      setMyPage(false);
+    }
     async function fetchUserInfo() {
       try {
-        dispatch(setIsLoading(true));
-        const data = await userPage(userId);
-        setUserInfo(data);
+        const userData = await userPage(userId);
+        setUserInfo(userData);
       } catch (error) {
         console.error("Failed to fetch user info: ", error);
-      } finally {
-        dispatch(setIsLoading(false));
       }
     }
 
@@ -58,13 +61,13 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
               <div className='flex justify-between'>
                 <div className='flex'>
                   <div className='font-medium text-sm md:text-lg me-5'>{userinfo?.nickname}</div>
-                  <div className={`${loginUserId === userId? 'hidden' : '' } flex`}>
+                  <div className={`${myPage ? 'hidden' : '  ' } flex`}>
                     <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-orange-400 text-white rounded-md me-2 cursor-pointer'>팔로우</div>
                     <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-gray-300 rounded-md cursor-pointer'>채팅</div>
                   </div>
                 </div>
                 
-                <Link to='/user/profile/edit' className='font-light text-xs md:text-sm lg:text-base mt-2 cursor-pointer'>프로필 수정하기</Link>
+                <Link to='/user/profile/edit' className={`${myPage ? '' : 'hidden'} font-light text-xs md:text-sm lg:text-base mt-2 cursor-pointer`}>프로필 수정하기</Link>
               </div>
 
               <div className="mt-2">
@@ -72,13 +75,13 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
                   setIsModalOpen(true)
                   setIsFollowing(false)
                   }} className="text-gray-700 inline-block md:text pr-3">팔로워
-                  <span className='font-medium ms-2 cursor-pointer'>111</span>
+                  <span className='font-medium ms-2 cursor-pointer'>{userinfo?.followerCount}</span>
                 </div>
                 <div onClick={() => {
                   setIsModalOpen(true)
                   setIsFollowing(true)
                   }} className="text-gray-700 inline-block md:text">팔로잉
-                  <span className='font-medium ms-2 cursor-pointer'>286</span>
+                  <span className='font-medium ms-2 cursor-pointer'>{userinfo?.followingCount}</span>
                 </div>
               </div>
 

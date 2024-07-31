@@ -4,6 +4,8 @@ import { ReactComponent as BookMarkIcon } from '@assets/icons/bookmark-empty.svg
 import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 
 type Props = {
+  boardCount: number;
+  productCount: number;
   selectedMenu: string;
   setSelectedMenu: (menu: string) => void;
 }
@@ -20,13 +22,13 @@ const MenuBar = (props: Props) => {
           onClick={() => handleMenuClick('게시물')}
           className={`${props.selectedMenu === '게시물' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
           <p className='me-2'>게시물</p>
-          <p>12</p>
+          <p>{props.boardCount}</p>
         </div>
         <div 
           onClick={() => handleMenuClick('판매/대여')}
           className={`${props.selectedMenu === '판매/대여' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
           <p className='me-2'>판매/대여</p>
-          <p>12</p>
+          <p>{props.productCount}</p>
         </div>
         <div 
           onClick={() => handleMenuClick('거래후기')}
@@ -36,7 +38,7 @@ const MenuBar = (props: Props) => {
         </div>
       </div>
       <div>
-        <div className='flex justify-center mt-6 relative'>
+        <div className={`${props.selectedMenu === '거래후기' ? 'hidden' : ''} flex justify-center mt-6 relative mb-[1.5rem]`}>
           <div className='flex items-center'>
             <ArticleIcon className='size-4'/>
             <span className='ms-2 text-sm'>작성글</span>
