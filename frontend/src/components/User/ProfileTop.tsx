@@ -46,10 +46,10 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
   }, [])
 
   return (
-    <div className='p-6'>
+    <div className='px-4 py-6'>
           <div className='flex'>
             {/* 프로필사진 */}
-            <div className="relative size-20 md:size-24 rounded-full border-[0.1rem] me-6">
+            <div className="relative size-16 md:size-20 rounded-full border-[0.1rem] me-6">
                 <img src={userinfo?.profileImage ? userinfo.profileImage : defaultImage} alt='' className="absolute rounded-full" />
                 <div className='cursor-pointer opacity-0 hover:opacity-100 duration-200 absolute w-full h-full rounded-full mx-auto bg-[#00000098] text-white'>
                   <p className='flex justify-center items-center h-full'>사진변경</p>
@@ -92,9 +92,13 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
           <div className='lg:text-lg mt-4 ms-2'>{userinfo?.introduction}</div>
 
           {/* 거래불꽃온도 */}
-          <div className='ms-2 mt-6 mb-3'>
-            <div className='mb-2 font-medium'>거래불꽃온도</div>
-            <div className="w-full h-3 bg-gray-200 rounded-full">
+          <div className='ms-2 mt-6 mb-3 w-full'>
+            <div className='flex'>
+              <div className='mb-2 font-medium'>거래불꽃온도</div>
+              <div className='ms-3 text-red-500 font-medium'><span>653</span>℃</div>
+            </div>
+            
+            <div className="w-full h-4 bg-gray-200 rounded-full">
               <div className="h-full rounded-full w-1/2 bg-gradient-to-r from-red-500 to-orange-400 relative">
                 <img src={FireGif} alt="불꽃" className="absolute -right-16 -top-[3.75rem] size-32"/>
               </div>
