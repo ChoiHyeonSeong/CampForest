@@ -5,6 +5,7 @@ import java.util.List;
 import com.campforest.backend.product.model.Category;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductType;
+import com.campforest.backend.user.model.UserImage;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,8 +26,11 @@ public class ProductDetailDto {
 	private Long hit;
 	private Long deposit;
 	private List<String> imageUrls;
+	private UserImage userImage;
+	private String nickname;
 
-	public ProductDetailDto(Product product, List<String> imageUrls) {
+
+	public ProductDetailDto(Product product, List<String> imageUrls, String nickname, UserImage userImage) {
 		this.productId = product.getId();
 		this.category = product.getCategory();
 		this.productName = product.getProductName();
@@ -37,5 +41,9 @@ public class ProductDetailDto {
 		this.interestHit = product.getInterest_hit();
 		this.hit = product.getHit();
 		this.imageUrls = imageUrls;
+		this.userImage = userImage;
+		this.nickname = nickname;
+		this.deposit = product.getDeposit();
+		this.userId = product.getUserId();
 	}
 }

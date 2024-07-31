@@ -1,5 +1,6 @@
 package com.campforest.backend.user.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -16,4 +17,6 @@ public interface UserService {
 	void deleteByEmail(String email);
 
 	Authentication authenticateUser(String email, String password);
+
+	List<Integer> getPythonRecommendUsers(Long userId);
 }

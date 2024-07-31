@@ -1,15 +1,20 @@
 package com.campforest.backend.user.service;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.model.Interest;
@@ -73,5 +78,19 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Authentication authenticateUser(String email, String password) {
 		return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+	}
+
+	@Override
+	public List<Integer> getPythonRecommendUsers(Long userId) {
+		RestTemplate restTemplate = new RestTemplate();
+		String pythonUrl = "http://127.0.0.1:8000/similar-users/" + userId;
+		ResponseEntity<Map> pythonResponse = restTemplate.getForEntity(pythonUrl, Map.class);
+
+		if (pythonResponse.getStatusCode() == HttpStatus.OK) {
+			Map<String, Object> responseBody = pythonResponse.getBody();
+			return ((List<Integer>) responseBody.get("similar_users"));
+		} else {
+			return List.of();
+		}
 	}
 }
