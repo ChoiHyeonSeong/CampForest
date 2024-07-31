@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Routes } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import FollowUsers from '@components/User/FollowUsers';
 
-function MyPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isFollowing, setIsFollowing] = useState(true)
+const MyPage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(true);
 
   return (
     <div className='flex justify-center min-h-screen'>
@@ -19,7 +19,7 @@ function MyPage() {
         </div>
       </div>
       <div className='bg-white md:p-6 w-full xl:w-[55rem] rounded-lg'>
-        <h3 className='pb-[0.75rem] text-lg md:text-[1.5rem] hidden lg:block'>XXX 프로필</h3>
+        <h3 className='pb-[0.75rem] text-lg md:text-[1.5rem] hidden lg:block'>마이 프로필</h3>
         <ProfileTop setIsModalOpen={setIsModalOpen} setIsFollowing={setIsFollowing}/>
         <div>
           {/* 목록전환박스 */}

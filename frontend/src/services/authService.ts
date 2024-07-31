@@ -20,11 +20,6 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
-const token = sessionStorage.getItem('accessToken');
-if (token) {
-  axiosInstance.defaults.headers['Authorization'] = token;
-}
-
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = sessionStorage.getItem('accessToken');

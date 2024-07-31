@@ -1,7 +1,27 @@
-import React from 'react'
-import ProfileImgEX from '@assets/images/profileimg1.png'
-import FireGif from '@assets/images/fire.gif'
+import React, { useEffect, useState } from 'react';
+import defaultImage from '@assets/logo192.png';
+import FireGif from '@assets/images/fire.gif';
 import { Link } from 'react-router-dom';
+import { myPage } from '@services/userService';
+import { setIsLoading } from '@store/modalSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
+type UserInfo = {
+  birthdate: string;
+  createdAt: string;
+  email: string;
+  gender: string;
+  introduction: string;
+  modifiedAt: string;
+  nickname: string;
+  open: boolean;
+  phoneNumber: string;
+  profileImage: string;
+  role: string;
+  userId: number;
+  userName: string;
+}
 
 type Props = {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -9,12 +29,33 @@ type Props = {
 }
 
 export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
+  const dispatch = useDispatch();
+  const [userinfo, setUserInfo] = useState<UserInfo>();
+  const loginUserId = Number(sessionStorage.getItem('userId'));
+
+  useEffect(() => {
+    console.log(loginUserId);
+    async function fetchUserInfo() {
+      try {
+        dispatch(setIsLoading(true));
+        const data = await myPage();
+        setUserInfo(data);
+      } catch (error) {
+        console.error("Failed to fetch user info: ", error);
+      } finally {
+        dispatch(setIsLoading(false));
+      }
+    }
+
+    fetchUserInfo();
+  }, [])
+
   return (
     <div className='p-6'>
           <div className='flex'>
             {/* 프로필사진 */}
             <div className="relative size-20 md:size-24 rounded-full border-[0.1rem] me-6">
-                <img src={ProfileImgEX} alt="프로필 사진" className="absolute rounded-full" />
+                <img src={userinfo?.profileImage ? userinfo.profileImage : defaultImage} alt='' className="absolute rounded-full" />
                 <div className='cursor-pointer opacity-0 hover:opacity-100 duration-200 absolute w-full h-full rounded-full mx-auto bg-[#00000098] text-white'>
                   <p className='flex justify-center items-center h-full'>사진변경</p>
                 </div>
@@ -24,8 +65,8 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
             <div className='py-3 w-[calc(100%-6rem)] md:w-[calc(100%-7rem)] lg:w-[calc(100%-8rem)]'>
               <div className='flex justify-between'>
                 <div className='flex'>
-                  <div className='font-medium text-sm md:text-lg me-5'>사용자닉네임</div>
-                  <div className='flex'>
+                  <div className='font-medium text-sm md:text-lg me-5'>{userinfo?.nickname}</div>
+                  <div className={`${loginUserId === userinfo?.userId ? 'hidden' : '' } flex`}>
                     <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-orange-400 text-white rounded-md me-2 cursor-pointer'>팔로우</div>
                     <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-gray-300 rounded-md cursor-pointer'>채팅</div>
                   </div>
@@ -53,7 +94,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
           </div>
 
           {/* 자기소개 */}
-          <div className='lg:text-lg mt-4 ms-2'>자기소개를 적는 곳입니다.</div>
+          <div className='lg:text-lg mt-4 ms-2'>{userinfo?.introduction}</div>
 
           {/* 거래불꽃온도 */}
           <div className='ms-2 mt-6 mb-3'>
