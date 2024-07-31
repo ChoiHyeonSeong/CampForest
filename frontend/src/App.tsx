@@ -65,7 +65,7 @@ function App() {
             <Route path='/' element={<Main />}/>
             <Route path='/user/login' element={<Login/>}/>
             <Route path="/user/regist/*" element={<Regist/>}/>
-            <Route path="/user/:userId" element={<UserPage/>}/>
+            <Route path="/user/:userId/*" element={<UserPage/>}/>
             <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
             <Route path='/product/*' element={<Product/>}/>
             <Route path='/camping' element={<CampingSearch/> }/>

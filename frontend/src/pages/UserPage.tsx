@@ -9,6 +9,7 @@ import { productList } from '@services/productService';
 import ProductCard from '@components/Product/ProductCard';
 import { boardUserList } from '@services/boardService';
 import Board from '@components/Board/Board';
+import UserReviewList from '@components/User/UserReviewList';
 
 const UserPage = () => {
   const dispatch = useDispatch();
@@ -70,17 +71,20 @@ const UserPage = () => {
             {/* 게시물 목록 */}
             <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
             {boards?.content.map((board: any) => (
-                  <Board board={board} deleteFunction={pageReload} />
-              ))}
+                <Board board={board} deleteFunction={pageReload} />
+            ))}
             </div>
             {/* 판매/대여 목록 */}
             <div className={`${selectedMenu === '판매/대여' ? '' : 'hidden'} grid grid-cols-2 md:grid-cols-3`}>
               {products?.content.map((product: any) => (
-                  <ProductCard product={product}/>
+                <ProductCard product={product}/>
               ))}
             </div>
             {/* 거래후기 목록 */}
             <div className={`${selectedMenu === '거래후기' ? '' : 'hidden'}`}>
+              {/* {reveiw?.content.map((reveiw: any) => ( */}
+                <UserReviewList />
+              {/* ))} */}
       
             </div>
           </div>
