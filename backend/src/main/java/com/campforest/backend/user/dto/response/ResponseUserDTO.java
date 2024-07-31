@@ -13,13 +13,13 @@ import lombok.Setter;
 
 @Getter
 @Builder
-@Setter
 public class ResponseUserDTO {
 
     private Long userId;
     private String email;
     private String nickname;
     private String profileImage;
+    @Setter
     private List<Integer> similarUsers;
 
     public static ResponseUserDTO fromEntity(Users user) {

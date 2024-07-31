@@ -1,12 +1,9 @@
 package com.campforest.backend.user.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.kms.model.NotFoundException;
@@ -26,9 +22,11 @@ import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.user.dto.request.RequestInfoDTO;
 import com.campforest.backend.user.dto.request.RequestLoginDTO;
 import com.campforest.backend.user.dto.request.RequestRefreshTokenDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
 import com.campforest.backend.user.model.Users;
@@ -126,14 +124,14 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 	}
 
-	@GetMapping
-	public ApiResponse<?> getUserDetailsAfterLogin(Authentication authentication, HttpServletRequest request) {
+	@GetMapping("/auth/info")
+	public ApiResponse<?> getUserInfo(@RequestBody RequestInfoDTO requestDTO) {
 		try {
-			Users users = userService.findByEmail(authentication.getName())
+			Users users = userService.findByUserId(requestDTO.getUserId())
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
-
+			// TODO : 팔로우 기능 구현
+			ResponseInfoDTO responseDTO = ResponseInfoDTO.fromEntity(users);
 			return ApiResponse.createSuccess(responseDTO, "유저 정보 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
