@@ -1,5 +1,7 @@
 package com.campforest.backend.user.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.user.dto.request.RequestLoginDTO;
 import com.campforest.backend.user.dto.request.RequestRefreshTokenDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
 import com.campforest.backend.user.model.Users;
@@ -95,6 +99,9 @@ public class UserController {
 				.orElseThrow(() -> new NotFoundException("유저 정보 조회 실패"));
 			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
 
+			List<Integer> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
+			responseDTO.setSimilarUsers(similarUsers);
+
 			return ApiResponse.createSuccess(responseDTO, "로그인이 완료되었습니다.");
 		}
 		return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
@@ -117,14 +124,14 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 	}
 
-	@GetMapping
-	public ApiResponse<?> getUserDetailsAfterLogin(Authentication authentication, HttpServletRequest request) {
+	@GetMapping("/auth/info")
+	public ApiResponse<?> getUserInfo(@RequestParam("userId") Long userId) {
 		try {
-			Users users = userService.findByEmail(authentication.getName())
+			Users users = userService.findByUserId(userId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
-
+			// TODO : 팔로우 기능 구현
+			ResponseInfoDTO responseDTO = ResponseInfoDTO.fromEntity(users);
 			return ApiResponse.createSuccess(responseDTO, "유저 정보 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
