@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { ReactComponent as HeartOutline } from '@assets/icons/heart-outline.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 import { ReactComponent as BookmarkEmpty } from '@assets/icons/bookmark-empty.svg'
@@ -27,6 +27,7 @@ export type BoardType = {
 type Props = {
   board: BoardType;
   deleteFunction: () => void;
+  isDetail: boolean;
 }
 
 const Board = (props: Props) => {
@@ -102,47 +103,62 @@ const Board = (props: Props) => {
     setTimeDifference(difference); // 계산된 값을 상태에 설정
   }, [props.board.createdAt]); // modifiedAt이 변경될 때마다 실행
 
+  const [isWider, setIsWider] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (props.board.imageUrls.length > 0) {
+      const img = new Image();
+      img.onload = () => {
+        const containerAspectRatio = 4 / 3; // 컨테이너의 가로세로 비율 (aspect-[4/3])
+        const imageAspectRatio = img.width / img.height;
+        setIsWider(imageAspectRatio > containerAspectRatio);
+      };
+      img.src = props.board.imageUrls[0];
+    }
+  }, [props.board.imageUrls]);
+
   return (
-    <div className='w-full lg:h-fit min-w-[22rem] min-h-[40rem] border-b border-[#EEEEEE] bg-white shadow-lg'>
-
-      {/* 포스팅 상단바 */}
-      <div className='flex justify-between h-20 px-2 py-4'>
-        <div className='flex '>
-          <div className='rounded-full size-11 md:size-12 shadow-md overflow-hidden'></div>
-          <div className='ms-[1rem]'>
-            <div className='text-xl md:text-lg'>{props.board.userId}</div>
-            <div className='md:text-sm' onClick={() => calculateTimeDifference(props.board.createdAt)}>{props.board.category}</div>
+    <div className='flex flex-col justify-between w-full lg:h-fit min-w-[22rem] border-b border-[#EEEEEE] bg-white  px-4'>
+      <div>
+        {/* 포스팅 상단바 */}
+        <div className='flex justify-between h-20 px-2 py-4'>
+          <div className='flex '>
+            <div className='rounded-full size-11 md:size-12 shadow-md overflow-hidden'></div>
+            <div className='ms-[1rem]'>
+              <div className='text-xl md:text-lg'>{props.board.userId}</div>
+              <div className='md:text-sm'>{props.board.category}</div>
+            </div>
           </div>
+          <MoreOptionsMenu 
+            isUserPost={isUserPost} 
+            deleteFunction={deleteBoard} 
+            deleteId={props.board.boardId}
+            copyURL={`board/detail/${props.board.boardId}`}
+          />
         </div>
-        <MoreOptionsMenu 
-          isUserPost={isUserPost} 
-          deleteFunction={deleteBoard} 
-          deleteId={props.board.boardId}
-          copyURL={`board/detail/${props.board.boardId}`}
-        />
-      </div>
 
-      {/* 사진 및 내용 */}
-      <div className='mb-2 w-full' onClick={goBoardDetail}>
-        {/* 사진 */}
-        <div className={`relative flex justify-center w-full pb-[75%] overflow-hidden ${props.board.imageUrls.length > 0 ? '' : 'bg-gray-300'}`}>
-          {props.board.imageUrls.length > 0 && (
-            <img 
-              src={props.board.imageUrls[0]} 
-              alt="프로필 사진"
-              className='absolute top-0 left-0 w-full h-full object-cover' 
-            />
-          )}
-        </div>
-        {/* 내용 및 포스팅 시간 */}
-        <div className='py-[1rem] px-[0.5rem]'>
-          {/* 제목 */}
-          <div className='md:text-xl text-lg break-all mb-2'>{props.board.title}</div>
-          {/* 내용 */}
-          <div className='md:text-base text-xl break-all'>
-            {props.board.content}
+        {/* 사진 및 내용 */}
+        <div className='mb-2 w-full'>
+          {/* 사진 */}
+          <div className={`cursor-pointer relative flex flex-all-center w-full aspect-[4/3] overflow-hidden ${props.board.imageUrls.length > 0 ? 'bg-black' : 'hidden'}`} onClick={goBoardDetail}>
+            {props.board.imageUrls.length > 0 && (
+              <img 
+                src={props.board.imageUrls[0]} 
+                alt="프로필 사진"
+                className={`${isWider ? 'w-full h-auto' : 'w-auto h-full'} object-contain`}
+              />
+            )}
           </div>
-          <div className='my-2 text-xs md:text-sm text-gray-500'>{timeDifference}</div>
+          {/* 내용 및 포스팅 시간 */}
+          <div className='py-[1rem] px-[0.5rem]'>
+            {/* 제목 */}
+            <div className='cursor-pointer md:text-xl text-lg break-all mb-2' onClick={goBoardDetail}>{props.board.title}</div>
+            {/* 내용 */}
+            <div className={`cursor-pointer md:text-base text-xl break-all ${props.isDetail ? '' : 'line-clamp-3'}`} onClick={goBoardDetail}>
+              {props.board.content}
+            </div>
+            <div className='my-2 text-xs md:text-sm text-gray-500'>{timeDifference}</div>
+          </div>
         </div>
       </div>
 

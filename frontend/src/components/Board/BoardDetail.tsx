@@ -1,34 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Board from './Board'
 import BoardComment from './BoardComment'
 import CommentInput from './CommentInput';
-
+import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { BoardType } from '@components/Board/Board';
+import { boardDetail } from '@services/boardService';
+import { setIsLoading } from '@store/modalSlice';
+import { useNavigate } from 'react-router-dom';
 
 const BoardDetail = () => {
+  const navigate = useNavigate();
+
+  const params = useParams();
+
+  const boardId = Number(params.boardId)
+
   const [comments, setComments] = useState<string[]>([]);
 
-  const boardData = {
-    boardId: 1,
-    userId: 1,
-    title: "Sample Title",
-    content: "This is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample contentThis is a sample content",
-    category: "Camping",
-    likeCount: 10,
-    createdAt: "2024-07-29T00:00:00Z",
-    modifiedAt: "2024-07-29T00:00:00Z",
-    imageUrls: ["https://via.placeholder.com/150"],
-    boardOpen: true
+  const dispatch = useDispatch();
+
+  const [board, setBoard] = useState<BoardType>(
+    {
+      boardId: 0,
+      userId: 0,
+      title: "",
+      content: "",
+      category: "",
+      likeCount: 0,
+      createdAt: "",
+      modifiedAt: "",
+      imageUrls: [],
+      boardOpen: true
+    }
+  );
+
+  const fetchBoards = async () => {
+    try {
+      dispatch(setIsLoading(true))
+      const result = await boardDetail(boardId);
+      dispatch(setIsLoading(false))
+
+      console.log(result)
+      setBoard(result.data.data);
+    } catch (error) {
+      dispatch(setIsLoading(false))
+      console.error('게시글 불러오기 실패: ', error);
+    }
   };
+
+  useEffect(() => {
+    fetchBoards()
+  }, [boardId]);
 
   const handleAddComment = (comment: string) => {
     setComments([...comments, comment]);
+  };
+
+  const goMain = () => {
+    navigate('/')
   };
 
   return (
     <div className='flex justify-center min-h-screen'>
       <div className='p-6 mb-12 w-full lg:w-[60rem] lg:p-0 lg:pt-4 flex flex-col lg:flex-row'>
         <div className='lg:w-3/5 rounded-md min-h-[80vh]'>
-          <Board board={boardData} deleteFunction={()=>{}}/>
+          <Board board={board} deleteFunction={goMain} isDetail={true}/>
         </div>
         
         {/* 게시물 상세 */}

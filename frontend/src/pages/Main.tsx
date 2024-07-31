@@ -24,12 +24,10 @@ function Main() {
         setBoards([]);
         setNextPageExist(true);
       }
-
       dispatch(setIsLoading(true))
       const result = await boardList(boardPageRef.current, 10);
       dispatch(setIsLoading(false))
 
-      console.log(result.data.data)
       boardPageRef.current += 1
       if (result.data.data.last) {
         setNextPageExist(false);
@@ -68,8 +66,10 @@ function Main() {
       <div className='flex justify-center'>
         <div className='hidden lg:block w-[15rem]'/>
         <div className='w-full md:w-[40rem]'>
-          {boards?.map((board) => (
-            <Board key={board.boardId} board={board} deleteFunction={pageReload}/>
+          {boards?.map((board, index) => (
+            <div className='my-5' key={index}>
+              <Board board={board} deleteFunction={pageReload} isDetail={false}/>
+            </div>
           ))}
         </div>
         <div>
