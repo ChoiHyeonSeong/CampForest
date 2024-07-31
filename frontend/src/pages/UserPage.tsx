@@ -71,7 +71,7 @@ const UserPage = () => {
             {/* 게시물 목록 */}
             <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
             {boards?.content.map((board: any) => (
-                <Board board={board} deleteFunction={pageReload} />
+                <Board board={board} deleteFunction={pageReload} isDetail={false}/>
             ))}
             </div>
             {/* 판매/대여 목록 */}
