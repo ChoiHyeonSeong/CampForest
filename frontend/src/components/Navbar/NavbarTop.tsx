@@ -5,6 +5,8 @@ import { ReactComponent as BigLogoIcon } from '@assets/logo/logo.svg'
 import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
 import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 
+import ProfileImage from '@assets/images/profileimgs.png'
+
 type Props = {
   toggleMenu: () => void;
   closeMenu: () => void;
@@ -38,8 +40,11 @@ const NavbarTop = (props: Props) => {
         </Link>
       </div>
 
-      <div className='lg:ms-auto cursor-pointer flex flex-all-center w-11'>
-        <PushIcon className='size-[1.5rem]' stroke={'black'}/>
+      <div className='lg:ms-auto flex items-center justify-end w-[6rem] lg:w-[6rem]'>
+        <PushIcon className='cursor-pointer size-[1.75rem] block lg:hidden' stroke={'black'}/>
+        <div className='cursor-pointer ms-0 md:ms-3 hidden md:block size-[1.75rem] rounded-full overflow-hidden border border-black'>
+          <img src={ProfileImage} alt="" />
+        </div>
       </div>
     </div>
   )
