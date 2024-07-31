@@ -21,6 +21,8 @@ import com.campforest.backend.product.model.ProductImage;
 import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.repository.ProductImageRepository;
 import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductService {
 
 	private final ProductRepository productRepository;
-
+	private final UserRepository userRepository;
 	private final ProductImageRepository productImageRepository;
 
 	public void createProduct(ProductRegistDto productRegistDto) {
@@ -58,10 +60,14 @@ public class ProductService {
 		Product findProduct = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
 
+		Users user = userRepository.findById(findProduct.getUserId())
+			.orElseThrow(() -> new IllegalArgumentException("유저 없음요 "));
+
+
 		List<String> imageUrls = findProduct.getProductImages()
 			.stream().map(ProductImage::getImageUrl)
 			.collect(Collectors.toList());
-		return new ProductDetailDto(findProduct, imageUrls);
+		return new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
 	}
 
 	//게시물 수정 기능
