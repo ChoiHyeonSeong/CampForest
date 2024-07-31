@@ -77,7 +77,9 @@ const Community = () => {
         <div className='hidden lg:block w-[15rem]'/>
         <div className='w-full md:w-[40rem]'>
           {boards?.map((board, index) => (
-            <Board key={index} board={board} deleteFunction={pageReload}/>
+            <div className='my-5' key={index}>
+              <Board board={board} deleteFunction={pageReload} isDetail={false}/>
+            </div>
           ))}
         </div>
       </div>

@@ -62,7 +62,7 @@ const NavbarLeft = (props: Props) => {
     <div 
       className={`fixed z-[60] md:z-[40] h-full mb-11 pt-0 md:pt-[3.2rem]
         transition-all duration-300 ease-in-out
-        bg-white border-r w-[90vw] 
+        bg-white border-r border-light-border w-[90vw] 
         lg:block ${isHovered && !isEitherOpen ? 'lg:w-[15rem]' : 'lg:w-[5rem]'}
         ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}

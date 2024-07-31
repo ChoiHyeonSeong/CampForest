@@ -30,10 +30,16 @@ const MoreOptionsMenu = (props: Props) => {
       </div>
       {isMenuOpen && (
         <div className="toggle-menu font-medium text-left flex flex-col px-1 absolute z-10 top-6 right-6 w-32 rounded-md border-[0.1rem] border-[#eee] bg-[#fff]">
+          <div className='w-full border-b ps-3'>
+            <button className="py-3 text-base hover:text-[#FF7F50]">신고하기</button>
+          </div>
+          <div className='w-full border-b ps-3'>
+            <button className="py-3 text-base hover:text-[#FF7F50]" onClick={copyLink}>링크복사</button>
+          </div>
           {props.isUserPost ? (
             <>
               <div className='w-full border-b ps-3'>
-              <button className="py-3 text-base hover:text-[#FF7F50]">수정하기</button>
+                <button className="py-3 text-base hover:text-[#FF7F50]">수정하기</button>
               </div>
               <div className='w-full border-b ps-3' onClick={() => props.deleteFunction(props.deleteId)}>
                 <button className="py-3 text-base hover:text-[#FF7F50]">삭제하기</button>
@@ -41,12 +47,6 @@ const MoreOptionsMenu = (props: Props) => {
             </>
           ) : (
             <>
-              <div className='w-full border-b ps-3'>
-              <button className="py-3 text-base hover:text-[#FF7F50]">신고하기</button>
-              </div>
-              <div className='w-full border-b ps-3'>
-              <button className="py-3 text-base hover:text-[#FF7F50]" onClick={copyLink}>링크복사</button>
-              </div>
             </>
           )}
         </div>
