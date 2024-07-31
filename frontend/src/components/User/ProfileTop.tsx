@@ -2,43 +2,35 @@ import React, { useEffect, useState } from 'react';
 import defaultImage from '@assets/logo192.png';
 import FireGif from '@assets/images/fire.gif';
 import { Link } from 'react-router-dom';
-import { myPage } from '@services/userService';
+import { userPage } from '@services/userService';
 import { setIsLoading } from '@store/modalSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@store/store';
+import { useDispatch } from 'react-redux';
 
 type UserInfo = {
-  birthdate: string;
-  createdAt: string;
-  email: string;
-  gender: string;
-  introduction: string;
-  modifiedAt: string;
   nickname: string;
-  open: boolean;
-  phoneNumber: string;
+  followingCount: number;
+  followerCount: number;
+  introduction: string;
   profileImage: string;
-  role: string;
-  userId: number;
-  userName: string;
+  isOpen: boolean;
 }
 
 type Props = {
+  userId: number;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsFollowing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
+export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: Props) {
   const dispatch = useDispatch();
   const [userinfo, setUserInfo] = useState<UserInfo>();
   const loginUserId = Number(sessionStorage.getItem('userId'));
 
   useEffect(() => {
-    console.log(loginUserId);
     async function fetchUserInfo() {
       try {
         dispatch(setIsLoading(true));
-        const data = await myPage();
+        const data = await userPage(userId);
         setUserInfo(data);
       } catch (error) {
         console.error("Failed to fetch user info: ", error);
@@ -66,7 +58,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
               <div className='flex justify-between'>
                 <div className='flex'>
                   <div className='font-medium text-sm md:text-lg me-5'>{userinfo?.nickname}</div>
-                  <div className={`${loginUserId === userinfo?.userId ? 'hidden' : '' } flex`}>
+                  <div className={`${loginUserId === userId? 'hidden' : '' } flex`}>
                     <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-orange-400 text-white rounded-md me-2 cursor-pointer'>팔로우</div>
                     <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-gray-300 rounded-md cursor-pointer'>채팅</div>
                   </div>
