@@ -5,7 +5,7 @@ import { ReactComponent as EyeIcon } from '@assets/icons/eyes.svg'
 import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 import { ReactComponent as BlackHeartIcon } from '@assets/icons/heart-black.svg'
-import ProfileImgEX from '@assets/images/productExample.png'
+// import ProfileImgEX from '@assets/images/productExample.png'
 import { Link } from 'react-router-dom';
 
 export type ProductType = {

@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'shake': 'shake 0.5s 2', // 애니메이션 이름과 지속 시간 설정
+        'shake': 'shake 0.5s 3', // 애니메이션 이름과 지속 시간 설정
       },
       keyframes: {
         shake: {

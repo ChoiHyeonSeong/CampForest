@@ -48,7 +48,7 @@ const CommentInput = (props: Props) => {
         </button>
       </div>
       {showEmojiPicker && (
-        <div className='absolute top-0 z-10'>
+        <div className='absolute bottom-12 z-10'>
           <Picker onEmojiSelect={handleEmojiSelect} />
         </div>
       )}
