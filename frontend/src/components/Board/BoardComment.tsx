@@ -2,8 +2,11 @@ import React from 'react'
 import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 
+type Props = {
+  comment: string;
+};
 
-const BoardComment = () => {
+const BoardComment = (props: Props) => {
   return (
     <div className='bg-white w-full border-b border-[#ccc] min-h-[5rem] px-2 py-3 flex justify-between items-center'>
       <div className='flex'>
@@ -21,7 +24,7 @@ const BoardComment = () => {
           </div>
           {/* user-comment */}
           <div className='user-comment break-all text-gray-600'>
-            댓글을 달아주세요.
+            {props.comment}
           </div>
         
         </div>
