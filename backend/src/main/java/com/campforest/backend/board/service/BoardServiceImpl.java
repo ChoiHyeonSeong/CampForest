@@ -28,6 +28,8 @@ import com.campforest.backend.board.repository.commentlike.CommentLikeRepository
 import com.campforest.backend.board.repository.comment.CommentRepository;
 import com.campforest.backend.board.repository.like.LikeRepository;
 import com.campforest.backend.board.repository.save.SaveRepository;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -39,16 +41,18 @@ public class BoardServiceImpl implements BoardService {
 	private final CommentRepository commentRepository;
 	private final CommentLikeRepository commentLikeRepository;
 	private final BoardImageRepository boardImageRepository;
-
+	private final UserRepository userRepository;
 	public BoardServiceImpl(BoardRepository boardRepository, LikeRepository likeRepository,
 		SaveRepository saveRepository, CommentRepository commentRepository,
-		CommentLikeRepository commentLikeRepository, BoardImageRepository boardImageRepository) {
+		CommentLikeRepository commentLikeRepository, BoardImageRepository boardImageRepository,
+		UserRepository userRepository) {
 		this.boardRepository = boardRepository;
 		this.likeRepository = likeRepository;
 		this.saveRepository = saveRepository;
 		this.commentRepository = commentRepository;
 		this.commentLikeRepository = commentLikeRepository;
 		this.boardImageRepository = boardImageRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Transactional
@@ -81,33 +85,55 @@ public class BoardServiceImpl implements BoardService {
 
 	@Transactional
 	@Override
-	public Page<BoardResponseDto> getAllBoards(int page, int size) {
+	public Page<BoardResponseDto> getAllBoards(Long nowId,int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		Page<Boards> boardsPage = boardRepository.findAll(pageable);
 
-		return boardsPage.map(this::convertToDto);
+		List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
+		return boardsPage.map(board -> {
+			BoardResponseDto dto = convertToDto(board);
+			Users user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+			// dto.setUserImage(user.getUserImage().getImageUrl());
+			dto.setNickname(user.getNickname());
+			dto.setLiked(likeBoardsId.contains(board.getBoardId()));
+			return dto;
+		});
 	}
 
 	@Override
-	public Page<BoardResponseDto> getUserBoards(Long userId, int page, int size) {
+	public Page<BoardResponseDto> getUserBoards(Long nowId,Long userId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		Page<Boards> boardsPage = boardRepository.findByUserId(userId, pageable);
-
-		return boardsPage.map(this::convertToDto);
+		List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
+		return boardsPage.map(board -> {
+			BoardResponseDto dto = convertToDto(board);
+			dto.setLiked(likeBoardsId.contains(board.getBoardId()));
+			return dto;
+		});
 	}
 
 	@Override
-	public Page<BoardResponseDto> getCategoryBoards(String category, int page, int size) {
+	public Page<BoardResponseDto> getCategoryBoards(Long nowId,String category, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		Page<Boards> boardsPage = boardRepository.findByCategory(category, pageable);
-		return boardsPage.map(this::convertToDto);
+		List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
+		return boardsPage.map(board -> {
+			BoardResponseDto dto = convertToDto(board);
+			dto.setLiked(likeBoardsId.contains(board.getBoardId()));
+			return dto;
+		});
 	}
 
 	@Override
-	public Page<BoardResponseDto> getTitleBoards(String title, int page, int size) {
+	public Page<BoardResponseDto> getTitleBoards(Long nowId,String title, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		Page<Boards> boardsPage=boardRepository.findByTitle(title,pageable);
-		return boardsPage.map(this::convertToDto);
+		List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
+		return boardsPage.map(board -> {
+			BoardResponseDto dto = convertToDto(board);
+			dto.setLiked(likeBoardsId.contains(board.getBoardId()));
+			return dto;
+		});
 	}
 
 	@Transactional

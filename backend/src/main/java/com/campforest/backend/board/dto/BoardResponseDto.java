@@ -22,6 +22,9 @@ public class BoardResponseDto {
 	private String category;
 	private Long likeCount;
 	private boolean isBoardOpen;
+	private String nickname;
+	private String userImage;
+	private boolean isLiked;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 	private List<String> imageUrls;

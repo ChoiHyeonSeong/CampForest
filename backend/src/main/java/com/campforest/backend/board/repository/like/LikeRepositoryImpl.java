@@ -40,4 +40,13 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
 			.where(likes.boardId.eq(boardId))
 			.fetchOne();
 	}
+
+	@Override
+	public List<Long> findBoardIdsByUserId(Long userId) {
+		return queryFactory
+			.select(likes.boardId)
+			.from(likes)
+			.where(likes.userId.eq(userId))
+			.fetch();
+	}
 }

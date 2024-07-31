@@ -14,13 +14,13 @@ public interface BoardService {
 
 	BoardResponseDto getBoard(Long boardId);
 
-	Page<BoardResponseDto> getAllBoards(int page, int size);
+	Page<BoardResponseDto> getAllBoards(Long nowId, int page, int size);
 
-	Page<BoardResponseDto> getUserBoards(Long userId, int page, int size);
+	Page<BoardResponseDto> getUserBoards(Long nowId,Long userId, int page, int size);
 
-	Page<BoardResponseDto> getTitleBoards(String title, int page, int size);
+	Page<BoardResponseDto> getTitleBoards(Long nowId,String title, int page, int size);
 
-	Page<BoardResponseDto> getCategoryBoards(String category, int page, int size);
+	Page<BoardResponseDto> getCategoryBoards(Long nowId,String category, int page, int size);
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 

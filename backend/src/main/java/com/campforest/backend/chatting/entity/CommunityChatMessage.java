@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "community_chat_message")
+@Table(name = "community_chat_messages")
 public class CommunityChatMessage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

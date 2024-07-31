@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,8 @@ import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.product.dto.ProductRegistDto;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,14 +43,18 @@ public class BoardController {
 
 	private final BoardService boardService;
 	private final S3Service s3Service;
+	private final UserService userService;
 
 	//게시글 작성
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponse<?> writeBoard(
+		Authentication authentication,
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
 		@RequestPart(value = "boardRequestDto") BoardRequestDto boardRequestDto
 	) {
 		try {
+			Users users = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 			List<String> imageUrls = new ArrayList<>();
 			if (files != null) {
@@ -59,6 +66,7 @@ public class BoardController {
 				}
 			}
 			boardRequestDto.setImageUrls(imageUrls);
+			boardRequestDto.setUserId(users.getUserId());
 			boardService.writeBoard(boardRequestDto);
 			return ApiResponse.createSuccessWithNoContent("게시물 작성에 성공하였습니다.");
 		} catch (IOException e) {
@@ -82,6 +90,7 @@ public class BoardController {
 	//전체 게시글 조회
 	@GetMapping
 	public ApiResponse<?> getAllBoard(
+		Authentication authentication,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size
 	) {
@@ -89,9 +98,22 @@ public class BoardController {
 			if (page < 0 || size <= 0) {
 				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
 			}
-			Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(page, size);
-			return ApiResponse.createSuccess(boardResponseDtos, "게시글 목록 조회 성공하였습니다");
+			else if (authentication == null) {
+				System.out.println("유저 없을때");
+				Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(-1L, page, size);
+
+				return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 목록 조회 성공하였습니다");
+
+			} else {
+				Users user = userService.findByEmail(authentication.getName())
+					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+				Long nowId = user.getUserId();
+				Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(nowId, page, size);
+
+				return ApiResponse.createSuccess(boardResponseDtos, "게시글 목록 조회 성공하였습니다");
+			}
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -99,6 +121,7 @@ public class BoardController {
 	//사용자별 게시글 조회
 	@GetMapping("/user")
 	public ApiResponse<?> getUserBoard(
+		Authentication authentication,
 		@RequestParam Long userId,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size
@@ -108,25 +131,46 @@ public class BoardController {
 			if (page < 0 || size <= 0) {
 				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
 			}
-			Page<BoardResponseDto> boardResponseDtos = boardService.getUserBoards(userId,page,size);
+			else if (authentication == null) {
+				Page<BoardResponseDto> boardResponseDtos = boardService.getUserBoards(-1L,userId, page, size);
+				return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 사용자별 조회 성공하였습니다");
+			}
+			else{
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));;
+			Long nowId= user.getUserId();
+			Page<BoardResponseDto> boardResponseDtos = boardService.getUserBoards(nowId, userId, page, size);
 			return ApiResponse.createSuccess(boardResponseDtos, "게시글 사용자별 조회에 성공하였습니다");
-		} catch (Exception e) {
+		}
+		}
+			catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}
 	}
+
 	//제목 검색
 	@GetMapping("/title")
 	public ApiResponse<?> getTitleBoard(
+		Authentication authentication,
 		@RequestParam String title,
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size){
+		@RequestParam(defaultValue = "10") int size) {
 		try {
 			if (page < 0 || size <= 0) {
 				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
 			}
-			Page<BoardResponseDto> boardResponseDtos = boardService.getTitleBoards(title,page,size);
-			return ApiResponse.createSuccess(boardResponseDtos, "게시글 제목으로 검색에 성공하였습니다");
-		} catch (Exception e) {
+			else if (authentication == null) {
+				Page<BoardResponseDto> boardResponseDtos = boardService.getTitleBoards(-1L, title, page, size);
+				return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 제목으로 검색에 성공하였습니다");
+			}
+			else {
+				Users user = userService.findByEmail(authentication.getName())
+					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+				Long nowId= user.getUserId();
+				Page<BoardResponseDto> boardResponseDtos = boardService.getTitleBoards(nowId, title, page, size);
+				return ApiResponse.createSuccess(boardResponseDtos, "게시글 제목으로 검색에 성공하였습니다");
+			}
+			} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INVALID_BOARD_CATEGORY);
 		}
 	}
@@ -134,6 +178,7 @@ public class BoardController {
 	//카테고리별 게시글 조회
 	@GetMapping("/category")
 	public ApiResponse<?> getCategoryBoard(
+		Authentication authentication,
 		@RequestParam String category,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
@@ -141,9 +186,19 @@ public class BoardController {
 			if (page < 0 || size <= 0) {
 				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
 			}
-			Page<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(category,page,size);
-			return ApiResponse.createSuccess(boardResponseDtos, "게시글 카테고리별 조회에 성공하였습니다");
-		} catch (Exception e) {
+			else if (authentication == null) {
+				Page<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(-1L, category, page, size);
+				return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 카테고리별 조회에 성공하였습니다");
+
+			}
+			else {
+				Users user = userService.findByEmail(authentication.getName())
+					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));;
+				Long nowId= user.getUserId();
+				Page<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(nowId, category, page, size);
+				return ApiResponse.createSuccess(boardResponseDtos, "게시글 카테고리별 조회에 성공하였습니다");
+			}
+			} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INVALID_BOARD_CATEGORY);
 		}
 	}
@@ -178,7 +233,7 @@ public class BoardController {
 				return ApiResponse.createError(ErrorCode.LIKE_ALREADY_EXISTS);
 			}
 			boardService.likeBoard(boardId, userId);
-			return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(),"게시글 좋아요 성공하였습니다");
+			return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(), "게시글 좋아요 성공하였습니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
@@ -188,12 +243,12 @@ public class BoardController {
 	@DeleteMapping("like")
 	public ApiResponse<?> deleteLike(@RequestParam Long boardId, @RequestParam Long userId) {
 
-			if (!boardService.checkLike(boardId, userId)) {
-				return ApiResponse.createError(ErrorCode.LIKE_NOT_FOUND);
-			}
-			boardService.deleteLike(boardId, userId);
+		if (!boardService.checkLike(boardId, userId)) {
+			return ApiResponse.createError(ErrorCode.LIKE_NOT_FOUND);
+		}
+		boardService.deleteLike(boardId, userId);
 
-			return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(),"게시글 좋아요 삭제 성공하였습니다");
+		return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(), "게시글 좋아요 삭제 성공하였습니다");
 
 	}
 
