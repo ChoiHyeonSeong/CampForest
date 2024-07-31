@@ -28,6 +28,7 @@ const BoardWrite = () => {
   const [boardOpen, setBoardOpen] = useState<boolean>(true);
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
   const [uploadedImage, setUploadedImage] = useState<string[]>([])
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const dispatch = useDispatch()
   const handleWrite = async (e: React.FormEvent) => {
@@ -127,6 +128,14 @@ const BoardWrite = () => {
   useEffect(() => {
     formClear()
   }, [isBoardWriteModal]);
+
+  useEffect(() => {
+    if (title.length > 0 && content.length > 0) {
+      setIsSubmitDisabled(false);
+    } else {
+      setIsSubmitDisabled(true);
+    }
+  }, [title, content])
 
   return (
     <div 
@@ -237,11 +246,13 @@ const BoardWrite = () => {
             </div>
 
             <div className='md:static md:text-center w-full' onClick={handleWrite}>
-              <button className='
-                py-3 w-full md:w-[15rem] bg-black text-white 
-                md:bg-white md:text-black md:hover:bg-black md:hover:text-white 
-                transition duration-300 text-center md:border border-black 
-                md:rounded-md md:py-1'
+              <button 
+                className={`py-3 w-full md:w-[15rem]  
+                  transition duration-300 text-center md:rounded-md md:py-1 
+                  ${isSubmitDisabled ? 'bg-gray-500' : 
+                    'bg-black text-white md:bg-white md:text-black md:hover:bg-black md:hover:text-white md:border border-black'
+                  }`}
+                disabled={isSubmitDisabled}
               >
                 등록
               </button>
