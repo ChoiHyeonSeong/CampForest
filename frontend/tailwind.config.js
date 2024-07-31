@@ -13,6 +13,36 @@ module.exports = {
           '75%': { transform: 'translateX(2px)' },
         },
       },
+      colors: {
+        light: {
+          background: {
+            DEFAULT: '#FFFFFF',
+          },
+          text: {
+            DEFAULT: '#333333', 
+          },
+          border: {
+            DEFAULT: '#DDDDDD'
+          },
+          button: {
+
+          }
+        },
+        dark: {
+          background: {
+            DEFAULT: '#262626'
+          },
+          text: {
+            DEFAULT: '#F7F7F7',
+          },
+          border: {
+            
+          },
+          button: {
+
+          }
+        }
+      }
     },
   },
   darkMode: 'class',

@@ -55,7 +55,7 @@ function App() {
   }, [isAnyModalOpen]);
 
   return (
-    <div className="App">
+    <div className="App dark:text-dark-text dark:bg-dark-background text-light-text">
       <Navbar />
       <div className='flex'>
         {/* Desktop Navigation bar용 공간 */}
