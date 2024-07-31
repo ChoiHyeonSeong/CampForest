@@ -39,7 +39,6 @@ public class ResponseUserDTO {
                 .nickname(user.getNickname())
                 .phoneNumber(user.getPhoneNumber())
                 .introduction(user.getIntroduction())
-                .profileImage(user.getProfileImage())
                 .createdAt(user.getCreatedAt())
                 .modifiedAt(user.getModifiedAt())
                 .build();

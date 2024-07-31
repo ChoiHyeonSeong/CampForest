@@ -60,6 +60,9 @@ public class Product {
 	private ProductType productType;
 
 	@ColumnDefault("0")
+	private Long deposit;
+
+	@ColumnDefault("0")
 	private Long interest_hit;
 
 	@ColumnDefault("0")

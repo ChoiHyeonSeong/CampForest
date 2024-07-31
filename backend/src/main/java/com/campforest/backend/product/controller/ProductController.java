@@ -47,19 +47,20 @@ public class ProductController {
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
 		@RequestPart(value = "productRegistDto") ProductRegistDto productRegistDto
 	) throws Exception {
-
 		Users users = userService.findByEmail(authentication.getName())
 			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 		List<String> imageUrls = new ArrayList<>();
-		try {
-			for (MultipartFile file : files) {
-				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-				String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
-				imageUrls.add(fileUrl);
+		if (files != null) {
+			try {
+				for (MultipartFile file : files) {
+					String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
+					imageUrls.add(fileUrl);
+				}
+			} catch (IOException e) {
+				return ApiResponse.createError(ErrorCode.PRODUCT_CREATION_FAILED);
 			}
-		} catch (IOException e) {
-			return ApiResponse.createError(ErrorCode.PRODUCT_CREATION_FAILED);
 		}
 
 		productRegistDto.setProductImageUrl(imageUrls);
@@ -161,6 +162,7 @@ public class ProductController {
 	}
 
 	// 게시물 조회 - 카테고리, 검색, 지역, 대여&판매, 페이지
+	@Transactional(readOnly = true)
 	@GetMapping("/search")
 	public ApiResponse<?> findProductsByDynamicConditions(
 		@RequestParam(required = false) String category,
@@ -171,7 +173,6 @@ public class ProductController {
 		@RequestParam(required = false) String titleKeyword,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "20") int size) {
-
 		Category categoryEnum = null;
 		if (category != null) {
 			try {

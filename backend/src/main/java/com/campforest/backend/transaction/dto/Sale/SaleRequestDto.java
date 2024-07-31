@@ -21,4 +21,5 @@ public class SaleRequestDto {
 	private Long requesterId;
 	private Long receiverId;
 	private LocalDateTime meetingTime;
+	private String meetingPlace;
 }

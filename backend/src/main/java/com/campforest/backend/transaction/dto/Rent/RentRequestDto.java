@@ -15,6 +15,7 @@ public class RentRequestDto {
 	private LocalDateTime rentStartDate;
 	private LocalDateTime rentEndDate;
 	private LocalDateTime meetingTime;
+	private String meetingPlace;
 	private Long deposit;
 	private Long requesterId;
 	private Long receiverId;

@@ -3,6 +3,8 @@ package com.campforest.backend.user.model;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.campforest.backend.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -16,6 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -44,18 +47,25 @@ public class Users {
 	@Column(name = "user_email", nullable = false, unique = true)
 	private String email;
 
-	@Column(name = "user_password", nullable = false)
+	@Column(name = "user_password")
 	private String password;
+
+	@Column(name = "provider")
+	@ColumnDefault(value = "local")
+	private String provider;
+
+	@Column(name = "provider_id")
+	private String providerId;
 
 	@Column(name = "user_role", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@Column(name = "user_Birthdate", nullable = false)
+	@Column(name = "user_Birthdate")
 	@Temporal(TemporalType.DATE)
 	private Date birthdate;
 
-	@Column(name = "gender", nullable = false)
+	@Column(name = "gender")
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -65,14 +75,15 @@ public class Users {
 	@Column(name = "nickname", nullable = false)
 	private String nickname;
 
-	@Column(name = "phone_number", nullable = false)
+	@Column(name = "phone_number")
 	private String phoneNumber;
 
 	@Column(name = "introduction")
 	private String introduction;
 
-	@Column(name = "profile_image")
-	private String profileImage;
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	private UserImage userImage;
 
 	@OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
@@ -91,4 +102,9 @@ public class Users {
 		columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedAt;
+
+	public void updateOAuthInfo(String provider, String providerId) {
+		this.provider = provider;
+		this.providerId = providerId;
+	}
 }

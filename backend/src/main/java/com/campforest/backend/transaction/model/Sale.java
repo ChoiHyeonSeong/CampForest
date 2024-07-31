@@ -69,6 +69,9 @@ public class Sale {
 	@Column(name = "meeting_time")
 	private LocalDateTime meetingTime;
 
+	@Column(name = "meeting_place")
+	private String meetingPlace;
+
 	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
 	private List<Review> reviews;
@@ -93,11 +96,11 @@ public class Sale {
 		this.modifiedAt = LocalDateTime.now();
 	}
 
-	public void confirmSale(String requestRole) {
-		if ("buyer".equals(requestRole)) {
-			this.confirmedByBuyer = true;
-		} else if ("seller".equals(requestRole)) {
+	public void confirmSale(boolean isOwner) {
+		if (isOwner) {
 			this.confirmedBySeller = true;
+		} else {
+			this.confirmedByBuyer = true;
 		}
 		this.modifiedAt = LocalDateTime.now();
 	}

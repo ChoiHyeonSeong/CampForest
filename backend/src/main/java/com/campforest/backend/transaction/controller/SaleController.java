@@ -2,6 +2,7 @@ package com.campforest.backend.transaction.controller;
 
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.service.ProductService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,13 +39,12 @@ public class SaleController {
 			saleRequestDto.setRequesterId(requester.getUserId());
 
 			Product product = productService.getProductById(saleRequestDto.getProductId())
-					.orElseThrow(() -> new Exception("게시물 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("게시물 정보 조회 실패"));
 
 			//요청자가 게시물 작성자인지 확인
-			if(requester.getUserId().equals(product.getUserId())) {
+			if (requester.getUserId().equals(product.getUserId())) {
 				saleRequestDto.setReceiverId(saleRequestDto.getBuyerId());
-			}
-			else {
+			} else {
 				saleRequestDto.setReceiverId(product.getUserId());
 			}
 
@@ -61,7 +61,7 @@ public class SaleController {
 	public ApiResponse<?> acceptSale(Authentication authentication, @RequestBody SaleRequestDto saleRequestDto) {
 		try {
 			Users requester = userService.findByEmail(authentication.getName())
-					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 			saleService.acceptSale(saleRequestDto, requester.getUserId());
 
@@ -76,7 +76,7 @@ public class SaleController {
 	public ApiResponse<?> denySale(Authentication authentication, @RequestBody SaleRequestDto saleRequestDto) {
 		try {
 			Users requester = userService.findByEmail(authentication.getName())
-					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 			saleService.denySale(saleRequestDto, requester.getUserId());
 
@@ -90,7 +90,7 @@ public class SaleController {
 	public ApiResponse<?> confirmSale(Authentication authentication, @RequestBody SaleRequestDto saleRequestDto) {
 		try {
 			Users requester = userService.findByEmail(authentication.getName())
-					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 			saleService.confirmSale(saleRequestDto, requester.getUserId());
 
@@ -105,7 +105,7 @@ public class SaleController {
 	public ApiResponse<?> getSale(Authentication authentication, @RequestBody SaleRequestDto saleRequestDto) {
 		try {
 			Users requester = userService.findByEmail(authentication.getName())
-					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 			SaleResponseDto saleResponseDto = saleService.getSale(saleRequestDto, requester.getUserId());
 			return ApiResponse.createSuccess(saleResponseDto, "거래 정보 입니다.");
@@ -114,14 +114,14 @@ public class SaleController {
 		}
 	}
 
-	//약속시간 변경
-	@PutMapping("/update-time")
+	//약속시간, 장소 변경
+	@PutMapping("/update")
 	public ApiResponse<?> updateMeetingTime(Authentication authentication, @RequestBody SaleRequestDto saleRequestDto) {
 		try {
 			Users requester = userService.findByEmail(authentication.getName())
-					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			saleService.updateMeetingTime(saleRequestDto, requester.getUserId());
+			saleService.updateMeeting(saleRequestDto, requester.getUserId());
 
 			return ApiResponse.createSuccessWithNoContent("약속 시간이 업데이트 되었습니다.");
 
@@ -130,7 +130,6 @@ public class SaleController {
 		}
 	}
 }
-
 
 //요청하는 사람 정보를 saleRequestDto에 set해주는 로직 필요
 //프론트에서 구매자인지 판매자인지를 알려주면 가능함

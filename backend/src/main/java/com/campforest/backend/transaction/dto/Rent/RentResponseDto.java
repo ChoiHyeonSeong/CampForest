@@ -29,6 +29,8 @@ public class RentResponseDto {
 	private ProductType productType;
 	private Long productPrice;
 	private String location;
+	private LocalDateTime meetingTime;
+	private String meetingPlace;
 
 	public RentResponseDto(Rent rent) {
 		this.rentId = rent.getId();
@@ -47,5 +49,7 @@ public class RentResponseDto {
 		this.productType = rent.getProduct().getProductType();
 		this.productPrice = rent.getProduct().getProductPrice();
 		this.location = rent.getProduct().getLocation();
+		this.meetingTime = rent.getMeetingTime();
+		this.meetingPlace = rent.getMeetingPlace();
 	}
 }

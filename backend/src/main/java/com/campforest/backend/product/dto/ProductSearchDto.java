@@ -22,4 +22,6 @@ public class ProductSearchDto {
 	private Long interestHit;
 	private Long hit;
 	private String imageUrl;
+	private Long deposit;
+	private boolean isSold;
 }
