@@ -3,19 +3,34 @@ import { ReactComponent as ArticleIcon } from '@assets/icons/article-outline.svg
 import { ReactComponent as BookMarkIcon } from '@assets/icons/bookmark-empty.svg';
 import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 
-const MenuBar = () => {
+type Props = {
+  selectedMenu: string;
+  setSelectedMenu: (menu: string) => void;
+}
+
+const MenuBar = (props: Props) => {
+  const handleMenuClick = (menu: string) => {
+    props.setSelectedMenu(menu);
+  }
+
   return (
     <div>
       <div className='flex text-center border-b'>
-        <div className='menu w-1/3 py-4 flex justify-center cursor-pointer'>
+        <div 
+          onClick={() => handleMenuClick('게시물')}
+          className={`${props.selectedMenu === '게시물' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
           <p className='me-2'>게시물</p>
           <p>12</p>
         </div>
-        <div className='menu w-1/3 py-4 flex justify-center cursor-pointer'>
+        <div 
+          onClick={() => handleMenuClick('판매/대여')}
+          className={`${props.selectedMenu === '판매/대여' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
           <p className='me-2'>판매/대여</p>
           <p>12</p>
         </div>
-        <div className='menu w-1/3 py-4 flex justify-center cursor-pointer'>
+        <div 
+          onClick={() => handleMenuClick('거래후기')}
+          className={`${props.selectedMenu === '거래후기' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
           <p className='me-2'>거래후기</p>
           <p>12</p>
         </div>

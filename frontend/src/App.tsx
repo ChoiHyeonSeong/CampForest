@@ -9,7 +9,7 @@ import Navbar from '@components/Navbar/Navbar';
 import Login from '@pages/Login';
 import Regist from '@pages/Regist';
 import Main from '@pages/Main';
-import MyPage from '@pages/MyPage';
+import UserPage from '@pages/UserPage';
 import ProfileEdit from '@pages/ProfileEdit';
 import CampingSearch from '@pages/CampingSearch';
 import FindPassword from '@pages/FindPassword';
@@ -65,7 +65,7 @@ function App() {
             <Route path='/' element={<Main />}/>
             <Route path='/user/login' element={<Login/>}/>
             <Route path="/user/regist/*" element={<Regist/>}/>
-            <Route path="/user/mypage/*" element={<MyPage/>}/>
+            <Route path="/user/:userId" element={<UserPage/>}/>
             <Route path="/user/profile/edit" element={<ProfileEdit/>}/>
             <Route path='/product/*' element={<Product/>}/>
             <Route path='/camping' element={<CampingSearch/> }/>
