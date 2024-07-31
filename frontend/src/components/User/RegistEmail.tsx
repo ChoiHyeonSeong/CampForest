@@ -61,7 +61,7 @@ const RegistEmail: React.FC = () => {
 
   const requestEmail = async () => {
     try {
-      const response = await axios.post('http://192.168.100.203:8080/email/request', {
+      const response = await axios.post('http://192.168.100.167:8080/email/request', {
         email: registFormData.userEmail,
       });
       setEmailRequest(false);
@@ -73,7 +73,7 @@ const RegistEmail: React.FC = () => {
 
   const validateEmail = async () => {
     try {
-      const response = await axios.post('http://192.168.100.203:8080/email/validation', {
+      const response = await axios.post('http://192.168.100.167:8080/email/validation', {
         email: registFormData.userEmail,
         authCode: emailValidateNumber,
       });
