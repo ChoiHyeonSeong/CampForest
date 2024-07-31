@@ -1,6 +1,8 @@
 package com.campforest.backend.user.service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,8 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.model.Interest;
 import com.campforest.backend.user.model.UserImage;
 import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.InterestRepository;
 import com.campforest.backend.user.repository.UserImageRepository;
 import com.campforest.backend.user.repository.UserRepository;
 
@@ -25,6 +29,7 @@ public class UserServiceImpl implements UserService{
 
 	private final UserRepository userRepository;
 	private final UserImageRepository userImageRepository;
+	private final InterestRepository interestRepository;
 	private final TokenService tokenService;
 	private final AuthenticationManager authenticationManager;
 
@@ -32,13 +37,22 @@ public class UserServiceImpl implements UserService{
 	@Transactional
 	public void registUser(RequestRegisterDTO requestDTO) {
 		Users users = requestDTO.toEntity();
+
+		Set<Interest> interests = new HashSet<>();
+		for (String interestName : requestDTO.getInterests()) {
+			Interest interest = interestRepository.findByInterest(interestName);
+			interests.add(interest);
+		}
+	    users.setInterests(interests);
 		Users savedUser = userRepository.save(users);
 
-		UserImage userImage = UserImage.builder()
-			.user(savedUser)
-			.imageUrl(requestDTO.getProfileImage())
-			.build();
-		userImageRepository.save(userImage);
+		if(requestDTO.getProfileImage() != null) {
+			UserImage userImage = UserImage.builder()
+				.user(savedUser)
+				.imageUrl(requestDTO.getProfileImage())
+				.build();
+			userImageRepository.save(userImage);
+		}
 	}
 
 	@Override

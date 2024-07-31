@@ -1,6 +1,7 @@
 package com.campforest.backend.user.dto.request;
 
 import java.util.Date;
+import java.util.List;
 
 import com.campforest.backend.user.model.Gender;
 import com.campforest.backend.user.model.Role;
@@ -29,6 +30,7 @@ public class RequestRegisterDTO {
 	private String introduction;
 	@Setter
 	private String profileImage;
+	private List<String> interests;
 
 	public Users toEntity() {
 		return Users.builder()
