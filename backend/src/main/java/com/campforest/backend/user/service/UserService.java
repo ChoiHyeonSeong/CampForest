@@ -14,6 +14,8 @@ public interface UserService {
 
 	Optional<Users> findByEmail(String email);
 
+	Optional<Users> findByUserId(Long userId);
+
 	void deleteByEmail(String email);
 
 	Authentication authenticateUser(String email, String password);
