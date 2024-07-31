@@ -4,6 +4,9 @@ import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
 import { productWrite } from '@services/productService';
 import MultiImageUpload from '@components/Public/MultiImageUpload';
 import ProductMap from './ProductMap';
+import { useNavigate } from 'react-router-dom';
+import { setIsLoading } from '@store/modalSlice';
+import { useDispatch } from 'react-redux';
 
 type Option = {
   id: number;
@@ -34,6 +37,9 @@ const categories: Option[] = [
 ];
 
 const ProductWrite = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Option>(categories[0]);
   const [selectedButton, setSelectedButton] = useState<string>('대여');
@@ -97,11 +103,14 @@ const ProductWrite = () => {
     };
 
     console.log(submitData);
-
+    
     try { 
+      dispatch(setIsLoading(true));
       await productWrite(submitData, productImages);
+      dispatch(setIsLoading(false));
+      navigate('/product/list');
     } catch (error) {
-
+      
     }
   }
 
@@ -226,7 +235,7 @@ const ProductWrite = () => {
                 <input 
                   type='number'
                   name='deposit'
-                  // value={formData.deposit || ""}
+                  value={formData.deposit || ""}
                   onChange={handleInputChange}
                   className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
                 />

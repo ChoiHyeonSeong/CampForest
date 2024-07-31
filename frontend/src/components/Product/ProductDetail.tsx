@@ -27,7 +27,9 @@ type ProductDetailType = {
   productName: string;
   productPrice: number;
   productType: string;
-  usreId: string;
+  userId: string;
+  nickname: string;
+  userImage: string;
 };
 
 function Detail() {
@@ -45,7 +47,9 @@ function Detail() {
     productName: '',
     productPrice: 0,
     productType: '',
-    usreId: '',
+    userId: '',
+    nickname: '',
+    userImage: ''
   });
   const fetchProduct = async () => {
     try {
@@ -81,7 +85,7 @@ function Detail() {
                 <img
                   src={imageUrl}
                   alt="ProductImg"
-                  className="w-full h-full object-contain rounded-lg"
+                  className="w-full h-full object-contain rounded-lg border"
                 ></img>
               </SwiperSlide>
             ))}
@@ -168,10 +172,12 @@ function Detail() {
           {/* 판매자 정보 */}
           <div className="w-full lg:w-[calc(100%-24.5rem)] flex flex-col mb-8 lg:mb-0">
             <div className="mb-3 w-full">
-              <span className="font-medium">사용자1 </span>의 제품
+              <span className="font-medium">{product.nickname} </span>의 제품
             </div>
             <div className="flex w-full">
-              <div className="rounded-full bg-black size-12 me-4 shrink-0"></div>
+              <div className="rounded-full bg-black size-12 me-4 shrink-0">
+                <img src={product.userImage} alt={''} />
+              </div>
               <div className="flex flex-col w-full">
                 <div className="flex mb-2">
                   <div className="font-medium me-3">거래 불꽃 온도</div>
