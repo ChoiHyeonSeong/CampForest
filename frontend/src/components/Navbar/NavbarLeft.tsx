@@ -21,6 +21,9 @@ import { logout } from '@services/authService';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '@store/userSlice';
 
+import ShortLogo from '@assets/logo/mini-logo.png'
+import { ReactComponent as LongLogo } from '@assets/logo/logo.svg'
+
 type Props = {
   isMenuOpen: boolean;
   isExtendRentalOpen: boolean;
@@ -43,6 +46,7 @@ const NavbarLeft = (props: Props) => {
                                  props.isExtendNotificationOpen ||
                                  props.isExtendSearchOpen);
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
   const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
@@ -56,77 +60,74 @@ const NavbarLeft = (props: Props) => {
 
   return (
     <div 
-      className={`fixed z-[60] md:z-40 h-full mb-11 pt-0 md:pt-[3.2rem]
+      className={`fixed z-[60] md:z-[40] h-full mb-11 pt-0 md:pt-[3.2rem]
         transition-all duration-300 ease-in-out
-        border-r w-[90vw] bg-white
-        ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        bg-white border-r w-[90vw] 
+        lg:block lg:w-[5rem] ${isHovered && !isEitherOpen ? 'lg:w-[15rem]' : 'lg:w-[5rem]'}
+        ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
-        ${props.isMenuBlocked ? 'block' : 'hidden'}
+        ${props.isMenuBlocked ? 'block' : 'hidden lg:block'}
         `
       } 
       onTransitionEnd={props.handleTransitionEnd}
     >
       {/* desktop tablet */}
-      <div className='h-full hidden md:flex flex-col justify-between'>
+      <div 
+        className='h-full hidden md:flex flex-col justify-between' 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         {/* main menu */}
-        <div>
-          <div className={`h-[7rem] flex ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out rounded-3xl mt-[3rem] p-[1rem] ps-[2rem]`}>
-            <div className={`w-[4rem] ${props.user.isLoggedIn ? 'flex' : 'hidden'} border rounded-full flex-all-center me-[1rem] my-[0.5rem]`}>
-              <img src={tempImage} alt={tempImage} className='size-[3rem]'/>
-            </div>
-            {props.user.isLoggedIn ? (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[7rem]'} transition-all duration-100 flex flex-col justify-center gap-y-[0.25rem] truncate`}>
-                <div>{props.user.nickname}</div>
-                <div onClick={handleLogout} className='text-sm cursor-pointer'>로그아웃</div>
-                </div>
-            ) : (
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[11rem]'} transition-all duration-100 flex items-center justify-center truncate`}>
-                <Link to='/user/login'>로그인 해주세요</Link>
-              </div>
-            )}
+        <div className='justify-center hidden lg:flex'>
+          <div className={`flex justify-center ${isHovered && !isEitherOpen ? 'lg:w-[0rem]' : 'lg:w-[5rem]'} ${isEitherOpen ? 'w-[5rem]' : 'w-[0rem]'}`}>
+            <img src={ShortLogo} alt="" />
           </div>
-          <div className='space-y-2'>
-            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
-              <div className='w-[5rem] flex flex-all-center'>
-                <RentalIcon className='stroke-[#999999] w-[2rem]'/>
-              </div>
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>대여 / 판매</div>
+          <div className={`${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'}`}>
+            <LongLogo fill='black'/>
+          </div>
+        </div>
+
+        <div className='flex-grow flex flex-col justify-center gap-8'>
+          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('rental')}>
+            <div className='w-[5rem] flex flex-all-center'> 
+              <RentalIcon className='stroke-[#999999] w-[2rem]'/>
             </div>
-            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('community')}>
-              <div className='w-[5rem] flex flex-all-center'>
-                <CommunityIcon className='stroke-[#999999] w-[2rem]'/>
-              </div>
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
+            <div className={`lg:w-[0rem] ${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>대여 / 판매</div>
+          </div>
+          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('community')}>
+            <div className='w-[5rem] flex flex-all-center'>
+              <CommunityIcon className='stroke-[#999999] w-[2rem]'/>
             </div>
-            <Link to='/camping' className='h-[3.5rem] flex cursor-pointer' onClick={props.closeMenu} >
-              <div className='w-[5rem] flex flex-all-center'>
-                <CampingIcon className='fill-[#999999] w-[2rem]'/>
-              </div>
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
-            </Link>
-            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('chat')}>
-              <div className='w-[5rem] flex flex-all-center'>
-                <ChatIcon className='fill-[#999999] w-[2rem]'/>
-              </div>
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
+            <div className={`lg:w-[0rem] ${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>커뮤니티</div>
+          </div>
+          <Link to='/camping' className='h-[3.5rem] flex cursor-pointer' onClick={props.closeMenu} >
+            <div className='w-[5rem] flex flex-all-center'>
+              <CampingIcon className='fill-[#999999] w-[2rem]'/>
             </div>
-            <div className='h-[3.5rem] hidden lg:flex cursor-pointer' onClick={() => props.toggleExtendMenu('notification')}>
-              <div className='w-[5rem] flex flex-all-center'>
-                <PushIcon className='stroke-[#999999] w-[2rem]'/>
-              </div>
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>알림</div>
+            <div className={`lg:w-[0rem] ${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>캠핑장 찾기</div>
+          </Link>
+          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('chat')}>
+            <div className='w-[5rem] flex flex-all-center'>
+              <ChatIcon className='fill-[#999999] w-[2rem]'/>
             </div>
-            <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('search')}>
-              <div className='w-[5rem] flex flex-all-center'>
-                <SearchIcon className='stroke-[#999999] w-[2rem]'/>
-              </div>
-              <div className={`${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>검색</div>
+            <div className={`lg:w-[0rem] ${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>채팅</div>
+          </div>
+          <div className='h-[3.5rem] hidden lg:flex cursor-pointer' onClick={() => props.toggleExtendMenu('notification')}>
+            <div className='w-[5rem] flex flex-all-center'>
+              <PushIcon className='stroke-[#999999] w-[2rem]'/>
             </div>
+            <div className={`lg:w-[0rem] ${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>알림</div>
+          </div>
+          <div className='h-[3.5rem] flex cursor-pointer' onClick={() => props.toggleExtendMenu('search')}>
+            <div className='w-[5rem] flex flex-all-center'>
+              <SearchIcon className='stroke-[#999999] w-[2rem]'/>
+            </div>
+            <div className={`lg:w-[0rem] ${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'} transition-all duration-300 flex items-center truncate`}>검색</div>
           </div>
         </div>
         {/* darkmode */}
-        <div className='mb-16 lg:mb-5'>
-          <div className={`flex flex-all-center ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out`}>
+        <div className='mb-16 lg:mb-5 h-[2rem]'>
+          <div className={`flex flex-all-center ${isHovered && !isEitherOpen ? 'lg:translate-x-0' : 'lg:-translate-x-[150%]'} ${isEitherOpen ? '-translate-x-[150%]' : 'translate-x-0'} transition-all duration-300 ease-in-out`}>
             <p className='me-5'>다크모드</p>
             <DarkmodeBtn />
           </div>
