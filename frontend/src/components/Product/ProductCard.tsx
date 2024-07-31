@@ -7,6 +7,7 @@ import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 import { ReactComponent as BlackHeartIcon } from '@assets/icons/heart-black.svg'
 // import ProfileImgEX from '@assets/images/productExample.png'
 import { Link } from 'react-router-dom';
+import { priceComma } from '@utils/priceComma';
 
 export type ProductType = {
   category: string;
@@ -65,7 +66,7 @@ const ProductCard = (props: Props) => {
        {/* 상품설명 */}
        <div className='w-full overflow-hidden text-[#333] ps-2'>
         <h5 className='font-semibold truncate overflow-hidden whitespace-nowrap'>{props.product.productName}</h5>
-        <p className='font-medium'>{props.product.productPrice}원<span className={`${props.product.productType === 'RENT' ? '' : 'hidden'} text-sm md:text-sm`}>/일</span></p>
+        <p className='font-medium'>{priceComma(props.product.productPrice)}원<span className={`${props.product.productType === 'RENT' ? '' : 'hidden'} text-sm md:text-sm`}>/일</span></p>
         <p className='font-light text-xs md:text-sm text-gray-500 my-1'>{props.product.location}</p>
         <div className='flex'>
           <div className='flex me-3 items-center'>

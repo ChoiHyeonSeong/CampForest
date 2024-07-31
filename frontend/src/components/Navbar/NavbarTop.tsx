@@ -19,9 +19,9 @@ const NavbarTop = (props: Props) => {
   }, [currentLoc]);
 
   return (
-    <div className='fixed py-1 h-[3.2rem] z-50 w-full flex justify-between bg-white border-b border-[#EEEEEE] px-[1rem]'>
+    <div className='fixed py-1 h-[3.2rem] z-50 w-full flex justify-between px-[1rem] bg-white lg:bg-inherit border-b lg:border-none'>
       <div>
-        <div className='cursor-pointer flex-all-center w-11 h-full me-[1rem] hidden md:flex' onClick={props.toggleMenu}>
+        <div className='cursor-pointer flex-all-center w-11 h-full me-[1rem] hidden md:flex lg:hidden' onClick={props.toggleMenu}>
           <HamMenuIcon className='size-[2rem]' stroke={'black'}/>
         </div>
         <div className='w-[10rem] h-full me-[1rem] bl flex md:hidden items-center'>
@@ -32,7 +32,7 @@ const NavbarTop = (props: Props) => {
         </div>
       </div>
 
-      <div className='max-md:hidden'>
+      <div className='max-md:hidden lg:hidden'>
         <Link to='/' onClick={props.closeMenu}>
           <BigLogoIcon className='fill-[#000000] w-[10rem]'/>
         </Link>

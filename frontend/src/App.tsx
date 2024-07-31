@@ -23,11 +23,14 @@ import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
 import BoardDetail from '@components/Board/BoardDetail';
+import { useThemeEffect } from '@hooks/useThemeEffect';
 
 function App() {
   const dispatch = useDispatch()
   const isAnyModalOpen = useSelector((state: RootState) => state.modalStore.isAnyModalOpen)
   const currentLoc = useLocation();
+
+  useThemeEffect();
 
   useEffect(() => {
     window.scrollTo(0, 0);

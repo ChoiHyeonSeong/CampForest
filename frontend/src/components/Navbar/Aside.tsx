@@ -9,6 +9,7 @@ import { ReactComponent as CommunityIcon } from '@assets/icons/nav-community.svg
 import { useDispatch } from 'react-redux'
 import { setIsBoardWriteModal } from '@store/modalSlice'
 import { RootState } from '@store/store'
+import { Link } from 'react-router-dom'
 
 type Props = {
   user: RootState['userStore'];
@@ -34,16 +35,18 @@ const Aside = (props: Props) => {
     <aside className='fixed bottom-14 right-5 md:bottom-8 md:right-5 z-10'>
       <div className={`${props.user.isLoggedIn ? '' : 'hidden'} flex items-center mb-2 relative`}>
         <div className='flex absolute right-2'>
-          <div 
+          <Link onClick={toggleExpand} to='product/write' 
             className={`w-11 h-11 bg-black rounded-full flex flex-all-center transition-all duration-300 ease-in-out 
               ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}
               delay-100
               `}
           >
             <RentalIcon className='stroke-white'/>
-          </div>
+          </Link>
           <div 
-            onClick={() => dispatch(setIsBoardWriteModal(true))}
+            onClick={() => {
+              dispatch(setIsBoardWriteModal(true))
+              toggleExpand()}}
             className={`w-11 h-11 bg-black rounded-full flex flex-all-center ml-2 transition-all duration-300 ease-in-out 
               ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}`}
           >

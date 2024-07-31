@@ -11,19 +11,15 @@ type LoginResponse = {
   user: {
     userId: number,
     nickname: string,
-    profileImage: string
-  }
+    profileImage: string,
+    similarUsers: number[]
+  },
 }
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true
 });
-
-const token = sessionStorage.getItem('accessToken');
-if (token) {
-  axiosInstance.defaults.headers['Authorization'] = token;
-}
 
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -66,16 +62,18 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     const response = await axiosInstance.post('/user/auth/login', { email, password });
     const data = response.data.data;
     const Authorization = response.headers.authorization;
-    const user = { userId: data.userId, nickname: data.nickname, profileImage: data.profileImage }
-    
+    const user = { userId: data.userId, 
+                   nickname: data.nickname, 
+                   profileImage: data.profileImage,
+                   similarUsers: data.similarUsers }
     if (Authorization) {
       sessionStorage.setItem('accessToken', Authorization);
       sessionStorage.setItem('userId', data.userId);
       sessionStorage.setItem('nickname', data.nickname);
       sessionStorage.setItem('profileImage', data.profileImage);
+      sessionStorage.setItem('similarUsers', data.similarUsers);
       sessionStorage.setItem('isLoggedIn', 'true');
       axiosInstance.defaults.headers['Authorization'] = Authorization;
-      console.log(axiosInstance.defaults.headers)
     } else {
       console.error('No access token received from server');
     }

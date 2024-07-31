@@ -106,6 +106,7 @@ const ProductList = () => {
       console.log(result.data);
       setProducts((prevProducts) => [...prevProducts, ...result.data.data.content]);
     } catch (error) {
+      dispatch(setIsLoading(false));
       console.error('판매/대여 게시글 불러오기 실패: ', error);
     }
   };

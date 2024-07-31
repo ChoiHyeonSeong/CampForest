@@ -23,7 +23,6 @@ function Login() {
         withCredentials: true
       });
       console.log('Login successful');
-      console.log(data)
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
