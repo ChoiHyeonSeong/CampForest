@@ -200,7 +200,7 @@ const Navbar = () => {
       {/* 좌측 메뉴바 확장 */}
       <div>
         <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
-        <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu}/>
+        <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
         <NavbarLeftExtendChatList isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
         <Chat isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
         <NavbarLeftExtendNotification isExtendMenuOpen={isExtendNotificationOpen} toggleExtendMenu={toggleExtendMenu} />

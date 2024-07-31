@@ -63,7 +63,7 @@ const NavbarLeft = (props: Props) => {
       className={`fixed z-[60] md:z-[40] h-full mb-11 pt-0 md:pt-[3.2rem]
         transition-all duration-300 ease-in-out
         bg-white border-r w-[90vw] 
-        lg:block lg:w-[5rem] ${isHovered && !isEitherOpen ? 'lg:w-[15rem]' : 'lg:w-[5rem]'}
+        lg:block ${isHovered && !isEitherOpen ? 'lg:w-[15rem]' : 'lg:w-[5rem]'}
         ${props.isMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
         ${props.isMenuBlocked ? 'block' : 'hidden lg:block'}
@@ -78,13 +78,15 @@ const NavbarLeft = (props: Props) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* main menu */}
-        <div className='justify-center hidden lg:flex'>
-          <div className={`flex justify-center ${isHovered && !isEitherOpen ? 'lg:w-[0rem]' : 'lg:w-[5rem]'} ${isEitherOpen ? 'w-[5rem]' : 'w-[0rem]'}`}>
-            <img src={ShortLogo} alt="" />
-          </div>
-          <div className={`${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'}`}>
-            <LongLogo fill='black'/>
-          </div>
+        <div className='justify-center hidden lg:flex h-[3rem]'>
+          <Link to='/' onClick={props.closeMenu}>
+            <div className={`flex justify-center ${isHovered && !isEitherOpen ? 'lg:w-[0rem]' : 'lg:w-[5rem]'} ${isEitherOpen ? 'w-[5rem]' : 'w-[0rem]'}`}>
+              <img src={ShortLogo} alt="" className='h-full'/>
+            </div>
+            <div className={`${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'}`}>
+              <LongLogo className='h-full fill-black'/>
+            </div>
+          </Link>
         </div>
 
         <div className='flex-grow flex flex-col justify-center gap-8'>

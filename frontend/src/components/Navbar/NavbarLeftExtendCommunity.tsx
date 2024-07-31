@@ -6,6 +6,7 @@ import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 type Props = {
   isExtendMenuOpen: boolean;
   toggleExtendMenu: (param:string) => void;
+  closeMenu: () => void;
 }
 
 type CommunityCategoryObj = {
@@ -59,7 +60,7 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       </div>
       <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide flex flex-col text-left ps-10'>
         {communityCategory.map((eachObj, index) => (
-          <Link key={index} to={`/community/${eachObj.path}`}>
+          <Link key={index} to={`/community/${eachObj.path}`} onClick={props.closeMenu}>
             <div className="p-6">{eachObj.title}</div>
           </Link>
         ))}
