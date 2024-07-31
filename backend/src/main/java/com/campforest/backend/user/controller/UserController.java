@@ -1,7 +1,12 @@
 package com.campforest.backend.user.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.kms.model.NotFoundException;
@@ -94,6 +100,9 @@ public class UserController {
 			Users users = userService.findByEmail(requestDTO.getEmail())
 				.orElseThrow(() -> new NotFoundException("유저 정보 조회 실패"));
 			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
+
+			List<Integer> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
+			responseDTO.setSimilarUsers(similarUsers);
 
 			return ApiResponse.createSuccess(responseDTO, "로그인이 완료되었습니다.");
 		}

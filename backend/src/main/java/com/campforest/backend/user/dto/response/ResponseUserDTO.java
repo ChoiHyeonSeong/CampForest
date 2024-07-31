@@ -1,6 +1,7 @@
 package com.campforest.backend.user.dto.response;
 
 import java.util.Date;
+import java.util.List;
 
 import com.campforest.backend.user.model.Gender;
 import com.campforest.backend.user.model.Role;
@@ -8,39 +9,24 @@ import com.campforest.backend.user.model.Users;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Builder
+@Setter
 public class ResponseUserDTO {
 
     private Long userId;
-    private String userName;
     private String email;
-    private Role role;
-    private Date birthdate;
-    private Gender gender;
-    private boolean isOpen;
     private String nickname;
-    private String phoneNumber;
-    private String introduction;
     private String profileImage;
-    private Date createdAt;
-    private Date modifiedAt;
+    private List<Integer> similarUsers;
 
     public static ResponseUserDTO fromEntity(Users user) {
         return ResponseUserDTO.builder()
                 .userId(user.getUserId())
-                .userName(user.getUserName())
                 .email(user.getEmail())
-                .role(user.getRole())
-                .birthdate(user.getBirthdate())
-                .gender(user.getGender())
-                .isOpen(user.isOpen())
                 .nickname(user.getNickname())
-                .phoneNumber(user.getPhoneNumber())
-                .introduction(user.getIntroduction())
-                .createdAt(user.getCreatedAt())
-                .modifiedAt(user.getModifiedAt())
                 .build();
     }
 }
