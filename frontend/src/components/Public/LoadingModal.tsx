@@ -23,7 +23,7 @@ const LoadingModal= () => {
   }, [isLoading]);
 
   return (
-    <div className={`${isLoading ? 'fixed' : 'hidden'} z-[500] w-full h-screen bg-black bg-opacity-80 text-white top-0 left-0 flex flex-col items-center justify-center`}>
+    <div className={`${isLoading ? 'hidden' : 'hidden'} z-[500] w-full h-screen bg-black bg-opacity-80 text-white top-0 left-0 flex flex-col items-center justify-center`}>
       {/* <WhiteLogoIcon className='mb-4' /> */}
       <div className='flex space-x-2 mb-4'>
         <div className='w-4 h-4 bg-gray-100 rounded-full animate-bounce'></div>
