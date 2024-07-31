@@ -10,18 +10,26 @@ const UserReviewList = (props: Props) => {
       <div className='flex w-full flex-all-center py-5'>
         {/* 받은 후기 */}
         <div className='flex flex-col text-center w-1/2'>
-          <div className='w-full'>20</div>
+          <div className='w-full font-medium'>20</div>
           <div className='w-full'>받은 후기 수</div>
         </div>
 
         {/* 받은 평점 */}
         <div className='flex flex-col text-center w-1/2'>
-          <div className='w-full'>4.0</div>
+          <div className='w-full font-medium'>4.0</div>
           <div className='w-full'>받은 평점</div>
         </div>
       </div>
 
-      {/* <UserReviewCard /> */}
+      {/* 후기 카드 */}
+      <div className='w-full px-3'>
+        {/* 거래 후기 개수에 따라 map 함수 실행할 곳 */}
+        <UserReviewCard />
+        <UserReviewCard />
+        <UserReviewCard />
+        <UserReviewCard />
+        <UserReviewCard />
+      </div>
     </div>
   )
 }

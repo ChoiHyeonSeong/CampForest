@@ -51,48 +51,54 @@ const UserPage = () => {
   }, [])
 
   return (
-    <div className='flex justify-center min-h-screen'>
+    <>
+      {/* 팔로잉 모달 */}
       <div 
         onClick={() => setIsModalOpen(false)} 
-        className={`${isModalOpen ? '' : 'hidden'} z-10 fixed md:items-center w-full h-full bg-black bg-opacity-70 flex`}>
+        className={`${isModalOpen ? '' : 'hidden'} z-10 fixed md:items-center w-full h-full bg-black bg-opacity-80 flex`}>
         <div className="h-full md:min-h-[30rem] md:w-[40rem] md:h-[50%] md:mx-auto" onClick={(event) => event.stopPropagation()}>
           <FollowUsers isFollowing={isFollowing} setIsModalOpen={setIsModalOpen}/>
         </div>
       </div>
-      <div className='bg-white md:p-6 w-full xl:w-[55rem] rounded-lg'>
-        <h3 className='pb-[0.75rem] text-lg md:text-[1.5rem] hidden lg:block'>유저 프로필</h3>
-        <ProfileTop userId={userId} setIsModalOpen={setIsModalOpen} setIsFollowing={setIsFollowing}/>
-        <div>
-          {/* 목록전환박스 */}
-          <MenuBar boardCount={boards.totalElements} productCount={products?.totalElements} selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu}/>
 
-          {/* 목록 */}
-          <div className='w-full h-56'>
-            {/* 게시물 목록 */}
-            <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
-            {boards?.content.map((board: any) => (
-                <Board board={board} deleteFunction={pageReload} isDetail={false}/>
-            ))}
-            </div>
-            {/* 판매/대여 목록 */}
-            <div className={`${selectedMenu === '판매/대여' ? '' : 'hidden'} grid grid-cols-2 md:grid-cols-3`}>
-              {products?.content.map((product: any) => (
-                <ProductCard product={product}/>
+      {/* 유저 메인 페이지 */}
+      <div className='flex justify-center min-h-screen'>
+        <div className='bg-white p-6 lg:p-0 w-full lg:w-[54rem]'>
+          <h3 className='pb-[0.75rem] text-lg md:text-[1.5rem] hidden lg:block'>유저 프로필</h3>
+          <ProfileTop userId={userId} setIsModalOpen={setIsModalOpen} setIsFollowing={setIsFollowing}/>
+          <div>
+            {/* 목록전환박스 */}
+            <MenuBar boardCount={boards.totalElements} productCount={products?.totalElements} selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu}/>
+
+            {/* 목록 */}
+            <div className='w-full h-56'>
+              {/* 게시물 목록 */}
+              <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
+              {boards?.content.map((board: any) => (
+                  <Board board={board} deleteFunction={pageReload} isDetail={false}/>
               ))}
+              </div>
+              {/* 판매/대여 목록 */}
+              <div className={`${selectedMenu === '판매/대여' ? '' : 'hidden'} grid grid-cols-2 md:grid-cols-3`}>
+                {products?.content.map((product: any) => (
+                  <ProductCard product={product}/>
+                ))}
+              </div>
+              {/* 거래후기 목록 */}
+              <div className={`${selectedMenu === '거래후기' ? '' : 'hidden'}`}>
+                {/* {reveiw?.content.map((reveiw: any) => ( */}
+                  <UserReviewList />
+                {/* ))} */}
+        
+              </div>
             </div>
-            {/* 거래후기 목록 */}
-            <div className={`${selectedMenu === '거래후기' ? '' : 'hidden'}`}>
-              {/* {reveiw?.content.map((reveiw: any) => ( */}
-                <UserReviewList />
-              {/* ))} */}
-      
-            </div>
+
           </div>
 
         </div>
-
       </div>
-    </div>
+    </>
+    
   )
 }
 
