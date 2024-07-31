@@ -25,7 +25,7 @@ const BoardDetail = () => {
   };
 
   return (
-    <div className='flex justify-center bg-[#000000b3] min-h-screen'>
+    <div className='flex justify-center min-h-screen'>
       <div className='p-6 mb-12 w-full lg:w-[60rem] lg:p-0 lg:pt-4 flex flex-col lg:flex-row'>
         <div className='lg:w-3/5 rounded-md min-h-[80vh]'>
           <Board board={boardData} deleteFunction={()=>{}}/>
