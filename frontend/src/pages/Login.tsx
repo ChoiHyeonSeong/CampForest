@@ -19,7 +19,7 @@ function Login() {
     try {
       const data = await login(email, password);
       dispatch(setUser(data.user));
-      axios.post(`http://192.168.100.167:8080/user/auth/refreshToken`, {}, {
+      axios.post(`http://3.36.78.37:8081/user/auth/refreshToken`, {}, {
         withCredentials: true
       });
       console.log('Login successful');
