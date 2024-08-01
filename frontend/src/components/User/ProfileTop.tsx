@@ -69,7 +69,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
               absolute w-full h-full rounded-full mx-auto 
               bg-light-black text-light-white
               dark:bg-dark-black dark:text-dark-white
-              cursor-pointer opacity-60 hover:opacity-100 duration-200 
+              cursor-pointer opacity-0 hover:opacity-100 duration-200 
             `}
           >
             <p className={`flex justify-center items-center h-full`}>
@@ -98,9 +98,9 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
               >
                 <div 
                   className={`
-                    me-[0.5rem] px-[0.75rem] md:px-[1rem] py-[1rem]
+                    me-[0.5rem] px-[0.75rem] md:px-[1rem] py-[0.25rem]
                     bg-light-signature text-light-white
-                    dark:bg-dark-signature dark:text-dark-white
+                    dark:bg-dark-signature
                     text-xs md:text-base cursor-pointer rounded-md
                   `}
                 >
@@ -110,6 +110,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
                   className={`
                     px-[0.75rem] md:px-[1rem] py-[0.25rem]
                     bg-light-gray-1
+                    dark:bg-dark-gray-1
                     text-xs md:text-base rounded-md cursor-pointer
                   `}
                 >
@@ -173,7 +174,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
       <div 
         className={`
           mt-[1rem] ms-[0.5rem]
-          lg:text-lg 
+          break-all
         `}
       >
         {userinfo?.introduction}
@@ -223,7 +224,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
             <img 
               src={FireGif} 
               alt="불꽃" 
-              className={`absolute -right-[4rem] -top-[3.75rem] size-[8rem]`}/>
+              className={`absolute -right-[4rem] -top-[3.75rem] z-[0] size-[8rem]`}/>
           </div>
         </div>
       </div>

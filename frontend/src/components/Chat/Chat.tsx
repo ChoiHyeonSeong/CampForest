@@ -14,7 +14,7 @@ const Chat = (props: Props) => {
     <div 
       className={`
         ${props.isExtendMenuOpen ? 'translate-x-[25rem]' : '-translate-x-full'} 
-        max-md:hidden fixed z-[35] w-[calc(100%-25rem)] max-w-[40rem] h-full pt-[3.2rem] 
+        max-md:hidden fixed z-[35] w-[calc(100%-25rem)] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
         bg-light-white outline-light-border-1
         dark:bg-dark-white dark:outline-dark-border-1
         transition-all duration-300 ease-in-out outline outline-1
