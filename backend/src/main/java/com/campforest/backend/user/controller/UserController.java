@@ -1,6 +1,7 @@
 package com.campforest.backend.user.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.user.dto.request.RequestLoginDTO;
 import com.campforest.backend.user.dto.request.RequestRefreshTokenDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.dto.response.ResponseFollowDTO;
 import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
@@ -130,7 +133,6 @@ public class UserController {
 			Users users = userService.findByUserId(userId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			// TODO : 팔로우 기능 구현
 			ResponseInfoDTO responseDTO = ResponseInfoDTO.fromEntity(users);
 			return ApiResponse.createSuccess(responseDTO, "유저 정보 조회 성공");
 		} catch (Exception e) {
@@ -187,6 +189,46 @@ public class UserController {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_DELETE_FAILED);
+		}
+	}
+
+	@PostMapping("/follow/{followeeId}")
+	public ApiResponse<?> followUser(Authentication authentication, @PathVariable Long followeeId) {
+		try {
+			userService.followUser(authentication, followeeId);
+			return ApiResponse.createSuccess(null, "팔로우 성공");
+		} catch (IllegalArgumentException e) {
+			return ApiResponse.createError(ErrorCode.FOLLOW_FAILED);
+		}
+	}
+
+	@PostMapping("/unfollow/{followeeId}")
+	public ApiResponse<?> unfollowUser(Authentication authentication, @PathVariable Long followeeId) {
+		try {
+			userService.unfollowUser(authentication, followeeId);
+			return ApiResponse.createSuccess(null, "언팔로우 성공");
+		} catch (IllegalArgumentException e) {
+			return ApiResponse.createError(ErrorCode.UNFOLLOW_FAILED);
+		}
+	}
+
+	@GetMapping("/auth/follower/{userId}")
+	public ApiResponse<?> getFollowers(@PathVariable Long userId) {
+		try {
+			List<ResponseFollowDTO> followers = userService.getFollowers(userId);
+			return ApiResponse.createSuccess(followers, "팔로워 목록 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.FOLLOW_NOT_FOUND);
+		}
+	}
+
+	@GetMapping("/auth/following/{userId}")
+	public ApiResponse<?> getFollowing(@PathVariable Long userId) {
+		try {
+			List<ResponseFollowDTO> following = userService.getFollowing(userId);
+			return ApiResponse.createSuccess(following, "팔로잉 목록 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.FOLLOW_NOT_FOUND);
 		}
 	}
 

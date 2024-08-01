@@ -23,8 +23,8 @@ public class ResponseInfoDTO {
 		}
 		return ResponseInfoDTO.builder()
 				.nickname(users.getNickname())
-				.followingCount(0)
-				.followerCount(0)
+				.followingCount(users.getFollowing().size())
+				.followerCount(users.getFollowers().size())
 				.introduction(users.getIntroduction())
 				.profileImage(imageUrl)
 				.isOpen(users.isOpen())
