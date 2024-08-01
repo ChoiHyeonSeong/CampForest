@@ -102,26 +102,37 @@ const NavbarLeftExtendRental = (props: Props) => {
 
   return (
     <div
-      className={`fixed z-[35] w-[22rem] h-full pt-[3.2rem]
-        transition-all duration-300 ease-in-out 
-        ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'} 
-        bg-white outline outline-1 outline-[#CCCCCC]`
-      }
+      className={`
+        ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'}
+        fixed z-[35] w-[20rem] h-[100%] pt-[3.2rem] lg:pt-[0]
+        bg-light-white border-light-border-1
+        dark:bg-dark-white dark:border-dark-border-1
+        border-r transition-all duration-300 ease-in-out
+      `}
     >
-      <div className='h-20 ps-4 flex items-center mb-[1rem]'>
-        <LeftArrow className='me-3 cursor-pointer w-5 h-5' onClick={() => props.toggleExtendMenu('rental')}/>
-        <p className='text-2xl'>판매 / 대여</p>
+      <div className={`flex items-center h-[5rem] ps-[1rem]`}>
+        <LeftArrow 
+          onClick={() => props.toggleExtendMenu('rental')}
+          className={`
+            w-[1.25rem] h-[1.25rem] me-[0.75rem] 
+            fill-light-black
+            dark:fill-dark-black
+            cursor-pointer
+          `}
+        />
+        <p className={`text-2xl`}>판매 / 대여</p>
       </div>
-      <div className='h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide p-2 mx-10'>
-        <div className="grid grid-cols-2 gap-4">
+
+      <div className={`h-[calc(100vh-5rem)] mx-[2.5rem] p-[0.5rem] overflow-y-auto scrollbar-hide`}>
+        <div className={`grid grid-cols-2 gap-[1rem]`}>
           {rentalCategory.map((eachObj, index) => (
-            <div key={index} className='cursor-pointer' onClick={() => handleCategoryClick(eachObj.linkUrl)} >
+            <div key={index} className={`cursor-pointer`} onClick={() => handleCategoryClick(eachObj.linkUrl)} >
               <EachCategory
                 title={eachObj.title} 
                 imgsrc={eachObj.imgsrc} 
                 imgBgColor={eachObj.imgBgColor} 
-                imgWd={eachObj.imgWd}/
-              >
+                imgWd={eachObj.imgWd}
+              />
             </div>
           ))}
         </div>

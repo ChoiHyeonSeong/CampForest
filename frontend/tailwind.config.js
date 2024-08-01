@@ -33,6 +33,7 @@ module.exports = {
           },
           black: '#333333',
           white: '#FFFFFF',
+          gray: '#EEEEEE',
           heart: '#FF5B62',
           warning: '#FF0000',
           anchor: {
@@ -45,7 +46,7 @@ module.exports = {
           text: {
             DEFAULT: '#E0E0E0',
             secondary: '#A0A0A0',
-            white: '#FFFFFF'
+            white: '#262626'
           },
           border: {
             DEFAULT: '#333333',
@@ -60,6 +61,7 @@ module.exports = {
           },
           black: '#E0E0E0',
           white: '#262626',
+          gray: '#333333',
           heart: '#FF7F84',
           warning: '#FF5555',
           anchor: {
