@@ -24,11 +24,13 @@ public class Comment {
 	@Column(name = "board_id")
 	private Long boardId;
 	private String content;
+	private Long likeCount;
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
 	@PrePersist
 	protected void onCreate() {
+		this.likeCount = 0L;
 		this.createdAt = LocalDateTime.now();
 	}
 }

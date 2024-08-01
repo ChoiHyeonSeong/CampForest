@@ -10,4 +10,6 @@ public interface LikeRepositoryCustom {
 	void deleteByBoardIdAndUserId(Long boardId, Long userId);
 
 	Long countAllByBoardId(Long boardId);
+
+	List<Long> findBoardIdsByUserId(Long userId);
 }
