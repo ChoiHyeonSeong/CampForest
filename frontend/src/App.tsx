@@ -33,6 +33,15 @@ function App() {
   useThemeEffect();
 
   useEffect(() => {
+    const bodyBox = document.querySelector('body') as HTMLElement;
+    
+    bodyBox.classList.add('bg-light-white')
+    bodyBox.classList.add('dark:bg-dark-white')
+    bodyBox.classList.add('text-light-white')
+    bodyBox.classList.add('dark:text-dark-white')
+  }, []);
+
+  useEffect(() => {
     window.scrollTo(0, 0);
     dispatch(setIsBoardWriteModal(false))
   }, [currentLoc]);
@@ -55,7 +64,7 @@ function App() {
   }, [isAnyModalOpen]);
 
   return (
-    <div className="App dark:text-dark-text dark:bg-dark-background text-light-text">
+    <div className="App">
       <Navbar />
       <div className='flex'>
         {/* Desktop Navigation bar용 공간 */}
