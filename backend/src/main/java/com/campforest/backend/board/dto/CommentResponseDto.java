@@ -16,5 +16,9 @@ public class CommentResponseDto {
 	private Long commentWriterId;
 	private Long boardId;
 	private String content;
+	private String nickname;
+	private boolean isLiked;
+	private Long likeCount;
+	private String userImage;
 	private LocalDateTime createdAt;
 }

@@ -1,5 +1,7 @@
 package com.campforest.backend.board.repository.save;
 
+import java.util.List;
+
 import com.campforest.backend.board.entity.QSave;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -27,5 +29,14 @@ public class SaveRepositoryImpl implements SaveRepositoryCustom {
 			.delete(save)
 			.where(save.boardId.eq(boardId).and(save.userId.eq(userId)))
 			.execute();
+	}
+
+	@Override
+	public List<Long> findBoardIdsByUserId(Long nowId) {
+		return queryFactory
+			.select(save.boardId)
+			.from(save)
+			.where(save.userId.eq(nowId))
+			.fetch();
 	}
 }

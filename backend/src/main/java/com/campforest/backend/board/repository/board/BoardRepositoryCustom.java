@@ -12,8 +12,15 @@ public interface BoardRepositoryCustom {
 
 	Page<Boards> findByCategory(String category, Pageable pageable);
 
+	Page<Boards> findByTitle(String title, Pageable pageable);
+
 	void plusLikeCount(Long boardId);
 
 	void minusLikeCount(Long boardId);
 
+	void plusCommentCount(Long boardId);
+
+	void minusCommentCount(Long boardId);
+
+	Page<Boards> findSavedBoardsByUserId(Long nowId, Pageable pageable);
 }

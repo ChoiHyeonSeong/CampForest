@@ -8,17 +8,20 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
+import com.campforest.backend.board.entity.Comment;
 
 public interface BoardService {
 	void writeBoard(BoardRequestDto boardRequestDto);
 
 	BoardResponseDto getBoard(Long boardId);
 
-	Page<BoardResponseDto> getAllBoards(int page, int size);
+	Page<BoardResponseDto> getAllBoards(Long nowId, int page, int size);
 
-	Page<BoardResponseDto> getUserBoards(Long userId,int page, int size);
+	Page<BoardResponseDto> getUserBoards(Long nowId,Long userId, int page, int size);
 
-	Page<BoardResponseDto> getCategoryBoards(String category,int page, int size);
+	Page<BoardResponseDto> getTitleBoards(Long nowId,String title, int page, int size);
+
+	Page<BoardResponseDto> getCategoryBoards(Long nowId,String category, int page, int size);
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 
@@ -40,7 +43,7 @@ public interface BoardService {
 
 	void writeComment(Long boardId, CommentRequestDto commentRequestDto);
 
-	List<CommentResponseDto> getComment(Long boardId);
+	Page<CommentResponseDto> getComments(Long nowId,Long boardId, int page, int size);
 
 	List<CommentResponseDto> getUserComment(Long commentWriterId);
 
@@ -55,4 +58,8 @@ public interface BoardService {
 	boolean checkCommentLike(Long commentId, Long userId);
 
 	Long countCommentLike(Long commentId);
+
+	Page<BoardResponseDto> getSavedBoards(Long nowId, int page, int size);
+
+	Comment getCommentById(Long commentId);
 }

@@ -43,4 +43,13 @@ public class CommentLikeRepositoryImpl implements CommentLikeRepositoryCustom {
 			.where(commentLikes.commentId.eq(commentId))
 			.fetchOne();
 	}
+
+	@Override
+	public List<Long> findCommentIdsByUserId(Long nowId) {
+		return queryFactory
+			.select(commentLikes.commentId)
+			.from(commentLikes)
+			.where(commentLikes.userId.eq(nowId))
+			.fetch();
+	}
 }

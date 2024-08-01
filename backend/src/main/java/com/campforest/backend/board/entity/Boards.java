@@ -38,6 +38,8 @@ public class Boards {
 	private String category;
 	@Column(name = "like_count")
 	private Long likeCount;
+	@Column(name = "comment_count")
+	private Long commentCount;
 	@Column(name = "is_board_open")
 	private boolean isBoardOpen;
 	// @Column(name="created_at")
@@ -52,6 +54,7 @@ public class Boards {
 	@PrePersist
 	protected void onCreate() {
 		this.likeCount = 0L;
+		this.commentCount = 0L;
 		this.createdAt = LocalDateTime.now();
 		this.modifiedAt = LocalDateTime.now(); // 생성 시 수정 시간도 동일하게 설정
 	}
