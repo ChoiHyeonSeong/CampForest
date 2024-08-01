@@ -17,40 +17,134 @@ const MenuBar = (props: Props) => {
 
   return (
     <div>
-      <div className='flex text-center border-b'>
+      <div
+        className={`
+          flex text-center
+          text-light-text 
+          dark:text-dark-text
+          border-b
+        `}
+      >
+
+        {/* 게시물 */}
         <div 
           onClick={() => handleMenuClick('게시물')}
-          className={`${props.selectedMenu === '게시물' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
+          className={`
+            ${props.selectedMenu === '게시물' ?
+              `
+              border-light-border-3 text-light-text
+              dark:border-dark-border-3 dark:text-dark-text
+              border-b-[0.125rem] font-bold
+              ` :
+              ''
+            }
+              flex justify-center w-1/3 py-[1rem]
+              cursor-pointer
+              `
+            }
+          >
           <p className='me-2'>게시물</p>
           <p>{props.boardCount}</p>
         </div>
+
+        {/* 판매/대여 */}
         <div 
           onClick={() => handleMenuClick('판매/대여')}
-          className={`${props.selectedMenu === '판매/대여' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
+          className={`
+            ${props.selectedMenu === '판매/대여' ?
+              `
+              border-light-border-3 text-light-text
+              dark:border-dark-border-3 dark:text-dark-text
+              border-b-[0.125rem] font-bold
+              ` :
+              ''
+            }
+              flex justify-center w-1/3 py-[1rem]
+              cursor-pointer
+              `
+            }
+          >
           <p className='me-2'>판매/대여</p>
           <p>{props.productCount}</p>
         </div>
+
+        {/* 거래후기 */}
         <div 
           onClick={() => handleMenuClick('거래후기')}
-          className={`${props.selectedMenu === '거래후기' ? 'border-b-2 border-black font-bold' : ''} menu w-1/3 py-4 flex justify-center cursor-pointer`}>
+          className={`
+            ${props.selectedMenu === '거래후기' ?
+              `
+              border-light-border-3 text-light-text
+              dark:border-dark-border-3 dark:text-dark-text
+              border-b-[0.125rem] font-bold
+              ` :
+              ''
+            }
+              flex justify-center w-1/3 py-[1rem]
+              cursor-pointer
+              `
+            }
+          >
           <p className='me-2'>거래후기</p>
           <p>12</p>
         </div>
       </div>
+
+      {/* 탭 아래에 표시되는 곳 -> 조건문 */}
       <div>
-        <div className={`${props.selectedMenu === '거래후기' ? 'hidden' : ''} flex justify-center mt-6 relative mb-[1.5rem]`}>
+        <div
+          className={`
+            ${props.selectedMenu === '거래후기'?
+              'hidden' :
+              ''
+            }
+            flex justify-center relative mt-[1.5rem] mb-[1.5rem]
+          `}
+        >
+          {/* 작성글 */}
           <div className='flex items-center'>
-            <ArticleIcon className='size-4'/>
-            <span className='ms-2 text-sm'>작성글</span>
+            <ArticleIcon className='size-[1rem]'/>
+            <span
+              className={`
+                ms-[0.5rem]
+                text-[0.875rem]
+              `}
+            >
+              작성글
+            </span>
           </div>
-          <div className='flex items-center ms-10'>
-            <BookMarkIcon className='size-5'/>
-            <span className='ms-2 text-sm'>저장됨</span>
+
+          {/* 북마크 */}
+          <div className='flex items-center ms-[2.5rem]'>
+            <BookMarkIcon className='size-[1.25rem]'/>
+            <span
+              className={`
+                ms-[0.5rem]
+                text-[0.875rem]
+              `}
+            >
+              저장됨
+            </span>
           </div>
+
+        {/* 필터 */}
         <div className='flex justify-end absolute right-0'>
-          <div className='flex items-center border-b px-2 ms-auto text-sm'>
-            <div>필터</div>
-            <FilterIcon className='size-5 ms-2' />
+          <div className='flex items-center ms-auto px-[0.5rem] text-sm'>
+            <div
+              className={`
+                ms-[0.5rem]
+                text-[0.875rem]
+              `}
+            >
+              필터
+            </div>
+            <FilterIcon
+              className={`
+                size-[1.25rem] ms-[0.5rem] 
+                fill-light-border-icon 
+                dark:fill-dark-border-icon
+              `}  
+            />
           </div>
         </div>
         </div>
