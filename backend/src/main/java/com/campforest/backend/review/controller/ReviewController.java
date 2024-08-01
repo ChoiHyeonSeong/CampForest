@@ -28,7 +28,7 @@ import com.campforest.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("/api/review")
 @RequiredArgsConstructor
 public class ReviewController {
 

@@ -24,10 +24,10 @@ import com.campforest.backend.user.model.Follow;
 import com.campforest.backend.user.model.Interest;
 import com.campforest.backend.user.model.UserImage;
 import com.campforest.backend.user.model.Users;
-import com.campforest.backend.user.repository.FollowRepository;
-import com.campforest.backend.user.repository.InterestRepository;
-import com.campforest.backend.user.repository.UserImageRepository;
-import com.campforest.backend.user.repository.UserRepository;
+import com.campforest.backend.user.repository.jpa.FollowRepository;
+import com.campforest.backend.user.repository.jpa.InterestRepository;
+import com.campforest.backend.user.repository.jpa.UserImageRepository;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

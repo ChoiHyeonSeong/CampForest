@@ -17,7 +17,7 @@ import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.oauth.model.OAuthCodeToken;
 import com.campforest.backend.oauth.repository.OAuthCodeTokenRepository;
 import com.campforest.backend.user.model.Users;
-import com.campforest.backend.user.repository.UserRepository;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

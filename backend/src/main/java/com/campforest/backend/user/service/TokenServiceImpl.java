@@ -8,8 +8,8 @@ import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.model.RefreshToken;
 import com.campforest.backend.user.model.TokenBlacklist;
-import com.campforest.backend.user.repository.RefreshTokenRepository;
-import com.campforest.backend.user.repository.TokenBlacklistRepository;
+import com.campforest.backend.user.repository.redis.RefreshTokenRepository;
+import com.campforest.backend.user.repository.redis.TokenBlacklistRepository;
 
 import lombok.RequiredArgsConstructor;
 
