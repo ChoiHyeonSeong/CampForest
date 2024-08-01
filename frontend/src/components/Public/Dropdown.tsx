@@ -1,0 +1,108 @@
+import React from 'react';
+import { ReactComponent as RefreshIcon } from '@assets/icons/refresh.svg';
+import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg';
+
+type Option = {
+  id: number;
+  name: string;
+};
+
+type DropdownProps = {
+  label: string;
+  options: Option[];
+  isOpen: boolean;
+  onToggle: () => void;
+  onSelect: (option: Option) => void;
+  selectedOption: Option;
+};
+
+const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }: DropdownProps) => {
+
+  const handleSelect = (option: Option) => {
+    onSelect(option);
+    onToggle();
+  };
+
+  const handleRefreshClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering onToggle
+    const optionOne = options.find(option => option.id === 1);
+    if (optionOne) {
+      onSelect(optionOne);
+    }
+    if (isOpen) {
+      onToggle(); // Close the dropdown if it's open
+    }
+  };
+
+  const shouldChangeIcon = label !== 'Write' && selectedOption.id !== 1;
+
+  return (
+    <div 
+      className={`
+        inline-block relative 
+        text-left
+      `}
+    >
+      <div>
+        <button
+          type="button"
+          className={`
+            ${shouldChangeIcon ? 'border-[#FF7F50]' : 'border-gray-300'} 
+            inline-flex justify-between items-center w-full min-w-[7rem] px-[1rem] py-[0.5rem]
+            border-light-border
+            dark:border-dark-border
+            text-sm font-medium rounded-md border shadow-sm focus:outline-none`}
+          onClick={onToggle}
+        >
+          {selectedOption.name}
+          {shouldChangeIcon ? (
+            <RefreshIcon 
+              className={`
+                size-[1.25rem] ms-[0.5rem] -mr-[0.25rem]
+                text-light-text-secondary
+                dark:text-dark-text-secondary
+              `} 
+              onClick={handleRefreshClick} />
+          ) : (
+            <ArrowBottomIcon 
+              className={`
+                size-[0.75rem] ms-[0.5rem] -mr-[0.25rem] 
+                text-light-text-secondary
+                dark:text-dark-text-secondary
+              `}
+            />
+          )}
+        </button>
+      </div>
+      {isOpen && (
+        <div 
+          className={`
+            origin-top-left absolute left-0 w-max mt-[0.5rem] 
+            ring-light-black
+            dark:ring-dark-black
+            rounded-md shadow-lg ring-[0.25rem] ring-opacity-5 focus:outline-none
+          `}
+        >
+          <div className={`py-[0.25rem]`}>
+            {options.map((option) => (
+              <div 
+                key={option.id}
+                className={`
+                  block px-[1rem] py-[0.5rem] 
+                  hover:text-light-signature
+                  dark:hover:text-dark-signature
+                  text-sm  font-medium cursor-pointer duration-100
+                `}
+                onClick={() => handleSelect(option)}
+              >
+                {option.name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Dropdown;

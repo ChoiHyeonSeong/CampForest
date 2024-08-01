@@ -1,19 +1,95 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
+
+import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
+import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
+import { ReactComponent as HomeIcon } from '@assets/icons/home.svg'
+import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
+import { ReactComponent as MyPageIcon } from '@assets/icons/mypage.svg'
 
 type Props = {
   toggleMenu: () => void;
+  closeMenu: () => void;
 }
 
 const NavbarBottom = (props: Props) => {
   return (
-    <div className='fixed bottom-0 w-full h-10 flex md:hidden justify-between bg-slate-500'>
-      <div className='bg-yellow-100'>
-        <button onClick={props.toggleMenu}>1</button>
+    <div 
+      className={`
+        flex justify-around md:hidden fixed bottom-[0] z-[30] w-[100%] h-[2.75rem] 
+        bg-light-white border-light-border-1
+        dark:bg-dark-white dark:border-dark-border-1
+        border-t
+      `}
+    >
+
+      {/* 햄 메뉴 */}
+      <div 
+        onClick={props.toggleMenu}
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <HamMenuIcon 
+          className={`
+            size-[2rem]
+            stroke-light-black
+            dark:stroke-dark-black
+          `}
+        />
       </div>
-      <div className='bg-yellow-200'>2</div>
-      <div className='bg-yellow-300'>3</div>
-      <div className='bg-yellow-400'>4</div>
-      <div className='bg-yellow-500'>5</div>
+
+      {/* 검색 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <SearchIcon 
+          className={`
+            size-[1.5rem]
+            stroke-light-black
+            dark:stroke-dark-black
+          `}
+        />
+      </div>  
+      
+      {/* 홈 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <Link to='/' onClick={props.closeMenu}>
+          <HomeIcon 
+            className={`
+              size-[1.5rem]
+              fill-light-black
+              dark:fill-dark-black
+            `}
+          />
+        </Link>
+      </div>
+
+      {/* 채팅 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <ChatIcon 
+          className={`
+            size-[1.5rem]
+            fill-light-black
+            dark:fill-dark-black
+          `}
+        />
+      </div>
+
+      {/* 마이페이지 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <MyPageIcon 
+          className={`
+            size-[1.5rem]
+            fill-light-black stroke-light-black
+            dark:fill-dark-black dark:stroke-dark-black
+          `}
+        />
+      </div>
     </div>
   )
 }
