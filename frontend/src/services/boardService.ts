@@ -87,12 +87,12 @@ export const boardDelete = (boardId: number) => {
   return response;
 }
 
-export const boardLike = (boardId: number, userId: number) => {
-  const response = axios.post(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+export const boardLike = async (boardId: number, userId: number) => {
+  const response = await axiosInstance.post(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
 }
 
-export const boardDislike = (boardId: number, userId: number) => {
-  const response = axios.delete(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+export const boardDislike = async (boardId: number, userId: number) => {
+  const response = await axiosInstance.delete(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
 }

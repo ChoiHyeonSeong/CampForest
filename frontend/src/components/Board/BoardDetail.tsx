@@ -23,15 +23,20 @@ const BoardDetail = () => {
   const [board, setBoard] = useState<BoardType>(
     {
       boardId: 0,
-      userId: 0,
-      title: "",
-      content: "",
-      category: "",
-      likeCount: 0,
-      createdAt: "",
-      modifiedAt: "",
+      boardOpen: true,
+      category: '',
+      commentCount: 0,
+      content: '',
+      createdAt: '',
       imageUrls: [],
-      boardOpen: true
+      likeCount: 0,
+      liked: false,
+      modifiedAt: '',
+      nickname: '',
+      saved: false,
+      title: '',
+      userId: 0,
+      userImage: '',
     }
   );
 

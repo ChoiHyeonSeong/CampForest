@@ -13,15 +13,20 @@ import { boardDelete, boardLike, boardDislike } from '@services/boardService';
 
 export type BoardType = {
   boardId: number;
-  userId: number;
-  title: string;
-  content: string;
-  category: string;
-  likeCount: number;
-  createdAt: string;
-  modifiedAt: string;
-  imageUrls: string[];
   boardOpen: boolean;
+  category: string;
+  commentCount: number;
+  content: string;
+  createdAt: string;
+  imageUrls: string[];
+  likeCount: number;
+  liked: boolean;
+  modifiedAt: string;
+  nickname: string;
+  saved: boolean
+  title: string;
+  userId: number;
+  userImage: string;
 }
 
 type Props = {
@@ -137,7 +142,7 @@ const Board = (props: Props) => {
               `}
             />
             <div className={`ms-[1rem]`}>
-              <div className={`text-xl md:text-lg`}>{props.board.userId}</div>
+              <div className={`text-xl md:text-lg`}>{props.board.nickname}</div>
               <div className={`md:text-sm`}>{props.board.category}</div>
             </div>
           </div>
@@ -216,13 +221,23 @@ const Board = (props: Props) => {
         `}
       >
         <div className={`w-1/3`}>
+        {props.board.liked ? (
+          <FillHeartIcon 
+            onClick={dislike}
+            className={`
+              inline size-[1.75rem] 
+              cursor-pointer
+            `}
+          />
+        ) : (
           <HeartOutline 
+            onClick={like}
             className={`
               inline size-[1.75rem]
               cursor-pointer
             `}
           />
-          {/* <FillHeartIcon className='inline size-7 cursor-pointer'/> */}
+        )}
           <span 
             className={`
               mx-[0.5rem] 
@@ -249,12 +264,20 @@ const Board = (props: Props) => {
           </span>
         </div>
         <div className={`w-1/3`}>
-          <BookmarkEmpty 
-            className={`
-              inline size-[1.75rem]
-              cursor-pointer
-            `}
-          />
+          {!props.board.saved ? 
+            (<BookmarkEmpty 
+              className={`
+                inline size-[1.75rem]
+                cursor-pointer
+              `}
+            />) : 
+            (<BookmarkFill 
+              className={`
+                inline size-[1.75rem]
+                cursor-pointer
+              `}
+            />)
+          }
         </div>
       </div>
     </div>
