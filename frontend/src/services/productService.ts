@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = 'http://3.36.78.37:8081/api';
+const API_URL = '/api';
 
 type ProductRegistDto = {
   productName: string,
