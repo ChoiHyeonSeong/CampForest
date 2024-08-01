@@ -20,7 +20,7 @@ import com.campforest.backend.common.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/communitychat")
+@RequestMapping("/api/communitychat")
 @RequiredArgsConstructor
 public class CommunityChatController {
     private final CommunityChatService communityChatService;
