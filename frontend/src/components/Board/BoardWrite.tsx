@@ -142,9 +142,9 @@ const BoardWrite = () => {
       className={`
         ${isBoardWriteModal ? 'block' : 'hidden'} 
         fixed z-[100] w-full h-full
-        bg-light-black
-        dark:bg-dark-black 
-        bg-opacity-80 inset-0
+        bg-light-black bg-opacity-80
+        dark:bg-dark-black dark:bg-opacity-80
+        inset-0
       `}
       onClick={() => dispatch(setIsBoardWriteModal(false))} 
     >

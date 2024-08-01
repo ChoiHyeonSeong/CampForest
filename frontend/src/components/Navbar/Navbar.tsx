@@ -226,9 +226,8 @@ const Navbar = () => {
       <div
         onClick={closeMenu}
         className={`
-          ${isMenuOpen ? 'block lg:hidden fixed inset-0 bg-light-black dark:bg-dark-black' : 'hidden bg-none'}
+          ${isMenuOpen ? 'block lg:hidden fixed inset-0 bg-light-black bg-opacity-80 dark:bg-dark-black dark:bg-opacity-80' : 'hidden bg-none'}
           z-[30]
-          bg-opacity-80  
         `}
       >
       </div>
