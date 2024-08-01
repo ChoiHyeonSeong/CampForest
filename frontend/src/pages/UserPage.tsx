@@ -55,23 +55,33 @@ const UserPage = () => {
       {/* 팔로잉 모달 */}
       <div 
         onClick={() => setIsModalOpen(false)} 
-        className={`${isModalOpen ? '' : 'hidden'} z-10 fixed md:items-center w-full h-full bg-black bg-opacity-80 flex`}>
-        <div className="h-full md:min-h-[30rem] md:w-[40rem] md:h-[50%] md:mx-auto" onClick={(event) => event.stopPropagation()}>
+        className={`
+          ${isModalOpen ? 'flex' : 'hidden'} 
+          md:items-center fixed z-[10] w-[100%] h-[100%] 
+          bg-light-black
+          dark:bg-dark-black
+          bg-opacity-80
+        `}
+      >
+        <div 
+          onClick={(event) => event.stopPropagation()}
+          className={`md:w-[40rem] h-[100%] md:h-[50%] md:min-h-[30rem] md:mx-auto`} 
+        >
           <FollowUsers isFollowing={isFollowing} setIsModalOpen={setIsModalOpen}/>
         </div>
       </div>
 
       {/* 유저 메인 페이지 */}
-      <div className='flex justify-center min-h-screen'>
-        <div className='bg-white p-6 lg:p-0 w-full lg:w-[54rem]'>
-          <h3 className='pb-[0.75rem] text-lg md:text-[1.5rem] hidden lg:block'>유저 프로필</h3>
+      <div className={`flex justify-center min-h-[100vh]`}>
+        <div className={`w-[100%] lg:w-[54rem] bg-light-white dark:bg-dark-white p-[1.5rem] lg:p-0`}>
+          <h3 className={`hidden lg:block pb-[0.75rem] text-lg md:text-[1.5rem]`}>유저 프로필</h3>
           <ProfileTop userId={userId} setIsModalOpen={setIsModalOpen} setIsFollowing={setIsFollowing}/>
           <div>
             {/* 목록전환박스 */}
             <MenuBar boardCount={boards.totalElements} productCount={products?.totalElements} selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu}/>
 
             {/* 목록 */}
-            <div className='w-full h-56'>
+            <div className={`w-[100%] h-[14rem]`}>
               {/* 게시물 목록 */}
               <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
               {boards?.content.map((board: any) => (
