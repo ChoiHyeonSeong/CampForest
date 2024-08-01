@@ -1,4 +1,4 @@
-package com.campforest.backend.user.repository;
+package com.campforest.backend.user.repository.jpa;
 
 import java.util.Optional;
 

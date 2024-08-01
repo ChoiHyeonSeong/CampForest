@@ -18,7 +18,7 @@ import com.campforest.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/rent")
+@RequestMapping("/api/rent")
 @RequiredArgsConstructor
 public class RentController {
 

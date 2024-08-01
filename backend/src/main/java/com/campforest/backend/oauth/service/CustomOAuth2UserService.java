@@ -17,7 +17,7 @@ import com.campforest.backend.oauth.repository.TempUserRepository;
 import com.campforest.backend.oauth.model.OAuthAttributes;
 import com.campforest.backend.oauth.model.TempUser;
 import com.campforest.backend.user.model.Users;
-import com.campforest.backend.user.repository.UserRepository;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

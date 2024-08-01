@@ -5,8 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @Configuration
+@EnableRedisRepositories(
+	basePackages = {
+		"com.campforest.backend.mail.repository",
+		"com.campforest.backend.oauth.repository",
+		"com.campforest.backend.user.repository.redis"
+	}
+)
 public class RedisConfig {
 
 	@Value("${spring.data.redis.host}")

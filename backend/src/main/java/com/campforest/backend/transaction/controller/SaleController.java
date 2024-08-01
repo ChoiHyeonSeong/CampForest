@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/sale")
+@RequestMapping("/api/sale")
 @RequiredArgsConstructor
 @Slf4j
 public class SaleController {
