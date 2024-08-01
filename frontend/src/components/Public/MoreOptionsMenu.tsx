@@ -24,25 +24,103 @@ const MoreOptionsMenu = (props: Props) => {
   };
 
   return (
-    <div className="relative cursor-pointer">
+    <div 
+      className={`
+        relative 
+        cursor-pointer
+      `}
+    >
       <div onClick={toggleMenu}>
-        <MoreDotIcon className="absolute top-0 right-0 size-8" />
+        <MoreDotIcon className={`absolute top-0 right-0 size-[2rem]`}/>
       </div>
       {isMenuOpen && (
-        <div className="toggle-menu font-medium text-left flex flex-col px-1 absolute z-10 top-6 right-6 w-32 rounded-md border-[0.1rem] border-[#eee] bg-[#fff]">
-          <div className='w-full border-b ps-3'>
-            <button className="py-3 text-base hover:text-[#FF7F50]">신고하기</button>
+        <div 
+          className={`
+            toggle-menu
+            flex flex-col absolute top-[1.5rem] right-[1.5rem] z-[10] w-[8rem] px-[0.25rem]
+            border-light-border
+            dark:border-dark-border
+            font-medium text-left rounded-md border-[0.1rem]
+          `}
+        >
+          <div 
+            className={`
+              w-full ps-[0.75rem]
+              border-light-border
+              dark:border-dark-border
+              border-b
+            `}
+          >
+            <button 
+              className={`
+                py-[0.75rem] 
+                hover:text-light-signature
+                dark:hover:text-dark-signature
+                text-base
+              `}
+            >
+              신고하기
+            </button>
           </div>
-          <div className='w-full border-b ps-3'>
-            <button className="py-3 text-base hover:text-[#FF7F50]" onClick={copyLink}>링크복사</button>
+          <div 
+            className={`
+              w-full ps-[0.75rem]
+              border-light-border
+              dark:border-dark-border
+              border-b
+            `}
+          >
+            <button 
+              className={`
+                py-[0.75rem]
+                hover:text-light-signature
+                dark:hover:text-dark-signature 
+                text-base
+              `}
+              onClick={copyLink}>
+                링크복사
+              </button>
           </div>
           {props.isUserPost ? (
             <>
-              <div className='w-full border-b ps-3'>
-                <button className="py-3 text-base hover:text-[#FF7F50]">수정하기</button>
+              <div 
+                className={`
+                  w-full ps-[0.75rem]
+                  border-light-border
+                  dark:border-dark-border
+                  border-b 
+                `}
+              >
+                <button 
+                  className={`
+                    py-[0.75rem]
+                    hover:text-light-signature
+                    dark:hover:text-dark-signature 
+                    text-base 
+                  `}
+                >
+                  수정하기
+                </button>
               </div>
-              <div className='w-full border-b ps-3' onClick={() => props.deleteFunction(props.deleteId)}>
-                <button className="py-3 text-base hover:text-[#FF7F50]">삭제하기</button>
+              <div 
+                className={`
+                  w-full ps-[0.75rem]
+                  border-light-border
+                  dark:border-dark-border
+                  border-b
+                `}
+                onClick={() => props.deleteFunction(props.deleteId)}
+              >
+                <button 
+                  className={`
+                    py-[0.75rem]
+                    hover:text-light-signature
+                    dark:hover:text-dark-signature 
+                    text-base
+                  `}
+                >
+                  삭제하기
+                </button>
               </div>
             </>
           ) : (

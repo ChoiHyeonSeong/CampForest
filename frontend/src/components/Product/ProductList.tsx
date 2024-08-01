@@ -119,38 +119,63 @@ const ProductList = () => {
   }, [inView, activeTab]);
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="p-6 w-full lg:w-[60rem] xl:w-[66rem] lg:p-0">
-        <div className="md:flex justify-between mt-6 mb-10 hidden items-center">
-          <h3 className="font-medium md:text-2xl lg:text-3xl">상품 판매/대여</h3>
+    <div className={`flex justify-center items-center`}>
+      <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-[1.5rem]`}>
+        <div className={`hidden md:flex items-center justify-between mt-[1.5rem] mb-[2.5rem]`}>
+          <div className={`font-medium md:text-2xl lg:text-3xl`}>
+            상품 판매/대여
+          </div>
           <Link
             to="/product/write"
-            className="cursor-pointer px-2 py-1 bg-[#FF7F50] text-white rounded-sm text-sm"
+            className={`
+              px-[0.5rem] py-[0.25rem]
+              bg-light-signature text-light-white
+              dark:bg-dark-signature dark:text-dark-white
+              text-sm cursor-pointer rounded-sm
+            `}
           >
             작성하기
           </Link>
         </div>
-
-        <div className="w-full flex mb-10 h-12">
+        <div className={`flex w-full h-[3rem] mb-[2.5rem]`}>
           <div
             onClick={() => handleTabClick(1)}
-            className={`w-1/2 cursor-pointer flex items-center md:text-lg font-medium text-center border-b-2 transition-all duration-200 ${
-              activeTab === 1 ? 'border-[#FF7F50]' : 'border-[#eee]'
-            }`}
+            className={`
+              ${activeTab === 1 ? 'border-light-signature dark:border-dark-signature' : 'border-light-border dark:border-dark-border'}
+              flex items-center w-1/2 
+              border-light-border
+              dark:border-dark-border
+              md:text-lg font-medium text-center cursor-pointer border-b-2 transition-all duration-200 
+            `}
           >
-            <div className="w-full text-center">판매</div>
+            <div 
+              className={`
+                w-full 
+                text-center
+              `}
+            >
+              판매
+            </div>
           </div>
           <div
             onClick={() => handleTabClick(2)}
-            className={`w-1/2 cursor-pointer flex items-center md:text-lg font-medium text-center border-b-2 transition-all duration-200 ${
-              activeTab === 2 ? ' border-[#FF7F50]' : 'border-[#eee]'
-            }`}
+            className={`
+              ${activeTab === 2 ? 'border-light-signature dark:border-dark-signature' : 'border-light-border dark:border-dark-border'}
+              flex items-center w-1/2 
+              md:text-lg font-medium text-center cursor-pointer border-b-2 transition-all duration-200 
+            `}
           >
-            <div className="w-full text-center">대여</div>
+            <div 
+              className={`
+                w-full 
+                text-center
+              `}
+            >
+              대여
+            </div>
           </div>
         </div>
-
-        <div className="mb-3 flex gap-2 items-center relative z-10 flex-wrap ps-3">
+        <div className={`flex flex-wrap gap-[0.5rem] items-center relative z-[10] mb-[0.75rem] ps-[0.75rem]`}>
           <Dropdown
             label="카테고리"
             options={categories}
@@ -176,28 +201,38 @@ const ProductList = () => {
             selectedOption={selectedLocation}
           />
           <div
-            className={`acc-btn duration-200 cursor-pointer rounded-md border shadow-sm px-4 py-2 text-sm font-medium focus:outline-none ${
+            className={`
+              acc-btn 
+              px-[1rem] py-[0.5rem]
+              border-light-border
+              dark:border-dark-border
+              text-sm font-medium duration-200 cursor-pointer rounded-md border shadow-sm focus:outline-none ${
               isAccBtnActive
-                ? 'bg-[#FF7F50] text-white border-[#FF7F50]'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
+                ? 'bg-light-signature dark:bg-dark-signature text-light-white dark:text-dark-white border-light-signature dark:border-dark-signature'
+                : 'border-light-border-1 dark:border-dark-border-1'
+              }
+            `}
             onClick={handleAccBtnClick}
           >
-            <p>거래 가능</p>
+            <p>
+              거래 가능
+            </p>
           </div>
         </div>
-        <div className="w-full grid lg:grid-cols-5 md:grid-cols-4 grid-cols-3">
+        <div className={`grid lg:grid-cols-5 md:grid-cols-4 grid-cols-3 w-full`}>
           {products?.map(
             (product) =>
               (!product.sold || !isAccBtnActive) && (
-                <ProductCard key={product.productId} product={product} />
+                <ProductCard 
+                  key={product.productId} 
+                  product={product} 
+                />
               ),
           )}
         </div>
       </div>
-
       {/* intersection observer */}
-      <div ref={ref} className="h-1"></div>
+      <div ref={ref} className="h-[0.25rem]"></div>
     </div>
   );
 };

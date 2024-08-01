@@ -5,7 +5,12 @@ import { ReactComponent as StarIcon } from '@assets/icons/star.svg'
 
 const Review = () => {
   return (
-    <div className='mx-auto min-w-[22rem] md:max-w-[40rem] md:my-[2rem] rounded-md px-[1.5rem] md:px-0 py-[2rem] md:pt-[2rem]'>
+    <div 
+      className={`
+        min-w-[22rem] md:max-w-[40rem] mx-auto md:my-[2rem] max-md:px-[1.5rem] py-[2rem]
+        rounded-md 
+      `}
+    >
       <div>
         {/* 리뷰개수에 따라 반복문 사용할 것 같아, 코드직관성을 위해 아래 리뷰카드 컴포넌트 제작 */}
         <ReviewCard />
@@ -20,25 +25,28 @@ const Review = () => {
 
 const ReviewCard = () => {
   return (
-    <div className='flex justify-between items-center w-full bg-gray-200 rounded-sm px-3 py-4 mb-4'>
-      <div className='flex me-10'>
+    <div 
+      className={`
+        flex justify-between items-center w-full mb-[1rem] px-[0.75rem] py-[1rem] 
+        rounded-sm
+      `}
+    >
+      <div className={`flex me-[2.5rem]`}>
         {/* 별점 */}
-        <div className='flex items-center me-3'>
-          <StarIcon className='size-5 me-1' />
-          <span>4.0</span>
+        <div className={`flex items-center me-[0.75rem]`}>
+          <StarIcon className={`size-[1.25rem] me-[0.25rem]`} />
+          <span>
+            4.0
+          </span>
         </div>
-
         {/* 후기 */}
-        <div className='flex items-center'>
+        <div className={`flex items-center`}>
           사용자가 작성한 거래후기가 들어갈 예정입니다. 많은 관심부탁드립니다.
         </div>
       </div>     
-
       {/* 상품사진 -> 본인프로필에만 보일 예정! */}
-      <div className='size-12 bg-slate-600 flex shrink-0'>
-      </div>
+      <div className={`flex shrink-0 size-[3rem]`} />
     </div>
-
   )
 }
 

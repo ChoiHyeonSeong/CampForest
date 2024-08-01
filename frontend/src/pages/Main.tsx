@@ -63,11 +63,11 @@ function Main() {
 
   return (
     <div>
-      <div className='flex justify-center'>
-        <div className='hidden lg:block w-[15rem]'/>
-        <div className='w-full md:w-[40rem]'>
+      <div className={`flex justify-center`}>
+        <div className={`hidden lg:block w-[15rem]`}/>
+        <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
-            <div className='my-5' key={index}>
+            <div className={`my-[1.25rem]`} key={index}>
               <Board board={board} deleteFunction={pageReload} isDetail={false}/>
             </div>
           ))}
@@ -78,7 +78,7 @@ function Main() {
       </div>
 
       {/* intersection observer */}
-      <div ref={ref} className={`h-1 ${isFirstLoadRef.current ? 'hidden' : 'block'}`}></div>
+      <div ref={ref} className={`${isFirstLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
     </div> 
   )
 }

@@ -23,16 +23,47 @@ const LoadingModal= () => {
   }, [isLoading]);
 
   return (
-    <div className={`${isLoading ? 'hidden' : 'hidden'} z-[500] w-full h-screen bg-black bg-opacity-80 text-white top-0 left-0 flex flex-col items-center justify-center`}>
+    <div 
+      className={`
+        ${isLoading ? 'hidden' : 'hidden'}
+        flex flex-col items-center justify-center top-0 left-0 z-[500] w-full h-screen 
+        bg-light-black text-light-white
+        dark:bg-dark-black dark:text-dark-white 
+        bg-opacity-80
+      `}
+    >
       {/* <WhiteLogoIcon className='mb-4' /> */}
-      <div className='flex space-x-2 mb-4'>
-        <div className='w-4 h-4 bg-gray-100 rounded-full animate-bounce'></div>
-        <div className='w-4 h-4 bg-gray-300 rounded-full animate-bounce animation-delay-200'></div>
-        <div className='w-4 h-4 bg-gray-500 rounded-full animate-bounce animation-delay-400'></div>
+      <div className={`flex space-x-[0.5rem] mb-[1rem]`}>
+        <div 
+          className={`
+            w-[1rem] h-[1rem]
+            bg-gray-300
+            rounded-full animate-bounce
+          `}
+        />
+        <div 
+          className={`
+            w-[1rem] h-[1rem]
+            bg-gray-300
+            rounded-full animate-bounce
+          `}
+        />
+        <div 
+          className={`
+            w-[1rem] h-[1rem]
+            bg-gray-500
+            rounded-full animate-bounce
+          `}
+        />
       </div>
-      <div className='text-center'>
-        <div className='text-lg mb-4'></div>
-        마이페이지를 가져오는 중입니다.
+      <div className={`text-center`}>
+        <div 
+          className={`
+            mb-[1rem]
+            text-lg
+          `}
+        ></div>
+        로딩 중입니다.
       </div>
   </div>
   );

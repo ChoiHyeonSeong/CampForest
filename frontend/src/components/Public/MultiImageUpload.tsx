@@ -26,21 +26,43 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({ onImagesChange }) =
   };
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={`flex flex-wrap gap-2`}>
       {previewUrls.map((url, index) => (
-        <div key={index} className="relative w-24 h-24">
-          <img src={url} alt={`preview ${index}`} className="w-full h-full object-cover" />
+        <div 
+          key={index} 
+          className={`relative size-[6rem]`}
+        >
+          <img 
+            src={url} 
+            alt={`preview ${index}`} 
+            className={`
+              w-full h-full 
+              object-cover
+            `}
+          />
           <div
             onClick={() => handleRemoveImage(index)}
-            className="absolute top-0 right-0 text-white w-5 h-5 flex items-center justify-center"
+            className={`
+              flex items-center justify-center absolute top-0 right-0 size-[1.25rem] 
+              text-light-white
+              dark:text-dark-white
+            `}
           >
-            <CloseIcon stroke='#333333' fill='#FFFFFF'/>
+            <CloseIcon 
+              stroke='#333333' 
+              fill='#FFFFFF'
+            />
           </div>
         </div>
       ))}
       <div
         onClick={() => fileInputRef.current?.click()}
-        className="w-24 h-24 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400"
+        className={`
+          flex items-center justify-center size-[6rem] 
+          border-light-border-1 text-light-text-secondary
+          dark:border-dark-border-1 dark:text-dark-text-secondary
+          border-2 border-dashed
+        `}
       >
         +
       </div>

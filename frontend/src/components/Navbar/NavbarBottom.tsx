@@ -14,23 +14,81 @@ type Props = {
 
 const NavbarBottom = (props: Props) => {
   return (
-    <div className='fixed z-30 bottom-0 w-full h-11 flex md:hidden justify-around bg-white outline outline-1 outline-[#CCCCCC]'>
-      <div className='w-11 flex flex-all-center cursor-pointer' onClick={props.toggleMenu}>
-        <HamMenuIcon className='size-[2rem]' stroke={'black'}/>
+    <div 
+      className={`
+        flex justify-around md:hidden fixed bottom-[0] z-[30] w-[100%] h-[2.75rem] 
+        bg-light-white border-light-border-1
+        dark:bg-dark-white dark:border-dark-border-1
+        border-t
+      `}
+    >
+
+      {/* 햄 메뉴 */}
+      <div 
+        onClick={props.toggleMenu}
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <HamMenuIcon 
+          className={`
+            size-[2rem]
+            stroke-light-black
+            dark:stroke-dark-black
+          `}
+        />
       </div>
-      <div className='w-11 flex flex-all-center'>
-        <SearchIcon className='size-[1.5rem]' stroke={'black'}/>
-      </div>    
-      <div className='w-11 flex flex-all-center'>
+
+      {/* 검색 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <SearchIcon 
+          className={`
+            size-[1.5rem]
+            stroke-light-black
+            dark:stroke-dark-black
+          `}
+        />
+      </div>  
+      
+      {/* 홈 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
         <Link to='/' onClick={props.closeMenu}>
-          <HomeIcon className='size-[1.5rem]' fill={'black'}/>
+          <HomeIcon 
+            className={`
+              size-[1.5rem]
+              fill-light-black
+              dark:fill-dark-black
+            `}
+          />
         </Link>
       </div>
-      <div className='w-11 flex flex-all-center'>
-        <ChatIcon className='size-[1.5rem]' fill={'black'}/>
+
+      {/* 채팅 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <ChatIcon 
+          className={`
+            size-[1.5rem]
+            fill-light-black
+            dark:fill-dark-black
+          `}
+        />
       </div>
-      <div className='w-11 flex flex-all-center'>
-        <MyPageIcon className='size-[1.5rem]'/>
+
+      {/* 마이페이지 */}
+      <div 
+        className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
+      >
+        <MyPageIcon 
+          className={`
+            size-[1.5rem]
+            fill-light-black stroke-light-black
+            dark:fill-dark-black dark:stroke-dark-black
+          `}
+        />
       </div>
     </div>
   )

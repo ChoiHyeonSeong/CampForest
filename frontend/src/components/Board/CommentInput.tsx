@@ -29,10 +29,20 @@ const CommentInput = (props: Props) => {
   };
 
   return (
-    <div className='flex flex-col items-start border-t border-gray-300 p-2'>
-      <div className='flex items-center w-full'>
+    <div 
+      className={`
+        flex flex-col items-start p-[0.5rem]
+        border-light-border-1
+        dark:border-dark-border-1
+        border-t
+      `}
+    >
+      <div className={`flex items-center w-full`}>
         <EmojiIcon 
-          className='text-2xl me-2 size-6 cursor-pointer'
+          className={`
+            size-[1.5rem] me-[0.5rem]
+            text-2xl cursor-pointer
+          `}
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
         />
         <input
@@ -41,14 +51,26 @@ const CommentInput = (props: Props) => {
           onChange={(e) => setComment(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder='댓글 달기...'
-          className='flex-1 px-2 py-1 outline-none focus:border-none border border-transparent rounded cursor-text'
+          className={`
+            flex-1 px-[0.5rem] py-[0.25rem] 
+            border-light-border
+            dark:border-dark-border
+            outline-none focus:border-none border border-transparent rounded cursor-text
+          `}
         />
-        <button onClick={handleAddComment} className='ml-2 text-blue-500'>
+        <button 
+          onClick={handleAddComment} 
+          className={`
+            me-[0.5rem] 
+            text-light-anchor
+            dark:text-dark-anchor
+          `}
+        >
           게시
         </button>
       </div>
       {showEmojiPicker && (
-        <div className='absolute bottom-12 z-10'>
+        <div className={`absolute bottom-[3rem] z-[10]`}>
           <Picker onEmojiSelect={handleEmojiSelect} />
         </div>
       )}

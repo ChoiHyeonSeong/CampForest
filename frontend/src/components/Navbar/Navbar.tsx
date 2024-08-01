@@ -224,8 +224,12 @@ const Navbar = () => {
 
       {/* 태블릿 이하 사이즈에서 메뉴 열때 배경 회색처리 */}
       <div
-        className={`fixed z-[30] bg-opacity-80 lg:hidden ${isMenuOpen ? 'bg-black inset-0 block' : 'bg-none hidden'}`}
         onClick={closeMenu}
+        className={`
+          ${isMenuOpen ? 'block lg:hidden fixed inset-0 bg-light-black dark:bg-dark-black' : 'hidden bg-none'}
+          z-[30]
+          bg-opacity-80  
+        `}
       >
       </div>
     </div>

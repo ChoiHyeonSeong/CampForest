@@ -121,64 +121,154 @@ const UserInformation = () => {
   };
 
   return (
-    <form className="flex justify-center items-center">
-      <div className="bg-white p-6 w-full md:max-w-3xl lg:w-[40rem] lg:p-0">
-
+    <form className={`flex justify-center items-center`}>
+      <div className={`w-full md:max-w-3xl lg:w-[40rem] max-lg:p-[1.5rem]`}>
         {/* 프로필사진 */}
-        <div className="flex justify-center mb-10">
+        <div className={`flex justify-center mb-[2.5rem]`}>
           <div 
-            className="relative size-20 md:size-24 rounded-full mx-auto border-[0.1rem]"
+            className={`
+              relative size-[5rem] md:size-[6rem]
+              border-light-border
+              dark:border-dark-border 
+              rounded-full mx-auto border-[0.1rem]
+            `}
             onClick={() => {fileInputRef.current?.click()}}
           >
-            <img src={uploadedImage} onError={handleImageError} alt="프로필 사진" className="absolute size-full rounded-full" />
-            <div className='cursor-pointer opacity-0 hover:opacity-100 duration-200 absolute w-full h-full rounded-full mx-auto bg-[#00000098] text-white'>
-              <p className='flex justify-center items-center h-full'>사진변경</p>
+            <img 
+              src={uploadedImage} 
+              onError={handleImageError} 
+              alt="프로필 사진" 
+              className={`
+                absolute size-full 
+                rounded-full
+              `}
+            />
+            <div 
+              className={`
+                absolute w-full h-full mx-auto
+                bg-light-black text-light-white
+                dark:bg-dark-black dark:text-dark-white
+                cursor-pointer opacity-60 hover:opacity-100 duration-200 rounded-full
+              `}
+            >
+              <p className={`flex justify-center items-center h-full`}>
+                사진변경
+              </p>
             </div>
             <input 
               type="file" 
               ref={fileInputRef}
-              className="hidden"
+              className={`hidden`}
               onChange={handleImageUpload}
               accept="image/*"
             />
           </div>
         </div>
         {/* 닉네임 */}
-        <div className="mb-6 relative">
-          <label className="block text-gray-700 text-left font-medium text-lg">닉네임<span className='text-red-500 text-md'> *</span></label>
-          <div className="flex items-center border-b border-[#cccccc]">
-              <input 
-                type="text" 
-                className="w-full px-4 py-2 focus:outline-none placeholder-slate-400 focus:ring-0" 
-                placeholder='닉네임은 최대 10자 이하여야 합니다.'
-                name='nickname'
-                value={nickname}
-                onChange={handleNicknameChange}
-              />
-              <span className={`ml-2 ${isNicknameAnimating ? 'text-[#FF7F50] animate-shake' : 'text-gray-500'}`}>
-                {nicknameChars}/10
-              </span>
-              <XIcon className="ml-2 h-5 w-5 text-gray-500 cursor-pointer" onClick={clearNickname} />
-            </div>
-          
-        </div>
-
-        {/* 자기소개 */}
-        <div className="mb-6 relative">
-          <label className="block text-gray-700 text-left font-medium text-lg">자기소개</label>
-          <div className="flex items-center  border-b border-[#cccccc]">
+        <div className={`relative mb-[1.5rem]`}>
+          <label 
+            className={`
+              block
+              text-left font-medium text-lg
+            `}
+          >
+            닉네임
+            <span 
+              className={`
+                text-light-warning
+                dark:text-dark-warning
+                text-md
+              `}
+            > 
+              *
+            </span>
+          </label>
+          <div 
+            className={`
+              flex items-center 
+              border-light-border-1
+              dark:border-dark-border-1
+              border-b
+            `}
+          >
             <input 
               type="text" 
-              className="w-full px-4 py-2 focus:outline-none placeholder-slate-400 focus:ring-0" 
+              className={`
+                w-full px-[1rem] py-[0.5rem]
+                placeholder-light-text-secondary
+                dark:placeholder-dark-text-secondary
+                focus:outline-none focus:ring-0
+              `}
+              placeholder='닉네임은 최대 10자 이하여야 합니다.'
+              name='nickname'
+              value={nickname}
+              onChange={handleNicknameChange}
+            />
+            <span 
+              className={`
+                ${isNicknameAnimating ? 'text-light-signature dark:text-dark-signature animate-shake' : 'text-light-text-secondary dark:text-dark-text-secondary'}
+                me-[0.5rem] 
+              `}
+            >
+              {nicknameChars}/10
+            </span>
+            <XIcon 
+              className={`
+                size-[1.25rem] me-[0.5rem]
+                text-light-text-secondary
+                dark:text-dark-text-secondary
+                 ursor-pointer
+              `}
+              onClick={clearNickname} 
+            />
+          </div>
+        </div>
+        {/* 자기소개 */}
+        <div className={`relative mb-[1.5rem]`}>
+          <label 
+            className={`
+              block 
+              text-left font-medium text-lg
+            `}
+          >
+            자기소개
+          </label>
+          <div 
+            className={`
+              flex items-center 
+              border-light-border-1
+                dark:border-dark-border-1
+              border-b
+            `}
+          >
+            <input 
+              type="text" 
+              className={`
+                w-full px-[1rem] py-[0.5rem]
+                placeholder-light-text-secondary
+                dark:placeholder-dark-text-secondary 
+                focus:outline-none focus:ring-0
+              `}
               placeholder='자기소개를 입력해주세요.'
               name='introduction'
               value={introduction}
               onChange={handleIntroductionChange}
             />
-            <span className={`ml-2 ${isIntroductionAnimating ? 'text-[#FF7F50] animate-shake' : 'text-gray-500'}`}>
+            <span 
+              className={`
+                ${isIntroductionAnimating ? 'text-light-signature dark:text-dark-signature animate-shake' : 'text-light-text-secondary dark:text-dark-text-secondary'}
+                  me-[0.5rem]
+                `}
+              >
               {introChars}/50
             </span>
-            <XIcon className="ml-2 h-5 w-5 text-gray-500 cursor-pointer" onClick={clearIntroduction} />
+            <XIcon 
+              className={`
+                size-[1.25rem] me-[0.5rem]  
+                text-light-text-secondary
+                dark:text-dark-text-secondary cursor-pointer
+              `}
+              onClick={clearIntroduction} />
           </div>
         </div>
 
