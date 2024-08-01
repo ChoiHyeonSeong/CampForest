@@ -32,42 +32,93 @@ const Aside = (props: Props) => {
   };
 
   return (
-    <aside className='fixed bottom-14 right-5 md:bottom-8 md:right-5 z-10'>
-      <div className={`${props.user.isLoggedIn ? '' : 'hidden'} flex items-center mb-2 relative`}>
-        <div className='flex absolute right-2'>
-          <Link onClick={toggleExpand} to='product/write' 
-            className={`w-11 h-11 bg-black rounded-full flex flex-all-center transition-all duration-300 ease-in-out 
-              ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}
-              delay-100
-              `}
+    <aside className={`fixed bottom-[3.5rem] md:bottom-[2rem] right-[1.25rem] md:right-[1.25rem] z-[10]`}>
+
+      {/* Aside 글쓰기 (로그인 해야 보임) */}
+      <div className={`${props.user.isLoggedIn ? 'flex' : 'hidden'} items-center relative mb-[0.5rem]`}>
+        <div className={`flex absolute right-[0.5rem]`}>
+          <Link 
+            onClick={toggleExpand} 
+            to='product/write' 
+            className={`
+              ${isExpanded ? 'hover:bg-light-signature dark:hover:bg-dark-signature opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
+              flex flex-all-center w-[2.75rem] h-[2.75rem] 
+              bg-light-black 
+              dark:bg-dark-black 
+              rounded-full transition-all duration-300 ease-in-out delay-100
+            `}
           >
-            <RentalIcon className='stroke-white'/>
+            <RentalIcon 
+              className={`
+                stroke-light-white 
+                dark:stroke-dark-white
+              `}
+            />
           </Link>
           <div 
             onClick={() => {
               dispatch(setIsBoardWriteModal(true))
-              toggleExpand()}}
-            className={`w-11 h-11 bg-black rounded-full flex flex-all-center ml-2 transition-all duration-300 ease-in-out 
-              ${isExpanded ? 'opacity-100 -translate-x-full hover:bg-[#FF6B00]' : 'opacity-0 -translate-x-0 pointer-events-none'}`}
+              toggleExpand()
+            }}
+            className={`
+              ${isExpanded ? 'hover:bg-light-signature dark:hover:bg-dark-signature opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
+              flex flex-all-center w-[2.75rem] h-[2.75rem] ml-[0.5rem]
+              bg-light-black
+              dark:bg-dark-black
+              rounded-full transition-all duration-300 ease-in-out
+            `}
           >
-            <CommunityIcon className='stroke-white'/>
+            <CommunityIcon 
+              className={`
+                stroke-light-white 
+                dark:stroke-dark-white
+              `}
+            />
           </div>
         </div>
 
+        {/* 글쓰기 확장 토글 버튼 */}
         <div 
-          className={`w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200 transition-all z-10`}
           onClick={toggleExpand}
+          className={`
+            flex flex-all-center z-[10] w-[2.75rem] h-[2.75rem] 
+            bg-light-black hover:bg-light-signature
+            dark:bg-dark-black dark:hover:bg-dark-signature
+            rounded-full duration-200 transition-all 
+          `}
         >
-          {isExpanded ? <DotIcon className='fill-white rotate-90'/> : <WriteIcon className='stroke-white'/>}
+          {isExpanded ? (
+            <DotIcon 
+              className={`
+                fill-light-white
+                dark:fill-dark-white
+                rotate-90
+              `}
+            /> 
+          ) : (
+            <WriteIcon 
+              className={`
+                stroke-light-white 
+                dark:stroke-dark-white
+              `}
+            />
+          )}
         </div>
       </div>
 
-      <div 
-        className='w-11 h-11 bg-black rounded-full flex flex-all-center hover:bg-[#FF6B00] duration-200'
-        onClick={scrollToTop}
+      {/* 최상단 이동 버튼 */}
+      <div
+        onClick={scrollToTop} 
+        className={`
+          flex flex-all-center w-[2.75rem] h-[2.75rem] 
+          bg-light-black hover:bg-light-signature
+          dark:bg-dark-black dark:hover:bg-dark-signature
+          rounded-full duration-200
+        `}
       >
-          <TopBtnIcon />
+          <TopBtnIcon className={`stroke-light-white dark:stroke-dark-white`}/>
       </div>
+          
     </aside>
   )
 }

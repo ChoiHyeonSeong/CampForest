@@ -77,32 +77,49 @@ function CampingSearch() {
   }, [isModalOpen]);
 
   return (
-    <div className="lg:h-[calc(100vh-3.2rem)] z-30">
+    <div className={`lg:h-[calc(100vh-3.2rem)] z-[30]`}>
       {/* 메인 화면 */}
-      <div className="flex h-[calc(100%-3.2rem)] justify-center items-center">
-        <div className="ms-2 me-2 flex flex-all-center flex-col lg:flex-row lg:h-[40rem] w-full lg:max-w-[80rem] md:max-w-3xl">
-          <div className="bg-black aspect-[4/3] w-full lg:size-[40rem]">지도</div>
-          <div className="w-full my-3 lg:my-0 lg:w-[calc(100%-40rem)] lg:min-w-[20rem] lg:h-full">
-            <div className="h-[3rem]">
-              <div className="relative w-[calc(100%-2rem)] mx-[1rem]">
-                <div className="absolute left-[0.75rem] top-[0.9rem]">
-                  <SearchIcon stroke="#777777" className="size-[1rem]" />
+      <div className={`flex justify-center items-center h-[calc(100%-3.2rem)]`}>
+        <div className={`flex flex-all-center flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[40rem] ms-[0.5rem] me-[0.5rem]`}>
+          <div className={`w-[100%] lg:size-[40rem] bg-light-black dark:bg-dark-black aspect-[4/3]`}>지도</div>
+          <div className={`w-[100%] lg:w-[calc(100%-40rem)] lg:min-w-[20rem] lg:h-[100%] my-[0.75rem] lg:my-0`}>
+            <div className={`h-[3rem]`}>
+              <div className={`relative w-[calc(100%-2rem)] mx-[1rem]`}>
+                <div className={`absolute left-[0.75rem] top-[0.9rem]`}>
+                  <SearchIcon
+                    className={`
+                      size-[1rem]
+                      stroke-light-border-icon
+                      dark:stroke-dark-border-icon
+                    `} 
+                  />
                 </div>
                 <input
                   type="text"
                   placeholder="검색어를 입력하세요."
-                  className="text-sm focus:outline-0 rounded-md bg-[#EEEEEE] px-[3rem] py-[0.75rem] w-full"
+                  className={`
+                    w-[100%] px-[3rem] py-[0.75rem]
+                    bg-light-gray
+                    dark:bg-dark-gray
+                    text-sm focus:outline-0 rounded-md
+                  `}
                 />
-                <div className="absolute right-[0.75rem] top-[0.75rem]">
-                  <CloseIcon fill="#777777" className="size-[1.25rem] " />
+                <div className={`absolute right-[0.75rem] top-[0.75rem]`}>
+                  <CloseIcon
+                    className={`
+                      size-[1.25rem]
+                      fill-light-gray
+                      dark:fill-dark-gray
+                    `}
+                  />
                 </div>
               </div>
             </div>
-            <div className="h-[1.5rem] flex mx-[1rem]">
+            <div className={`flex h-[1.5rem] mx-[1rem]`}>
               <div>필터</div>
-              <FilterIcon />
+              <FilterIcon className={`fill-light-black dark:fill-dark-black`}/>
             </div>
-            <div className="lg:h-[35.5rem] overflow-y-auto scrollbar-hide">
+            <div className={`lg:h-[35.5rem] overflow-y-auto scrollbar-hide`}>
               <CampingList modalOpen={modalOpen} />
             </div>
           </div>

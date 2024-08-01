@@ -21,9 +21,23 @@ const DarkmodeBtn = () => {
   }
 
   return (    
-    <div className='bg-black w-16 h-5 rounded-3xl cursor-pointer' onClick={toggleDarkmode}>
-      <div className={`bg-green-500 w-10 h-5 rounded-3xl transition-all duration-300
-        ${isDark ? 'translate-x-6' : '-translate-x-0'}`}
+    <div 
+      onClick={toggleDarkmode}
+      className={`
+        w-[4rem] h-[1.25rem]
+        bg-light-black
+        dark:bg-dark-black
+        rounded-3xl cursor-pointer
+      `}
+    >
+      <div 
+        className={`
+          ${isDark ? 'translate-x-6' : '-translate-x-0'}
+          w-[2.5rem] h-[1.25rem]
+          bg-light-signature
+          dark:bg-dark-signature
+          rounded-3xl transition-all duration-300
+        `}
       />
     </div>
   )

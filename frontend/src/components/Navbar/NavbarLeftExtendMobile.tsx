@@ -111,7 +111,7 @@ const NavbarLeftExtendMobile = (props: Props) => {
 
   if (props.selectedExtendMenu === 'rental') {
     htmlContent = (
-      <div className="grid grid-cols-2 gap-2 m-3">
+      <div className={`grid grid-cols-2 gap-[0.5rem] m-[0.75rem]`}>
         {rentalCategory.map((eachObj, index) => (
           <EachCategory key={index} title={eachObj.title} imgsrc={eachObj.imgsrc} imgBgColor={eachObj.imgBgColor} imgWd={eachObj.imgWd}/>
         ))}
@@ -119,9 +119,9 @@ const NavbarLeftExtendMobile = (props: Props) => {
     )
   } else if (props.selectedExtendMenu === 'community') {
     htmlContent = (
-      <div className='text-start p-4 ps-10'>
+      <div className={`p-[1rem] ps-[2.5rem] text-start`}>
         {communityCategory.map((eachObj, index) => (
-          <div key={index} className="pb-6">{eachObj.title}</div>
+          <div key={index} className={`pb-[1.5rem]`}>{eachObj.title}</div>
         ))}
       </div>
     )
@@ -132,7 +132,7 @@ const NavbarLeftExtendMobile = (props: Props) => {
   }
 
   return (
-    <div className='z-30'>
+    <div className={`z-[30]`}>
       {htmlContent}
     </div>
   )

@@ -11,8 +11,15 @@ const Regist: React.FC = () => {
   }
 
   return (
-    <div className='md:mt-[1rem] lg:mt-[3rem] mx-auto p-6 md:max-w-3xl lg:w-[40rem] lg:p-0'>
-      <div className='text-center pb-[0.75rem] text-[2rem] border-b-2 border-[#333] mb-[3rem] text-[#333]'>
+    <div className={`lg:w-[40rem] md:max-w-[48rem] md:mt-[1rem] lg:mt-[3rem] mx-auto p-[1.5rem] lg:p-0`}>
+      <div 
+        className={`
+          mb-[3rem] pb-[0.75rem]
+          border-light-black text-light-text
+          dark:border-dark-black dark:text-dark-text
+          border-b-2 text-[2rem] text-center
+        `}
+      >
         회원가입
       </div>
       <Routes>
@@ -26,10 +33,15 @@ const Regist: React.FC = () => {
             다음
         </button>
       </div> */}
-      <div className='text-center'>
+      <div className={`text-center`}>
         <button 
           onClick={handleNextClick}
-          className='md:mt-[3rem] border-2 border-black font-bold w-[20rem] md:rounded-none rounded-md md:w-[11rem] h-[2.5rem] hover:bg-black hover:text-white transition-all duration-300'
+          className={`
+            w-[20rem] md:w-[11rem] h-[2.5rem] md:mt-[3rem]
+            border-light-black hover:bg-light-black hover:text-light-text-white 
+            dark:border-dark-black dark:hover:bg-dark-black dark:hover:text-dark-text-white
+            border-2 md:rounded-none rounded-md transition-all duration-300 font-bold
+          `}
         >
           다음
         </button>
