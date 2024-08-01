@@ -6,30 +6,42 @@ import { lightMode, darkMode } from '@store/themeSlice';
 export const useThemeEffect = () => {
   const dispatch = useDispatch();
 
-  const save = ( value: string ) => {
-    localStorage.setItem( 'theme', value );
-  }
+  const save = (value: string) => {
+    localStorage.setItem('theme', value);
+  };
 
-  useEffect( () => {
-    const theme = localStorage.getItem( 'theme' );
+  useEffect(() => {
+    const userTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    if ( !theme || theme === 'light') {
-      dispatch( lightMode() );
+    if (userTheme === 'dark') {
+      dispatch(darkMode());
+    } else if (userTheme === 'light') {
+      dispatch(lightMode());
+    } else if (systemPrefersDark) {
+      dispatch(darkMode());
+      save('dark');
     } else {
-      dispatch( darkMode() );
-    }
-    
-    save( theme || 'light' );
-    
-    const mediaCheck = window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
-
-    if ( theme !== 'dark' && mediaCheck ) {
-      dispatch( darkMode() );
-      save( 'dark' );
-    } else if (theme === 'dark' && !mediaCheck) {
-      dispatch( lightMode() );
-      save( 'light' );
+      dispatch(lightMode());
+      save('light');
     }
 
-  }, [] );
-}
+    // 시스템 테마 변경 감지
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (!userTheme) {
+        if (e.matches) {
+          dispatch(darkMode());
+          save('dark');
+        } else {
+          dispatch(lightMode());
+          save('light');
+        }
+      }
+    };
+
+    mediaQuery.addListener(handleChange);
+
+    return () => mediaQuery.removeListener(handleChange);
+  }, [dispatch]);
+};
