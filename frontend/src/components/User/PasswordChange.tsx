@@ -39,8 +39,8 @@ const PasswordChange = () => {
             placeholder='새 비밀번호'
             className={`
                w-full max-w-[23rem] border mb-[1rem] px-[1rem] py-[0.75rem]
-              border-light-border-3 
-              dark:border-dark-border-3
+              bg-light-white border-light-border-3 
+              dark:bg-dark-white dark:border-dark-border-3
               rounded-md focus:outline-none text-sm
             `}
           />
@@ -49,8 +49,8 @@ const PasswordChange = () => {
             placeholder='비밀번호 확인'
             className={`
                w-full max-w-[23rem] border mb-[1rem] px-[1rem] py-[0.75rem]
-              border-light-border-3 
-              dark:border-dark-border-3
+              bg-light-white border-light-border-3 
+              dark:bg-dark-white dark:border-dark-border-3
               rounded-md focus:outline-none text-sm
             `}
           />

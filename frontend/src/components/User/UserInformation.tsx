@@ -195,8 +195,8 @@ const UserInformation = () => {
               type="text" 
               className={`
                 w-full px-[1rem] py-[0.5rem]
-                placeholder-light-text-secondary
-                dark:placeholder-dark-text-secondary
+                bg-light-white placeholder-light-text-secondary
+                dark:bg-dark-white dark:placeholder-dark-text-secondary
                 focus:outline-none focus:ring-0
               `}
               placeholder='닉네임은 최대 10자 이하여야 합니다.'
@@ -245,8 +245,8 @@ const UserInformation = () => {
               type="text" 
               className={`
                 w-full px-[1rem] py-[0.5rem]
-                placeholder-light-text-secondary
-                dark:placeholder-dark-text-secondary 
+                bg-light-white placeholder-light-text-secondary
+                dark:bg-dark-white dark:placeholder-dark-text-secondary 
                 focus:outline-none focus:ring-0
               `}
               placeholder='자기소개를 입력해주세요.'

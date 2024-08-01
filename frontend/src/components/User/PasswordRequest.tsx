@@ -35,8 +35,8 @@ const PasswordRequest = () => {
             placeholder='test@test.com' 
             className={`
               w-[100%] max-w-[23rem] py-[0.75rem] px-[1rem]
-              border-light-black
-              dark:border-dark-black
+              bg-light-white border-light-black
+              dark:bg-dark-white dark:border-dark-black
               rounded-md focus:outline-none border text-sm 
             `}
           />

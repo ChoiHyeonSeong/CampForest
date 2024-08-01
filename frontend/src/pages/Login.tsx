@@ -41,7 +41,11 @@ function Login() {
             <label htmlFor="email" className={`block mb-[0.5rem] text-light-text-secondary dark:text-dark-text-secondary text-left`}>이메일</label>
             <input 
               type="email" 
-              className={`w-[100%] px-[1rem] py-[0.5rem] border-light-border dark:border-dark-border border-b focus:outline-none rounded-md`} 
+              className={`
+                w-[100%] px-[1rem] py-[0.5rem] 
+                bg-light-white border-light-border
+                dark:bg-dark-white dark:border-dark-border 
+                border-b focus:outline-none rounded-md`} 
               placeholder="이메일을 입력하세요."
               onChange={(e) => setEmail(e.target.value)}
               required 
@@ -50,12 +54,26 @@ function Login() {
 
           {/* 비밀번호 */}
           <div className="mb-2">
-            <label htmlFor="password" className={`block mb-[0.5rem] text-light-text-secondary dark:text-dark-text-secondary text-left`}>비밀번호</label>
+            <label 
+              htmlFor="password" 
+              className={`block mb-[0.5rem] 
+                text-light-text-secondary
+                dark:text-dark-text-secondary 
+                text-left
+              `}
+            >
+              비밀번호
+            </label>
             <input 
               type="password" 
               id="password"
               name="userPassword"
-              className={`w-[100%] px-[1rem] py-[0.5rem] border-light-border dark:border-dark-border border-b focus:outline-none rounded-md`} 
+              className={`
+                w-[100%] px-[1rem] py-[0.5rem]
+                bg-light-white border-light-border
+                dark:bg-dark-white dark:border-dark-border 
+                border-b focus:outline-none rounded-md
+              `} 
               placeholder="비밀번호를 입력하세요." 
               onChange={(e) => setPassword(e.target.value)}
               required 

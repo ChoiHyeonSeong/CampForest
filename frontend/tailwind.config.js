@@ -32,8 +32,13 @@ module.exports = {
             hover: '#FF6025'
           },
           black: '#333333',
+          gray: {
+	          DEFAULT: '#EEEEEE',
+	          1: '#CCCCCC',
+	          2: '#AAAAAA',
+	          3: '#333333',
+          },
           white: '#FFFFFF',
-          gray: '#EEEEEE',
           heart: '#FF5B62',
           warning: '#FF0000',
           anchor: {
@@ -60,8 +65,13 @@ module.exports = {
             hover: '#FFB195'
           },
           black: '#E0E0E0',
+          gray: {
+	          DEFAULT: '#333333',
+            1: '#444444',
+            2: '#666666',
+            3: '#CCCCCC',
+          },
           white: '#262626',
-          gray: '#333333',
           heart: '#FF7F84',
           warning: '#FF5555',
           anchor: {

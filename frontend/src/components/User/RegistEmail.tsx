@@ -107,6 +107,8 @@ const RegistEmail: React.FC = () => {
           <input
             className={`
               px-[1rem] py-[0.75rem]
+              bg-light-white
+              dark:bg-dark-white
               focus:outline-none
             `}
             placeholder="이름을 입력해주세요."
@@ -137,8 +139,8 @@ const RegistEmail: React.FC = () => {
               placeholderText="날짜를 선택해주세요."
               className={`
                 w-full px-[1rem] py-[0.75rem]
-                border-light-border
-                dark:border-dark-border
+                bg-light-white border-light-border
+                dark:bg-dark-white dark:border-dark-border
                 border-b md:border-none focus:outline-none
               `}
               dateFormat="yyyy.MM.dd"
@@ -214,6 +216,8 @@ const RegistEmail: React.FC = () => {
               <input
                 className={`
                   px-[1rem] py-[0.75rem]
+                  bg-light-white
+                dark:bg-dark-white
                   focus:outline-none
                 `}
                 placeholder="휴대폰 번호 (- 제외)"
@@ -235,6 +239,8 @@ const RegistEmail: React.FC = () => {
               <input
                 className={`
                   w-[75%] px-[1rem] py-[0.75rem]
+                  bg-light-white
+                  dark:bg-dark-white
                   focus:outline-none
                 `}
                 placeholder="인증번호 입력"
@@ -279,6 +285,8 @@ const RegistEmail: React.FC = () => {
               <input
                 className={`
                   px-[1rem] py-[0.75rem]
+                  bg-light-white
+                  dark:bg-dark-white
                   focus:outline-none
                 `}
                 placeholder="이메일을 입력해주세요."
@@ -299,6 +307,8 @@ const RegistEmail: React.FC = () => {
               <input
                 className={`
                   w-[75%] px-[1rem] py-[0.75rem]
+                  bg-light-white
+                  dark:bg-dark-white
                   focus:outline-none
                 `}
                 placeholder="인증번호 입력"
@@ -350,6 +360,8 @@ const RegistEmail: React.FC = () => {
           <input
             className={`
               px-[1rem] py-[0.75rem]
+              bg-light-white
+              dark:bg-dark-white
               focus:outline-none 
             `}
             placeholder="비밀번호를 입력해주세요."
@@ -378,6 +390,8 @@ const RegistEmail: React.FC = () => {
           <input
             className={`
               px-[1rem] py-[0.75rem]
+              bg-light-white
+              dark:bg-dark-white
               focus:outline-none 
             `}
             placeholder="비밀번호 확인"

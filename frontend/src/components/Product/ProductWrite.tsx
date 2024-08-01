@@ -168,8 +168,8 @@ const ProductWrite = () => {
                 placeholder='제목을 입력하세요.'
                 className={`
                   w-[31rem] me-[2rem] px-[0.5rem] py-[0.25rem]
-                  border-light-border
-                  dark:border-dark-border
+                  bg-light-white border-light-border
+                  dark:bg-dark-white dark:border-dark-border
                   border-b focus:outline-none
                 `}
               />
@@ -248,8 +248,8 @@ const ProductWrite = () => {
               onChange={handleInputChange}
               className={`
                 w-full min-h-[10rem] p-[1rem]
-                border-light-border-3
-                dark:border-dark-border-3
+                bg-light-white border-light-border-3
+                dark:bg-dark-white dark:border-dark-border-3
                 resize-none border focus:outline-none
               `}
               placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉'
@@ -316,8 +316,8 @@ const ProductWrite = () => {
                     onChange={handleInputChange}
                     className={`
                       w-[90%] me-[0.75rem] px-[0.5rem] 
-                      border-light-border
-                      dark:border-dark-border
+                      bg-light-white border-light-border
+                      dark:bg-dark-white dark:border-dark-border
                       text-end border-b focus:outline-none
                     `} 
                   />
@@ -354,8 +354,8 @@ const ProductWrite = () => {
                   onChange={handleInputChange}
                   className={`
                     w-[90%] me-[0.75rem] px-[0.5rem]
-                    border-light-border
-                    dark:border-dark-border
+                    bg-light-white border-light-border
+                    dark:bg-dark-white dark:border-dark-border
                     text-end border-b focus:outline-none
                   `}
                 />

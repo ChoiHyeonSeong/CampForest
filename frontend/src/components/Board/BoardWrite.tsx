@@ -268,8 +268,8 @@ const BoardWrite = () => {
               <input
                 className={`
                   py-[0.5rem] ps-[1rem]
-                  border-light-border
-                  dark:border-dark-border
+                  bg-light-white border-light-border
+                  dark:bg-dark-white dark:border-dark-border
                   border-b focus:outline-none
                 `}
                 placeholder='제목을 입력하세요.'
@@ -279,6 +279,8 @@ const BoardWrite = () => {
               <textarea 
                 className={`
                   flex-grow h-[17rem] mb-[2rem] py-[0.5rem] ps-[1rem]
+                  bg-light-white
+                  dark:bg-dark-white
                   resize-none focus:outline-none
                 `}
                 placeholder='내용을 입력하세요.'
