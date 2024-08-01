@@ -21,6 +21,12 @@ public enum ErrorCode {
 	TEMP_USER_NOT_FOUND("U007", HttpStatus.NOT_FOUND, "임시 사용자를 찾을 수 없습니다."),
 	OAUTH_CODE_NOT_FOUND("U008", HttpStatus.NOT_FOUND, "OAuth 코드를 찾을 수 없습니다."),
 
+	// Follow Error
+	FOLLOW_ALREADY_EXISTS("F001", HttpStatus.BAD_REQUEST, "이미 팔로우한 사용자입니다."),
+	FOLLOW_NOT_FOUND("F002", HttpStatus.NOT_FOUND, "팔로우를 찾을 수 없습니다."),
+	FOLLOW_FAILED("F003", HttpStatus.BAD_REQUEST, "팔로우에 실패했습니다."),
+	UNFOLLOW_FAILED("F004", HttpStatus.BAD_REQUEST, "언팔로우에 실패했습니다."),
+
 	// Unauthorized
 	AUTHENTICATION_FAILED("A001", HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),
 	NO_JWT_TOKEN("A002", HttpStatus.UNAUTHORIZED, "JWT 토큰이 없습니다."),
