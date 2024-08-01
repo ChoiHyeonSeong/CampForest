@@ -6,6 +6,9 @@ import com.campforest.backend.board.entity.QBoards;
 import com.campforest.backend.board.entity.QComment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -18,14 +21,6 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
 	public CommentRepositoryImpl(JPAQueryFactory queryFactory) {
 		this.queryFactory = queryFactory;
-	}
-
-	@Override
-	public List<Comment> findAllByBoardId(Long boardId) {
-		return queryFactory
-			.selectFrom(comment)
-			.where(comment.boardId.eq(boardId))
-			.fetch();
 	}
 
 	@Override
@@ -43,5 +38,48 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 			.from(comment)
 			.where(comment.boardId.eq(boardId))
 			.fetchOne();
+	}
+
+	@Override
+	public Page<Comment> findByBoardId(Long boardId, Pageable pageable) {
+		List<Comment> content = queryFactory
+			.selectFrom(comment)
+			.where(comment.boardId.eq(boardId))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(comment.createdAt.desc())
+			.fetch();
+		long total = queryFactory
+			.selectFrom(comment)
+			.where(comment.boardId.eq(boardId))
+			.fetchCount();
+		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
+	public Long findByCommentId(Long commentId) {
+		return queryFactory
+			.select(comment.boardId)  // board의 boardId를 선택합니다
+			.from(comment)
+			.where(comment.commentId.eq(commentId))
+			.fetchOne();
+	}
+
+	@Override
+	public void plusLikeCount(Long commentId) {
+		queryFactory
+			.update(comment)
+			.where(comment.commentId.eq(commentId))
+			.set(comment.likeCount, comment.likeCount.add(1))
+			.execute();
+	}
+
+	@Override
+	public void minusLikeCount(Long commentId) {
+		queryFactory
+			.update(comment)
+			.where(comment.boardId.eq(commentId))
+			.set(comment.likeCount, comment.likeCount.subtract(1))
+			.execute();
 	}
 }

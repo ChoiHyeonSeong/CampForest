@@ -8,6 +8,7 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
+import com.campforest.backend.board.entity.Comment;
 
 public interface BoardService {
 	void writeBoard(BoardRequestDto boardRequestDto);
@@ -42,7 +43,7 @@ public interface BoardService {
 
 	void writeComment(Long boardId, CommentRequestDto commentRequestDto);
 
-	List<CommentResponseDto> getComment(Long boardId);
+	Page<CommentResponseDto> getComments(Long nowId,Long boardId, int page, int size);
 
 	List<CommentResponseDto> getUserComment(Long commentWriterId);
 
@@ -58,4 +59,7 @@ public interface BoardService {
 
 	Long countCommentLike(Long commentId);
 
+	Page<BoardResponseDto> getSavedBoards(Long nowId, int page, int size);
+
+	Comment getCommentById(Long commentId);
 }

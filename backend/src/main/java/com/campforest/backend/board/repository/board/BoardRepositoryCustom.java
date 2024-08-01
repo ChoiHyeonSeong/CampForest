@@ -18,4 +18,9 @@ public interface BoardRepositoryCustom {
 
 	void minusLikeCount(Long boardId);
 
+	void plusCommentCount(Long boardId);
+
+	void minusCommentCount(Long boardId);
+
+	Page<Boards> findSavedBoardsByUserId(Long nowId, Pageable pageable);
 }
