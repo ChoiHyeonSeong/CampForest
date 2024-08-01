@@ -8,6 +8,7 @@ import java.util.Set;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.campforest.backend.review.model.Review;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -30,6 +31,7 @@ import jakarta.persistence.TemporalType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,6 +42,7 @@ import lombok.Setter;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@EqualsAndHashCode(of = "userId")
 public class Users {
 
 	@Id
@@ -99,6 +102,14 @@ public class Users {
 		inverseJoinColumns = @JoinColumn(name = "interest_id")
 	)
 	private Set<Interest> interests = new HashSet<>();
+
+	@OneToMany(mappedBy = "follower")
+	@JsonIgnore
+	private Set<Follow> following = new HashSet<>();
+
+	@OneToMany(mappedBy = "followee")
+	@JsonIgnore
+	private Set<Follow> followers = new HashSet<>();
 
 	@OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
