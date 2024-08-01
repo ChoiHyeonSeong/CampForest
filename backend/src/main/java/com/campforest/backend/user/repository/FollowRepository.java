@@ -12,13 +12,13 @@ import com.campforest.backend.user.model.Follow;
 import com.campforest.backend.user.model.Users;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-	@Query("SELECT new com.campforest.backend.user.dto.response.ResponseFollowDTO(u.userId, u.nickname, COALESCE(ui.imageUrl, '')) "
+	@Query("SELECT new com.campforest.backend.user.dto.response.ResponseFollowDTO(u.userId, u.userName, u.nickname, COALESCE(ui.imageUrl, '')) "
 		+ "FROM Users u "
 		+ "LEFT JOIN u.userImage ui "
 		+ "WHERE u.userId IN (SELECT f.follower.userId FROM Follow f WHERE f.followee.userId = :userId)")
 	List<ResponseFollowDTO> findFollowerDTOsByUserId(@Param("userId") Long userId);
 
-	@Query("SELECT new com.campforest.backend.user.dto.response.ResponseFollowDTO(u.userId, u.nickname, COALESCE(ui.imageUrl, '')) "
+	@Query("SELECT new com.campforest.backend.user.dto.response.ResponseFollowDTO(u.userId, u.userName, u.nickname, COALESCE(ui.imageUrl, '')) "
 		+ "FROM Users u "
 		+ "LEFT JOIN u.userImage ui "
 		+ "WHERE u.userId IN (SELECT f.followee.userId FROM Follow f WHERE f.follower.userId = :userId)")

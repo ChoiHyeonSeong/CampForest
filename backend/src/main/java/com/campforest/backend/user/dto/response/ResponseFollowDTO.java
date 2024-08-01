@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ResponseFollowDTO {
 	private Long userId;
+	private String username;
 	private String nickname;
 	private String profileImage;
 }

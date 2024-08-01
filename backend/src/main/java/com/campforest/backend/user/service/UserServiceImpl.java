@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,6 +43,9 @@ public class UserServiceImpl implements UserService {
 	private final FollowRepository followRepository;
 	private final TokenService tokenService;
 	private final AuthenticationManager authenticationManager;
+
+	@Value("${filter-server.url}")
+	private String filterServerUrl;
 
 	@Override
 	@Transactional
@@ -145,7 +149,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<Integer> getPythonRecommendUsers(Long userId) {
 		RestTemplate restTemplate = new RestTemplate();
-		String pythonUrl = "http://127.0.0.1:8000/similar-users/" + userId;
+		String pythonUrl = filterServerUrl + userId;
 		ResponseEntity<Map> pythonResponse = restTemplate.getForEntity(pythonUrl, Map.class);
 
 		if (pythonResponse.getStatusCode() == HttpStatus.OK) {
