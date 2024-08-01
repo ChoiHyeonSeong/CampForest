@@ -47,7 +47,11 @@ const Chat = (props: Props) => {
         </div>
         <div className={`ms-auto`}>
           <CloseIcon 
-            className={`hidden md:block md:size-[2rem]`} fill='000000'
+            className={`
+              hidden md:block md:size-[2rem]
+              fill-light-black
+              dark:fill-dark-black
+            `}
           />
         </div>
       </div>

@@ -63,7 +63,7 @@ const RegistEmail: React.FC = () => {
 
   const requestEmail = async () => {
     try {
-      const response = await axios.post(`${API_URL}/email/request` {
+      const response = await axios.post(`${API_URL}/email/request`, {
         email: registFormData.userEmail,
       });
       setEmailRequest(false);
