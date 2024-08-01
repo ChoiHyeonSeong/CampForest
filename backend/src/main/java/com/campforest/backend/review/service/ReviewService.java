@@ -19,7 +19,7 @@ import com.campforest.backend.transaction.model.Sale;
 import com.campforest.backend.transaction.repository.RentRepository;
 import com.campforest.backend.transaction.repository.SaleRepository;
 import com.campforest.backend.user.model.Users;
-import com.campforest.backend.user.repository.UserRepository;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

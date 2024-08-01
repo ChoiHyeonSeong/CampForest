@@ -30,7 +30,7 @@ import com.campforest.backend.board.repository.like.LikeRepository;
 import com.campforest.backend.board.repository.save.SaveRepository;
 import com.campforest.backend.user.model.UserImage;
 import com.campforest.backend.user.model.Users;
-import com.campforest.backend.user.repository.UserRepository;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import jakarta.transaction.Transactional;
 
