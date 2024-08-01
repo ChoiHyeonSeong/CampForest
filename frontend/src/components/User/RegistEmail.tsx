@@ -88,10 +88,27 @@ const RegistEmail: React.FC = () => {
   return (
     <div>
       <form>
-        <div className="border-b my-[3rem] lg:my-[1.5rem]">
-          <div className="font-medium mb-[0.25rem]">이름</div>
+        <div 
+          className={`
+            my-[3rem] lg:my-[1.5rem]
+            border-light-border
+            dark:border-dark-border
+            border-b
+          `}
+        >
+          <div 
+            className={`
+              mb-[0.25rem]
+              font-medium 
+            `}
+          >
+            이름
+          </div>
           <input
-            className="focus:outline-none px-[1rem] py-[0.75rem]"
+            className={`
+              px-[1rem] py-[0.75rem]
+              focus:outline-none
+            `}
             placeholder="이름을 입력해주세요."
             type="text"
             name="userName"
@@ -99,12 +116,31 @@ const RegistEmail: React.FC = () => {
             onChange={handleChange}
           />
         </div>
-        <div className="md:border-b my-[3rem] lg:my-[1.5rem]">
-          <div className="font-medium mb-[0.25rem]">생년월일</div>
-          <div className="flex md:flex-row flex-col">
+        <div 
+          className={`
+            my-[3rem] lg:my-[1.5rem]
+            border-light-border
+            dark:border-dark-border
+            md:border-b
+          `}
+        >
+          <div 
+            className={`
+              mb-[0.25rem]
+              font-medium 
+            `}
+          >
+            생년월일
+          </div>
+          <div className={`flex md:flex-row flex-col`}>
             <DatePicker
               placeholderText="날짜를 선택해주세요."
-              className="md:border-none w-full border-b focus:outline-none px-[1rem] py-[0.75rem]"
+              className={`
+                w-full px-[1rem] py-[0.75rem]
+                border-light-border
+                dark:border-dark-border
+                border-b md:border-none focus:outline-none
+              `}
               dateFormat="yyyy.MM.dd"
               formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
               showYearDropdown
@@ -117,39 +153,69 @@ const RegistEmail: React.FC = () => {
               selected={birthdate}
               onChange={handleDateChange}
             />
-            <div className="md:hidden mt-[3rem] mb-[1rem]">성별</div>
-            <div className="flex md:ms-auto me-[1rem] items-center space-x-[2rem]">
-              <div className="flex items-center">
+            <div className={`md:hidden mt-[3rem] mb-[1rem]`}>
+              성별
+            </div>
+            <div className={`flex items-center space-x-[2rem] md:ms-auto me-[1rem]`}>
+              <div className={`flex items-center`}>
                 <input
-                  className="mx-[0.75rem] size-[1rem] accent-black"
+                  className={`
+                    size-[1rem] mx-[0.75rem]
+                    accent-light-black
+                    dark:accent-dark-black
+                  `}
                   type="radio"
                   name="userGender"
                   value="M"
                   checked={registFormData.userGender === 'M'}
                   onChange={handleChange}
                 />
-                <span>남자</span>
+                <span>
+                  남자
+                </span>
               </div>
-              <div className="flex items-center">
+              <div className={`flex items-center`}>
                 <input
-                  className="mx-[0.75rem] size-[1rem] accent-black"
+                  className={`size-[1rem] mx-[0.75rem]
+                    accent-light-black
+                    dark:accent-dark-black
+                  `}
                   type="radio"
                   name="userGender"
                   value="F"
                   checked={registFormData.userGender === 'F'}
                   onChange={handleChange}
                 />
-                <span>여자</span>
+                <span>
+                  여자
+                </span>
               </div>
             </div>
           </div>
         </div>
-        <div className="my-[3rem] lg:my-[1.5rem]">
-          <div className="font-medium mb-[0.25rem]">휴대폰 번호</div>
-          <div className="flex md:flex-row flex-col md:space-x-[1.5rem]">
-            <div className="w-full md:mb-0 mb-[1rem] md:w-[55%] border-b">
+        <div className={`my-[3rem] lg:my-[1.5rem]`}>
+          <div 
+            className={`
+              mb-[0.25rem]
+              font-medium 
+            `}
+          >
+            휴대폰 번호
+          </div>
+          <div className={`flex md:flex-row flex-col md:space-x-[1.5rem]`}>
+            <div 
+              className={`
+                w-full md:w-[55%] max-md:mb-[1rem] 
+                border-light-border
+                dark:border-dark-border
+                border-b
+              `}
+            >
               <input
-                className="focus:outline-none px-[1rem] py-[0.75rem]"
+                className={`
+                  px-[1rem] py-[0.75rem]
+                  focus:outline-none
+                `}
                 placeholder="휴대폰 번호 (- 제외)"
                 type="text"
                 maxLength={11}
@@ -158,9 +224,19 @@ const RegistEmail: React.FC = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="min-w-[20rem] w-[45%] border-b">
+            <div 
+              className={`
+                w-[45%] min-w-[20rem] 
+                border-light-border
+                dark:border-dark-border
+                border-b
+              `}
+            >
               <input
-                className="w-[75%] focus:outline-none px-[1rem] py-[0.75rem]"
+                className={`
+                  w-[75%] px-[1rem] py-[0.75rem]
+                  focus:outline-none
+                `}
                 placeholder="인증번호 입력"
                 type="number"
                 name="phoneValidateNumber"
@@ -169,18 +245,42 @@ const RegistEmail: React.FC = () => {
                   setphoneValidateNumber(event.target.value);
                 }}
               />
-              <button className="transition-all duration-300 rounded-sm w-[20%] h-[1.75rem] text-white bg-[#CCCCCC] hover:bg-[#FF7F50] text-[0.75rem]">
+              <button 
+                className={`
+                  w-[20%] h-[1.75rem] 
+                  text-light-white bg-light-gray-3 hover:bg-light-signature
+                  dark:text-dark-white dark:bg-dark-gray-3 dark:hover:bg-dark-signature 
+                  text-[0.75rem] transition-all duration-300 rounded-sm 
+                `}
+              >
                 요청
               </button>
             </div>
           </div>
         </div>
         <div>
-          <div className="font-medium mb-[0.25rem]">이메일</div>
-          <div className="flex md:flex-row flex-col md:space-x-[1.5rem]">
-            <div className="w-full md:mb-0 mb-[1rem] md:w-[55%] border-b">
+          <div 
+            className={`
+              mb-[0.25rem]
+              font-medium 
+            `}
+          >
+            이메일
+          </div>
+          <div className={`flex md:flex-row flex-col md:space-x-[1.5rem]`}>
+            <div 
+              className={`
+                w-full md:w-[55%] max-md:mb-[1rem]
+                border-light-border
+                dark:border-dark-border
+                border-b
+              `}
+            >
               <input
-                className="focus:outline-none px-[1rem] py-[0.75rem]"
+                className={`
+                  px-[1rem] py-[0.75rem]
+                  focus:outline-none
+                `}
                 placeholder="이메일을 입력해주세요."
                 type="email"
                 name="userEmail"
@@ -188,9 +288,19 @@ const RegistEmail: React.FC = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="min-w-[20rem] flex items-center w-[45%] border-b">
+            <div 
+              className={`
+                flex items-center w-[45%] min-w-[20rem] 
+                border-light-border
+                dark:border-dark-border
+                border-b
+              `}
+            >
               <input
-                className="w-[75%] focus:outline-none px-[1rem] py-[0.75rem]"
+                className={`
+                  w-[75%] px-[1rem] py-[0.75rem]
+                  focus:outline-none
+                `}
                 placeholder="인증번호 입력"
                 type="number"
                 name="emailCertNumber"
@@ -204,20 +314,44 @@ const RegistEmail: React.FC = () => {
                   event.preventDefault();
                   emailRequest ? requestEmail() : validateEmail();
                 }}
-                className={`transition-all duration-300 rounded-sm w-[20%] h-[1.75rem] text-white 
-                  ${emailRequest ? 'bg-[#CCCCCC] hover:bg-[#FF7F50]' : 'bg-[#FF7F50] hover:[#FF7F00]'} text-[0.75rem]
+                className={`
+                  ${emailRequest ? 
+                    'bg-light-gray-3 dark:bg-dark-gray-3 hover:bg-light-signature dark:hover:bg-dark-signature' : 
+                    'bg-light-signature dark:bg-dark-signature hover:bg-light-signature-hover dark:hover:bg-dark-signature-hover'
+                  } 
+                  w-[20%] h-[1.75rem] 
+                  text-light-white
+                  dark:text-dark-white 
+                  text-[0.75rem] transition-all duration-300 rounded-sm 
                 `}
-                disabled={emailRequestButton == '인증완료'}
+                disabled={emailRequestButton === '인증완료'}
               >
                 {emailRequestButton}
               </button>
             </div>
           </div>
         </div>
-        <div className="border-b mt-[3rem] lg:mt-[1.5rem]">
-          <div className="font-medium mb-[0.25rem]">비밀번호</div>
+        <div 
+          className={`
+            mt-[3rem] lg:mt-[1.5rem]
+            border-light-border
+            dark:border-dark-border
+            border-b 
+          `}
+        >
+          <div 
+            className={`
+              mb-[0.25rem]
+              font-medium 
+            `}
+          >
+            비밀번호
+          </div>
           <input
-            className="focus:outline-none px-[1rem] py-[0.75rem]"
+            className={`
+              px-[1rem] py-[0.75rem]
+              focus:outline-none 
+            `}
             placeholder="비밀번호를 입력해주세요."
             type="password"
             name="userPassword"
@@ -225,12 +359,27 @@ const RegistEmail: React.FC = () => {
             onChange={handleChange}
           />
         </div>
-        <div className="text-xs my-[0.25rem]">
+        <div 
+          className={`
+            my-[0.25rem]
+            text-xs 
+          `}
+        >
           8~16자, 영문 대소문자, 숫자, 특수문자 2종류 이상 사용해주세요.
         </div>
-        <div className="border-b my-[1rem]">
+        <div 
+          className={`
+            my-[1rem]
+            border-light-border
+            dark:border-dark-border
+            border-b 
+            `}
+          >
           <input
-            className="focus:outline-none px-[1rem] py-[0.75rem]"
+            className={`
+              px-[1rem] py-[0.75rem]
+              focus:outline-none 
+            `}
             placeholder="비밀번호 확인"
             type="password"
             name="userPassword"
@@ -241,10 +390,24 @@ const RegistEmail: React.FC = () => {
           />
         </div>
       </form>
-      <div className="mt-[2rem] flex items-center mx-3">
-        <input className="size-[1rem] accent-black" type="checkbox" />
-        <span className="ms-6 font-bold text-[1rem]">모든 약관에 동의합니다.</span>
-        <ArrowBottomIcon className="ms-auto" />
+      <div className={`flex items-center mt-[2rem] mx-[0.75rem]`}>
+        <input 
+          className={`
+            size-[1rem] 
+            accent-light-black
+            dark:accent-dark-black
+          `}
+          type="checkbox" 
+        />
+        <span 
+          className={`
+            ms-[1.5rem] 
+            font-bold text-[1rem]
+          `}
+          >
+            모든 약관에 동의합니다.
+          </span>
+        <ArrowBottomIcon className={`ms-auto`} />
       </div>
     </div>
   );

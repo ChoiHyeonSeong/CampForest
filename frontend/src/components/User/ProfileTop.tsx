@@ -46,64 +46,187 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
   }, [])
 
   return (
-    <div className='px-4 py-6'>
-          <div className='flex'>
-            {/* 프로필사진 */}
-            <div className="relative size-16 md:size-20 rounded-full border-[0.1rem] me-6">
-                <img src={userinfo?.profileImage ? userinfo.profileImage : defaultImage} alt='' className="absolute rounded-full" />
-                <div className='cursor-pointer opacity-0 hover:opacity-100 duration-200 absolute w-full h-full rounded-full mx-auto bg-[#00000098] text-white'>
-                  <p className='flex justify-center items-center h-full'>사진변경</p>
-                </div>
-            </div>
-
-            {/* 닉네임, 팔로우, 프로필 수정 */}
-            <div className='py-3 w-[calc(100%-6rem)] md:w-[calc(100%-7rem)] lg:w-[calc(100%-8rem)]'>
-              <div className='flex justify-between'>
-                <div className='flex'>
-                  <div className='font-medium text-sm md:text-lg me-5'>{userinfo?.nickname}</div>
-                  <div className={`${myPage ? 'hidden' : '  ' } flex`}>
-                    <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-orange-400 text-white rounded-md me-2 cursor-pointer'>팔로우</div>
-                    <div className='px-3 md:px-4 py-1 text-xs md:text-base bg-gray-300 rounded-md cursor-pointer'>채팅</div>
-                  </div>
-                </div>
-                
-                <Link to='/user/profile/edit' className={`${myPage ? '' : 'hidden'} font-light text-xs md:text-sm lg:text-base mt-2 cursor-pointer`}>프로필 수정하기</Link>
-              </div>
-
-              <div className="mt-2">
-                <div onClick={() => {
-                  setIsModalOpen(true)
-                  setIsFollowing(false)
-                  }} className="text-gray-700 inline-block md:text pr-3">팔로워
-                  <span className='font-medium ms-2 cursor-pointer'>{userinfo?.followerCount}</span>
-                </div>
-                <div onClick={() => {
-                  setIsModalOpen(true)
-                  setIsFollowing(true)
-                  }} className="text-gray-700 inline-block md:text">팔로잉
-                  <span className='font-medium ms-2 cursor-pointer'>{userinfo?.followingCount}</span>
-                </div>
-              </div>
-
-            </div>
+    <div className={`px-[1rem] py-[1.5rem`}>
+      <div className={`flex`}>
+        {/* 프로필사진 */}
+        <div 
+          className={`
+            relative size-[4rem] md:size-[5rem] me-[1.5rem]
+            border-light-border
+            dark:border-dark-border
+            rounded-full border-[0.1rem]
+          `}
+        >
+          <img 
+            src={userinfo?.profileImage ? userinfo.profileImage : defaultImage} 
+            alt='' 
+            className={`
+              absolute rounded-full
+            `}
+          />
+          <div 
+            className={`
+              absolute w-full h-full rounded-full mx-auto 
+              bg-light-black text-light-white
+              dark:bg-dark-black dark:text-dark-white
+              cursor-pointer opacity-60 hover:opacity-100 duration-200 
+            `}
+          >
+            <p className={`flex justify-center items-center h-full`}>
+              사진변경
+            </p>
           </div>
+        </div>
 
-          {/* 자기소개 */}
-          <div className='lg:text-lg mt-4 ms-2'>{userinfo?.introduction}</div>
-
-          {/* 거래불꽃온도 */}
-          <div className='ms-2 mt-6 mb-3 w-full'>
-            <div className='flex'>
-              <div className='mb-2 font-medium'>거래불꽃온도</div>
-              <div className='ms-3 text-red-500 font-medium'><span>653</span>℃</div>
+        {/* 닉네임, 팔로우, 프로필 수정 */}
+        <div className={`w-[calc(100%-6rem)] md:w-[calc(100%-7rem)] lg:w-[calc(100%-8rem)] py-[0.75rem]`}>
+          <div className={`flex justify-between`}>
+            <div className={`flex`}>
+              <div 
+                className={`
+                  me-[1.25rem]
+                  font-medium text-sm md:text-lg 
+                `}
+              >
+                {userinfo?.nickname}
+              </div>
+              <div 
+                className={`
+                  ${myPage ? 'hidden' : '  ' }
+                  flex
+                `}
+              >
+                <div 
+                  className={`
+                    me-[0.5rem] px-[0.75rem] md:px-[1rem] py-[1rem]
+                    bg-light-signature text-light-white
+                    dark:bg-dark-signature dark:text-dark-white
+                    text-xs md:text-base cursor-pointer rounded-md
+                  `}
+                >
+                  팔로우
+                </div>
+                <div 
+                  className={`
+                    px-[0.75rem] md:px-[1rem] py-[0.25rem]
+                    bg-light-gray-1
+                    text-xs md:text-base rounded-md cursor-pointer
+                  `}
+                >
+                  채팅
+                </div>
+              </div>
             </div>
             
-            <div className="w-full h-4 bg-gray-200 rounded-full">
-              <div className="h-full rounded-full w-1/2 bg-gradient-to-r from-red-500 to-orange-400 relative">
-                <img src={FireGif} alt="불꽃" className="absolute -right-16 -top-[3.75rem] size-32"/>
-              </div>
+            <Link 
+              to='/user/profile/edit' 
+              className={`
+                ${myPage ? '' : 'hidden'} 
+                mt-[0.5rem]
+                font-light text-xs md:text-sm lg:text-base cursor-pointer
+              `}
+            >
+              프로필 수정하기
+            </Link>
+          </div>
+
+          <div className={`mt-[0.5rem]`}>
+            <div 
+              onClick={() => {
+                setIsModalOpen(true)
+                setIsFollowing(false)
+              }} 
+              className={`inline-block pe-[0.75rem]`}
+            >
+              팔로워
+              <span 
+                className={`
+                  ms-[0.5rem]
+                  font-medium cursor-pointer
+                `}
+              >
+                {userinfo?.followerCount}
+              </span>
+            </div>
+            <div 
+              onClick={() => {
+                setIsModalOpen(true)
+                setIsFollowing(true)
+              }} 
+              className={`inline-block`}
+            >
+              팔로잉
+              <span 
+                className={`
+                   ms-[0.5rem]
+                  font-medium cursor-pointer
+                `}
+              >
+                {userinfo?.followingCount}
+              </span>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 자기소개 */}
+      <div 
+        className={`
+          mt-[1rem] ms-[0.5rem]
+          lg:text-lg 
+        `}
+      >
+        {userinfo?.introduction}
+      </div>
+      {/* 거래불꽃온도 */}
+      <div className={`w-full mt-[1.5rem] mb-[0.75rem] ms-[0.5rem]`}>
+        <div className={`flex`}>
+          <div 
+            className={`
+              mb-[0.5rem] 
+              font-medium
+            `}
+          >
+            거래불꽃온도
+          </div>
+          <div 
+            className={`
+              ms-[0.75rem] 
+              text-light-warning
+              dark:text-dark-warning
+              font-medium
+            `}
+          >
+            <span>
+              653
+            </span>
+            ℃
+          </div>
+        </div>
+        
+        <div 
+          className={`
+            w-full h-[1rem] 
+            bg-light-gray-1 
+            dark:bg-dark-gray-1
+            rounded-full
+          `}
+        >
+          <div 
+            className={`
+              relative w-1/2 h-full 
+              bg-gradient-to-r from-light-warning to-light-signature
+              dark:from-dark-warning dark:to-dark-signature
+              rounded-full
+            `}
+          >
+            <img 
+              src={FireGif} 
+              alt="불꽃" 
+              className={`absolute -right-[4rem] -top-[3.75rem] size-[8rem]`}/>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
