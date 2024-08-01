@@ -189,8 +189,8 @@ const InterestSetting = (props: Props) => {
                     <CheckIcon
                       className={`
                         size-[1rem] lg:size-[1.25rem] mr-[0.25rem]
-                        fill-light-border-icon
-                        dark:fill-dark-border-icon
+                        fill-light-signature
+                        dark:fill-dark-signature
                       `}
                     /> :
                     <PlusIcon 

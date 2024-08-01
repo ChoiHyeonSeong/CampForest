@@ -38,7 +38,7 @@ const MenuBar = (props: Props) => {
               ` :
               ''
             }
-              flex justify-center w-1/3 py-[1rem]
+              flex justify-center z-[10] w-1/3 py-[1rem]
               cursor-pointer
               `
             }
@@ -59,7 +59,7 @@ const MenuBar = (props: Props) => {
               ` :
               ''
             }
-              flex justify-center w-1/3 py-[1rem]
+              flex justify-center z-[10] w-1/3 py-[1rem]
               cursor-pointer
               `
             }
@@ -80,7 +80,7 @@ const MenuBar = (props: Props) => {
               ` :
               ''
             }
-              flex justify-center w-1/3 py-[1rem]
+              flex justify-center z-[10] w-1/3 py-[1rem]
               cursor-pointer
               `
             }
