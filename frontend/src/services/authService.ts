@@ -1,6 +1,6 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-const API_URL = 'http://3.36.78.37:8081';
+const API_URL = 'http://3.36.78.37:8081/api';
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;

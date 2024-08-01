@@ -8,6 +8,8 @@ import { setUser } from '@store/userSlice'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 
+const API_URL = 'http://3.36.78.37:8081/api'
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +21,7 @@ function Login() {
     try {
       const data = await login(email, password);
       dispatch(setUser(data.user));
-      axios.post(`http://3.36.78.37:8081/user/auth/refreshToken`, {}, {
+      axios.post(`${API_URL}/user/auth/refreshToken`, {}, {
         withCredentials: true
       });
       console.log('Login successful');

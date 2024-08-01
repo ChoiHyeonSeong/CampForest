@@ -9,6 +9,8 @@ import { registRequired, registClear } from '@store/registSlice';
 import '../../../node_modules/react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 
+const API_URL = 'http://3.36.78.37:8081/api'
+
 const RegistEmail: React.FC = () => {
   const dispatch = useDispatch();
 
@@ -61,7 +63,7 @@ const RegistEmail: React.FC = () => {
 
   const requestEmail = async () => {
     try {
-      const response = await axios.post('http://3.36.78.37:8081/email/request', {
+      const response = await axios.post(`${API_URL}/email/request` {
         email: registFormData.userEmail,
       });
       setEmailRequest(false);
@@ -73,7 +75,7 @@ const RegistEmail: React.FC = () => {
 
   const validateEmail = async () => {
     try {
-      const response = await axios.post('http://3.36.78.37:8081/email/validation', {
+      const response = await axios.post(`${API_URL}/email/validation`, {
         email: registFormData.userEmail,
         authCode: emailValidateNumber,
       });
