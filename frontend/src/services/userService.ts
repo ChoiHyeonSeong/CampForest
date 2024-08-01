@@ -18,5 +18,11 @@ export const deleteUser = async () => {
 export const followerList = async (userId: number) => {
   const response = await axios.get(`${API_URL}/user/auth/follower/${userId}`);
 
-  console.log(response);
+  return response.data.data;
+}
+
+export const followingList = async (userId: number) => {
+  const response = await axios.get(`${API_URL}/user/auth/following/${userId}`);
+
+  return response.data.data;
 }

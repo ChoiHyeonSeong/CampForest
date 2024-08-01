@@ -1,7 +1,12 @@
 import React from 'react';
-import ProfileImgEX from '@assets/images/profileimg1.png'
 
-const FollowUser = () => {
+type Props = {
+  userId: number;
+  nickname: string;
+  profileImage: string;
+}
+
+const FollowUser = (props: Props) => {
   return (
     <div
       className={`
@@ -12,7 +17,7 @@ const FollowUser = () => {
       `}
     >
       <img 
-        src={ProfileImgEX} 
+        src={props.profileImage} 
         alt="프로필 사진" 
         className={`
           size-[3.25rem] me-1
@@ -32,7 +37,7 @@ const FollowUser = () => {
             dark:text-dark-text
           `}
         >
-          사용자 아이디
+          {props.nickname}
         </div>
         <div
           className={`

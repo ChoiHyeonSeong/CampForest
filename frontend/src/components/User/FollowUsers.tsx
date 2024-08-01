@@ -1,18 +1,58 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
 import FollowUser from './FollowUser'
+import { followerList, followingList } from '@services/userService';
 
 type Props = {
+  userId: number;
   isFollowing: boolean;
+  isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const FollowUsers = ({isFollowing, setIsModalOpen}: Props) => {
+type FollowUserType = {
+  userId: number;
+  nickname: string;
+  profileImage: string;
+}
+
+const FollowUsers = ({userId, isFollowing, isModalOpen, setIsModalOpen}: Props) => {
+  const [followUsers, setFollowUsers] = useState<FollowUserType[]>([]);
+
+  async function fetchFollowers() {
+    try {
+      const followerData = await followerList(userId);
+      setFollowUsers(followerData);
+    } catch (error) {
+      console.error("Failed to fetch Followers: ", error);
+    }
+  }
+
+  async function fetchFollowings() {
+    try {
+      const followingData = await followingList(userId);
+      setFollowUsers(followingData);
+    } catch (error) {
+      console.error("Failed to fetch Followings: ", error);
+    }
+  }
+
+  useEffect(() => {
+    if(isModalOpen) {
+      if(isFollowing) {
+        fetchFollowings();
+      } else {
+        fetchFollowers();
+      }
+    } else {
+      setFollowUsers([]);
+    }
+  }, [isModalOpen])
 
   return (
     <div
       className={`
-        relative md:w-[30rem] h-full md:mx-auto p-[2rem]
+        relative h-full p-[2rem]
         bg-light-white
         dark:bg-dark-white
         overflow-auto md:rounded-md
@@ -44,11 +84,14 @@ const FollowUsers = ({isFollowing, setIsModalOpen}: Props) => {
         />
       </div>
       <div className='flex flex-col'>
-        <FollowUser />
-        <FollowUser />
-        <FollowUser />
-        <FollowUser />
-        <FollowUser />
+        {followUsers.map((followUser, index) => (
+          <FollowUser 
+            key={followUser.userId}
+            userId={followUser.userId}
+            nickname={followUser.nickname}
+            profileImage={followUser.profileImage}
+          />
+        ))}
       </div>
     </div>
   )
