@@ -37,31 +37,62 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
   const shouldChangeIcon = label !== 'Write' && selectedOption.id !== 1;
 
   return (
-    <div className="relative inline-block text-left">
+    <div 
+      className={`
+        inline-block relative 
+        text-left
+      `}
+    >
       <div>
         <button
           type="button"
-          className={`inline-flex justify-between items-center min-w-[7rem] w-full rounded-md border shadow-sm px-4 py-2 text-sm font-medium ${
-            shouldChangeIcon ? 'border-[#FF7F50]' : 'border-gray-300'
-          } text-gray-700 hover:bg-gray-50 focus:outline-none`}
+          className={`
+            ${shouldChangeIcon ? 'border-[#FF7F50]' : 'border-gray-300'} 
+            inline-flex justify-between items-center w-full min-w-[7rem] px-[1rem] py-[0.5rem]
+            border-light-border
+            dark:border-dark-border
+            text-sm font-medium rounded-md border shadow-sm focus:outline-none`}
           onClick={onToggle}
         >
           {selectedOption.name}
           {shouldChangeIcon ? (
-            <RefreshIcon className="size-5 ml-2 -mr-1 text-gray-400" onClick={handleRefreshClick} />
+            <RefreshIcon 
+              className={`
+                size-[1.25rem] ms-[0.5rem] -mr-[0.25rem]
+                text-light-text-secondary
+                dark:text-dark-text-secondary
+              `} 
+              onClick={handleRefreshClick} />
           ) : (
-            <ArrowBottomIcon className="size-3 ml-2 -mr-1 text-gray-400" />
+            <ArrowBottomIcon 
+              className={`
+                size-[0.75rem] ms-[0.5rem] -mr-[0.25rem] 
+                text-light-text-secondary
+                dark:text-dark-text-secondary
+              `}
+            />
           )}
         </button>
       </div>
-
       {isOpen && (
-        <div className="origin-top-left absolute left-0 mt-2 w-max rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <div className="py-1">
+        <div 
+          className={`
+            origin-top-left absolute left-0 w-max mt-[0.5rem] 
+            ring-light-black
+            dark:ring-dark-black
+            rounded-md shadow-lg ring-[0.25rem] ring-opacity-5 focus:outline-none
+          `}
+        >
+          <div className={`py-[0.25rem]`}>
             {options.map((option) => (
               <div 
                 key={option.id}
-                className="text-gray-700 block px-4 py-2 text-sm hover:text-[#FF7F50] font-medium cursor-pointer duration-100"
+                className={`
+                  block px-[1rem] py-[0.5rem] 
+                  hover:text-light-signature
+                  dark:hover:text-dark-signature
+                  text-sm  font-medium cursor-pointer duration-100
+                `}
                 onClick={() => handleSelect(option)}
               >
                 {option.name}

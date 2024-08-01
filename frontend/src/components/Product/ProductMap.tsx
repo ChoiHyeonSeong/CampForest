@@ -115,8 +115,11 @@ const MapInformation: React.FC<MapInformationProps> = ({ setChooseLocation, setB
 
   return (
     <>
-      <div className="w-[25rem]">
-        <div id="map" className="h-[40rem] w-[25rem]" />
+      <div className={`w-[25rem]`}>
+        <div 
+          id="map" 
+          className={`h-[40rem] w-[25rem]`} 
+        />
       </div>
     </>
   );
@@ -136,8 +139,8 @@ const ProductMap: React.FC<Props> = ({ handleLocation, openMap }) => {
   };
 
   return (
-    <div className="relative">
-      <div className="w-[100%] h-[100%]">
+    <div className={`relative`}>
+      <div className={`w-[100%] h-[100%]`}>
         <MapInformation
           setChooseLocation={setChooseLocation}
           setButtonText={setButtonText}
@@ -147,8 +150,11 @@ const ProductMap: React.FC<Props> = ({ handleLocation, openMap }) => {
         />
       </div>
       <div
-        className={`fixed bottom-[1rem] z-50 left-1/2 -translate-x-1/2 w-[90%] py-[0.5rem] text-center
-        transition-all ${chooseLocation ? 'bg-[#FF7F50] hover:w-[92%] hover:py-[0.6rem] hover:bottom-[0.9rem]' : 'bg-[#777777]'} text-white cursor-pointer`}
+        className={`
+          ${chooseLocation ? 'bg-light-signature dark:bg-dark-signature hover:bottom-[0.9rem] hover:w-[92%] hover:py-[0.6rem]' : 'bg-light-gray dark:bg-dark-gray'} 
+          fixed bottom-[1rem] left-1/2 z-[50] w-[90%] py-[0.5rem] 
+          text-center text-white -translate-x-1/2 transition-all cursor-pointer
+        `}
         onClick={() => handleButtonClick()}
       >
         {buttonText}

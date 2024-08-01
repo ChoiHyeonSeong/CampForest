@@ -8,11 +8,11 @@ type Props = {
 const CampingList = (props: Props) => {
   return (
     <div>
-      <Camping modalOpen={props.modalOpen}/>
-      <Camping modalOpen={props.modalOpen}/>
-      <Camping modalOpen={props.modalOpen}/>
-      <Camping modalOpen={props.modalOpen}/>
-      <Camping modalOpen={props.modalOpen}/>
+      <Camping modalOpen={props.modalOpen} />
+      <Camping modalOpen={props.modalOpen} />
+      <Camping modalOpen={props.modalOpen} />
+      <Camping modalOpen={props.modalOpen} />
+      <Camping modalOpen={props.modalOpen} />
     </div>
   )
 }

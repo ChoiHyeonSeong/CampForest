@@ -3,7 +3,7 @@ import Notification from './Notification';
 
 const NotificationList = () => {
   return (
-    <div className='px-[2rem]'>
+    <div className={`px-[2rem]`}>
       <Notification />
       <Notification />
       <Notification />

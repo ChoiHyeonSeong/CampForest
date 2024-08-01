@@ -139,35 +139,88 @@ const BoardWrite = () => {
 
   return (
     <div 
-    onClick={() => dispatch(setIsBoardWriteModal(false))} 
-    className={`${isBoardWriteModal ? 'block' : 'hidden'} fixed z-[100] md:items-center w-full h-full bg-black bg-opacity-80 inset-0`}>
-      <div className="h-full md:w-[40rem] md:h-[90%] md:mx-auto" onClick={(event) => event.stopPropagation()}>
-        
-        <div className='overflow-auto md:mx-auto h-[calc(100vh-5.95rem)] mt-[3.2rem] md:h-[85%] md:mt-[15%] md:w-[35rem] bg-white md:rounded-md p-4 md:px-[2rem] md:py-[3rem] flex flex-col justify-between'>
-          
-          <div className='flex flex-col flex-grow'>
-
-            <div className='flex items-center mb-[1rem]'>
-              <div><ArrowLeftIcon onClick={() => dispatch(setIsBoardWriteModal(false))} className='md:hidden md:size-8 cursor-pointer' fill='000000' /></div>
-              <div className='ms-4 font-bold text-2xl'>글 쓰기</div>
-              <div className='ms-auto'><CloseIcon onClick={() => dispatch(setIsBoardWriteModal(false))} className='hidden md:block md:size-[1.5rem] cursor-pointer' fill='000000' /></div>
+      className={`
+        ${isBoardWriteModal ? 'block' : 'hidden'} 
+        fixed z-[100] w-full h-full
+        bg-light-black
+        dark:bg-dark-black 
+        bg-opacity-80 inset-0
+      `}
+      onClick={() => dispatch(setIsBoardWriteModal(false))} 
+    >
+      <div 
+        className={`md:w-[40rem] h-full md:h-[90%] md:mx-auto`} 
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div 
+          className={`
+            flex flex-col justify-between md:w-[35rem] h-[calc(100vh-5.95rem)] md:h-[85%] mt-[3.2rem] md:mt-[15%] md:mx-auto p-[1rem] md:px-[2rem] md:py-[3rem]
+            bg-light-white
+            dark:bg-dark-white
+            overflow-auto md:rounded-md 
+          `}
+        >
+          <div className={`flex flex-col flex-grow`}>
+            <div className={`flex items-center mb-[1rem]`}>
+              <div>
+                <ArrowLeftIcon 
+                  onClick={() => dispatch(setIsBoardWriteModal(false))} 
+                  className={`
+                    md:hidden md:size-[2rem] 
+                    cursor-pointer
+                  `}
+                  fill='000000' 
+                />
+              </div>
+              <div 
+                className={`
+                  ms-[1rem]
+                  font-bold text-2xl
+                `}
+              >
+                  글 쓰기
+              </div>
+              <div className={`ms-auto`}>
+                <CloseIcon 
+                  onClick={() => dispatch(setIsBoardWriteModal(false))} 
+                  className={`
+                    hidden md:block md:size-[1.5rem]
+                    cursor-pointer
+                  `} 
+                  fill='000000' 
+                />
+              </div>
             </div>
-
-            <div className='flex items-baseline justify-between mb-[1rem]'>
-              <div className='relative'>
-                <div className='w-[10rem] flex justify-between items-center ms-2 border-b md:border border-black md:rounded-md md:px-4 py-[0.3rem]' onClick={toggleCategoryDropdown}>
+            <div className={`flex items-baseline justify-between mb-[1rem]`}>
+              <div className={`relative`}>
+                <div 
+                  className={`
+                    flex justify-between items-center w-[10rem] ms-[0.5rem] md:px-[1rem] py-[0.3rem]
+                    border-light-black
+                    dark:border-dark-black
+                    border-b md:border md:rounded-md
+                  `} 
+                  onClick={toggleCategoryDropdown}
+                >
                   {category.text}
-                  <ArrowBottomIcon className='ms-6 inline size-[1rem]'/>
+                  <ArrowBottomIcon className={`inline size-[1rem] ms-[1.5rem]`}/>
                 </div>
                 <div 
-                  className={`absolute z-10 w-[calc(100%-0.5rem)] ms-2 mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-y-auto scrollbar-hide transition-all duration-300 ease-in-out ${
-                    isCategoryDropdownOpen ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
-                  }`}
+                  className={`
+                    ${isCategoryDropdownOpen ? 'max-h-[18.75rem] opacity-100' : 'max-h-0 opacity-0'}
+                    absolute z-[10] w-[calc(100%-0.5rem)] mt-[0.25rem] ms-[0.5rem]
+                    bg-light-white border-light-border-1
+                    dark:bg-dark-white dark:border-dark-border-1
+                    border rounded-md shadow-lg overflow-y-auto scrollbar-hide transition-all duration-300 ease-in-out
+                  `}
                 > 
                   {categories.map((eachCategory, index) => (
                     <div 
                       key={index} 
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      className={`
+                        px-[1rem] py-[0.5rem]
+                        cursor-pointer
+                      `}
                       onClick={() => selectCategory(eachCategory)}
                     >
                       {eachCategory.text}
@@ -175,20 +228,34 @@ const BoardWrite = () => {
                   ))}
                 </div>
               </div>
-
-              <div className='relative'>
-                <div className='ms-auto cursor-pointer text-sm md:text-md text-blue-600' onClick={toggleBoardOpenDropdown}>
+              <div className={`relative`}>
+                <div 
+                  className={`
+                    ms-auto
+                    text-light-anchor hover:text-light-anchor-hover
+                    dark:text-dark-anchor dark:hover:text-dark-anchor-hover
+                    text-sm md:text-md cursor-pointer 
+                  `}
+                  onClick={toggleBoardOpenDropdown}
+                >
                   공개 범위 : {boardOpen ? '공개' : '비공개'}
                 </div>
                 <div 
-                  className={`absolute z-10 w-[calc(100%-0.5rem)] ms-2 mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-y-auto scrollbar-hide transition-all duration-300 ease-in-out ${
-                    isBoardOpenDropdownOpen ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
-                  }`}
+                  className={`
+                    ${isBoardOpenDropdownOpen ? 'max-h-[18.75px] opacity-100' : 'max-h-0 opacity-0'}
+                    absolute z-10 w-[calc(100%-0.5rem)] mt-[0.25rem] ms-[0.5rem]
+                    bg-light-white border-light-border-1
+                    dark:bg-dark-white dark:border-dark-border-1
+                    border rounded-md shadow-lg overflow-y-auto scrollbar-hide transition-all duration-300 ease-in-out 
+                  `}
                 > 
                   {boradOpenBoolean.map((eachChoice, index) => (
                     <div 
                       key={index} 
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      className={`
+                        px-[1rem] py-[0.5rem] 
+                        cursor-pointer
+                      `}
                       onClick={() => selectBoardOpen(eachChoice.bool)}
                     >
                       {eachChoice.text}
@@ -196,69 +263,97 @@ const BoardWrite = () => {
                   ))}
                 </div>
               </div>
-                  
-              
             </div>
-            
-            <div className='flex flex-col flex-grow'>
-              <input 
-                className='border-b py-2 ps-4 focus:outline-none'
+            <div className={`flex flex-col flex-grow`}>
+              <input
+                className={`
+                  py-[0.5rem] ps-[1rem]
+                  border-b focus:outline-none
+                `}
                 placeholder='제목을 입력하세요.'
                 onChange={(e) => setTitle(e.target.value)}
                 value={title}
               />
               <textarea 
-                className='resize-none py-2 ps-4 h-[17rem] focus:outline-none mb-[2rem] flex-grow'
+                className={`
+                  flex-grow h-[17rem] mb-[2rem] py-[0.5rem] ps-[1rem]
+                  resize-none focus:outline-none
+                `}
                 placeholder='내용을 입력하세요.'
                 onChange={(e) => setContent(e.target.value)}
                 value={content}
               />
             </div>
-          
           </div>
-          
-          <div className='flex flex-col'>
-
-            <div className='flex md:static mb-5 overflow-x-auto scrollbar-hide'>
+          <div className={`flex flex-col`}>
+            <div 
+              className={`
+                flex md:static mb-[1.25rem] 
+                overflow-x-auto scrollbar-hide
+              `}
+            >
               {uploadedImage.map((eachImage, index) => (
                 <div 
                   key={index} 
-                  className="size-[6rem] cursor-pointer flex-shrink-0 rounded-md bg-gray-300 md:mb-[2rem] me-5"
+                  className={`
+                    flex-shrink-0 size-[6rem] md:mb-[2rem] me-[1.25rem]
+                    cursor-pointer rounded-md
+                  `}
                   onClick={() => handleRemoveImage(index)}
                 >
-                  <img src={eachImage} alt="NOIMG" className='w-full h-full rounded-md'/>
+                  <img 
+                    src={eachImage} 
+                    alt="NOIMG" 
+                    className={`
+                      w-full h-full
+                      rounded-md
+                    `}
+                  />
                 </div>
               ))}
-
               <div 
-                className='size-[6rem] cursor-pointer flex-shrink-0 rounded-md bg-gray-300 md:mb-[2rem] me-5'
+                className={`
+                  flex-shrink-0 size-[6rem] md:mb-[2rem] me-[1.25rem]
+                  cursor-pointer rounded-md
+                `}
                 onClick={() => {fileInputRef.current?.click()}}
               >
                 <input 
                   type="file" 
                   ref={fileInputRef}
-                  className='hidden'
+                  className={`hidden`}
                   onChange={handleImageUpload}
                   accept="image/*"
                 />
               </div>
-                  
             </div>
-
-            <div className='md:static md:text-center w-full' onClick={handleWrite}>
+            <div 
+              className={`
+                md:static w-full
+                md:text-center
+              `} 
+              onClick={handleWrite}
+            >
               <button 
-                className={`py-3 w-full md:w-[15rem]  
-                  transition duration-300 text-center md:rounded-md md:py-1 
-                  ${isSubmitDisabled ? 'bg-gray-500' : 
-                    'bg-black text-white md:bg-white md:text-black md:hover:bg-black md:hover:text-white md:border border-black'
-                  }`}
+                className={`
+                  ${
+                    isSubmitDisabled ? 
+                    '' :
+                    `
+                      bg-light-black md:bg-light-white text-light-white md:text-light-black border-light-black md:hover:bg-light-black md:hover:text-light-white
+                      dark:bg-dark-black dark:md:bg-dark-white dark:text-dark-white dark:md:text-dark-black dark:border-dark-black dark:md:hover:bg-dark-black dark:md:hover:text-dark-white
+                      md:border
+                    `
+                  }
+                  w-full md:w-[15rem] py-[0.75rem] md:py-[0.25rem]  
+                  transition duration-300 text-center md:rounded-md 
+                `}
                 disabled={isSubmitDisabled}
               >
                 등록
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

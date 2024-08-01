@@ -11,17 +11,45 @@ type Props = {
 const Chat = (props: Props) => {
   return (
     // 데스크탑, 태블릿
-    <div className={`fixed z-[35] w-[calc(100%-25rem)] max-w-[40rem] h-full pt-[3.2rem] 
-        transition-all duration-300 ease-in-out max-md:hidden
+    <div 
+      className={`
         ${props.isExtendMenuOpen ? 'translate-x-[25rem]' : '-translate-x-full'} 
-        bg-white outline outline-1 outline-[#CCCCCC]`
-    }>
-      <div className='flex border-b mx-[2rem] py-[1rem] items-center'>
-        <div className='rounded-full border size-12 me-4'>
-          <img src={userImage} alt="NoImg" className='fit'/>
+        max-md:hidden fixed z-[35] w-[calc(100%-25rem)] max-w-[40rem] h-full pt-[3.2rem] 
+        bg-light-white outline-light-border-1
+        dark:bg-dark-white dark:outline-dark-border-1
+        transition-all duration-300 ease-in-out outline outline-1
+      `}
+    >
+      <div 
+        className={`
+          flex items-center mx-[2rem] py-[1rem]
+          border-light-border
+          dark:border-dark-border
+          border-b
+        `}
+      >
+        <div 
+          className={`
+            size-[3rem] me-[1rem]
+            border-light-border
+            dark:border-dark-border
+            rounded-full border
+          `}
+        >
+          <img 
+            src={userImage} 
+            alt="NoImg" 
+            className={`fit`}
+          />
         </div>
-        <div className='text-lg'>하치와레미콘</div>
-        <div className='ms-auto'><CloseIcon className='hidden md:block md:size-8' fill='000000' /></div>
+        <div className={`text-lg`}>
+          하치와레미콘
+        </div>
+        <div className={`ms-auto`}>
+          <CloseIcon 
+            className={`hidden md:block md:size-[2rem]`} fill='000000'
+          />
+        </div>
       </div>
     </div>
   )

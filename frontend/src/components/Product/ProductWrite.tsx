@@ -151,21 +151,29 @@ const ProductWrite = () => {
   }
 
   return (
-    <div className='flex justify-center'>
-      <div className='w-[40rem]'>
-        <form className='mt-[2rem]' onSubmit={handleSubmit}>
+    <div className={`flex justify-center`}>
+      <div className={`w-[40rem]`}>
+        <form 
+          className={`mt-[2rem]`} 
+          onSubmit={handleSubmit}
+        >
           {/* 제목, 카테고리 */}
-          <div className='flex flex-col'>
-            <div className='flex'>
+          <div className={`flex flex-col`}>
+            <div className={`flex`}>
               <input
                 type='text'
                 name='productName'
                 value={formData.productName}
                 onChange={handleInputChange}
                 placeholder='제목을 입력하세요.'
-                className='w-[31rem] border-b px-[0.5rem] py-[0.25rem] me-[2rem] focus:outline-none' 
+                className={`
+                  w-[31rem] me-[2rem] px-[0.5rem] py-[0.25rem]
+                  border-light-border
+                  dark:border-dark-border
+                  border-b focus:outline-none
+                `}
               />
-              <div className='w-[7rem]'>
+              <div className={`w-[7rem]`}>
                 <Dropdown
                   label='Write'
                   options={categories}
@@ -176,92 +184,250 @@ const ProductWrite = () => {
                 />
               </div>
             </div>
-            <div className='flex justify-between'>
-              {errors.productName && <p className='text-red-500 text-xs mt-1'>{errors.productName}</p>}
-              {errors.category && <p className='text-red-500 text-xs mt-1'>{errors.category}</p>}
+            <div className={`flex justify-between`}>
+              {errors.productName && 
+                <p className={`
+                      mt-[0.25rem]
+                      text-light-warning 
+                      dark:text-dark-warning
+                      text-xs 
+                  `}
+                >
+                  {errors.productName}
+                </p>
+              }
+              {errors.category && 
+                <p className={`
+                  mt-[0.25rem]
+                  text-light-warning
+                  dark:text-dark-warning
+                  text-xs
+                  `}
+                >
+                  {errors.category}
+                </p>}
             </div>
           </div>
           
           {/* 상품 사진 */}
-          <div className='my-[1.5rem]'>
-            <div className='mb-[0.25rem] font-medium'>상품 사진</div>
+          <div className={`my-[1.5rem]`}>
+            <div 
+              className={`
+                mb-[0.25rem] 
+                font-medium
+              `}
+            >
+              상품 사진
+            </div>
             <MultiImageUpload onImagesChange={handleImagesChange} />
-            {errors.productImages && <p className='text-red-500 text-xs mt-1'>{errors.productImages}</p>}
+            {errors.productImages &&
+              <p 
+                className={`
+                  mt-[0.25rem]
+                  text-light-warning
+                  dark:text-dark-warning
+                  text-xs
+                `}
+              >
+                {errors.productImages}
+              </p>}
           </div>
-          
           {/* 상품 설명 */}
-          <div className='mb-[1.5rem]'>
-            <div className='mb-[0.25rem] font-medium'>상품 설명</div>
+          <div className={`mb-[1.5rem]`}>
+            <div 
+              className={`
+                mb-[0.25rem]
+                font-medium
+              `}
+            >
+              상품 설명
+            </div>
             <textarea
               name='productContent'
               value={formData.productContent}
               onChange={handleInputChange}
-              className='resize-none border border-[#999999] min-h-[10rem] w-full focus:outline-none p-[1rem]'
+              className={`
+                w-full min-h-[10rem] p-[1rem]
+                border-light-border-3
+                dark:border-dark-border-3
+                resize-none border focus:outline-none
+              `}
               placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉'
             />
-            {errors.productContent && <p className='text-red-500 text-xs mt-1'>{errors.productContent}</p>}
+            {errors.productContent && 
+              <p 
+                className={`
+                  mt-[0.25rem]
+                  text-light-warning
+                  dark:text-dark-warning
+                  text-xs 
+                `}
+              >
+                {errors.productContent}
+              </p>}
           </div>
           {/* 거래 유형 */}
-          <div className='mb-[1.5rem]'>
-            <div className='my-[0.25rem] font-medium'>거래 유형</div>
-            <div className='flex'>
+          <div className={`mb-[1.5rem]`}>
+            <div 
+              className={`
+                my-[0.25rem] 
+                font-medium
+              `}
+            >
+              거래 유형
+            </div>
+            <div className={`flex`}>
               {buttons.map((button) => (
-                <div key={button} className={`border me-[1rem] px-[2rem] py-[0.15rem] cursor-pointer
-                  ${selectedButton === button ? 'bg-[#FF7F50] text-white' : ''}`}
+                <div 
+                  key={button} 
+                  className={`
+                    ${selectedButton === button ? 'bg-light-signature dark:bg-dark-signature text-light-white dark:text-dark-white' : ''}
+                    me-[1rem] px-[2rem] py-[0.15rem]
+                    border-light-border
+                    dark:border-dark-border
+                    border cursor-pointer
+                  `}
                   onClick={() => handleButtonClick(button)}>{button}</div>
               ))}
             </div>
           </div>
           {/* 금액, 보증금 */}
-          <div className={`grid ${selectedButton === '대여' ? 'grid-cols-2' : ''} gap-[3rem] mb-[2rem]`}>
+          <div 
+            className={`
+              ${selectedButton === '대여' ? 'grid-cols-2' : ''} 
+              grid gap-[3rem] mb-[2rem]
+            `}
+          >
             <div>
-              <div className='my-[0.25rem] font-medium'>금액</div>
-              <div className='flex flex-col'>
-                <div className='flex'>
+              <div 
+                className={`
+                  my-[0.25rem] 
+                  font-medium
+                `}
+              >
+                금액
+              </div>
+              <div className={`flex flex-col`}>
+                <div className={`flex`}>
                   <input
                     type='number'
                     name='productPrice'
                     value={formData.productPrice || ""}
                     onChange={handleInputChange}
-                    className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
+                    className={`
+                      w-[90%] me-[0.75rem] px-[0.5rem] 
+                      border-light-border
+                      dark:border-dark-border
+                      text-end border-b focus:outline-none
+                    `} 
                   />
-                  <div>원</div>
+                  <div>
+                    원
+                  </div>
                 </div>
-                {errors.productPrice && <p className='text-red-500 text-xs mt-1'>{errors.productPrice}</p>}
+                {errors.productPrice && 
+                  <p className={`
+                      mt-[0.25rem]
+                      text-light-warning
+                      dark:text-dark-warning
+                      text-xs
+                    `}
+                  >
+                    {errors.productPrice}
+                  </p>}
               </div>
             </div>
             <div className={`${selectedButton === '대여' ? '' : 'hidden'}`}>
-              <div className='my-[0.25rem] font-medium'>보증금</div>
-              <div className='flex'>
+              <div 
+                className={`
+                  my-[0.25rem]
+                  font-medium
+                `}
+              >
+                보증금
+              </div>
+              <div className={`flex`}>
                 <input 
                   type='number'
                   name='deposit'
                   value={formData.deposit || ""}
                   onChange={handleInputChange}
-                  className='w-[90%] px-[0.5rem] text-end border-b me-[0.75rem] focus:outline-none' 
+                  className={`
+                    w-[90%] me-[0.75rem] px-[0.5rem]
+                    border-light-border
+                    dark:border-dark-border
+                    text-end border-b focus:outline-none
+                  `}
                 />
-                <div>원</div>
+                <div>
+                  원
+                </div>
               </div>
             </div>
           </div>
           {/* 거래 희망 장소 */}
-          <div className='mb-[5em]'>
-            <div className='my-[0.25rem] font-medium'>거래 희망 장소</div>
-            <div onClick={() => openMap(true)}  className='flex border px-[0.5rem] py-[0.25rem] w-1/2'>
-              <LocationIcon fill='333333' className='me-[0.5rem]'/>
+          <div className={`mb-[5em]`}>
+            <div 
+              className={`
+                my-[0.25rem] 
+                font-medium
+              `}
+            >
+              거래 희망 장소
+            </div>
+            <div 
+              onClick={() => openMap(true)} 
+              className={`
+                flex w-1/2 px-[0.5rem] py-[0.25rem] 
+                border-light-border
+                dark:border-dark-border
+                border
+              `}
+            >
+              <LocationIcon 
+                fill='333333' 
+                className={`me-[0.5rem]`}
+              />
               <div className={`${formData.location === '장소를 선택하세요.' ? 'text-[#999999]' : 'text-black'}`}>
                 {formData.location}
               </div>
             </div>
-          {errors.location && <p className='text-red-500 text-xs mt-1'>{errors.location}</p>}
+          {errors.location &&
+            <p className={`
+                mt-[0.25rem]
+                text-light-warning
+                dark:text-dark-warning
+                text-xs
+              `}
+            >
+              {errors.location}
+            </p>}
           </div>
-          <div className='text-end'>
-            <button type='submit' className='w-1/2 text-center mb-[2rem] bg-black text-white py-[0.35rem]'>작성 완료</button>
+          <div className={`text-end`}>
+            <button 
+              type='submit' 
+              className={`
+                w-1/2 mb-[2rem] py-[0.35rem]
+                bg-light-black text-light-white
+                dark:bg-dark-black dark:text-dark-white
+                text-center
+              `}
+            >
+              작성 완료
+            </button>
           </div>
         </form>
       </div>
-      {loadMap && <div className='fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2'>
-      <ProductMap handleLocation={handleLocation} openMap={openMap} />
+      {loadMap && 
+        <div 
+          className={`
+            fixed top-1/2 left-1/2
+            -translate-y-1/2 -translate-x-1/2
+          `}
+        >
+      <ProductMap 
+        handleLocation={handleLocation} 
+        openMap={openMap} />
       </div>}
     </div>
   )

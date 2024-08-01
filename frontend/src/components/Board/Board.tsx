@@ -118,15 +118,27 @@ const Board = (props: Props) => {
   }, [props.board.imageUrls]);
 
   return (
-    <div className='flex flex-col justify-between w-full lg:h-fit min-w-[22rem] border-b border-[#EEEEEE] bg-white  px-4'>
+    <div 
+      className={`
+        flex flex-col justify-between w-full min-w-[22rem] lg:h-fit px-[1rem]
+      bg-light-white border-light-border
+      dark:bg-dark-white dark:border-dark-border
+        border-b
+      `}
+    >
       <div>
         {/* 포스팅 상단바 */}
-        <div className='flex justify-between h-20 px-2 py-4'>
-          <div className='flex '>
-            <div className='rounded-full size-11 md:size-12 shadow-md overflow-hidden'></div>
-            <div className='ms-[1rem]'>
-              <div className='text-xl md:text-lg'>{props.board.userId}</div>
-              <div className='md:text-sm'>{props.board.category}</div>
+        <div className={`flex justify-between h-[5rem] px-[0.5rem] py-[1rem]`}>
+          <div className={`flex`}>
+            <div 
+              className={`
+                overflow-hidden size-[2.75rem] md:size-[3rem]
+                rounded-full shadow-md
+              `}
+            />
+            <div className={`ms-[1rem]`}>
+              <div className={`text-xl md:text-lg`}>{props.board.userId}</div>
+              <div className={`md:text-sm`}>{props.board.category}</div>
             </div>
           </div>
           <MoreOptionsMenu 
@@ -138,43 +150,111 @@ const Board = (props: Props) => {
         </div>
 
         {/* 사진 및 내용 */}
-        <div className='mb-2 w-full'>
+        <div className={`w-full mb-[0.5rem]`}>
           {/* 사진 */}
-          <div className={`cursor-pointer relative flex flex-all-center w-full aspect-[4/3] overflow-hidden ${props.board.imageUrls.length > 0 ? 'bg-black' : 'hidden'}`} onClick={goBoardDetail}>
+          <div 
+            className={`
+              ${props.board.imageUrls.length > 0 ? 'bg-light-black dark:bg-dark-black' : 'hidden'}
+              flex flex-all-center relative w-full
+              cursor-pointer aspect-[4/3] overflow-hidden
+            `} 
+            onClick={goBoardDetail}
+          >
             {props.board.imageUrls.length > 0 && (
-              <img 
+              <img
                 src={props.board.imageUrls[0]} 
                 alt="프로필 사진"
-                className={`${isWider ? 'w-full h-auto' : 'w-auto h-full'} object-contain`}
+                className={`
+                  ${isWider ? 'w-full h-auto' : 'w-auto h-full'}
+                  object-contain
+                `}
               />
             )}
           </div>
           {/* 내용 및 포스팅 시간 */}
-          <div className='py-[1rem] px-[0.5rem]'>
+          <div className={`px-[0.5rem] py-[1rem]`}>
             {/* 제목 */}
-            <div className='cursor-pointer md:text-xl text-lg break-all mb-2' onClick={goBoardDetail}>{props.board.title}</div>
+            <div 
+              className={`
+                mb-[0.5rem]
+                text-lg md:text-xl cursor-pointer break-all
+              `}
+              onClick={goBoardDetail}
+            >
+              {props.board.title}
+            </div>
             {/* 내용 */}
-            <div className={`cursor-pointer md:text-base text-xl break-all ${props.isDetail ? '' : 'line-clamp-3'}`} onClick={goBoardDetail}>
+            <div 
+              className={`
+                ${props.isDetail ? '' : 'line-clamp-3'}
+                text-xl md:text-base
+                cursor-pointer break-all
+              `} 
+              onClick={goBoardDetail}
+            >
               {props.board.content}
             </div>
-            <div className='my-2 text-xs md:text-sm text-gray-500'>{timeDifference}</div>
+            <div 
+              className={`
+                my-[0.5rem]
+              text-light-text-secondary
+              dark:text-dark-text-secondary
+                text-xs md:text-sm
+              `}
+            >
+              {timeDifference}
+            </div>
           </div>
         </div>
       </div>
 
       {/* 좋아요, 댓글, 북마크 아이콘 */}
-      <div className='flex justify-between text-center mb-[1rem]'>
-        <div className='w-1/3'>
-          <HeartOutline className='inline size-7 cursor-pointer'/>
+      <div 
+        className={`
+          flex justify-between mb-[1rem]
+          text-center
+        `}
+      >
+        <div className={`w-1/3`}>
+          <HeartOutline 
+            className={`
+              inline size-[1.75rem]
+              cursor-pointer
+            `}
+          />
           {/* <FillHeartIcon className='inline size-7 cursor-pointer'/> */}
-          <span className='mx-2 md:text-sm'>{props.board.likeCount}</span>
+          <span 
+            className={`
+              mx-[0.5rem] 
+              md:text-sm
+            `}
+          >
+            {props.board.likeCount}
+          </span>
         </div>
-        <div className='w-1/3'>
-          <CommentIcon className='inline size-6 cursor-pointer'/>
-          <span className='mx-2 md:text-sm'>3</span>
+        <div className={`w-1/3`}>
+          <CommentIcon 
+            className={`
+              inline size-[1.5rem]
+              cursor-pointer
+            `}
+          />
+          <span 
+            className={`
+              mx-[0.5rem] 
+              md:text-sm
+            `}
+          >
+              3
+          </span>
         </div>
-        <div className='w-1/3'>
-          <BookmarkEmpty className='inline size-7 cursor-pointer'/>
+        <div className={`w-1/3`}>
+          <BookmarkEmpty 
+            className={`
+              inline size-[1.75rem]
+              cursor-pointer
+            `}
+          />
         </div>
       </div>
     </div>
