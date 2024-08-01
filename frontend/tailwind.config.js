@@ -15,32 +15,57 @@ module.exports = {
       },
       colors: {
         light: {
-          background: {
-            DEFAULT: '#FFFFFF',
-          },
           text: {
-            DEFAULT: '#333333', 
+            DEFAULT: '#333333',
+            secondary: '#666666',
+            white: '#FFFFFF'
           },
           border: {
-            DEFAULT: '#DDDDDD'
+            DEFAULT: '#EEEEEE',
+            1: '#CCCCCC',
+            2: '#AAAAAA',
+            3: '#333333',
+            icon: '#666666'
           },
-          button: {
-
-          }
+          signature: {
+            DEFAULT: '#FF7F50',
+            hover: '#FF6025'
+          },
+          black: '#333333',
+          white: '#FFFFFF',
+          heart: '#FF5B62',
+          warning: '#FF0000',
+          anchor: {
+            DEFAULT: '#3982FF',
+            hover: '#355388'
+          },
         },
+
         dark: {
-          background: {
-            DEFAULT: '#262626'
-          },
           text: {
-            DEFAULT: '#F7F7F7',
+            DEFAULT: '#E0E0E0',
+            secondary: '#A0A0A0',
+            white: '#FFFFFF'
           },
           border: {
-            
+            DEFAULT: '#333333',
+            1: '#444444',
+            2: '#666666',
+            3: '#CCCCCC',
+            icon: '#999999',
           },
-          button: {
-
-          }
+          signature: {
+            DEFAULT: '#FF9770',
+            hover: '#FFB195'
+          },
+          black: '#E0E0E0',
+          white: '#262626',
+          heart: '#FF7F84',
+          warning: '#FF5555',
+          anchor: {
+            DEFAULT: '#6BA4FF',
+            hover: '#9CC3FF'
+          },
         }
       }
     },
