@@ -1,8 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-// const API_URL = 'http://192.168.100.203:8080';
-const API_URL = 'http://192.168.100.167:8080';
+const API_URL = 'http://3.36.78.37:8081';
 
 export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
   const formData = new FormData();
