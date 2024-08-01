@@ -9,7 +9,9 @@ const RecommandUser = () => {
         src={userImage} 
         alt="NoImg" 
         className={`
-          size-[2.5rem] 
+          size-[2.5rem]
+          border-light-border
+          dark:border-dark-border
           rounded-full border
           `}
         />

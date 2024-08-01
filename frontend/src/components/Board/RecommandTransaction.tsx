@@ -10,6 +10,8 @@ const RecommandTransaction = () => {
         alt="NoImg" 
         className={`
           size-[2.5rem]
+          border-light-border
+          dark:border-dark-border
           border
         `}
       />

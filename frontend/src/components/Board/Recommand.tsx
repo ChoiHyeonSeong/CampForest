@@ -13,6 +13,8 @@ const Recommand = () => {
     <div 
       className={`
         hidden xl:sticky lg:top-[13rem] xl:ms-[3rem] p-[2rem]
+        border-light-border
+        dark:border-dark-border
         border rounded-md
       `}
     >
@@ -20,6 +22,8 @@ const Recommand = () => {
       <div 
         className={`
           pb-[1rem]
+          border-light-border
+          dark:border-dark-border
           border-b
         `}
       >

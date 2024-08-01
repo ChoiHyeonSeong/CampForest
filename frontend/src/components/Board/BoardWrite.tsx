@@ -268,6 +268,8 @@ const BoardWrite = () => {
               <input
                 className={`
                   py-[0.5rem] ps-[1rem]
+                  border-light-border
+                  dark:border-dark-border
                   border-b focus:outline-none
                 `}
                 placeholder='제목을 입력하세요.'

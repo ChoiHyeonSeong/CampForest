@@ -37,8 +37,8 @@ function App() {
     
     bodyBox.classList.add('bg-light-white')
     bodyBox.classList.add('dark:bg-dark-white')
-    bodyBox.classList.add('text-light-white')
-    bodyBox.classList.add('dark:text-dark-white')
+    bodyBox.classList.add('text-light-black')
+    bodyBox.classList.add('dark:text-dark-black')
   }, []);
 
   useEffect(() => {

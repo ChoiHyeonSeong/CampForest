@@ -53,6 +53,8 @@ const CommentInput = (props: Props) => {
           placeholder='댓글 달기...'
           className={`
             flex-1 px-[0.5rem] py-[0.25rem] 
+            border-light-border
+            dark:border-dark-border
             outline-none focus:border-none border border-transparent rounded cursor-text
           `}
         />
