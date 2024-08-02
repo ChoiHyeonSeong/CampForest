@@ -202,13 +202,12 @@ const ProductList = () => {
           />
           <div
             className={`
-              acc-btn 
               px-[1rem] py-[0.5rem]
               border-light-border
               dark:border-dark-border
               text-sm font-medium duration-200 cursor-pointer rounded-md border shadow-sm focus:outline-none ${
               isAccBtnActive
-                ? 'bg-light-signature dark:bg-dark-signature text-light-white dark:text-dark-white border-light-signature dark:border-dark-signature'
+                ? 'bg-light-signature dark:bg-dark-signature text-light-white border-light-signature dark:border-dark-signature'
                 : 'border-light-border-1 dark:border-dark-border-1'
               }
             `}
