@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/transactionchat")
+@RequestMapping("/api/transactionchat")
 public class TransactionChatController {
 	private final TransactionChatService transactionChatService;
 	private final SimpMessagingTemplate messagingTemplate;

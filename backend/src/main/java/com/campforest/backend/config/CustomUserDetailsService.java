@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.user.model.Users;
-import com.campforest.backend.user.repository.UserRepository;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

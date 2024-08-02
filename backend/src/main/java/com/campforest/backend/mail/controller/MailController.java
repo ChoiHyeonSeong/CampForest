@@ -14,7 +14,7 @@ import com.campforest.backend.mail.service.MailService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/email")
+@RequestMapping("/api/email")
 @RequiredArgsConstructor
 public class MailController {
 
