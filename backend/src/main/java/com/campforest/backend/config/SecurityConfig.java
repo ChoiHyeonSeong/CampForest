@@ -56,7 +56,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/api/user/auth/**", "/api/email/**", "/api/login/**", "/api/board/**", "/api/product/search", "/api/product/{productId}", "/ws/**", "/pub/", "/sub/", "communitychat/**").permitAll()
+				.requestMatchers("/api/user/auth/**", "/api/email/**", "/api/login/**", "/api/board/**", "/api/product/search", "/api/product/{productId}", "/ws/**", "/pub/", "/sub/", "/api/communitychat/**").permitAll()
 				.anyRequest().authenticated())
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
