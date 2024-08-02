@@ -6,9 +6,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@services/authService'
 import { setUser } from '@store/userSlice'
 import { useDispatch } from 'react-redux'
-import axios from 'axios'
 
-const API_URL = 'http://i11d208.p.ssafy.io/api'
+import { kakaoLogin } from '@services/authService'
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -21,9 +20,6 @@ function Login() {
     try {
       const data = await login(email, password);
       dispatch(setUser(data.user));
-      axios.post(`${API_URL}/user/auth/refreshToken`, {}, {
-        withCredentials: true
-      });
       console.log('Login successful');
       navigate('/');
     } catch (error) {
@@ -47,10 +43,12 @@ function Login() {
                 w-[100%] px-[1rem] py-[0.5rem] 
                 bg-light-white border-light-border
                 dark:bg-dark-white dark:border-dark-border 
-                border-b focus:outline-none rounded-md`} 
+                border-b focus:outline-none rounded-md
+              `} 
               placeholder="이메일을 입력하세요."
               onChange={(e) => setEmail(e.target.value)}
               required 
+              autoComplete="username"
             />
           </div>
 
@@ -78,7 +76,8 @@ function Login() {
               `} 
               placeholder="비밀번호를 입력하세요." 
               onChange={(e) => setPassword(e.target.value)}
-              required 
+              required
+              autoComplete="current-password"
             />
           </div>
 
@@ -111,6 +110,7 @@ function Login() {
         {/* 소셜 로그인 */}
         <div className={`md:flex md:justify-center mt-[1.5rem] md:space-x-4`}>
           <button 
+            onClick={kakaoLogin}
             className={`
               flex flex-all-center w-[50%] max-md:w-[100%] max-md:mb-[1rem] py-[0.5rem] px-[1rem]
               bg-[#FEE500] text-black

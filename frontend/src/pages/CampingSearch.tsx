@@ -1,5 +1,5 @@
 import CampingList from '@components/CampingSearch/CampingList';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
@@ -7,11 +7,23 @@ import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 
 import CampingDetail from '@components/CampingSearch/CampingDetail';
 
-const { kakao } = window;
+const geolocationOptions = {
+  enableHighAccuracy: true,
+  timeout: 1000 * 10,
+  maximumAge: 1000 * 3600 * 24,
+}
+
+type PosType = {
+  lat: number,
+  lng: number
+}
 
 function CampingSearch() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalBlocked, setIsModalBlocked] = useState<boolean>(false);
+  const currentLat = useRef(36.110336);
+  const currentLng = useRef(128.4112384);
+  const [map, setMap] = useState<naver.maps.Map | null>(null);
 
   // 모달이 오픈될때 Modal을 block시킴
   const modalOpen = () => {
@@ -39,23 +51,52 @@ function CampingSearch() {
 
   // 다른 페이지로 이동할때는 항상 Modal Blocked 비활성화하기
   useEffect(() => {
-    try {
-      const container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-      const options = { //지도를 생성할 때 필요한 기본 옵션
-        center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
-        level: 3 //지도의 레벨(확대, 축소 정도)
-      };
+    setCurrentPos()
 
-      const map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
-    } catch {
+    try {
+      const mapOptions = {
+        center: new naver.maps.LatLng(currentLat.current, currentLng.current),
+        zoom: 15
+      };
+    
+      const mapInstance = new naver.maps.Map('map', mapOptions);
+      setMap(mapInstance); // map 객체를 상태에 저장
+    } catch (error) {
+      console.log(error)
       console.log("Kakao map not loaded")
     }
-
     return () => {
       setIsModalOpen(false);
       setIsModalBlocked(false);
     };
   }, []);
+
+  const setCurrentPos = () => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        currentLat.current = pos.coords.latitude
+        currentLng.current = pos.coords.longitude
+      }, 
+      (error) => {
+        console.log(error)
+        currentLat.current = 36.110336
+        currentLng.current = 128.4112384
+      },
+      geolocationOptions
+    );
+  }
+
+  const moveMapCenter = (lat: number, lng: number) => {
+    if (map) {
+      const newCenter = new naver.maps.LatLng(lat, lng);
+      map.setCenter(newCenter); // 지도의 중심을 변경
+    }
+  };
+
+  const moveMapCurrent = () => {
+    setCurrentPos()
+    moveMapCenter(currentLat.current, currentLng.current)
+  }
 
   useEffect(() => {
     const currentScrollY = window.scrollY;
@@ -81,10 +122,29 @@ function CampingSearch() {
       {/* 메인 화면 */}
       <div className={`flex justify-center items-center h-[calc(100%-3.2rem)]`}>
         <div className={`flex flex-all-center flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[40rem] ms-[0.5rem] me-[0.5rem]`}>
-          <div className={`w-[100%] lg:size-[40rem] bg-light-black dark:bg-dark-black aspect-[4/3]`}>지도</div>
-          <div className={`w-[100%] lg:w-[calc(100%-40rem)] lg:min-w-[20rem] lg:h-[100%] my-[0.75rem] lg:my-0`}>
+          
+          <div className='relative w-[100%] lg:size-[40rem] aspect-[4/3]'>
+            <div 
+              className={`
+                w-[100%] lg:size-[40rem] 
+                bg-light-black 
+                dark:bg-dark-black 
+                aspect-[4/3]
+              `}
+              id='map'
+            />
+            <div 
+              onClick={moveMapCurrent}
+              className='
+                absolute top-0 right-0 w-[4rem] h-[4rem] bg-black z-[100]
+              '
+            >
+            </div>
+          </div>
+          
+          <div className={`w-[100%] lg:w-[calc(100%-40rem-1rem)] lg:min-w-[30rem] lg:h-[100%] lg:ms-[1rem] my-[0.75rem] lg:my-0`}>
             <div className={`h-[3rem]`}>
-              <div className={`relative w-[calc(100%-2rem)] mx-[1rem]`}>
+              <div className={`relative w-[100%]`}>
                 <div className={`absolute left-[0.75rem] top-[0.9rem]`}>
                   <SearchIcon
                     className={`

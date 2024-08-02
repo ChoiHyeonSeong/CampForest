@@ -12,7 +12,7 @@ type LoginResponse = {
     userId: number,
     nickname: string,
     profileImage: string,
-    similarUsers: number[]
+    similarUsers: object
   },
 }
 
@@ -62,16 +62,17 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     const response = await axiosInstance.post('/user/auth/login', { email, password });
     const data = response.data.data;
     const Authorization = response.headers.authorization;
+    console.log(data)
     const user = { userId: data.userId, 
                    nickname: data.nickname, 
                    profileImage: data.profileImage,
-                   similarUsers: data.similarUsers }
+                   similarUsers: data.similarUsers}
     if (Authorization) {
       sessionStorage.setItem('accessToken', Authorization);
       sessionStorage.setItem('userId', data.userId);
       sessionStorage.setItem('nickname', data.nickname);
       sessionStorage.setItem('profileImage', data.profileImage);
-      sessionStorage.setItem('similarUsers', data.similarUsers);
+      sessionStorage.setItem('similarUsers', JSON.stringify(data.similarUsers));
       sessionStorage.setItem('isLoggedIn', 'true');
       axiosInstance.defaults.headers['Authorization'] = Authorization;
     } else {
@@ -99,18 +100,36 @@ export const refreshToken = async() => {
 
 export const logout = async () => {
   try {
-    await axiosInstance.post('/user/auth/logout');
+    const result = await axiosInstance.post('/user/auth/logout');
+    
+    console.log(result)
 
     // 토큰 제거
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('userId');
     sessionStorage.removeItem('nickname');
     sessionStorage.removeItem('profileImage');
+    sessionStorage.removeItem('similarUsers');
     sessionStorage.removeItem('isLoggedIn');
     delete axiosInstance.defaults.headers['Authorization'];
 
   } catch (error) {
     console.error('Logout failed:', error);
+    throw error;
+  }
+};
+
+export const kakaoLogin = async () => {
+  try {
+    const result = await axios.get(`${API_URL}/login/kakao`,{
+        withCredentials: true
+    });
+    window.location.href = result.data.url;
+
+    console.log(result)
+
+  } catch (error) {
+    console.error('kakao Login failed:', error);
     throw error;
   }
 };
