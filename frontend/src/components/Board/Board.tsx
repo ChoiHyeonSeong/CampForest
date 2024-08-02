@@ -67,8 +67,7 @@ const Board = (props: Props) => {
   
   const like = async () => {
     try {
-      const result = await boardLike(props.board.boardId, user.userId)
-      console.log(result)
+      await boardLike(props.board.boardId, user.userId)
     } catch (error) {
       console.log(error)
     };
@@ -76,8 +75,7 @@ const Board = (props: Props) => {
 
   const dislike = async () => {
     try {
-      const result = await boardDislike(props.board.boardId, user.userId)
-      console.log(result)
+      await boardDislike(props.board.boardId, user.userId)
     } catch (error) {
       console.log(error)
     };
@@ -104,7 +102,6 @@ const Board = (props: Props) => {
     }
   
     if (differenceInMinutes >= 60) {
-      const minutes = differenceInMinutes % 60;
       return `${differenceInHours}시간 전`;
     }
   
@@ -116,20 +113,6 @@ const Board = (props: Props) => {
     const difference = calculateTimeDifference(modifiedAt);
     setTimeDifference(difference); // 계산된 값을 상태에 설정
   }, [props.board.createdAt]); // modifiedAt이 변경될 때마다 실행
-
-  const [isWider, setIsWider] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (props.board.imageUrls.length > 0) {
-      const img = new Image();
-      img.onload = () => {
-        const containerAspectRatio = 4 / 3; // 컨테이너의 가로세로 비율 (aspect-[4/3])
-        const imageAspectRatio = img.width / img.height;
-        setIsWider(imageAspectRatio > containerAspectRatio);
-      };
-      img.src = props.board.imageUrls[0];
-    }
-  }, [props.board.imageUrls]);
 
   return (
     <div 
@@ -175,61 +158,64 @@ const Board = (props: Props) => {
             onClick={goBoardDetail}
           >
             {props.board.imageUrls.length > 0 && (
-              <Swiper
-                modules={[Navigation, Pagination]}
-                spaceBetween={50}
-                slidesPerView={1}
-                navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
-                pagination={{ clickable: true }}
-                onSwiper={(swiper: any) => console.log(swiper)}
-              >
-                {props.board.imageUrls.map((imageUrl, index) => (
-                  <SwiperSlide key={index}>
-                    <img
-                      src={imageUrl}
-                      alt="ProductImg"
-                      className={`
-                        w-full h-full 
-                        border-light-border
-                        dark:border-dark-border
-                        object-contain rounded-lg border
-                      `}
-                    />
-                  </SwiperSlide>
-                ))}
-                <button 
-                  className={`
-                    my-next-button 
-                    absolute top-1/2 right-[0.5rem] z-10 p-[0.5rem] 
-                    transform -translate-y-1/2 rounded-full
-                  `}
-                >
-                  <RightArrowIcon />
-                </button>
-                <button 
-                  className={`
-                    my-prev-button
-                    absolute top-1/2 left-[0.5rem] z-10 p-[0.5rem]
-                    transform -translate-y-1/2 rounded-full
-                  `}
-                >
-                  <LeftArrowIcon />
-                </button>
-                <style
-                  dangerouslySetInnerHTML={{
-                    __html: `
-                    .swiper-pagination-bullet {
-                      background-color: #888 !important;
-                      opacity: 0.5 !important;
-                    }
-                    .swiper-pagination-bullet-active {
-                      background-color: #555 !important;
-                      opacity: 1 !important;
-                    }
-                  `,
-                  }}
-                />
-              </Swiper>
+          <Swiper
+          className={`
+            flex-shrink-0 w-full
+            aspect-1 rounded-lg overflow-hidden
+          `}
+          modules={[Navigation, Pagination]}
+          spaceBetween={50}
+          slidesPerView={1}
+          navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
+          pagination={{ clickable: true }}
+          onSwiper={(swiper: any) => console.log(swiper)}
+        >
+          {props.board.imageUrls.map((imageUrl, index) => (
+            <SwiperSlide key={index}>
+              <img
+                src={imageUrl}
+                alt="ProductImg"
+                className={`
+                  w-full h-full 
+                  object-contain
+                `}
+              />
+            </SwiperSlide>
+          ))}
+          <button 
+            className={`
+              my-next-button 
+              absolute top-1/2 right-[0.5rem] z-10 p-[0.5rem] 
+              transform -translate-y-1/2 rounded-full
+            `}
+          >
+            <RightArrowIcon />
+          </button>
+          <button 
+            className={`
+              my-prev-button
+              absolute top-1/2 left-[0.5rem] z-10 p-[0.5rem]
+              fill-light-black
+              transform -translate-y-1/2 rounded-full
+            `}
+          >
+            <LeftArrowIcon />
+          </button>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+              .swiper-pagination-bullet {
+                background-color: #888 !important;
+                opacity: 0.5 !important;
+              }
+              .swiper-pagination-bullet-active {
+                background-color: #555 !important;
+                opacity: 1 !important;
+              }
+            `,
+            }}
+          />
+        </Swiper>
             )}
           </div>
           {/* 내용 및 포스팅 시간 */}

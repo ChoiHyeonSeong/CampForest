@@ -47,7 +47,7 @@ export const boardWrite = async (userId: number, title: string, content: string,
 export const boardList = (page: number, size: number) => {
   const params = { page: page, size: size };
   
-  const response = axiosInstance.get(`${API_URL}/board`, {params});
+  const response = axiosInstance.get(`/board`, {params});
   return response;
 }
 
@@ -88,11 +88,11 @@ export const boardDelete = (boardId: number) => {
 }
 
 export const boardLike = async (boardId: number, userId: number) => {
-  const response = await axiosInstance.post(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+  const response = await axiosInstance.post(`/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
 }
 
 export const boardDislike = async (boardId: number, userId: number) => {
-  const response = await axiosInstance.delete(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+  const response = await axiosInstance.delete(`/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
 }
