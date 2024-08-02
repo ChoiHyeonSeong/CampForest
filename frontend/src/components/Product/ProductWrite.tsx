@@ -152,7 +152,10 @@ const ProductWrite = () => {
 
   return (
     <div className={`flex justify-center`}>
-      <div className={`w-[40rem]`}>
+      <div className={`w-[40rem] md:mt-6 lg:mt-0 p-6 md:p-0`}>
+        <h4
+          className='text-2xl font-bold'
+        >거래 글쓰기</h4>
         <form 
           className={`mt-[2rem]`} 
           onSubmit={handleSubmit}
