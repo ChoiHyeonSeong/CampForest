@@ -10,6 +10,7 @@ import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
 import com.campforest.backend.chatting.dto.TransactionChatDto;
 import com.campforest.backend.chatting.entity.CommunityChatMessage;
 import com.campforest.backend.chatting.entity.CommunityChatRoom;
+import com.campforest.backend.chatting.entity.TransactionChatMessage;
 import com.campforest.backend.chatting.entity.TransactionChatRoom;
 import com.campforest.backend.chatting.repository.communitychatroom.CommunityChatRoomRepository;
 import com.campforest.backend.chatting.repository.communitymessage.CommunityChatMessageRepository;
@@ -30,32 +31,30 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         TransactionChatRoom room = transactionChatRoomRepository.findOrCreateChatRoom(productId, buyer, seller);
         return convertToDto(room);
     }
-    //
-    // @Transactional
-    // @Override
-    // public CommunityChatMessage saveMessage(Long roomId, CommunityChatMessage message) {
-    //     CommunityChatRoom room = communityChatRoomRepository.findById(roomId)
-    //             .orElseThrow(() -> new RuntimeException("Chat room not found"));
-    //     message= CommunityChatMessage.builder()
-    //             .roomId(roomId)
-    //             .content(message.getContent())
-    //             .senderId(message.getSenderId())
-    //             .build();
-    //     return communityChatMessageRepository.save(message);
-    // }
-    //
-    // @Transactional
-    // @Override
-    // public List<CommunityChatMessage> getChatHistory(Long roomId) {
-    //     return communityChatMessageRepository.findByChatRoom(roomId);
-    // }
+
+    @Transactional
+    @Override
+    public TransactionChatMessage saveMessage(Long roomId, TransactionChatMessage message) {
+        TransactionChatRoom room = transactionChatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        message= TransactionChatMessage.builder()
+                .roomId(roomId)
+                .build();
+        return transactionChatMessageRepository.save(message);
+    }
+
+    @Transactional
+    @Override
+    public List<TransactionChatMessage> getChatHistory(Long roomId) {
+        return transactionChatMessageRepository.findByChatRoom(roomId);
+    }
     // @Transactional
     // @Override
     // public Long getUnreadMessageCount(Long roomId, Long userId) {
     //     return communityChatMessageRepository.countUnreadMessagesForUser(roomId, userId);
     //
     // }
-    //
+
     // @Transactional
     // @Override
     // public void markMessagesAsRead(Long roomId, Long userId) {

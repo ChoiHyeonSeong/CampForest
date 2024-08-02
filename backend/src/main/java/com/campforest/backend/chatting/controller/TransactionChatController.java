@@ -42,27 +42,29 @@ public class TransactionChatController {
 		@RequestParam Long seller) {
 		try {
 			TransactionChatDto room = transactionChatService.createOrGetChatRoom(productId,buyer, seller);
-			return ApiResponse.createSuccessWithNoContent("채팅방 생성 성공하였습니다");
+			return ApiResponse.createSuccess(transactionChatService.getChatHistory(room.getRoomId()),"채팅방 생성 성공하였습니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
 		}
 	}
-	// @MessageMapping("/{roomId}/send")
-	// @SendTo("/sub/transactionchat/{roomId}")
-	// public TransactionChatMessage sendMessage(@DestinationVariable Long roomId, @Payload TransactionChatMessage message) {
-	//
-	// 	return transactionChatService.saveMessage(roomId, message);
-	// }
-	// @GetMapping("/room/{roomId}/messages")
-	// public  ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
-	// 	try {
-	// 		List<TransactionChatMessage> messages = transactionChatService.getChatHistory(roomId);
-	// 		return  ApiResponse.createSuccess(messages, "채팅 메시지 조회 성공");
-	// 	}catch (Exception e) {
-	// 		return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);
-	// 	}
-	// }
-	//
+	@MessageMapping("/transaction/{roomId}/send")
+	@SendTo("/sub/transaction/{roomId}")
+	public TransactionChatMessage sendMessage(
+		@DestinationVariable Long roomId,
+		@Payload TransactionChatMessage message) {
+
+		return transactionChatService.saveMessage(roomId, message);
+	}
+	@GetMapping("/room/{roomId}/messages")
+	public  ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
+		try {
+			List<TransactionChatMessage> messages = transactionChatService.getChatHistory(roomId);
+			return  ApiResponse.createSuccess(messages, "채팅 메시지 조회 성공");
+		}catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);
+		}
+	}
+
 	// //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
 	// @PostMapping("/room/{roomId}/markAsRead")
 	// public ApiResponse<?> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {

@@ -9,9 +9,9 @@ import com.campforest.backend.chatting.entity.TransactionChatMessage;
 public interface TransactionChatService {
 	public TransactionChatDto createOrGetChatRoom(Long productId, Long buyer, Long seller);
 	//
-	// TransactionChatMessage saveMessage(Long roomId, TransactionChatMessage message);
+	TransactionChatMessage saveMessage(Long roomId, TransactionChatMessage message);
 	//
-	// List<TransactionChatMessage> getChatHistory(Long roomId);
+	List<TransactionChatMessage> getChatHistory(Long roomId);
 	//
 	// Long getUnreadMessageCount(Long roomId, Long userId);
 	//
