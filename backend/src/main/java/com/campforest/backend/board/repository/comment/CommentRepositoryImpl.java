@@ -78,7 +78,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 	public void minusLikeCount(Long commentId) {
 		queryFactory
 			.update(comment)
-			.where(comment.boardId.eq(commentId))
+			.where(comment.commentId.eq(commentId))
 			.set(comment.likeCount, comment.likeCount.subtract(1))
 			.execute();
 	}
