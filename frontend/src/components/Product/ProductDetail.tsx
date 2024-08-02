@@ -80,7 +80,7 @@ function Detail() {
           {/* 이미지 */}
           <Swiper
             className={`
-              flex-shrink-0 w-full lg:w-2/5
+              flex-shrink-0 relative w-full lg:w-2/5
               aspect-1 rounded-lg overflow-hidden
             `}
             modules={[Navigation, Pagination]}
@@ -96,9 +96,7 @@ function Detail() {
                   src={imageUrl}
                   alt="ProductImg"
                   className={`
-                    w-full h-full 
-                    border-light-border
-                    dark:border-dark-border
+                    size-full 
                     object-contain rounded-lg border
                   `}
                 />
@@ -107,7 +105,7 @@ function Detail() {
             <button 
               className={`
                 my-next-button 
-                absolute top-1/2 right-[0.5rem] z-10 p-[0.5rem] 
+                absolute top-1/2 right-[0.5rem] z-[20] p-[0.5rem] 
                 transform -translate-y-1/2 rounded-full
               `}
             >
@@ -116,7 +114,7 @@ function Detail() {
             <button 
               className={`
                 my-prev-button
-                absolute top-1/2 left-[0.5rem] z-10 p-[0.5rem]
+                absolute top-1/2 left-[0.5rem] z-[20] p-[0.5rem]
                 transform -translate-y-1/2 rounded-full
               `}
             >

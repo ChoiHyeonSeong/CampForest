@@ -4,12 +4,21 @@ import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 import { ReactComponent as BookmarkEmpty } from '@assets/icons/bookmark-empty.svg'
 import { ReactComponent as BookmarkFill } from '@assets/icons/bookmark-fill.svg'
 import { ReactComponent as CommentIcon} from '@assets/icons/comment.svg'
+import { ReactComponent as LeftArrowIcon } from '@assets/icons/arrow-left.svg';
+import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
 import { useNavigate } from 'react-router-dom'
 
 import { boardDelete, boardLike, boardDislike } from '@services/boardService';
+
+// swiper
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 export type BoardType = {
   boardId: number;
@@ -166,14 +175,61 @@ const Board = (props: Props) => {
             onClick={goBoardDetail}
           >
             {props.board.imageUrls.length > 0 && (
-              <img
-                src={props.board.imageUrls[0]} 
-                alt="프로필 사진"
-                className={`
-                  ${isWider ? 'w-full h-auto' : 'w-auto h-full'}
-                  object-contain
-                `}
-              />
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={50}
+                slidesPerView={1}
+                navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
+                pagination={{ clickable: true }}
+                onSwiper={(swiper: any) => console.log(swiper)}
+              >
+                {props.board.imageUrls.map((imageUrl, index) => (
+                  <SwiperSlide key={index}>
+                    <img
+                      src={imageUrl}
+                      alt="ProductImg"
+                      className={`
+                        w-full h-full 
+                        border-light-border
+                        dark:border-dark-border
+                        object-contain rounded-lg border
+                      `}
+                    />
+                  </SwiperSlide>
+                ))}
+                <button 
+                  className={`
+                    my-next-button 
+                    absolute top-1/2 right-[0.5rem] z-10 p-[0.5rem] 
+                    transform -translate-y-1/2 rounded-full
+                  `}
+                >
+                  <RightArrowIcon />
+                </button>
+                <button 
+                  className={`
+                    my-prev-button
+                    absolute top-1/2 left-[0.5rem] z-10 p-[0.5rem]
+                    transform -translate-y-1/2 rounded-full
+                  `}
+                >
+                  <LeftArrowIcon />
+                </button>
+                <style
+                  dangerouslySetInnerHTML={{
+                    __html: `
+                    .swiper-pagination-bullet {
+                      background-color: #888 !important;
+                      opacity: 0.5 !important;
+                    }
+                    .swiper-pagination-bullet-active {
+                      background-color: #555 !important;
+                      opacity: 1 !important;
+                    }
+                  `,
+                  }}
+                />
+              </Swiper>
             )}
           </div>
           {/* 내용 및 포스팅 시간 */}

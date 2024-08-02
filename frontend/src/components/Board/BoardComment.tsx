@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
+import { Link } from 'react-router-dom';
 
 export type CommentType = {
   commentId: number;
@@ -19,6 +20,32 @@ type Props = {
 };
 
 const BoardComment = (props: Props) => {
+  const [timeDifference, setTimeDifference] = useState('');
+
+  const calculateTimeDifference = (createdAt: string) => {
+    const modifiedDate = new Date(createdAt);
+    const currentDate = new Date();
+    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
+  
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
+    const differenceInHours = Math.floor(differenceInMinutes / 60);
+    const differenceInDays = Math.floor(differenceInHours / 24);
+  
+    if (differenceInMinutes >= 1440) {
+      return `${differenceInDays}일 전`;
+    }
+  
+    if (differenceInMinutes >= 60) {
+      return `${differenceInHours}시간 전`;
+    }
+  
+    return `${differenceInMinutes}분 전`;
+  };
+
+  useEffect(() => {
+    setTimeDifference(calculateTimeDifference(props.comment.createdAt));
+  }, [])
+
   return (
     <div 
       className={`
@@ -28,34 +55,36 @@ const BoardComment = (props: Props) => {
           border-b
         `}
     >
-      <div className={`flex`}>
+      <div className={`flex items-center`}>
         {/* 프로필 이미지 */}
         <div 
           className={`
-            shrink-0 size-[2.5rem] me-[0.5rem]
+            shrink-0 size-[2.5rem] me-[1rem]
           border-light-border
             dark:border-dark-border  
-            shadow-sm border rounded-full
+            shadow-sm border rounded-full overflow-hidden
           `}
         >
           {/* 사용자 프로필 이미지 받아와서 넣을 곳 ! */}
           <img 
             src={props.comment.userImage} 
             alt='NOIMG'
+            className='fit'
           />
         </div>
 
         {/* 닉네임 및 글 */}
         <div>
-          <div className={`flex mb-[0.25rem]`}>
-            <div 
+          <div className={`flex items-center mb-[0.25rem]`}>
+            <Link
+              to={`/user/${props.comment.commentWriterId}`}
               className={`
                 me-[0.5rem]
                 text-sm font-medium
               `}
             >
               {props.comment.nickname}
-            </div>
+            </Link>
             <div 
               className={`
                 text-light-text-secondary
@@ -63,7 +92,7 @@ const BoardComment = (props: Props) => {
                 text-xs
               `}
             >
-              26분전
+              {timeDifference}
             </div>
           </div>
           {/* user-comment */}
