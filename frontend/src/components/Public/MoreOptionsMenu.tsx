@@ -4,7 +4,7 @@ import { ReactComponent as MoreDotIcon } from '@assets/icons/more-dots.svg'
 
 type Props = {
   isUserPost: boolean;
-  deleteFunction: (param:number) => void;
+  deleteFunction: () => void;
   deleteId: number;
   copyURL:string;
 };
@@ -45,7 +45,7 @@ const MoreOptionsMenu = (props: Props) => {
         >
           <div 
             className={`
-              w-full ps-[0.75rem]
+              ${props.isUserPost ? 'hidden' : ''} w-full ps-[0.75rem]
               border-light-border
               dark:border-dark-border
               border-b
@@ -109,7 +109,7 @@ const MoreOptionsMenu = (props: Props) => {
                   dark:border-dark-border
                   border-b
                 `}
-                onClick={() => props.deleteFunction(props.deleteId)}
+                onClick={() => props.deleteFunction()}
               >
                 <button 
                   className={`

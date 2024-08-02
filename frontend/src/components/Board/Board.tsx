@@ -50,13 +50,12 @@ const Board = (props: Props) => {
   const navigate = useNavigate();
 
   const [timeDifference, setTimeDifference] = useState('');
-  const isUserPost = user.userId === props.board.userId
 
-  const deleteBoard = async (boardId: number) => {
+  const deleteBoard = async () => {
     try {
-      const result = await boardDelete(boardId)
-      props.deleteFunction()
+      const result = await boardDelete(props.board.boardId)
       console.log(result)
+      navigate('/');
     } catch (error) {
       console.log(error)
     };
@@ -158,7 +157,7 @@ const Board = (props: Props) => {
             </div>
           </div>
           <MoreOptionsMenu 
-            isUserPost={isUserPost} 
+            isUserPost={user.userId === props.board.userId} 
             deleteFunction={deleteBoard} 
             deleteId={props.board.boardId}
             copyURL={`board/detail/${props.board.boardId}`}

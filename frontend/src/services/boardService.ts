@@ -73,10 +73,10 @@ export const boardDetail = (boardId: number) => {
   return response;
 }
 
-export const boardDelete = (boardId: number) => {
+export const boardDelete = async (boardId: number) => {
   const params = { boardId: boardId };
 
-  const response = axios.delete(`${API_URL}/board`, {params});
+  const response = await axiosInstance.delete(`/board`, {params});
   return response;
 }
 
