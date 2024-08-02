@@ -28,6 +28,7 @@ import { useThemeEffect } from '@hooks/useThemeEffect';
 function App() {
   const dispatch = useDispatch()
   const isAnyModalOpen = useSelector((state: RootState) => state.modalStore.isAnyModalOpen)
+  const isDark = useSelector((state: RootState) => state.themeStore.isDark)
   const currentLoc = useLocation();
 
   useThemeEffect();
@@ -64,11 +65,11 @@ function App() {
   }, [isAnyModalOpen]);
 
   return (
-    <div className="App">
+    <div className="App h-screen overflow-hidden">
       <Navbar />
-      <div className='flex'>
+      <div className='flex h-full'>
         {/* padding은 Navigation bar용 공간 */}
-        <div className='flex-grow pt-[3.2rem] lg:ps-[5rem]' id='contentBox'>
+        <div className='flex-grow h-[100vh-5.95rem] md:h-[100vh-3.2rem] lg:h-screen mt-[3.2rem] lg:mt-0 mb-[2.75rem] md:mb-0 lg:ps-[5rem] overflow-y-auto' id='contentBox'>
           {/* 여기서 부터 */}
           <Routes>
             <Route path='/' element={<Main />}/>

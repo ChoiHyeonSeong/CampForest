@@ -21,6 +21,10 @@ const NavbarTop = (props: Props) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const toggleProfileModal = () => {
+    setIsProfileModalOpen(!isProfileModalOpen);
+  };
+
+  const closeProfileModal = () => {
     setIsProfileModalOpen(false);
   };
 
@@ -31,7 +35,7 @@ const NavbarTop = (props: Props) => {
   return (
     <div 
       className={`
-        flex justify-between fixed z-[50] lg:z-[30] w-[100%] h-[3.2rem] py-[0.25rem] px-[1rem] 
+        flex justify-between fixed lg:top-0 md:right-0 z-[50] lg:z-[30] w-[100%] lg:w-[1.75rem] h-[3.2rem] py-[0.25rem] lg:mx-[1rem] 
         bg-light-white border-light-border-1 lg:bg-inherit
         dark:bg-dark-white dark:border-dark-border-1 dark:lg:bg-inherit
         border-b lg:border-none
@@ -65,7 +69,7 @@ const NavbarTop = (props: Props) => {
         </Link>
       </div>
 
-      <div className={`flex items-center justify-end w-[6rem] lg:ms-auto`}>
+      <div className={`flex items-center justify-end w-[6rem] lg:w-[1.75rem] lg:ms-auto me-[0.75rem] lg:me-0`}>
         <PushIcon 
           className={`
             block lg:hidden size-[1.75rem] 
@@ -76,9 +80,9 @@ const NavbarTop = (props: Props) => {
         />
         <div className={`relative`}>
           <div 
-            onClick={() => setIsProfileModalOpen(true)}
+            onClick={toggleProfileModal}
             className={`
-              hidden md:block size-[1.75rem] ms-[0] md:ms-[0.75rem]
+              hidden md:block size-[1.75rem] ms-[0] md:ms-[0.75rem] lg:ms-0
               border-light-black bg-light-black
               dark:border-dark-black dark:bg-dark-black
               overflow-hidden border rounded-full cursor-pointer
@@ -86,7 +90,7 @@ const NavbarTop = (props: Props) => {
           >
             <img src={ProfileImage} alt="NOIMG" />
           </div>
-          <ProfileModal isOpen={isProfileModalOpen} onClose={toggleProfileModal}/>
+          <ProfileModal isOpen={isProfileModalOpen} onClose={closeProfileModal}/>
         </div>
       </div>
     </div>
