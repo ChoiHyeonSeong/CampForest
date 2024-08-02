@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 import { Link } from 'react-router-dom';
+import { commentDislike, commentLike } from '@services/commentService';
 
 export type CommentType = {
   commentId: number;
@@ -20,6 +21,8 @@ type Props = {
 
 const BoardComment = (props: Props) => {
   const [timeDifference, setTimeDifference] = useState('');
+  const [liked, setLiked] = useState(props.comment.liked);
+  const [likeCount, setLikeCount] = useState(props.comment.likeCount);
 
   const calculateTimeDifference = (createdAt: string) => {
     const modifiedDate = new Date(createdAt);
@@ -40,6 +43,26 @@ const BoardComment = (props: Props) => {
   
     return `${differenceInMinutes}분 전`;
   };
+
+  const like = async () => {
+    try {
+      const result = await commentLike(props.comment.commentId);
+      setLiked(true);
+      setLikeCount(result);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const dislike = async () => {
+    try {
+      const result = await commentDislike(props.comment.commentId);
+      setLiked(false);
+      setLikeCount(result);
+    } catch (error) {
+      console.log(error);
+    };
+  }
 
   useEffect(() => {
     setTimeDifference(calculateTimeDifference(props.comment.createdAt));
@@ -113,13 +136,28 @@ const BoardComment = (props: Props) => {
           text-center
         `}
       >
-        <HeartIcon 
-          className={`
-            size-[1.2rem] 
-            cursor-pointer
-          `} 
-        />
-        <div className={`text-sm`}>{props.comment.likeCount}</div>
+        {liked ? (
+          <HeartIcon
+            onClick={dislike}
+            className={`
+              size-[1.2rem] 
+              fill-light-heart stroke-light-heart
+              dark:fill-dark-heart dark:stroke-dark-heart
+              cursor-pointer
+            `} 
+          />
+        ) : (
+          <HeartIcon
+            onClick={like}
+            className='
+              size-[1.2rem]
+              fill-none stroke-light-black
+              dark:stroke-dark-black
+              cursor-pointer
+            '
+          />
+        )}
+        <div className={`text-sm`}>{likeCount}</div>
       </div>
     </div>
   )

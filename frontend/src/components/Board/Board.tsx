@@ -185,7 +185,6 @@ const Board = (props: Props) => {
               slidesPerView={1}
               navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
               pagination={{ clickable: true }}
-              onSwiper={(swiper: any) => console.log(swiper)}
             >
               {props.board.imageUrls.map((imageUrl, index) => (
                 <SwiperSlide key={index} >
@@ -333,7 +332,7 @@ const Board = (props: Props) => {
               text-start md:text-sm
             `}
           >
-              3
+              {props.board.commentCount}
           </div>
         </div>
         <div className={`w-1/3`}>

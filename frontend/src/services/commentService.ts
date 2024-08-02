@@ -8,7 +8,7 @@ export const commentList = async (boardId: number) => {
   const response = await axiosInstance.get(`board/comment`, {params});
 
   console.log(response);
-  return response.data.data.content;
+  return response.data.data;
 }
 
 export const commentWrite = async (boardId: number, content: string) => {
@@ -20,4 +20,18 @@ export const commentWrite = async (boardId: number, content: string) => {
   )
 
   console.log(response);
+}
+
+export const commentLike = async (commentId: number) => {
+  const response = await axiosInstance.post(`/board/commentlike?commentId=${commentId}`);
+  console.log(response);
+
+  return response.data.data;
+}
+
+export const commentDislike = async (commentId: number) => {
+  const response = await axiosInstance.delete(`/board/commentlike?commentId=${commentId}`);
+  console.log(response);
+
+  return response.data.data;
 }

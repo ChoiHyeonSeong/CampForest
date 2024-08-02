@@ -64,7 +64,6 @@ function Main() {
   return (
     <div>
       <div className={`flex justify-center`}>
-        <div className={`hidden lg:block w-[15rem]`}/>
         <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
             <div className={`my-[1.25rem]`} key={index}>
@@ -72,9 +71,9 @@ function Main() {
             </div>
           ))}
         </div>
-        <div>
+        {/* <div>
           <Recommand />
-        </div>
+        </div> */}
       </div>
 
       {/* intersection observer */}

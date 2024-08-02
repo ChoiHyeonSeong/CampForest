@@ -141,7 +141,7 @@ const BoardWrite = () => {
     <div 
       className={`
         ${isBoardWriteModal ? 'block' : 'hidden'} 
-        fixed z-[100] w-full h-full
+        fixed md:z-[100] w-full h-full
         bg-light-black bg-opacity-80
         dark:bg-dark-black dark:bg-opacity-80
         inset-0

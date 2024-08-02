@@ -53,7 +53,8 @@ const BoardDetail = () => {
   const fetchComments = async () => {
     try {
       const result = await commentList(boardId);
-      setComments(result);
+      setComments(result.content);
+      setBoard({...board, commentCount: result.totalElements});
     } catch (error) {
       console.error('댓글 불러오기 실패: ', error);
     }
@@ -66,8 +67,9 @@ const BoardDetail = () => {
 
   const handleAddComment = async (comment: string) => {
     try {
-      const result = await commentWrite(boardId, comment);
+      await commentWrite(boardId, comment);
       fetchComments();
+
     } catch (error) {
       console.error('댓글 작성 실패: ', error);
     }
@@ -87,7 +89,7 @@ const BoardDetail = () => {
           `}
         >
           <Board 
-            board={board} 
+            board={board}
             deleteFunction={goMain} 
             isDetail={true}
           />

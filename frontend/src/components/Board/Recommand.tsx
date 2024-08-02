@@ -12,7 +12,7 @@ const Recommand = () => {
   return (
     <div 
       className={`
-        hidden xl:sticky lg:top-[13rem] xl:ms-[3rem] p-[2rem]
+        max-xl:hidden xl:sticky lg:top-[13rem] xl:ms-[3rem] p-[2rem]
         border-light-border
         dark:border-dark-border
         border rounded-md
