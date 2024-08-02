@@ -1,5 +1,6 @@
 package com.campforest.backend.oauth.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +32,12 @@ public class OAuthController {
 	private final TempUserRepository tempUserRepository;
 	private final OAuthCodeTokenRepository oAuthCodeTokenRepository;
 
+	@Value("${oauth2.baseUrl}")
+	private String baseUrl;
+
 	@GetMapping("/login/{provider}")
 	public RedirectView loginKakao(@PathVariable String provider) {
-		String redirectUrl = "/oauth2/authorization/" + provider;
+		String redirectUrl = baseUrl + "/oauth2/authorization/" + provider;
 		return new RedirectView(redirectUrl);
 	}
 
