@@ -1,8 +1,12 @@
 package com.campforest.backend.oauth.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,9 +40,11 @@ public class OAuthController {
 	private String baseUrl;
 
 	@GetMapping("/login/{provider}")
-	public RedirectView loginKakao(@PathVariable String provider) {
+	public ResponseEntity<Map<String, String>> getOAuthLoginUrl(@PathVariable String provider) {
 		String redirectUrl = baseUrl + "/oauth2/authorization/" + provider;
-		return new RedirectView(redirectUrl);
+		Map<String, String> response = new HashMap<>();
+		response.put("url", redirectUrl);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/get-oauth-info")
