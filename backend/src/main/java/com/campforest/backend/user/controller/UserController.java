@@ -92,7 +92,7 @@ public class UserController {
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
 				.secure(true)
-				.sameSite("None")
+				.sameSite("Strict")
 				.build();
 
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
