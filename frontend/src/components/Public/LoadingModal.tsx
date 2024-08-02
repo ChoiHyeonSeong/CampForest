@@ -26,7 +26,7 @@ const LoadingModal= () => {
     <div 
       className={`
         ${isLoading ? 'flex' : 'hidden'}
-        flex flex-col items-center justify-center top-0 left-0 z-[500] w-full h-screen 
+        flex flex-col items-center justify-center fixed top-0 left-0 z-[500] w-full h-screen 
         bg-light-black text-light-white bg-opacity-80
         dark:bg-dark-black dark:text-dark-white dark:bg-opacity-80
       `}

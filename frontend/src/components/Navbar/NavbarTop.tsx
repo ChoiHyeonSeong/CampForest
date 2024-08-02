@@ -21,7 +21,7 @@ const NavbarTop = (props: Props) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const toggleProfileModal = () => {
-    setIsProfileModalOpen(!isProfileModalOpen);
+    setIsProfileModalOpen(false);
   };
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const NavbarTop = (props: Props) => {
         />
         <div className={`relative`}>
           <div 
-            onClick={toggleProfileModal}
+            onClick={() => setIsProfileModalOpen(true)}
             className={`
               hidden md:block size-[1.75rem] ms-[0] md:ms-[0.75rem]
               border-light-black bg-light-black

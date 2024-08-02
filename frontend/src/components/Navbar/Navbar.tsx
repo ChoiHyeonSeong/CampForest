@@ -122,11 +122,11 @@ const Navbar = () => {
     window.addEventListener('resize', handleAllMenu);
 
     const storedIsLoggedIn = sessionStorage.getItem('isLoggedIn');
-    const similarUsersString = sessionStorage.getItem('similarUser');
-    let similarUsers: number[] = [];
+    const similarUsersString = sessionStorage.getItem('similarUsers');
+    let similarUsers: object = {};
     if (similarUsersString) {
       try {
-        similarUsers = JSON.parse(similarUsersString).map(Number);
+        similarUsers = JSON.parse(similarUsersString);
       } catch (error) {
         console.error('Failed to parse similarUsers: ', error);
       }
@@ -136,7 +136,7 @@ const Navbar = () => {
         userId: Number(sessionStorage.getItem('userId')),
         nickname: sessionStorage.getItem('nickname') || '',
         profileImage: sessionStorage.getItem('profileImage') || '',
-        similarUsers: similarUsers,
+        similarUsers: similarUsers || {test: '123'},
       }
       dispatch(setUser(storageObj));
     } else {

@@ -141,7 +141,7 @@ const BoardWrite = () => {
     <div 
       className={`
         ${isBoardWriteModal ? 'block' : 'hidden'} 
-        fixed z-[100] w-full h-full
+        fixed z-[10] md:z-[100] w-full h-[calc(100vh-5.95rem)] md:h-full mt-[3.2rem] md:mt-0
         bg-light-black bg-opacity-80
         dark:bg-dark-black dark:bg-opacity-80
         inset-0
@@ -154,7 +154,7 @@ const BoardWrite = () => {
       >
         <div 
           className={`
-            flex flex-col justify-between md:w-[35rem] h-[calc(100vh-5.95rem)] md:h-[85%] mt-[3.2rem] md:mt-[15%] md:mx-auto p-[1rem] md:px-[2rem] md:py-[3rem]
+            flex flex-col justify-between md:w-[35rem] h-[calc(100vh-5.95rem)] md:h-[85%] mt-0 md:mt-[15%] md:mx-auto p-[1rem] md:px-[2rem] md:py-[3rem]
             bg-light-white
             dark:bg-dark-white
             overflow-auto md:rounded-md 
@@ -242,7 +242,7 @@ const BoardWrite = () => {
                 </div>
                 <div 
                   className={`
-                    ${isBoardOpenDropdownOpen ? 'max-h-[18.75px] opacity-100' : 'max-h-0 opacity-0'}
+                    ${isBoardOpenDropdownOpen ? 'max-h-[18.75rem] opacity-100' : 'max-h-0 opacity-0'}
                     absolute z-10 w-[calc(100%-0.5rem)] mt-[0.25rem] ms-[0.5rem]
                     bg-light-white border-light-border-1
                     dark:bg-dark-white dark:border-dark-border-1
@@ -342,15 +342,16 @@ const BoardWrite = () => {
                 className={`
                   ${
                     isSubmitDisabled ? 
-                    '' :
                     `
+                      bg-light-gray border-light-gray text-light-text-secondary
+                      dark:bg-dark-gray dark:border-dark-gray dark:text-dark-text-secondary
+                    ` : `
                       bg-light-black md:bg-light-white text-light-white md:text-light-black border-light-black md:hover:bg-light-black md:hover:text-light-white
                       dark:bg-dark-black dark:md:bg-dark-white dark:text-dark-white dark:md:text-dark-black dark:border-dark-black dark:md:hover:bg-dark-black dark:md:hover:text-dark-white
-                      md:border
                     `
                   }
                   w-full md:w-[15rem] py-[0.75rem] md:py-[0.25rem]  
-                  transition duration-300 text-center md:rounded-md 
+                  md:border transition duration-300 text-center md:rounded-md 
                 `}
                 disabled={isSubmitDisabled}
               >

@@ -8,7 +8,7 @@ const Camping = (props: Props) => {
   return (
     <div 
       onClick={props.modalOpen} 
-      className={`flex md:min-w-[25rem] w-full`}
+      className={`flex w-full md:min-w-[30rem]`}
     >
       <div 
         className={`

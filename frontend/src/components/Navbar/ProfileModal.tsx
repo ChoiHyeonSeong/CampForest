@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
+import { logout } from '@services/authService';
+import DefaultProfileImg from '@assets/images/profileimgs.png'
 
 type Props = {
   isOpen: boolean;
@@ -11,6 +13,19 @@ type Props = {
 const ProfileModal = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
   
+  const loggedout = async () => {
+    await logout()
+    window.location.reload();
+  }
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = DefaultProfileImg;
+  };
+  
+  useEffect(() => {
+    window.addEventListener('resize', props.onClose);
+  }, []);
+
   return (
     <div 
       className={`
@@ -28,14 +43,37 @@ const ProfileModal = (props: Props) => {
         <div className={`flex flex-col items-center`}>
           {user.isLoggedIn ? (
               <>
-                <div className={`w-[5rem] h-[5rem] mb-[1rem] bg-light-gray dark:bg-dark-gray rounded-full`}></div>
-                <div className={`mb-[0.5rem] text-lg`}>사용자닉네임</div>
-                <Link to="/my-page" className={`mb-[1rem] text-light-anchor dark:text-dark-anchor`}>마이페이지 보기</Link>
-                <button onClick={props.onClose} className={`px-[1rem] py-[0.5rem] border-light-border dark:border-dark-border border rounded-lg`}>로그아웃</button>
+                <div className={`w-[5rem] h-[5rem] mb-[1rem] bg-light-gray dark:bg-dark-gray rounded-full overflow-hidden`}>
+                  <img 
+                    src={`${user.profileImage}`} 
+                    alt="" 
+                    onError={handleImageError}
+                  />
+                </div>
+                <div className={`mb-[0.5rem] text-lg`}>{user.nickname}</div>
+                <Link 
+                  to={`/user/${user.userId}`} 
+                  onClick={props.onClose} 
+                  className={`mb-[1rem] text-light-anchor dark:text-dark-anchor`}
+                >
+                  마이페이지 보기
+                </Link>
+                <button 
+                  onClick={loggedout} 
+                  className={`px-[1rem] py-[0.5rem] border-light-border dark:border-dark-border border rounded-lg`}
+                >
+                  로그아웃
+                </button>
               </>
             ) : (
               <>
-                <div onClick={props.onClose} className={`px-[1rem] py-[0.5rem] cursor-pointer`}>로그인 하러가기</div>
+                <Link 
+                  to="/user/login" 
+                  onClick={props.onClose} 
+                  className={`px-[1rem] py-[0.5rem] cursor-pointer`}
+                >
+                  로그인 하러가기
+                </Link>
               </>
             )
           }

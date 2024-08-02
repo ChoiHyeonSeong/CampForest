@@ -66,7 +66,7 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-      <div className='flex'>
+      <div className='flex z-[0]'>
         {/* Desktop Navigation bar용 공간 */}
         <div className='flex-grow pt-[3.2rem]' id='contentBox'>
           {/* 여기서 부터 */}

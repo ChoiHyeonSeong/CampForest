@@ -23,6 +23,8 @@ const CampingDetail = (props: Props) => {
           ${props.isModalOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'}
           ${props.isModalBlocked ? 'block' : 'hidden'}
           fixed lg:top-0 bottom-0 lg:right-0 z-[30] w-full lg:w-[60rem] h-[80vh] lg:h-full md:px-[10%] md:py-[5%] lg:p-[5rem]
+          bg-light-white
+          dark:bg-dark-white
           overflow-y-auto scrollbar-hide transform transition-transform duration-300 ease-in-out lg:translate-y-0
         `}
         onTransitionEnd={props.handleTransitionEnd}
@@ -30,6 +32,8 @@ const CampingDetail = (props: Props) => {
         <div 
           className={`
             w-full mb-[1rem]
+            bg-light-gray
+            dark:bg-dark-gray
             aspect-[1.8]`} 
         />
         <div className={`max-md:p-[1rem]`}>

@@ -31,9 +31,9 @@ const Recommand = () => {
           사용자 추천
         </div>
         <div className={`space-y-[1rem]`}>
-          {similarUsers.map((similarUser, index) => (
+          {/* {similarUsers.map((similarUser, index) => (
             <RecommandUser key={index} />
-          ))}
+          ))} */}
         </div>
       </div>
       {/* 인기 거래 글 */}
