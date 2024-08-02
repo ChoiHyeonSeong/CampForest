@@ -3,10 +3,8 @@ import Board from './Board'
 import BoardComment, { CommentType } from './BoardComment'
 import CommentInput from './CommentInput';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { BoardType } from '@components/Board/Board';
 import { boardDetail } from '@services/boardService';
-import { setIsLoading } from '@store/modalSlice';
 import { useNavigate } from 'react-router-dom';
 import { commentList, commentWrite } from '@services/commentService';
 
@@ -15,46 +13,33 @@ const BoardDetail = () => {
   const params = useParams();
   const boardId = Number(params.boardId)
   const [comments, setComments] = useState<CommentType[]>([]);
-  const dispatch = useDispatch();
-  const [board, setBoard] = useState<BoardType>(
-    {
-      boardId: 0,
-      boardOpen: true,
-      category: '',
-      commentCount: 0,
-      content: '',
-      createdAt: '',
-      imageUrls: [],
-      likeCount: 0,
-      liked: false,
-      modifiedAt: '',
-      nickname: '',
-      saved: false,
-      title: '',
-      userId: 0,
-      userImage: '',
-    }
-  );
+  const [board, setBoard] = useState<BoardType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchBoard = async () => {
     try {
-      dispatch(setIsLoading(true))
+      setIsLoading(true)
       const result = await boardDetail(boardId);
-      dispatch(setIsLoading(false))
+      setIsLoading(false)
 
       console.log(result)
       setBoard(result.data.data);
     } catch (error) {
-      dispatch(setIsLoading(false))
+      setIsLoading(false)
       console.error('게시글 불러오기 실패: ', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const fetchComments = async () => {
     try {
       const result = await commentList(boardId);
+      console.log(result.content);
       setComments(result.content);
-      setBoard({...board, commentCount: result.totalElements});
+      if(board) {
+        setBoard({...board, commentCount: result.totalElements});
+      }
     } catch (error) {
       console.error('댓글 불러오기 실패: ', error);
     }
@@ -78,6 +63,14 @@ const BoardDetail = () => {
   const goMain = () => {
     navigate('/')
   };
+
+  if (isLoading) {
+    return <div></div>; // 또는 로딩 스피너 컴포넌트
+  }
+
+  if (!board) {
+    return <div>게시글을 찾을 수 없습니다.</div>;
+  }
 
   return (
     <div className={`flex justify-center min-h-screen`}>
