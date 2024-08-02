@@ -25,12 +25,12 @@ const NavbarLeftExtendCommunity = (props: Props) => {
           onClick={() => props.toggleExtendMenu('notification')}
           className={`
             w-[1.25rem] h-[1.25rem] me-[0.75rem] 
-            fill-light-black
-            dark:fill-dark-black
+            fill-light-border-icon
+            dark:fill-dark-border-icon
             cursor-pointer
           `}
         />
-        <p className={`text-2xl`}>알림</p>
+        <p className={`text-2xl font-medium`}>알림</p>
       </div>
       <NotificationList />
     </div>
