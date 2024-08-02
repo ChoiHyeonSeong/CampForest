@@ -80,9 +80,23 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public BoardResponseDto getBoard(Long boardId) {
-        Boards boards = boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("Board not found"));
-        return convertToDto(boards);
+    public BoardResponseDto getBoard(Long nowId,Long boardId) {
+        Boards board = boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("Board not found"));
+
+        List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
+        List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
+        BoardResponseDto dto =  convertToDto(board);
+        Users user = userRepository.findById(dto.getUserId())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        UserImage userImage = user.getUserImage();
+        String imageUrl = userImage != null ? userImage.getImageUrl() : null;
+        if (!(imageUrl == null)) {
+            dto.setUserImage(user.getUserImage().getImageUrl());
+        }
+        dto.setNickname(user.getNickname());
+        dto.setLiked(likeBoardsId.contains(board.getBoardId()));
+        dto.setSaved(saveBoardsId.contains(board.getBoardId()));
+        return dto;
     }
 
     @Transactional

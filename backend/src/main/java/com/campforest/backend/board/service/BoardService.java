@@ -13,7 +13,7 @@ import com.campforest.backend.board.entity.Comment;
 public interface BoardService {
 	void writeBoard(BoardRequestDto boardRequestDto);
 
-	BoardResponseDto getBoard(Long boardId);
+	BoardResponseDto getBoard(Long nowId, Long boardId);
 
 	Page<BoardResponseDto> getAllBoards(Long nowId, int page, int size);
 
