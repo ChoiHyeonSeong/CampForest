@@ -66,9 +66,9 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-      <div className='flex z-[0]'>
-        {/* Desktop Navigation bar용 공간 */}
-        <div className='flex-grow pt-[3.2rem]' id='contentBox'>
+      <div className='flex'>
+        {/* padding은 Navigation bar용 공간 */}
+        <div className='flex-grow pt-[3.2rem] lg:ps-[5rem]' id='contentBox'>
           {/* 여기서 부터 */}
           <Routes>
             <Route path='/' element={<Main />}/>

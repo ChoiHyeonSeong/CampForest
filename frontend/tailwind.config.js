@@ -41,6 +41,8 @@ module.exports = {
           white: '#FFFFFF',
           heart: '#FF5B62',
           warning: '#FF0000',
+          star: '#FFD233',
+          reviewcard: '#FFF7ED',
           anchor: {
             DEFAULT: '#3982FF',
             hover: '#355388'
@@ -74,6 +76,8 @@ module.exports = {
           white: '#262626',
           heart: '#FF7F84',
           warning: '#FF5555',
+          star: '#FFC107',
+          reviewcard: '#615E5B',
           anchor: {
             DEFAULT: '#6BA4FF',
             hover: '#9CC3FF'

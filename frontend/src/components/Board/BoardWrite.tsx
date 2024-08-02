@@ -157,7 +157,7 @@ const BoardWrite = () => {
             flex flex-col justify-between md:w-[35rem] h-[calc(100vh-5.95rem)] md:h-[85%] mt-0 md:mt-[15%] md:mx-auto p-[1rem] md:px-[2rem] md:py-[3rem]
             bg-light-white
             dark:bg-dark-white
-            overflow-auto md:rounded-md 
+            overflow-auto md:rounded-md
           `}
         >
           <div className={`flex flex-col flex-grow`}>

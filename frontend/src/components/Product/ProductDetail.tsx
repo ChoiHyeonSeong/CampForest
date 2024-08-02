@@ -35,6 +35,7 @@ type ProductDetailType = {
 function Detail() {
   const isUserPost = false; // 예시로 사용자 게시물 여부를 나타내는 값
   const productId = Number(useParams().productId);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [product, setProduct] = useState<ProductDetailType>({
     category: '',
     deposit: 0,
@@ -65,6 +66,20 @@ function Detail() {
     fetchProduct();
   }, []);
 
+  // Swiper 크기 제어용
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className={`flex justify-center mb-[5rem]`}>
       <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-6 lg:pt-6`}>
@@ -79,64 +94,71 @@ function Detail() {
         >
           {/* 이미지 */}
           <Swiper
-            className={`
-              flex-shrink-0 w-full lg:w-2/5
-              aspect-1 rounded-lg overflow-hidden
-            `}
-            modules={[Navigation, Pagination]}
-            spaceBetween={50}
-            slidesPerView={1}
-            navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
-            pagination={{ clickable: true }}
-            onSwiper={(swiper: any) => console.log(swiper)}
-          >
-            {product.imageUrls.map((imageUrl, index) => (
-              <SwiperSlide key={index}>
-                <img
-                  src={imageUrl}
-                  alt="ProductImg"
+                className="w-2/5 aspect-1"
+                style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
+                modules={[Navigation, Pagination]}
+                spaceBetween={0}
+                slidesPerView={1}
+                navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
+                pagination={{ clickable: true }}
+                onSwiper={(swiper: any) => console.log(swiper)}
+              >
+                {product.imageUrls.map((imageUrl, index) => (
+                  <SwiperSlide key={index} >
+                    <img
+                      src={imageUrl}
+                      alt="ProductImg"
+                      className="
+                        w-full h-full 
+                        object-contain
+                      "
+                    />
+                  </SwiperSlide>
+                ))}
+                <button 
                   className={`
-                    w-full h-full 
-                    border-light-border
-                    dark:border-dark-border
-                    object-contain rounded-lg border
+                    my-next-button 
+                    absolute top-1/2 right-[0.5rem] z-[10] p-[0.5rem]
+                    transform -translate-y-1/2 rounded-full
+                    bg-white bg-opacity-50
                   `}
+                >
+                  <RightArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+                </button>
+                <button 
+                  className={`
+                    my-prev-button
+                    absolute top-1/2 left-2 z-10 p-2
+                    transform -translate-y-1/2 rounded-full
+                    bg-white bg-opacity-50
+                  `}
+                >
+                  <LeftArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+                </button>
+                <style
+                  dangerouslySetInnerHTML={{
+                    __html: `
+                    .swiper-container {
+                      width: 100% !important;
+                      height: 100% !important;
+                    }
+                    .swiper-slide {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    }
+                    .swiper-pagination-bullet {
+                      background-color: #888 !important;
+                      opacity: 0.5 !important;
+                    }
+                    .swiper-pagination-bullet-active {
+                      background-color: #555 !important;
+                      opacity: 1 !important;
+                    }
+                  `,
+                  }}
                 />
-              </SwiperSlide>
-            ))}
-            <button 
-              className={`
-                my-next-button 
-                absolute top-1/2 right-[0.5rem] z-10 p-[0.5rem] 
-                transform -translate-y-1/2 rounded-full
-              `}
-            >
-              <RightArrowIcon />
-            </button>
-            <button 
-              className={`
-                my-prev-button
-                absolute top-1/2 left-[0.5rem] z-10 p-[0.5rem]
-                transform -translate-y-1/2 rounded-full
-              `}
-            >
-              <LeftArrowIcon />
-            </button>
-            <style
-              dangerouslySetInnerHTML={{
-                __html: `
-                .swiper-pagination-bullet {
-                  background-color: #888 !important;
-                  opacity: 0.5 !important;
-                }
-                .swiper-pagination-bullet-active {
-                  background-color: #555 !important;
-                  opacity: 1 !important;
-                }
-              `,
-              }}
-            />
-          </Swiper>
+              </Swiper>
           {/* 내용 */}
           <div className={`w-full lg:w-3/5 md:ps-[1.5rem]`}>
             <div 

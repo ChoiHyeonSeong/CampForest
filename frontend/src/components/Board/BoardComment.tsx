@@ -1,12 +1,73 @@
-import React from 'react'
-import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
-import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
+import React, { useEffect, useState } from 'react'
+import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
+import { Link } from 'react-router-dom';
+import { commentDislike, commentLike } from '@services/commentService';
+
+export type CommentType = {
+  commentId: number;
+  commentWriterId: number;
+  boardId: number;
+  content: string;
+  nickname: string;
+  likeCount: number;
+  userImage: string;
+  createdAt: string;
+  liked: boolean;
+}
 
 type Props = {
-  comment: string;
+  comment: CommentType;
 };
 
 const BoardComment = (props: Props) => {
+  const [timeDifference, setTimeDifference] = useState('');
+  const [liked, setLiked] = useState(props.comment.liked);
+  const [likeCount, setLikeCount] = useState(props.comment.likeCount);
+
+  const calculateTimeDifference = (createdAt: string) => {
+    const modifiedDate = new Date(createdAt);
+    const currentDate = new Date();
+    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
+  
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
+    const differenceInHours = Math.floor(differenceInMinutes / 60);
+    const differenceInDays = Math.floor(differenceInHours / 24);
+  
+    if (differenceInMinutes >= 1440) {
+      return `${differenceInDays}일 전`;
+    }
+  
+    if (differenceInMinutes >= 60) {
+      return `${differenceInHours}시간 전`;
+    }
+  
+    return `${differenceInMinutes}분 전`;
+  };
+
+  const like = async () => {
+    try {
+      const result = await commentLike(props.comment.commentId);
+      setLiked(true);
+      setLikeCount(result);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const dislike = async () => {
+    try {
+      const result = await commentDislike(props.comment.commentId);
+      setLiked(false);
+      setLikeCount(result);
+    } catch (error) {
+      console.log(error);
+    };
+  }
+
+  useEffect(() => {
+    setTimeDifference(calculateTimeDifference(props.comment.createdAt));
+  }, [])
+
   return (
     <div 
       className={`
@@ -16,31 +77,36 @@ const BoardComment = (props: Props) => {
           border-b
         `}
     >
-      <div className={`flex`}>
+      <div className={`flex items-center`}>
         {/* 프로필 이미지 */}
         <div 
           className={`
-            shrink-0 size-[2.5rem] me-[0.5rem]
+            shrink-0 size-[2.5rem] me-[1rem]
           border-light-border
             dark:border-dark-border  
-            shadow-sm border rounded-full
+            shadow-sm border rounded-full overflow-hidden
           `}
         >
           {/* 사용자 프로필 이미지 받아와서 넣을 곳 ! */}
-          {/* <img src='' alt='NOIMG'></img> */}
+          <img 
+            src={props.comment.userImage} 
+            alt='NOIMG'
+            className='fit'
+          />
         </div>
 
         {/* 닉네임 및 글 */}
         <div>
-          <div className={`flex mb-[0.25rem]`}>
-            <div 
+          <div className={`flex items-center mb-[0.25rem]`}>
+            <Link
+              to={`/user/${props.comment.commentWriterId}`}
               className={`
                 me-[0.5rem]
                 text-sm font-medium
               `}
             >
-              사용자닉네임
-            </div>
+              {props.comment.nickname}
+            </Link>
             <div 
               className={`
                 text-light-text-secondary
@@ -48,7 +114,7 @@ const BoardComment = (props: Props) => {
                 text-xs
               `}
             >
-              26분전
+              {timeDifference}
             </div>
           </div>
           {/* user-comment */}
@@ -59,18 +125,39 @@ const BoardComment = (props: Props) => {
               break-all
             `}
           >
-            {props.comment}
+            {props.comment.content}
           </div>
         </div>
       </div>
       {/* 좋아요 */}
-      <div className={`ms-[1rem]`}>
-        <HeartOutlineIcon 
-          className={`
-            size-[1.2rem] 
-            cursor-pointer
-          `} 
-        />
+      <div 
+        className={`
+          ms-[1rem] space-y-[0.5rem]
+          text-center
+        `}
+      >
+        {liked ? (
+          <HeartIcon
+            onClick={dislike}
+            className={`
+              size-[1.2rem] 
+              fill-light-heart stroke-light-heart
+              dark:fill-dark-heart dark:stroke-dark-heart
+              cursor-pointer
+            `} 
+          />
+        ) : (
+          <HeartIcon
+            onClick={like}
+            className='
+              size-[1.2rem]
+              fill-none stroke-light-black
+              dark:stroke-dark-black
+              cursor-pointer
+            '
+          />
+        )}
+        <div className={`text-sm`}>{likeCount}</div>
       </div>
     </div>
   )

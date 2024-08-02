@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 
 // icon
 import { ReactComponent as EyeIcon } from '@assets/icons/eyes.svg'
-import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
-import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
-import { ReactComponent as BlackHeartIcon } from '@assets/icons/heart-black.svg'
+import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 // import ProfileImgEX from '@assets/images/productExample.png'
 import { Link } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
@@ -107,8 +105,22 @@ const ProductCard = (props: Props) => {
           `}
         >
           {isLiked ? 
-            (<FillHeartIcon className={`size-[1rem] md:size-[1.25rem]`} />) : 
-            (<HeartOutlineIcon className='size-[1rem] md:size-[1.25rem]' />)
+            (<HeartIcon 
+                className={`
+                  size-[1rem] md:size-[1.25rem]
+                  fill-light-heart stroke-light-heart
+                dark:fill-dark-heart dark:stroke-dark-heart
+                `} 
+              />
+            ) : 
+            (<HeartIcon 
+                className={`
+                  size-[1rem] md:size-[1.25rem]
+                  fill-none stroke-light-border-icon
+                dark:stroke-dark-border-icon
+                `} 
+              />
+            )
           }
         </div>
        </div>
@@ -153,7 +165,12 @@ const ProductCard = (props: Props) => {
             </span>
           </div>
           <div className={`flex items-center`}>
-            <BlackHeartIcon className={`size-[0.75rem] md:size-[1rem] me-[0.25rem`} />
+            <HeartIcon 
+              className={`
+                size-[0.75rem] md:size-[1rem] me-[0.25rem]
+                fill-none stroke-light-black
+                dark:stroke-dark-black
+              `} />
             <span className={`text-sm`}>
               {props.product.interestHit}
             </span>

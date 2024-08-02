@@ -7,7 +7,9 @@ const UserReviewCard = (props: Props) => {
   return (
     <div 
       className={`
-        mb-[0.75rem] py-[1.25rem] px-[1rem] 
+        mb-[0.75rem] py-[1.25rem] px-[1rem]
+        bg-light-reviewcard
+        dark:bg-dark-reviewcard
         rounded 
       `}>
       {/* 평점 */}

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = '/api';
+const API_URL = 'http://i11d208.p.ssafy.io/api';
 
 export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
   const formData = new FormData();
@@ -47,7 +47,7 @@ export const boardWrite = async (userId: number, title: string, content: string,
 export const boardList = (page: number, size: number) => {
   const params = { page: page, size: size };
   
-  const response = axios.get(`${API_URL}/board`, {params});
+  const response = axiosInstance.get(`/board`, {params});
   return response;
 }
 
@@ -69,16 +69,9 @@ export const filteredBoardList = (category: string, page: number, size: number) 
 export const boardDetail = (boardId: number) => {
   const params = { boardId: boardId };
 
-  const response = axios.get(`${API_URL}/board/detail`, {params});
+  const response = axiosInstance.get(`/board/detail`, {params});
   return response;
 }
-
-// export const boardUpdate = (boardId: number) => {
-//   const params = { boardId: boardId };
-
-//   const response = axios.delete(`${API_URL}/board`, {params});
-//   return response;
-// }
 
 export const boardDelete = (boardId: number) => {
   const params = { boardId: boardId };
@@ -88,11 +81,15 @@ export const boardDelete = (boardId: number) => {
 }
 
 export const boardLike = async (boardId: number, userId: number) => {
-  const response = await axiosInstance.post(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+  const response = await axiosInstance.post(`/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
+
+  return response.data.data;
 }
 
 export const boardDislike = async (boardId: number, userId: number) => {
-  const response = await axiosInstance.delete(`${API_URL}/board/like?boardId=${boardId}&userId=${userId}`);
+  const response = await axiosInstance.delete(`/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
+
+  return response.data.data;
 }
