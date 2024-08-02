@@ -99,6 +99,7 @@ public class BoardController {
 			if (page < 0 || size <= 0) {
 				return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
 			} else if (authentication == null) {
+
 				Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(-1L, page, size);
 
 				return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 목록 조회 성공하였습니다");
