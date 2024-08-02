@@ -75,9 +75,8 @@ public class OAuthController {
 				.httpOnly(true)
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
-				.secure(true)
-				// TODO : sameSite 설정 변경
-				.sameSite("None")
+				.sameSite("Lax")
+				.domain("i11d208.p.ssafy.io")
 				.build();
 
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
