@@ -1,5 +1,7 @@
 package com.campforest.backend.user.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -147,16 +149,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<Integer> getPythonRecommendUsers(Long userId) {
+	public Map<String, Object> getPythonRecommendUsers(Long userId) {
 		RestTemplate restTemplate = new RestTemplate();
 		String pythonUrl = filterServerUrl + userId;
-		ResponseEntity<Map> pythonResponse = restTemplate.getForEntity(pythonUrl, Map.class);
+		ResponseEntity<List> pythonResponse = restTemplate.getForEntity(pythonUrl, List.class);
 
 		if (pythonResponse.getStatusCode() == HttpStatus.OK) {
-			Map<String, Object> responseBody = pythonResponse.getBody();
-			return ((List<Integer>) responseBody.get("similar_users"));
+			List<Map<String, Object>> responseBody = pythonResponse.getBody();
+			Map<String, Object> similarUsers = new HashMap<>();
+			if (responseBody != null) {
+				for (Map<String, Object> userMap : responseBody) {
+					String userIdFromResponse = String.valueOf(userMap.get("user_id"));
+					Object commonFollowsCount = userMap.get("common_follows_count");
+					similarUsers.put(userIdFromResponse, commonFollowsCount);
+				}
+			}
+			return similarUsers;
 		} else {
-			return List.of();
+			return new HashMap<>();
 		}
 	}
 
