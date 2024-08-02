@@ -1,6 +1,7 @@
 package com.campforest.backend.user.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -29,5 +30,5 @@ public interface UserService {
 
 	List<ResponseFollowDTO> getFollowing(Long userId);
 
-	List<Integer> getPythonRecommendUsers(Long userId);
+	Map<String, Object> getPythonRecommendUsers(Long userId);
 }
