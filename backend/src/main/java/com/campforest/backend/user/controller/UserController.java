@@ -1,6 +1,7 @@
 package com.campforest.backend.user.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.HttpHeaders;
@@ -91,7 +92,6 @@ public class UserController {
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
 				.secure(true)
-				// TODO : sameSite 설정 변경
 				.sameSite("None")
 				.build();
 
@@ -102,7 +102,7 @@ public class UserController {
 				.orElseThrow(() -> new NotFoundException("유저 정보 조회 실패"));
 			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
 
-			List<Integer> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
+			Map<String, Object> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
 			responseDTO.setSimilarUsers(similarUsers);
 
 			return ApiResponse.createSuccess(responseDTO, "로그인이 완료되었습니다.");
