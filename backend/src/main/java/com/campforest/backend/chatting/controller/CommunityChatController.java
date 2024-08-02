@@ -4,18 +4,24 @@ import java.util.List;
 
 import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
 import com.campforest.backend.chatting.entity.CommunityChatMessage;
+
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.campforest.backend.chatting.dto.CommunityChatDto;
 import com.campforest.backend.chatting.service.CommunityChatService;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.jpa.UserRepository;
+import com.campforest.backend.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,20 +31,31 @@ import lombok.RequiredArgsConstructor;
 public class CommunityChatController {
     private final CommunityChatService communityChatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final UserService userService;
 
     @PostMapping("/room")
-    public ApiResponse<?> createChatRoom(@RequestParam Long user1,
-                                        @RequestParam Long user2) {
+    public ApiResponse<?> createChatRoom(
+        Authentication authentication,
+        @RequestParam Long user2) {
         try {
-        CommunityChatDto room = communityChatService.createOrGetChatRoom(user1, user2);
-        return ApiResponse.createSuccessWithNoContent("채팅방 생성 성공하였습니다");
+        if (authentication == null) {
+            return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
+        }
+            Users user = userService.findByEmail(authentication.getName())
+                .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+            ;
+            Long nowId = user.getUserId();
+            CommunityChatDto room = communityChatService.createOrGetChatRoom(nowId, user2);
+        return ApiResponse.createSuccess(getChatHistory(room.getRoomId()),"채팅방 로드 성공하였습니다");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
         }
     }
     @MessageMapping("/{roomId}/send")
     @SendTo("/sub/community/{roomId}")
-    public CommunityChatMessage sendMessage(@DestinationVariable Long roomId, @Payload CommunityChatMessage message) {
+    public CommunityChatMessage sendMessage(
+        @DestinationVariable Long roomId,
+        @Payload CommunityChatMessage message) {
 
         return communityChatService.saveMessage(roomId, message);
     }
@@ -54,9 +71,18 @@ public class CommunityChatController {
 
     //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
     @PostMapping("/room/{roomId}/markAsRead")
-    public ApiResponse<?> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
+    public ApiResponse<?> markMessagesAsRead(
+        Authentication authentication,
+        @PathVariable Long roomId) {
         try {
-        communityChatService.markMessagesAsRead(roomId, userId);
+            if (authentication == null) {
+                return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
+            }
+            Users user = userService.findByEmail(authentication.getName())
+                .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+            Long nowId = user.getUserId();
+
+            communityChatService.markMessagesAsRead(roomId, nowId);
         return ApiResponse.createSuccessWithNoContent("메시지를 읽음 처리 성공.");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
@@ -76,9 +102,18 @@ public class CommunityChatController {
     //user가 속한 채팅방 목록 가져옴.
     // 각 채팅방 별 최근 메시지와, 안읽은 메세지 수 가져옴
     @GetMapping("/rooms")
-    public ApiResponse<?> getChatRoomsForUser(@RequestParam Long userId) {
+    public ApiResponse<?> getChatRoomsForUser(Authentication authentication) {
         try {
-        List<CommunityChatRoomListDto> rooms = communityChatService.getChatRoomsForUser(userId);
+            if (authentication == null) {
+                return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
+            }
+            Users user = userService.findByEmail(authentication.getName())
+                .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+            Long nowId = user.getUserId();
+
+
+        List<CommunityChatRoomListDto> rooms = communityChatService.getChatRoomsForUser(nowId);
         return ApiResponse.createSuccess(rooms,"채팅방 목록 가져오기 성공");
         }catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_ROOM_LIST_FAILED);
