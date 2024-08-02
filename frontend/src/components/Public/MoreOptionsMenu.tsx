@@ -26,7 +26,7 @@ const MoreOptionsMenu = (props: Props) => {
   return (
     <div 
       className={`
-        relative 
+        relative
         cursor-pointer
       `}
     >
@@ -38,8 +38,8 @@ const MoreOptionsMenu = (props: Props) => {
           className={`
             toggle-menu
             flex flex-col absolute top-[1.5rem] right-[1.5rem] z-[10] w-[8rem] px-[0.25rem]
-            border-light-border
-            dark:border-dark-border
+            bg-light-white border-light-border text-light-text-secondary
+            dark:bg-dark-white dark:border-dark-border dark:text-dark-text-secondary
             font-medium text-left rounded-md border-[0.1rem]
           `}
         >
