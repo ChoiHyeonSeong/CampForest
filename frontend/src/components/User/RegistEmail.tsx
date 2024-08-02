@@ -9,7 +9,7 @@ import { registRequired, registClear } from '@store/registSlice';
 import '../../../node_modules/react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 
-const API_URL = 'http://3.36.78.37:8081/api'
+const API_URL = 'http://i11d208.p.ssafy.io/api'
 
 const RegistEmail: React.FC = () => {
   const dispatch = useDispatch();

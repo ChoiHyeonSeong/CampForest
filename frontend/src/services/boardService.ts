@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = '/api';
+const API_URL = 'http://i11d208.p.ssafy.io/api';
 
 export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
   const formData = new FormData();
@@ -47,7 +47,7 @@ export const boardWrite = async (userId: number, title: string, content: string,
 export const boardList = (page: number, size: number) => {
   const params = { page: page, size: size };
   
-  const response = axios.get(`${API_URL}/board`, {params});
+  const response = axiosInstance.get(`${API_URL}/board`, {params});
   return response;
 }
 

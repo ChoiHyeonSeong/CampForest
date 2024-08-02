@@ -8,7 +8,7 @@ import { setUser } from '@store/userSlice'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 
-const API_URL = 'http://3.36.78.37:8081/api'
+const API_URL = 'http://i11d208.p.ssafy.io/api'
 
 function Login() {
   const [email, setEmail] = useState('');

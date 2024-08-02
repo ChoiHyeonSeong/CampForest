@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = '/api';
+const API_URL = 'http://i11d208.p.ssafy.io/api';
 
 type ProductRegistDto = {
   productName: string,

@@ -2,8 +2,20 @@ import React from 'react'
 import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
 import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
 
+export type CommentType = {
+  commentId: number;
+  commentWriterId: number;
+  boardId: number;
+  content: string;
+  nickname: string;
+  likeCount: number;
+  userImage: string;
+  createdAt: string;
+  liked: boolean;
+}
+
 type Props = {
-  comment: string;
+  comment: CommentType;
 };
 
 const BoardComment = (props: Props) => {
@@ -27,7 +39,10 @@ const BoardComment = (props: Props) => {
           `}
         >
           {/* 사용자 프로필 이미지 받아와서 넣을 곳 ! */}
-          {/* <img src='' alt='NOIMG'></img> */}
+          <img 
+            src={props.comment.userImage} 
+            alt='NOIMG'
+          />
         </div>
 
         {/* 닉네임 및 글 */}
@@ -39,7 +54,7 @@ const BoardComment = (props: Props) => {
                 text-sm font-medium
               `}
             >
-              사용자닉네임
+              {props.comment.nickname}
             </div>
             <div 
               className={`
@@ -59,18 +74,24 @@ const BoardComment = (props: Props) => {
               break-all
             `}
           >
-            {props.comment}
+            {props.comment.content}
           </div>
         </div>
       </div>
       {/* 좋아요 */}
-      <div className={`ms-[1rem]`}>
+      <div 
+        className={`
+          ms-[1rem] space-y-[0.5rem]
+          text-center
+        `}
+      >
         <HeartOutlineIcon 
           className={`
             size-[1.2rem] 
             cursor-pointer
           `} 
         />
+        <div className={`text-sm`}>{props.comment.likeCount}</div>
       </div>
     </div>
   )
