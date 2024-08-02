@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { ReactComponent as HeartOutline } from '@assets/icons/heart-outline.svg'
-import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
-import { ReactComponent as BookmarkEmpty } from '@assets/icons/bookmark-empty.svg'
-import { ReactComponent as BookmarkFill } from '@assets/icons/bookmark-fill.svg'
+import React, { useState, useEffect } from 'react'
+import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
+import { ReactComponent as BookmarkIcon } from '@assets/icons/bookmark.svg'
 import { ReactComponent as CommentIcon} from '@assets/icons/comment.svg'
 import { ReactComponent as LeftArrowIcon } from '@assets/icons/arrow-left.svg';
 import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
@@ -46,6 +44,9 @@ type Props = {
 
 const Board = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
+  const [liked, setLiked] = useState(props.board.liked);
+  const [likeCount, setLikeCount] = useState(props.board.likeCount);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
 
   const [timeDifference, setTimeDifference] = useState('');
@@ -67,7 +68,9 @@ const Board = (props: Props) => {
   
   const like = async () => {
     try {
-      await boardLike(props.board.boardId, user.userId)
+      const result = await boardLike(props.board.boardId, user.userId)
+      setLiked(true)
+      setLikeCount(result);
     } catch (error) {
       console.log(error)
     };
@@ -75,7 +78,9 @@ const Board = (props: Props) => {
 
   const dislike = async () => {
     try {
-      await boardDislike(props.board.boardId, user.userId)
+      const result = await boardDislike(props.board.boardId, user.userId)
+      setLiked(false)
+      setLikeCount(result);
     } catch (error) {
       console.log(error)
     };
@@ -114,10 +119,24 @@ const Board = (props: Props) => {
     setTimeDifference(difference); // 계산된 값을 상태에 설정
   }, [props.board.createdAt]); // modifiedAt이 변경될 때마다 실행
 
+  // Swiper 크기 제어용
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div 
       className={`
-        flex flex-col justify-between w-full min-w-[22rem] lg:h-fit px-[1rem]
+        flex flex-col justify-between w-full min-w-[22rem] lg:h-fit lg:px-[1rem]
       bg-light-white border-light-border
       dark:bg-dark-white dark:border-dark-border
         border-b
@@ -152,70 +171,78 @@ const Board = (props: Props) => {
           <div 
             className={`
               ${props.board.imageUrls.length > 0 ? 'bg-light-black dark:bg-dark-black' : 'hidden'}
-              flex flex-all-center relative w-full
-              cursor-pointer aspect-[4/3] overflow-hidden
+              flex flex-all-center relative w-full max-w-full
+              cursor-pointer overflow-hidden aspect-1
             `} 
             onClick={goBoardDetail}
           >
             {props.board.imageUrls.length > 0 && (
-          <Swiper
-          className={`
-            flex-shrink-0 w-full
-            aspect-1 rounded-lg overflow-hidden
-          `}
-          modules={[Navigation, Pagination]}
-          spaceBetween={50}
-          slidesPerView={1}
-          navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
-          pagination={{ clickable: true }}
-          onSwiper={(swiper: any) => console.log(swiper)}
-        >
-          {props.board.imageUrls.map((imageUrl, index) => (
-            <SwiperSlide key={index}>
-              <img
-                src={imageUrl}
-                alt="ProductImg"
+              <Swiper
+              className="w-full aspect-1"
+              style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
+              modules={[Navigation, Pagination]}
+              spaceBetween={0}
+              slidesPerView={1}
+              navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
+              pagination={{ clickable: true }}
+              onSwiper={(swiper: any) => console.log(swiper)}
+            >
+              {props.board.imageUrls.map((imageUrl, index) => (
+                <SwiperSlide key={index} >
+                  <img
+                    src={imageUrl}
+                    alt="ProductImg"
+                    className="
+                      w-full h-full 
+                      object-contain
+                    "
+                  />
+                </SwiperSlide>
+              ))}
+              <button 
                 className={`
-                  w-full h-full 
-                  object-contain
+                  my-next-button 
+                  absolute top-1/2 right-[0.5rem] z-[10] p-[0.5rem]
+                  transform -translate-y-1/2 rounded-full
+                  bg-white bg-opacity-50
                 `}
+              >
+                <RightArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+              </button>
+              <button 
+                className={`
+                  my-prev-button
+                  absolute top-1/2 left-2 z-10 p-2
+                  transform -translate-y-1/2 rounded-full
+                  bg-white bg-opacity-50
+                `}
+              >
+                <LeftArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+              </button>
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
+                  .swiper-container {
+                    width: 100% !important;
+                    height: 100% !important;
+                  }
+                  .swiper-slide {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  }
+                  .swiper-pagination-bullet {
+                    background-color: #888 !important;
+                    opacity: 0.5 !important;
+                  }
+                  .swiper-pagination-bullet-active {
+                    background-color: #555 !important;
+                    opacity: 1 !important;
+                  }
+                `,
+                }}
               />
-            </SwiperSlide>
-          ))}
-          <button 
-            className={`
-              my-next-button 
-              absolute top-1/2 right-[0.5rem] z-10 p-[0.5rem] 
-              transform -translate-y-1/2 rounded-full
-            `}
-          >
-            <RightArrowIcon />
-          </button>
-          <button 
-            className={`
-              my-prev-button
-              absolute top-1/2 left-[0.5rem] z-10 p-[0.5rem]
-              fill-light-black
-              transform -translate-y-1/2 rounded-full
-            `}
-          >
-            <LeftArrowIcon />
-          </button>
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
-              .swiper-pagination-bullet {
-                background-color: #888 !important;
-                opacity: 0.5 !important;
-              }
-              .swiper-pagination-bullet-active {
-                background-color: #555 !important;
-                opacity: 1 !important;
-              }
-            `,
-            }}
-          />
-        </Swiper>
+            </Swiper>
             )}
           </div>
           {/* 내용 및 포스팅 시간 */}
@@ -262,60 +289,67 @@ const Board = (props: Props) => {
           text-center
         `}
       >
-        <div className={`w-1/3`}>
-        {props.board.liked ? (
-          <FillHeartIcon 
+        <div className={`relative w-1/3`}>
+        {liked ? (
+          <HeartIcon 
             onClick={dislike}
             className={`
-              inline size-[1.75rem] 
+              absolute left-1/2 size-[1.75rem]
+              fill-light-heart stroke-light-heart
+              dark:fill-dark-heart dark:stroke-dark-heart
               cursor-pointer
             `}
           />
         ) : (
-          <HeartOutline 
+          <HeartIcon 
             onClick={like}
             className={`
-              inline size-[1.75rem]
-              cursor-pointer
+              absolute left-1/2 size-[1.75rem]
+              fill-none stroke-light-border-icon
+              dark:stroke-dark-border-icon
+              cursor-pointer  
             `}
           />
         )}
-          <span 
+          <div 
             className={`
-              mx-[0.5rem] 
-              md:text-sm
+              absolute left-[calc(50%+1.75rem)] top-[0.25rem] w-[3rem] mx-[0.5rem]
+              text-start md:text-sm
             `}
           >
-            {props.board.likeCount}
-          </span>
+            {likeCount}
+          </div>
         </div>
-        <div className={`w-1/3`}>
+        <div className={`relative w-1/3`}>
           <CommentIcon 
             className={`
-              inline size-[1.5rem]
-              cursor-pointer
+              absolute left-[45%] size-[1.75rem]
+              cursor-pointer 
             `}
           />
-          <span 
+          <div 
             className={`
-              mx-[0.5rem] 
-              md:text-sm
+              absolute left-[calc(45%+1.75rem)] top-[0.25rem] w-[3rem] mx-[0.5rem]
+              text-start md:text-sm
             `}
           >
               3
-          </span>
+          </div>
         </div>
         <div className={`w-1/3`}>
-          {!props.board.saved ? 
-            (<BookmarkEmpty 
+          {props.board.saved ? 
+            (<BookmarkIcon
               className={`
                 inline size-[1.75rem]
+                stroke-light-border-icon
+                dark:stroke-dark-border-icon
                 cursor-pointer
               `}
-            />) : 
-            (<BookmarkFill 
+            />) : (<BookmarkIcon
               className={`
                 inline size-[1.75rem]
+                fill-none stroke-light-border-icon
+                dark:stroke-dark-border-icon
                 cursor-pointer
               `}
             />)

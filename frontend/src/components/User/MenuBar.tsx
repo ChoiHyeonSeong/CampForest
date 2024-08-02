@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReactComponent as ArticleIcon } from '@assets/icons/article-outline.svg';
-import { ReactComponent as BookMarkIcon } from '@assets/icons/bookmark-empty.svg';
+import { ReactComponent as BookMarkIcon } from '@assets/icons/bookmark.svg';
 import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 
 type Props = {

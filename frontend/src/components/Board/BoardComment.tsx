@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ReactComponent as HeartOutlineIcon } from '@assets/icons/Heart-outline-fill.svg'
-import { ReactComponent as FillHeartIcon } from '@assets/icons/heart-fill.svg'
+import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 import { Link } from 'react-router-dom';
 
 export type CommentType = {
@@ -114,7 +113,7 @@ const BoardComment = (props: Props) => {
           text-center
         `}
       >
-        <HeartOutlineIcon 
+        <HeartIcon 
           className={`
             size-[1.2rem] 
             cursor-pointer

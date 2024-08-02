@@ -69,16 +69,9 @@ export const filteredBoardList = (category: string, page: number, size: number) 
 export const boardDetail = (boardId: number) => {
   const params = { boardId: boardId };
 
-  const response = axios.get(`${API_URL}/board/detail`, {params});
+  const response = axiosInstance.get(`/board/detail`, {params});
   return response;
 }
-
-// export const boardUpdate = (boardId: number) => {
-//   const params = { boardId: boardId };
-
-//   const response = axios.delete(`${API_URL}/board`, {params});
-//   return response;
-// }
 
 export const boardDelete = (boardId: number) => {
   const params = { boardId: boardId };
@@ -90,9 +83,13 @@ export const boardDelete = (boardId: number) => {
 export const boardLike = async (boardId: number, userId: number) => {
   const response = await axiosInstance.post(`/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
+
+  return response.data.data;
 }
 
 export const boardDislike = async (boardId: number, userId: number) => {
   const response = await axiosInstance.delete(`/board/like?boardId=${boardId}&userId=${userId}`);
   console.log(response);
+
+  return response.data.data;
 }

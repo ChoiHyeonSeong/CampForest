@@ -79,7 +79,7 @@ const BoardDetail = () => {
 
   return (
     <div className={`flex justify-center min-h-screen`}>
-      <div className={`flex flex-col lg:flex-row w-full lg:w-[60rem] mb-[3rem] max-lg:p-[1.5rem] lg:pt-[1rem]`}>
+      <div className={`flex flex-col lg:flex-row w-full lg:w-[60rem] mb-[3rem] lg:pt-[1rem]`}>
         <div 
           className={`
             lg:w-3/5 min-h-[80vh]
