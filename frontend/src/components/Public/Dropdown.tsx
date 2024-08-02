@@ -47,7 +47,7 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
         <button
           type="button"
           className={`
-            ${shouldChangeIcon ? 'border-[#FF7F50]' : 'border-gray-300'} 
+            ${shouldChangeIcon ? 'border-light-signature dark:border-dark-signature' : 'border-light-border-1 dark:border-dark-border-1'} 
             inline-flex justify-between items-center w-full min-w-[7rem] px-[1rem] py-[0.5rem]
             border-light-border
             dark:border-dark-border
@@ -78,9 +78,9 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
         <div 
           className={`
             origin-top-left absolute left-0 w-max mt-[0.5rem] 
-            ring-light-black
-            dark:ring-dark-black
-            rounded-md shadow-lg ring-[0.25rem] ring-opacity-5 focus:outline-none
+            border-light-border-2
+            dark:border-dark-border-2
+            rounded-md shadow-lg border focus:outline-none
           `}
         >
           <div className={`py-[0.25rem]`}>
@@ -91,7 +91,7 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
                   block px-[1rem] py-[0.5rem] 
                   hover:text-light-signature
                   dark:hover:text-dark-signature
-                  text-sm  font-medium cursor-pointer duration-100
+                  text-sm font-medium cursor-pointer duration-100
                 `}
                 onClick={() => handleSelect(option)}
               >
