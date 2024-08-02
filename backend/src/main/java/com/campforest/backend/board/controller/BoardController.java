@@ -365,14 +365,13 @@ public class BoardController {
     @PostMapping("/comment")
     public ApiResponse<?> writeComment(
             Authentication authentication,
-            @RequestParam Long boardId,
             @RequestBody CommentRequestDto commentRequestDto) {
         try {
             Users users = userService.findByEmail(authentication.getName())
                     .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
             commentRequestDto.setCommentWriterId(users.getUserId());
-            boardService.writeComment(boardId, commentRequestDto);
+            boardService.writeComment(commentRequestDto.getBoardId(), commentRequestDto);
             return ApiResponse.createSuccessWithNoContent("댓글 작성 성공");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.COMMENT_CREATION_FAILED);
