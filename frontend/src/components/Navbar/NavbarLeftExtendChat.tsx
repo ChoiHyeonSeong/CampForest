@@ -25,25 +25,42 @@ const NavbarLeftExtendChat = (props: Props) => {
           onClick={() => props.toggleExtendMenu('chat')}
           className={`
             w-[1.25rem] h-[1.25rem] me-[0.75rem] 
-            fill-light-black
-            dark:fill-dark-black
+            fill-light-border-icon
+            dark:fill-dark-border-icon
             cursor-pointer
           `}
         />
-        <p className={`text-2xl`}>채팅</p>
+        <p className={`text-2xl font-medium`}>채팅</p>
       </div>
 
       {/* 채팅방 카테고리 */}
       <div 
         className={`
-          grid grid-cols-2 py-2
-          border-light-border-1
-          dark:border-dark-border-1
-          border-b text-center
+          flex w-full h-[2.5rem]
         `}
       >
-        <div>거래</div>
-        <div>커뮤니티</div>
+        <div
+          className={`
+            flex flex-all-center w-1/2 h-full
+            text-light-text border-light-border-2 hover:border-light-signature
+            dark:text-dark-text dark:border-dark-border-2 hover:dark:border-dark-signature
+            border-b hover:border-b-2 transition-all duration-150 cursor-pointer font-medium
+            
+          `}
+        >
+          일반
+        </div>
+        <div
+          className={`
+            flex flex-all-center w-1/2 h-full
+            text-light-text border-light-border-2 hover:border-light-signature
+            dark:text-dark-text dark:border-dark-border-2 hover:dark:border-dark-signature
+            border-b hover:border-b-2 transition-all duration-150 cursor-pointer font-medium
+            
+          `}
+        >
+          거래
+        </div>
       </div>
 
       {/* 채팅 유저 목록 */}

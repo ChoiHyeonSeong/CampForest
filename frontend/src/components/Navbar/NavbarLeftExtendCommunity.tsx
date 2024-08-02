@@ -62,8 +62,8 @@ const NavbarLeftExtendCommunity = (props: Props) => {
           onClick={() => props.toggleExtendMenu('community')}
           className={`
             w-[1.25rem] h-[1.25rem] me-[0.75rem] 
-            fill-light-black
-            dark:fill-dark-black
+            fill-light-border-icon
+            dark:fill-dark-border-icon
             cursor-pointer
           `}
         />

@@ -4,11 +4,11 @@ import userImage from '@assets/logo192.png'
 
 const Notification = () => {
   return (
-    <div className={`flex items-center py-[0.5rem]`}>
+    <div className={`flex items-center py-[0.75rem]`}>
       {/* 사용자 이미지 */}
       <div 
         className={`
-          w-1/6
+          shrink-0 size-[2.5rem]
           border-light-border
           dark:border-dark-border
           rounded-full border
@@ -17,14 +17,15 @@ const Notification = () => {
           <img 
             src={userImage} 
             alt="NoImg" 
-            className={`fit`}
+            className={`fit cursor-pointer`}
           />
       </div>
+
       {/* 팔로잉 알림 */}
-      <div className={`hidden grid-cols-4 w-5/6 items-center`}> {/* 사용하고싶으면 hidden -> grid */}
+      <div className={`flex w-full items-center`}>
         <div 
           className={`
-            col-span-3 px-[0.75rem]
+            px-[0.75rem]
             text-sm
           `}
         >
@@ -47,17 +48,18 @@ const Notification = () => {
         </div>
         <div 
           className={`
-            py-[0.25rem]
-            bg-light-signature text-light-white
-            dark:bg-dark-signature dark:text-dark-white
-            text-xs text-center rounded-md
+            shrink-0 w-[3.5rem] py-[0.35rem]
+            bg-light-signature text-light-white hover:bg-light-signature-hover
+            dark:bg-dark-signature hover:dark:bg-dark-signature-hover
+            text-xs text-center rounded-md cursor-pointer
           `}
         >
           팔로우
         </div>
       </div>
+      
       {/* 좋아요 / 댓글 알림 */}
-      <div className={`grid grid-cols-5 w-5/6 items-center`}>
+      <div className={`hidden w-full items-center`}>
         <div 
           className={`
             col-span-4 px-[0.75rem] 
@@ -81,16 +83,18 @@ const Notification = () => {
             20분
           </span>
         </div>
-        <img 
-          src={userImage} 
-          alt="NoImg" 
-          className={`
-            h-full 
-            border-light-border
-            dark:border-dark-border
-            border
-          `}
-        />
+        <div className={`shrink-0 size-[2.75rem]`}>
+          <img 
+            src={userImage} 
+            alt="NoImg" 
+            className={`
+              h-full 
+              border-light-border
+              dark:border-dark-border
+              border
+            `}
+          />
+        </div>
       </div>
     </div>
   )
