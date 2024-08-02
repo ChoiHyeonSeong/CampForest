@@ -2,6 +2,7 @@ package com.campforest.backend.user.dto.response;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.campforest.backend.user.model.Gender;
 import com.campforest.backend.user.model.Role;
@@ -20,7 +21,7 @@ public class ResponseUserDTO {
     private String nickname;
     private String profileImage;
     @Setter
-    private List<Integer> similarUsers;
+    private Map<String, Object> similarUsers;
 
     public static ResponseUserDTO fromEntity(Users user) {
         return ResponseUserDTO.builder()

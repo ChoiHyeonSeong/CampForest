@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Map<String, Object> getPythonRecommendUsers(Long userId) {
 		RestTemplate restTemplate = new RestTemplate();
-		String pythonUrl = "http://127.0.0.1:8000/similar-users/" + userId;
+		String pythonUrl = filterServerUrl + userId;
 		ResponseEntity<List> pythonResponse = restTemplate.getForEntity(pythonUrl, List.class);
 
 		if (pythonResponse.getStatusCode() == HttpStatus.OK) {
