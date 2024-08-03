@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
@@ -7,12 +7,27 @@ import { ReactComponent as HomeIcon } from '@assets/icons/home.svg'
 import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as MyPageIcon } from '@assets/icons/mypage.svg'
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 type Props = {
   toggleMenu: () => void;
   closeMenu: () => void;
 }
 
 const NavbarBottom = (props: Props) => {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.userStore);
+  
+  const clickMyPage = () => {
+    if (user.isLoggedIn) {
+      navigate(`user/${user.userId}`);
+    } else {
+      alert('로그인 해주세요.');
+      navigate('user/login');
+    }
+  };
+
   return (
     <div 
       className={`
@@ -83,6 +98,7 @@ const NavbarBottom = (props: Props) => {
         className={`flex flex-all-center w-[2.75rem] cursor-pointer`}
       >
         <MyPageIcon 
+          onClick={clickMyPage}
           className={`
             size-[1.5rem]
             fill-light-black stroke-light-black

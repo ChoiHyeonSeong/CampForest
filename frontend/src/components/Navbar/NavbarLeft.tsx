@@ -428,7 +428,7 @@ const NavbarLeft = (props: Props) => {
               overflow-y-auto scrollbar-hide
             `}
           >
-            <NavbarLeftExtendMobile selectedExtendMenu={selectedExtendMenu}/>
+            <NavbarLeftExtendMobile selectedExtendMenu={selectedExtendMenu} closeMenu={props.closeMenu}/>
           </div>
         </div>
       </div>
