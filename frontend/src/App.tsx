@@ -24,6 +24,7 @@ import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
 import BoardDetail from '@components/Board/BoardDetail';
 import { useThemeEffect } from '@hooks/useThemeEffect';
+import SearchPage from '@pages/SearchPage';
 
 function App() {
   const dispatch = useDispatch()
@@ -82,6 +83,7 @@ function App() {
             <Route path='/user/password/*' element={<FindPassword/>}/>
             <Route path="/community/:category" element={<Community/>}/>
             <Route path="/board/detail/:boardId" element={<BoardDetail/>}/>
+            <Route path="/search/*" element={<SearchPage/>}/>
           </Routes>
           {/* 여기까지 컨텐츠 */}
         </div> 
