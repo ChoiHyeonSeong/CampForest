@@ -1,22 +1,45 @@
 import React, { useState } from 'react';
 
+type Districts = {
+  name: string;
+  lat: number;
+  lng: number;
+}
+
 type AdministrativeDivision = {
   city: string;
-  districts: string[];
+  districts: Districts[];
+}
+
+type SelecetedLocType = {
+  city: string; 
+  district: string
 }
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   divisions: AdministrativeDivision[];
-  onSelect: (city: string, district: string) => void;
+  onSelect: (city: string, district: string, lat: number, lng: number) => void;
+  selectedLocation: SelecetedLocType | null;
 }
 
 const CampingFilter = (props: Props) => {
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string>('전체');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('전체');
+
+  const [selectedLat, setSelectedLat] = useState(35.9078)
+  const [selectedLng, setSelectedLng] = useState(127.7669)
 
   if (!props.isOpen) return null;
+
+  const closeFilter = () => {
+    if (props.selectedLocation !== null) {
+      setSelectedCity(props.selectedLocation.city)
+      setSelectedDistrict(props.selectedLocation.district)
+    }
+    props.onClose()
+  }
 
   return (
     <div 
@@ -47,7 +70,9 @@ const CampingFilter = (props: Props) => {
                     rounded text-sm
                   `}
                   onClick={() => {
-                    setSelectedDistrict(null);
+                    setSelectedDistrict(division.districts[0].name);
+                    setSelectedLat(division.districts[0].lat);
+                    setSelectedLng(division.districts[0].lng);
                     setSelectedCity(division.city);
                   }}
                 >
@@ -65,15 +90,19 @@ const CampingFilter = (props: Props) => {
                   .find((division) => division.city === selectedCity)
                   ?.districts.map((district) => (
                     <button
-                      key={district}
+                      key={district.name}
                       className={`
-                        ${selectedDistrict === district ? 'bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white' : 'bg-light-gray dark:bg-dark-gray'}
+                        ${selectedDistrict === district.name ? 'bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white' : 'bg-light-gray dark:bg-dark-gray'}
                         p-[0.5rem]
                         rounded text-sm
                       `}
-                      onClick={() => setSelectedDistrict(district)}
+                      onClick={() => {
+                        setSelectedDistrict(district.name);
+                        setSelectedLat(district.lat);
+                        setSelectedLng(district.lng);
+                      }}
                     >
-                      {district}
+                      {district.name}
                     </button>
                   ))}
             </div>
@@ -82,18 +111,28 @@ const CampingFilter = (props: Props) => {
         </div>
         <div className='flex justify-between'>
           <button
-            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            onClick={props.onClose}
+            onClick={closeFilter}
+            className="
+              mt-[1rem] px-[1rem] py-[0.5rem] 
+              bg-light-signature text-light-white hover:bg-light-signature-hover
+              dark:bg-dark-signature dark:text-dark-white dark:hover:bg-dark-signature-hover
+              rounded
+            "
           >
             닫기
           </button>
           
           <button
-            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
             onClick={() => {
-              props.onSelect(`${selectedCity ? selectedCity : ''}`, `${selectedDistrict ? selectedDistrict : ''}`);
+              props.onSelect(selectedCity, selectedDistrict, selectedLat, selectedLng);
               props.onClose();
             }}
+            className={`
+              mt-[1rem] px-[1rem] py-[0.5rem] 
+              bg-light-signature text-light-white hover:bg-light-signature-hover 
+              dark:bg-dark-signature dark:text-dark-white dark:hover:bg-dark-signature-hover
+              rounded
+            `}
           >
             확인
           </button>
