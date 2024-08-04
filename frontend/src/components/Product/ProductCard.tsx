@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 // icon
 import { ReactComponent as EyeIcon } from '@assets/icons/eyes.svg'
 import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
-// import ProfileImgEX from '@assets/images/productExample.png'
 import { Link } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
 
