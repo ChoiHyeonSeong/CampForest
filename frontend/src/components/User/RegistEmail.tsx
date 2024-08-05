@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { registRequired, registClear } from '@store/registSlice';
+import { setIsLoading } from '@store/modalSlice';
 
-import '../../../node_modules/react-datepicker/dist/react-datepicker.css';
-import axios from 'axios';
-
-const API_URL = 'http://i11d208.p.ssafy.io/api'
+import { requestEmail, validateEmail } from '@services/authService';
 
 const RegistEmail: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,72 +17,154 @@ const RegistEmail: React.FC = () => {
     if (aboutLocation.pathname !== './information') {
       dispatch(registClear());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aboutLocation.pathname]);
 
   const registFormData = useSelector((state: RootState) => state.registStore);
 
-  const birthdate = registFormData.userBirthdate ? new Date(registFormData.userBirthdate) : null;
-
-  const [phoneValidateNumber, setphoneValidateNumber] = useState<string>('');
-  const [phoneRequest, setPhoneRequest] = useState<boolean>(true);
-  const [emailRequestButton, setEmailRequestButton] = useState<string>('요청');
-  const [emailValidateNumber, setEmailValidateNumber] = useState<string>('');
-  const [emailRequest, setEmailRequest] = useState<boolean>(true);
+  const [firstPassword, setFirstPassword] = useState<string>('');
   const [repeatPassword, setRepeatPassword] = useState<string>('');
+  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
+
+  const [inputPhoneValue, setInputPhoneValue] = useState<string>('');
+  const [phoneValidateNumber, setPhoneValidateNumber] = useState<string>('');
+  const [phoneCertificationState, setPhoneCertificationState] = useState<0 | 1 | 2>(0);
+
+  const [inputEmailValue, setInputEmailValue] = useState<string>('');
+  const [emailValidateNumber, setEmailValidateNumber] = useState<string>('');
+  const [emailCertificationState, setEmailCertificationState] = useState<0 | 1 | 2>(0);
+  
+  const certificationBtnClass = {
+    0: 'bg-light-gray-3 dark:bg-dark-gray-3 hover:bg-light-signature dark:hover:bg-dark-signature', // 인증전
+    1: 'bg-light-signature dark:bg-dark-signature hover:bg-light-signature-hover dark:hover:bg-dark-signature-hover', // 인증중
+    2: 'bg-light-gray dark:bg-dark-gray ', // 인증완료(비활성화)
+  };
+
+  const certificationBtnText = {
+    0: '요청',
+    1: '인증',
+    2: '인증완료'
+  }
+  
+  const certificationInputTextClass = {
+    0: 'text-light-black dark:text-dark-black',
+    1: 'text-light-black dark:text-dark-black',
+    2: 'text-light-gray-2 dark:text-dark-gray-2'
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     dispatch(
       registRequired({
-        userName: name === 'userName' ? value : registFormData.userName,
-        userBirthdate: registFormData.userBirthdate,
-        userGender: name === 'userGender' ? value : registFormData.userGender,
-        phoneNumber: name === 'phoneNumber' ? value : registFormData.phoneNumber,
-        userEmail: name === 'userEmail' ? value : registFormData.userEmail,
-        userPassword: name === 'userPassword' ? value : registFormData.userPassword,
+        userName: name === 'userName' ? value : registFormData.required.userName,
+        phoneNumber: name === 'phoneNumber' ? value : registFormData.required.phoneNumber,
+        userEmail: name === 'userEmail' ? value : registFormData.required.userEmail,
+        userPassword: name === 'userPassword' ? value : registFormData.required.userPassword,
       }),
     );
   };
 
-  const handleDateChange = (date: Date | null) => {
+  // 휴대폰 인증
+  const requestCertificationPhone = async () => {
+    alert('아직 기능 미구현(아무숫자나 넣고 인증 누르기)')
+    setPhoneCertificationState(1)
+  }
+
+  const validateCertificationPhone = async () => {
+    alert('인증 완료되었습니다. (기능미구현임)')
+    setPhoneCertificationState(2)
     dispatch(
       registRequired({
-        userName: registFormData.userName,
-        userBirthdate: date?.toISOString(),
-        userGender: registFormData.userGender,
-        phoneNumber: registFormData.phoneNumber,
-        userEmail: registFormData.userEmail,
-        userPassword: registFormData.userPassword,
-      }),
+        ...registFormData.required,
+        phoneNumber: inputPhoneValue,
+      })
     );
-  };
+  }
 
-  const requestEmail = async () => {
+  // 이메일 인증
+  const requestCertificationEmail = async () => {
     try {
-      const response = await axios.post(`${API_URL}/email/request`, {
-        email: registFormData.userEmail,
-      });
-      setEmailRequest(false);
-      setEmailRequestButton('인증');
+      dispatch(setIsLoading(true))
+      const result = await requestEmail(inputEmailValue)
+      if (result?.data.status === 'C000') {
+        alert('이메일이 발송되었습니다.')
+        setEmailCertificationState(1)
+      } else {
+        alert('다시 요청해주세요.')
+      }
+      dispatch(setIsLoading(false))
     } catch (error) {
-      console.error('이메일 인증 요청 오류:', error);
+      console.log(error)
     }
-  };
+  }
 
-  const validateEmail = async () => {
+  const validateCertificationEmail = async () => {
     try {
-      const response = await axios.post(`${API_URL}/email/validation`, {
-        email: registFormData.userEmail,
-        authCode: emailValidateNumber,
-      });
-      console.log(response);
-      setEmailRequest(true);
-      setEmailRequestButton('인증완료');
+      const result = await validateEmail(inputEmailValue, emailValidateNumber)
+      if (result?.data.status === 'C000') {
+        alert('정상적으로 인증되었습니다.');
+        setEmailCertificationState(2);
+        dispatch(
+          registRequired({
+            ...registFormData.required,
+            userEmail: inputEmailValue,
+          })
+        );
+      } else {
+        alert('인증에 실패했습니다. 다시 요청해주세요.')
+        setEmailCertificationState(0)
+      }
     } catch (error) {
-      console.error('이메일 인증 확인 오류:', error);
+      console.log(error)
     }
-  };
+  }
+
+  // 비밃번호 확인 로직
+  useEffect(() => {
+    // 비밀번호 유효성 검사
+    const validatePassword = (password: string) => {
+      const lengthRegex = /^.{8,16}$/;
+      const uppercaseRegex = /[A-Z]/;
+      const lowercaseRegex = /[a-z]/;
+      const numberRegex = /[0-9]/;
+      const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
+      const conditions = [
+        uppercaseRegex.test(password),
+        lowercaseRegex.test(password),
+        numberRegex.test(password),
+        specialCharRegex.test(password)
+      ];
+
+      const validConditionsCount = conditions.filter(Boolean).length;
+
+      return lengthRegex.test(password) && validConditionsCount >= 3;
+    };
+
+    if (validatePassword(firstPassword)) {
+      setIsPasswordValid(true);
+    } else {
+      setIsPasswordValid(false);
+    }
+  }, [firstPassword]);
+
+  useEffect(() => {
+    // 비밀번호 일치 여부 확인
+    if (repeatPassword === firstPassword) {
+      dispatch(
+        registRequired({
+          ...registFormData.required,
+          userPassword: repeatPassword,
+        })
+      );
+    } else {
+      dispatch(
+        registRequired({
+          ...registFormData.required,
+          userPassword: '',
+        })
+      );
+    };
+  }, [firstPassword, repeatPassword])
 
   return (
     <div>
@@ -116,87 +195,12 @@ const RegistEmail: React.FC = () => {
             placeholder="이름을 입력해주세요."
             type="text"
             name="userName"
-            value={registFormData.userName}
+            value={registFormData.required.userName}
             onChange={handleChange}
           />
         </div>
-        <div 
-          className={`
-            my-[3rem] lg:my-[1.5rem]
-            border-light-border
-            dark:border-dark-border
-            md:border-b
-          `}
-        >
-          <div 
-            className={`
-              mb-[0.25rem]
-              font-medium 
-            `}
-          >
-            생년월일
-          </div>
-          <div className={`flex md:flex-row flex-col`}>
-            <DatePicker
-              placeholderText="날짜를 선택해주세요."
-              className={`
-                w-full px-[1rem] py-[0.75rem]
-                bg-light-white border-light-border
-                dark:bg-dark-white dark:border-dark-border
-                border-b md:border-none focus:outline-none
-              `}
-              dateFormat="yyyy.MM.dd"
-              formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
-              showYearDropdown
-              showMonthDropdown
-              scrollableYearDropdown
-              shouldCloseOnSelect
-              yearDropdownItemNumber={100}
-              minDate={new Date('1900-01-01')}
-              maxDate={new Date()}
-              selected={birthdate}
-              onChange={handleDateChange}
-            />
-            <div className={`md:hidden mt-[3rem] mb-[1rem]`}>
-              성별
-            </div>
-            <div className={`flex items-center space-x-[2rem] md:ms-auto me-[1rem]`}>
-              <div className={`flex items-center`}>
-                <input
-                  className={`
-                    size-[1rem] mx-[0.75rem]
-                    accent-light-black
-                    dark:accent-dark-black
-                  `}
-                  type="radio"
-                  name="userGender"
-                  value="M"
-                  checked={registFormData.userGender === 'M'}
-                  onChange={handleChange}
-                />
-                <span>
-                  남자
-                </span>
-              </div>
-              <div className={`flex items-center`}>
-                <input
-                  className={`size-[1rem] mx-[0.75rem]
-                    accent-light-black
-                    dark:accent-dark-black
-                  `}
-                  type="radio"
-                  name="userGender"
-                  value="F"
-                  checked={registFormData.userGender === 'F'}
-                  onChange={handleChange}
-                />
-                <span>
-                  여자
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        
+        {/* 휴대폰 */}
         <div className={`my-[3rem] lg:my-[1.5rem]`}>
           <div 
             className={`
@@ -217,6 +221,7 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
+                  ${certificationInputTextClass[phoneCertificationState]}
                   px-[1rem] py-[0.75rem]
                   bg-light-white
                 dark:bg-dark-white
@@ -226,8 +231,9 @@ const RegistEmail: React.FC = () => {
                 type="text"
                 maxLength={11}
                 name="phoneNumber"
-                value={registFormData.phoneNumber}
-                onChange={handleChange}
+                value={inputPhoneValue}
+                onChange={(e) => setInputPhoneValue(e.target.value)}
+                disabled={phoneCertificationState === 2}
               />
             </div>
             <div 
@@ -240,6 +246,7 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
+                  ${certificationInputTextClass[phoneCertificationState]}
                   w-[75%] px-[1rem] py-[0.75rem]
                   bg-light-white
                   dark:bg-dark-white
@@ -250,22 +257,31 @@ const RegistEmail: React.FC = () => {
                 name="phoneValidateNumber"
                 value={phoneValidateNumber}
                 onChange={(event) => {
-                  setphoneValidateNumber(event.target.value);
+                  setPhoneValidateNumber(event.target.value);
                 }}
+                disabled={phoneCertificationState === 2}
               />
               <button 
+                onClick={(event) => {
+                  event.preventDefault();
+                  phoneCertificationState === 0 ? requestCertificationPhone() : validateCertificationPhone();
+                }}
                 className={`
+                  ${certificationBtnClass[phoneCertificationState]}
                   w-[20%] h-[1.75rem] 
-                  text-light-white bg-light-gray-3 hover:bg-light-signature
-                  dark:text-dark-white dark:bg-dark-gray-3 dark:hover:bg-dark-signature 
+                  text-light-white
+                  dark:text-dark-white
                   text-[0.75rem] transition-all duration-300 rounded-sm 
                 `}
+                disabled={phoneCertificationState === 2}
               >
-                요청
+                {certificationBtnText[phoneCertificationState]}
               </button>
             </div>
           </div>
         </div>
+        
+        {/* 이메일 */}
         <div>
           <div 
             className={`
@@ -286,6 +302,7 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
+                  ${certificationInputTextClass[emailCertificationState]}
                   px-[1rem] py-[0.75rem]
                   bg-light-white
                   dark:bg-dark-white
@@ -294,8 +311,9 @@ const RegistEmail: React.FC = () => {
                 placeholder="이메일을 입력해주세요."
                 type="email"
                 name="userEmail"
-                value={registFormData.userEmail}
-                onChange={handleChange}
+                value={inputEmailValue}
+                onChange={(e) => setInputEmailValue(e.target.value)}
+                disabled={emailCertificationState === 2}
               />
             </div>
             <div 
@@ -308,6 +326,7 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
+                  ${certificationInputTextClass[emailCertificationState]}
                   w-[75%] px-[1rem] py-[0.75rem]
                   bg-light-white
                   dark:bg-dark-white
@@ -320,25 +339,23 @@ const RegistEmail: React.FC = () => {
                 onChange={(event) => {
                   setEmailValidateNumber(event.target.value);
                 }}
+                disabled={emailCertificationState === 2}
               />
               <button
                 onClick={(event) => {
                   event.preventDefault();
-                  emailRequest ? requestEmail() : validateEmail();
+                  emailCertificationState === 0 ? requestCertificationEmail() : validateCertificationEmail();
                 }}
                 className={`
-                  ${emailRequest ? 
-                    'bg-light-gray-3 dark:bg-dark-gray-3 hover:bg-light-signature dark:hover:bg-dark-signature' : 
-                    'bg-light-signature dark:bg-dark-signature hover:bg-light-signature-hover dark:hover:bg-dark-signature-hover'
-                  } 
+                  ${certificationBtnClass[emailCertificationState]}
                   w-[20%] h-[1.75rem] 
                   text-light-white
                   dark:text-dark-white 
                   text-[0.75rem] transition-all duration-300 rounded-sm 
                 `}
-                disabled={emailRequestButton === '인증완료'}
+                disabled={emailCertificationState === 2}
               >
-                {emailRequestButton}
+                {certificationBtnText[emailCertificationState]}
               </button>
             </div>
           </div>
@@ -369,8 +386,10 @@ const RegistEmail: React.FC = () => {
             placeholder="비밀번호를 입력해주세요."
             type="password"
             name="userPassword"
-            value={registFormData.userPassword}
-            onChange={handleChange}
+            value={firstPassword}
+            onChange={(event) => {
+              setFirstPassword(event.target.value)
+            }}
           />
         </div>
         <div 
@@ -379,7 +398,7 @@ const RegistEmail: React.FC = () => {
             text-xs 
           `}
         >
-          8~16자, 영문 대소문자, 숫자, 특수문자 2종류 이상 사용해주세요.
+          비밀번호는 8~16자 사이로, 영문 대소문자, 숫자, 특수문자 중 3종류 이상을 포함해야 합니다.
         </div>
         <div 
           className={`
@@ -391,6 +410,7 @@ const RegistEmail: React.FC = () => {
           >
           <input
             className={`
+              ${isPasswordValid ? '' : 'dark:placeholder-dark-gray-1 placeholder-light-gray-1'}
               px-[1rem] py-[0.75rem]
               bg-light-white
               dark:bg-dark-white
@@ -403,6 +423,7 @@ const RegistEmail: React.FC = () => {
             onChange={(event) => {
               setRepeatPassword(event.target.value);
             }}
+            disabled={!isPasswordValid}
           />
         </div>
       </form>

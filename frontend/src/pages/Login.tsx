@@ -47,8 +47,7 @@ function Login() {
               `} 
               placeholder="이메일을 입력하세요."
               onChange={(e) => setEmail(e.target.value)}
-              required 
-              autoComplete="username"
+              required
             />
           </div>
 
@@ -77,7 +76,6 @@ function Login() {
               placeholder="비밀번호를 입력하세요." 
               onChange={(e) => setPassword(e.target.value)}
               required
-              autoComplete="current-password"
             />
           </div>
 

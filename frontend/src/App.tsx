@@ -13,8 +13,8 @@ import FindPassword from '@pages/FindPassword';
 import Community from '@pages/Community';
 import BoardWrite from '@components/Board/BoardWrite';
 import LoadingModal from '@components/Public/LoadingModal';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@store/store';
+
+import { useDispatch } from 'react-redux';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
 import BoardDetail from '@components/Board/BoardDetail';
@@ -23,19 +23,12 @@ import SearchPage from '@pages/SearchPage';
 import { WebSocketProvider } from 'Context/WebSocketContext'
 
 function App() {
-  const dispatch = useDispatch();
-  const isAnyModalOpen = useSelector((state: RootState) => state.modalStore.isAnyModalOpen);
+  const dispatch = useDispatch()
   const currentLoc = useLocation();
 
   useThemeEffect();
 
   useEffect(() => {
-    // 네이버 API 호출
-    const naverMapApiKey = process.env.REACT_APP_NAVERMAP_API_KEY;
-    const script = document.createElement('script');
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${naverMapApiKey}`;
-    document.head.appendChild(script);
-
     const bodyBox = document.querySelector('body') as HTMLElement;
     bodyBox.classList.add('bg-light-white');
     bodyBox.classList.add('dark:bg-dark-white');
@@ -47,23 +40,6 @@ function App() {
     window.scrollTo(0, 0);
     dispatch(setIsBoardWriteModal(false));
   }, [currentLoc]);
-
-  useEffect(() => {
-    const currentScrollY = window.scrollY;
-    const contentBox = document.querySelector('#contentBox') as HTMLElement;
-
-    if (isAnyModalOpen) {
-      // 모달이 열릴 때 스크롤 방지
-      contentBox.classList.add('no-scroll');
-      contentBox.style.top = `-${currentScrollY}px`;
-    } else {
-      // 모달이 닫힐 때 스크롤 허용
-      const scrollY = parseInt(contentBox.style.top || '0') * -1;
-      contentBox.style.top = '';
-      contentBox.classList.remove('no-scroll');
-      window.scrollTo(0, scrollY || currentScrollY);
-    }
-  }, [isAnyModalOpen]);
 
   return (
     <WebSocketProvider>

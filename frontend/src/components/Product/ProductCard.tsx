@@ -108,8 +108,8 @@ const ProductCard = (props: Props) => {
                 className={`
                   size-[1rem] md:size-[1.25rem]
                   fill-light-heart stroke-light-heart
-                dark:fill-dark-heart dark:stroke-dark-heart
-                `} 
+                  dark:fill-dark-heart dark:stroke-dark-heart
+                  `} 
               />
             ) : 
             (<HeartIcon 

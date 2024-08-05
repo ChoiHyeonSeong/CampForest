@@ -1,26 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux'
 import { RootState } from '@store/store';
 
 const LoadingModal= () => {
   const isLoading = useSelector((state: RootState) => state.modalStore.isLoading)
-
-  useEffect(() => {
-    const currentScrollY = window.scrollY;
-    const contentBox = document.querySelector('#contentBox') as HTMLElement;
-    
-    if (isLoading) {
-      // 모달이 열릴 때 스크롤 방지
-      contentBox.classList.add('no-scroll');
-      contentBox.style.top = `-${currentScrollY}px`;
-    } else {
-      // 모달이 닫힐 때 스크롤 허용
-      const scrollY = parseInt(contentBox.style.top || '0') * -1;
-      contentBox.style.top = '';
-      contentBox.classList.remove('no-scroll');
-      window.scrollTo(0, scrollY || currentScrollY);
-    }
-  }, [isLoading]);
 
   return (
     <div 
