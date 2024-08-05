@@ -23,21 +23,28 @@ type SelecetedLocType = {
   lng: number;
 }
 
+type FilterCondition = {
+  type: 'Location' | 'Normal';
+  text: string;
+};
+
 function CampingSearch() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalBlocked, setIsModalBlocked] = useState<boolean>(false);
 
+  const [filterCondition, setFilterCondition] = useState<FilterCondition[]>([]);
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<SelecetedLocType>({city: '전체', district: '전체', lat: 35.9078, lng: 127.7669});
+  const [selectedLocation, setSelectedLocation] = useState<SelecetedLocType | null>(null);
+
+  const currentLat = useRef(35.9078);
+  const currentLng = useRef(127.7669);
+  const [map, setMap] = useState<naver.maps.Map | null>(null);
 
   const handleSelect = (city: string, district: string, lat: number, lng: number) => {
     setSelectedLocation({ city, district, lat, lng });
     console.log(city, district, lat, lng)
   };
-
-  const currentLat = useRef(35.9078);
-  const currentLng = useRef(127.7669);
-  const [map, setMap] = useState<naver.maps.Map | null>(null);
 
   // 모달이 오픈될때 Modal을 block시킴
   const modalOpen = () => {
@@ -72,13 +79,13 @@ function CampingSearch() {
         center: new naver.maps.LatLng(currentLat.current, currentLng.current),
         zoom: 8
       };
-    
       const mapInstance = new naver.maps.Map('map', mapOptions);
       setMap(mapInstance); // map 객체를 상태에 저장
     } catch (error) {
       console.log(error)
       console.log("Kakao map not loaded")
     }
+
     return () => {
       setIsModalOpen(false);
       setIsModalBlocked(false);
@@ -114,39 +121,69 @@ function CampingSearch() {
     moveMapCenter(currentLat.current, currentLng.current)
   }
 
+
+  // useEffect(() => {
+  //   setFilterCondition(prevConditions => {
+  //     // 이전의 Location 타입 조건을 제거
+  //     const updatedConditions = prevConditions.filter(condition => condition.type !== 'Location');
+      
+  //     if (selectedLocation===null) return updatedConditions;
+
+  //     // 새로운 조건이 "전체"가 아니면 추가
+  //     selectedLocation.forEach(location => {
+  //       if (location.city !== "전체" || location.district !== "전체") {
+  //         const newCondition: FilterCondition = {
+  //           type: 'Location',
+  //           text: location.district === "전체" 
+  //             ? location.city 
+  //             : `${location.city} ${location.district}`
+  //         };
+  //         updatedConditions.push(newCondition);
+  //       }
+  //     });
+      
+  //     return updatedConditions;
+  //   });
+
+  //   console.log(filterCondition)
+  // }, [selectedLocation])
+
+
   // 여기서 이제 지역필터를 확인 하는순간 위치 변화되도록
-  useEffect(() => {
-    if (selectedLocation?.city === '전체') {
-      moveMapCenter(selectedLocation.lat, selectedLocation.lng, 8)
-    } else if (selectedLocation?.district === '전체') {
-      // city는 선택되고 district는 선택안됐을때
-      moveMapCenter(selectedLocation.lat, selectedLocation.lng, 9)
-    } else {
-      // city, districts 둘다 선택됐을때
-      moveMapCenter(selectedLocation.lat, selectedLocation.lng, 14)
-    }
-  }, [selectedLocation])
+  // useEffect(() => {
+  //   if (selectedLocation?.city === '전체') {
+  //     moveMapCenter(selectedLocation.lat, selectedLocation.lng, 8)
+  //   } else if (selectedLocation?.district === '전체') {
+  //     // city는 선택되고 district는 선택안됐을때
+  //     moveMapCenter(selectedLocation.lat, selectedLocation.lng, 9)
+  //   } else {
+  //     // city, districts 둘다 선택됐을때
+  //     moveMapCenter(selectedLocation.lat, selectedLocation.lng, 14)
+  //   }
+  // }, [selectedLocation])
 
-  useEffect(() => {
+
+
+
+
+  // useEffect(() => {
     
-    const contentBox = document.querySelector('#contentBox') as HTMLElement;
-    const currentScrollY = window.scrollY;
+  //   const contentBox = document.querySelector('#contentBox') as HTMLElement;
+  //   const currentScrollY = window.scrollY;
 
-    if (isModalOpen) {
-      // 모달이 열릴 때 스크롤 방지
-      contentBox.classList.add('no-scroll');
-      contentBox.style.top = `-${currentScrollY}px`;
-      contentBox.style.zIndex = '20';
-      console.log(contentBox.style.top)
-    } else {
-      // 모달이 닫힐 때 스크롤 허용
-      const scrollY = parseInt(contentBox.style.top || '0') * -1;
-      contentBox.style.top = '';
-      contentBox.style.zIndex = '';
-      contentBox.classList.remove('no-scroll');
-      window.scrollTo(0, scrollY || currentScrollY);
-    }
-  }, [isModalOpen]);
+  //   if (isModalOpen) {
+  //     // 모달이 열릴 때 스크롤 방지
+  //     contentBox.style.top = `-${currentScrollY}px`;
+  //     contentBox.style.zIndex = '20';
+  //     console.log(contentBox.style.top)
+  //   } else {
+  //     // 모달이 닫힐 때 스크롤 허용
+  //     const scrollY = parseInt(contentBox.style.top || '0') * -1;
+  //     contentBox.style.top = '';
+  //     contentBox.style.zIndex = '';
+  //     window.scrollTo(0, scrollY || currentScrollY);
+  //   }
+  // }, [isModalOpen]);
 
   return (
     <div className={`lg:h-[calc(100vh-3.2rem)] z-[30]`}>
@@ -174,6 +211,7 @@ function CampingSearch() {
           </div>
           
           <div className={`w-[100%] lg:w-[calc(100%-40rem-1rem)] lg:min-w-[30rem] lg:h-[100%] lg:ms-[1rem] my-[0.75rem] lg:my-0`}>
+            
             <div className={`h-[3rem]`}>
               <div className={`relative w-[100%]`}>
                 <div className={`absolute left-[0.75rem] top-[0.9rem]`}>
@@ -206,6 +244,7 @@ function CampingSearch() {
                 </div>
               </div>
             </div>
+
             <div onClick={() => setIsFilterOpen(true)} className='flex h-[1.5rem] mx-[1rem] cursor-pointer'>
               <div>필터</div>
               <FilterIcon className={`fill-light-black dark:fill-dark-black`}/>
@@ -217,7 +256,12 @@ function CampingSearch() {
               onSelect={handleSelect}
               selectedLocation={selectedLocation}
             />
-            <div className={`lg:h-[35.5rem] overflow-y-auto scrollbar-hide`}>
+            
+            <div className={`${filterCondition.length > 1 ? 'h-[2rem]' : 'h-0'}`}>
+              
+            </div>
+
+            <div className={`${filterCondition.length > 1 ? 'lg:h-[33.5rem]' : 'lg:h-[35.5rem]'} overflow-y-auto scrollbar-hide`}>
               <CampingList modalOpen={modalOpen} />
             </div>
           </div>

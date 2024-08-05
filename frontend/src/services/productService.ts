@@ -1,8 +1,6 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL
-
 type ProductRegistDto = {
   productName: string,
   productPrice: number | undefined,
@@ -47,12 +45,12 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
 }
 
 export const productList = async (searchParams: SearchParams) => {
-  const response = await axios.get(`${API_URL}/product/search`, { params: searchParams});
+  const response = await axios.get(`/product/search`, { params: searchParams});
 
   return response.data.data;
 }
 
 export const productDetail = async (productId: number) => {
-  const response = await axios.get(`${API_URL}/product/${productId}`);
+  const response = await axios.get(`/product/${productId}`);
   return response.data.data;
 }
