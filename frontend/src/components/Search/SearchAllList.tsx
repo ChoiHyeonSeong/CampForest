@@ -56,9 +56,9 @@ const SearchAllList = (props: Props) => {
           
         </div>
         <div className=''>
+          {/* <SearchProfile />
           <SearchProfile />
-          <SearchProfile />
-          <SearchProfile />
+          <SearchProfile /> */}
         </div>
       </div>
 

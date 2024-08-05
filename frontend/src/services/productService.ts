@@ -54,3 +54,11 @@ export const productDetail = async (productId: number) => {
   const response = await axios.get(`/product/${productId}`);
   return response.data.data;
 }
+
+export const productSearch = async ( productType:string) => {
+  const params = {productType: productType}
+  const response = await axiosInstance.get(`/product/search`, { params: params });
+
+  console.log(response.data.data.content);
+  return (response)
+}

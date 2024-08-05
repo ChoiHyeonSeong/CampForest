@@ -6,6 +6,13 @@ type Props = {}
 const SearchProductList = (props: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('전체');
+  // const [productList, setProductList] = useState<ProductType[]>([]);
+  
+  // API 연동
+  // const fetchProductList = async () => {
+  //   const result = await productSearch('제목', 0, 10);
+  //   setProductList(result);
+  // }
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -15,7 +22,6 @@ const SearchProductList = (props: Props) => {
     setSelectedFilter(filter);
     setIsDropdownOpen(false); // 메뉴 선택 후 드롭다운 닫기
   };
-
 
   return (
     <div>
@@ -61,7 +67,7 @@ const SearchProductList = (props: Props) => {
           {isDropdownOpen && (
             <div
               className='
-                absolute z-10 right-0 w-[5rem] mt-[0.5rem]
+                absolute z-[15] right-0 w-[5rem] mt-[0.5rem]
                 bg-light-white
                 dark:bg-dark-white
                 shadow-lg rounded-md font-medium overflow-hidden'

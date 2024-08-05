@@ -327,8 +327,8 @@ function Detail() {
                   </div>
                   <div 
                     className={`
-                      text-light-warning
-                      dark:text-dark-warning
+                      text-light-heart
+                      dark:text-dark-heart
                       font-medium
                     `}
                   >
@@ -337,7 +337,9 @@ function Detail() {
                 </div>
                 <div 
                   className={`
-                    w-full lg:w-4/5 h-4  
+                    w-full lg:w-4/5 h-4
+                    bg-light-gray
+                    dark:bg-dark-gray
                     rounded-full
                   `}
                 >
@@ -345,7 +347,7 @@ function Detail() {
                     className={`
                       relative w-1/2 h-full
                       bg-gradient-to-r from-light-warning to-light-signature
-                      dark:from-dark-warning dkar:to-dark-signature
+                      dark:from-dark-warning dark:to-dark-signature
                       rounded-full
                     `}
                   >
@@ -375,7 +377,7 @@ function Detail() {
               className={`
                 flex flex-all-center w-1/2 md:max-w-[20rem] lg:w-[12rem] h-[2.5rem] py-[0.5rem] 
                 bg-light-signature text-light-white
-                dark:bg-dark-signature dark:text-dark-white
+                dark:bg-dark-signature
                 rounded-md 
               `}
             >
