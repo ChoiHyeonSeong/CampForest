@@ -1,7 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-const API_URL = process.env.REACT_APP_BACKEND_URL
-
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
@@ -17,7 +15,7 @@ type LoginResponse = {
 }
 
 const axiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: process.env.REACT_APP_BACKEND_URL,
   withCredentials: true
 });
 
@@ -88,7 +86,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 
 export const refreshToken = async() => {
  // refreshToken 요청에는 인터셉터를 적용하지 않음
- const response = await axios.post(`${API_URL}/user/auth/refreshToken`, {}, {
+ const response = await axios.post(`/user/auth/refreshToken`, {}, {
     withCredentials: true
   });
   const accessToken = response.headers['Authorization'];
@@ -121,7 +119,7 @@ export const logout = async () => {
 
 export const kakaoLogin = async () => {
   try {
-    const result = await axios.get(`${API_URL}/login/kakao`,{
+    const result = await axios.get(`/login/kakao`,{
         withCredentials: true
     });
     window.location.href = result.data.url;

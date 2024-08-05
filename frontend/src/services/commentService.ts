@@ -1,8 +1,6 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL
-
 export const commentList = async (boardId: number) => {
   const params = { boardId: boardId };
   const response = await axiosInstance.get(`board/comment`, {params});

@@ -1,8 +1,6 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL
-
 export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
   const formData = new FormData();
   const value = {
@@ -54,7 +52,7 @@ export const boardList = (page: number, size: number) => {
 export const boardUserList = async (userId: number, page?: number, size?: number) => {
   const params = { userId: userId, page: page, size: size };
 
-  const response = await axios.get(`${API_URL}/board/user`, {params});
+  const response = await axios.get(`/board/user`, {params});
 
   return response.data.data;
 }
@@ -62,7 +60,7 @@ export const boardUserList = async (userId: number, page?: number, size?: number
 export const filteredBoardList = (category: string, page: number, size: number) => {
   const params = { category: category, page: page, size: size };
   
-  const response = axios.get(`${API_URL}/board/category`, {params});
+  const response = axios.get(`/board/category`, {params});
   return response;
 }
 
