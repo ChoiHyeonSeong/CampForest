@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
@@ -12,7 +12,7 @@ import SearchAllList from '@components/Search/SearchAllList';
 type Props = {}
 
 const SearchPage = (props: Props) => {
-
+  const [searchText, setSearchText] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,6 +35,14 @@ const SearchPage = (props: Props) => {
       `
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleClearInput = () => {
+    setSearchText('');
+  };
+
   return (
     <div className='flex justify-center min-h-screen'>
       <div className='w-full lg:w-[65%] lg:min-w-[56rem] max-lg:p-[1.5rem] lg:py-[2.5rem]'>
@@ -43,18 +51,25 @@ const SearchPage = (props: Props) => {
         {/* 검색창  */}
         <div
           className='
-            flex justify-between items-center w-full h-[3.1rem] mb-[0.5rem] px-[0.5rem]
+            flex justify-between items-center w-full h-[2.8rem] md:h-[3.1rem] mb-[0.5rem] px-[0.5rem]
             text-light-text bg-light-gray
             dark:text-dark-text dark:bg-light-gray
-            font-medium text-lg rounded-md
+            font-medium text-lg rounded
             '
           >
-          <div className='flex'>
-          <SearchIcon className='size-[1.6rem] me-[1rem] stroke-light-border-icon dark:stroke-light-dark-icon' />
-          <input placeholder='키워드로 검색해보세요.' className='outline-none bg-transparent'></input>
+          <div className='flex items-center'>
+          <SearchIcon className='size-[1.4rem] md:size-[1.6rem] me-[1rem] stroke-light-border-icon dark:stroke-light-dark-icon' />
+          <input
+              placeholder='키워드로 검색해보세요.'
+              className='outline-none bg-transparent'
+              value={searchText}
+              onChange={handleInputChange}
+            />
           </div>
-          <CloseIcon className='fill-light-border-icon dark:fill-dark-border-icon cursor-pointer' />
-          
+          <CloseIcon
+            className='size-[1.4rem] md:size-[1.6rem] fill-light-border-icon dark:fill-dark-border-icon cursor-pointer'
+            onClick={handleClearInput}
+          />
         </div>
 
         {/* 검색 카테고리 탭 */}
@@ -63,7 +78,7 @@ const SearchPage = (props: Props) => {
             flex w-full h-[3.5rem] mt-[1.5rem]
             text-light-text-secondary border-light-gray-1
             dark:text-dark-text-secondary dark:border-dark-gray-1
-            font-medium text-sm md:text-lg duration-150 border-b
+            font-medium text sm:text-lg duration-150 border-b
             '
           >
           <div
@@ -88,7 +103,7 @@ const SearchPage = (props: Props) => {
             className={getTabClassName('/search/product')}
             onClick={() => handleTabClick('/search/product')}
             >
-              판매/대여
+              장비거래
           </div>
 
         </div>

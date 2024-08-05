@@ -115,7 +115,7 @@ const SearchAllList = (props: Props) => {
       <div className='mb-[2rem]'>
       <div className='flex justify-between mb-1'>
           <p className='font-bold text-lg '>
-            판매/대여
+            장비거래
             <span 
               className='
                 ms-[0.5rem]
@@ -126,7 +126,7 @@ const SearchAllList = (props: Props) => {
             </span>
           </p>
           
-          {/* 모두보기 -> 판매/대여 검색으로 이동 */}
+          {/* 모두보기 -> 장비거래 검색으로 이동 */}
           <div
             className='
             flex items-center
