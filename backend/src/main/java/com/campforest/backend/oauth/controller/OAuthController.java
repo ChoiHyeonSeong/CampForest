@@ -85,7 +85,7 @@ public class OAuthController {
 				.httpOnly(true)
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
-				.sameSite("Strict")
+				.sameSite("None")
 				.domain("i11d208.p.ssafy.io")
 				.build();
 

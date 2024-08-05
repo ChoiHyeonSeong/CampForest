@@ -92,7 +92,8 @@ public class UserController {
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
 				.secure(true)
-				.sameSite("Strict")
+				.sameSite("None")
+				.domain("i11d208.p.ssafy.io")
 				.build();
 
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
