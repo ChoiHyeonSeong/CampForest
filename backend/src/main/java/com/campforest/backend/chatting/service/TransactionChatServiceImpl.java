@@ -38,8 +38,11 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         TransactionChatRoom room = transactionChatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
         message= TransactionChatMessage.builder()
+                .content(message.getContent())
+                .senderId(message.getSenderId())
                 .roomId(roomId)
                 .build();
+        System.out.println(message.getContent()+message.getSenderId());
         return transactionChatMessageRepository.save(message);
     }
 
