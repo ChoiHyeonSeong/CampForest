@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import ChatUserList from '@components/Chat/ChatUserList';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+import { selectCommnunity, selectTransaction } from '@store/chatSlice';
 
 type Props = {
   isExtendMenuOpen: boolean;
@@ -9,6 +12,11 @@ type Props = {
 }
 
 const NavbarLeftExtendChat = (props: Props) => {
+  const dispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.userStore.userId);
+  const isLogin = useSelector((state: RootState) => state.userStore.isLoggedIn);
+  const selectedCategory = useSelector((state: RootState) => state.chatStore.selectedCategory);
+
   return (
     <div
       className={`
@@ -41,30 +49,35 @@ const NavbarLeftExtendChat = (props: Props) => {
       >
         <div
           className={`
+            ${selectedCategory === '일반' ? 'border-light-signature dark:border-dark-signature' : ''}
             flex flex-all-center w-1/2 h-full
-            text-light-text border-light-border-2 hover:border-light-signature
-            dark:text-dark-text dark:border-dark-border-2 hover:dark:border-dark-signature
-            border-b hover:border-b-2 transition-all duration-150 cursor-pointer font-medium
-            
+            text-light-text border-light-border-2
+            dark:text-dark-text dark:border-dark-border-2
+            border-b transition-all duration-150 cursor-pointer font-medium
           `}
+          onClick={() => dispatch(selectCommnunity())}
         >
           일반
         </div>
         <div
           className={`
+            ${selectedCategory === '거래' ? 'border-light-signature dark:border-dark-signature' : ''}
             flex flex-all-center w-1/2 h-full
-            text-light-text border-light-border-2 hover:border-light-signature
-            dark:text-dark-text dark:border-dark-border-2 hover:dark:border-dark-signature
-            border-b hover:border-b-2 transition-all duration-150 cursor-pointer font-medium
-            
+            text-light-text border-light-border-2
+            dark:text-dark-text dark:border-dark-border-2
+            border-b transition-all duration-150 cursor-pointer font-medium
           `}
+          onClick={() => dispatch(selectTransaction())}
         >
           거래
         </div>
       </div>
 
       {/* 채팅 유저 목록 */}
-      <ChatUserList />
+      <ChatUserList
+        isLogin={isLogin} 
+        userId={userId} 
+      />
     </div>
   )
 }

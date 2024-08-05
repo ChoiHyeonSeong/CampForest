@@ -2,19 +2,27 @@ import React from 'react';
 
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import userImage from '@assets/logo192.png'
+import { RootState } from '@store/store';
+import { useSelector } from 'react-redux';
 
-type Props = {
-  isExtendMenuOpen: boolean;
-  toggleExtendMenu: (param:string) => void;
+export type Message = {
+  messageId: number;
+  content: string;
+  senderId: number;
+  roomId: number;
+  createdAt: string;
+  read: boolean;
 }
 
-const Chat = (props: Props) => {
+const Chat = () => {
+  const otherUserId = useSelector((state: RootState) => state.chatStore.otherUserId);
+
   return (
     // 데스크탑, 태블릿
     <div 
       className={`
-        ${props.isExtendMenuOpen ? 'translate-x-[25rem]' : '-translate-x-full'} 
-        max-md:hidden fixed z-[35] w-[calc(100%-25rem)] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+        ${otherUserId !== 0 ? 'translate-x-[20rem]' : '-translate-x-full'} 
+        max-md:hidden fixed top-0 z-[35] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
         bg-light-white outline-light-border-1
         dark:bg-dark-white dark:outline-dark-border-1
         transition-all duration-300 ease-in-out outline outline-1

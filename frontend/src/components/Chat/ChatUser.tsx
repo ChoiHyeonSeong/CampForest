@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import userImage from '@assets/logo192.png'
+import { userPage } from '@services/userService';
 
-const ChatUser = () => {
+export type ChatUserType = {
+  roomId: number;
+  otherUserId: number;
+  lastMessage: string;
+  lastMessageTime: string;
+  unreadCount: number;
+}
+
+type Props = {
+  chatUser: ChatUserType;
+}
+
+const ChatUser = (props: Props) => {
+  const [nickname, setNickname] = useState('');
+  const fetchOtherUser = async () => {
+    const result = await userPage(props.chatUser.otherUserId);
+    setNickname(result.nickname);
+  }
+
+  useEffect(() => {
+    fetchOtherUser();
+  }, [])
+
   return (
     <div 
       className={`
@@ -35,7 +58,7 @@ const ChatUser = () => {
               font-medium  
             `}
           >
-            사용자닉네임
+            {nickname}
           </div>
           <div 
             className={`
@@ -45,7 +68,7 @@ const ChatUser = () => {
               text-xs
             `}
           >
-            오전 10:47
+            {props.chatUser.lastMessageTime}
           </div>
         </div>
         <div className={`flex items-center`}>
@@ -56,7 +79,7 @@ const ChatUser = () => {
               text-[1rem]
             `}
           >
-            마지막 대화 내용
+            {props.chatUser.lastMessage}
           </div>
           <div 
             className={`
@@ -66,7 +89,7 @@ const ChatUser = () => {
               text-sm rounded-lg
             `}
           >
-            10
+            {props.chatUser.unreadCount}
           </div>
         </div>
       </div>
