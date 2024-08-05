@@ -58,71 +58,82 @@ const ChatUser = (props: Props) => {
   return (
     <div 
       className={`
-        flex gap-4 items-center px-[1.5rem] py-[1rem] 
+        flex items-center px-[0.8rem] py-[1rem] 
         border-light-border
         dark:border-dark-border
         border-b
       `}
     >
-      <div 
-        className={`
-          w-1/6
-          border-light-border
-          dark:border-dark-border
-          rounded-full border
-        `}
-      >
-        <img 
-          src={userImage} 
-          alt="NoImg" 
-          className={`fit`}
-        />
-      </div>
-      <div className={`w-4/5`}>
-        <div className={`flex items-center mb-[0.25rem]`}>
+      <div className='flex w-5/6'>
+        {/* 프로필 */}
+        <div 
+          className={`
+            shrink-0 size-[2.6rem] me-[0.75rem]
+            border-light-border
+            dark:border-dark-border
+            rounded-full border
+          `}
+        >
+          <img 
+            src={userImage} 
+            alt="NoImg" 
+            className={`fit`}
+          />
+        </div>
+
+        <div className=''>
+          {/* 닉네임 */}
           <div
             className={`
               text-light-text
               dark:text-dark-text
-              font-medium  
+              font-semibold
             `}
           >
             {nickname}
           </div>
-          <div 
-            className={`
-              ms-auto
-              text-light-text-secondary
-              dark:text-dark-text-secondary
-              text-xs
-            `}
-          >
-            {lastMessageTime}
-          </div>
-        </div>
-        <div className={`flex items-center`}>
+
+           {/* 마지막 메세지 */}
           <div
             className={`
               text-light-text-secondary
               dark:text-dark-text-secondary
-              text-[1rem]
+              text-sm line-clamp-1
             `}
           >
             {props.chatUser.lastMessage}
           </div>
-          <div 
-            className={`
-              ${props.chatUser.unreadCount === 0 ? 'hidden' : ''}
-              ms-auto px-[0.5rem]
-              bg-light-signature text-light-white 
-              dark:bg-dark-signature dark:text-light-white
-              text-sm rounded-lg
-            `}
-          >
-            {props.chatUser.unreadCount}
-          </div>
         </div>
       </div>
+
+      <div>
+        {/* 보낸 시간 */}
+        <div 
+          className={`
+            mb-[0.25rem]
+            text-light-text-secondary
+            dark:text-dark-text-secondary
+            text-xs font-medium
+          `}
+        >
+          {lastMessageTime}
+        </div>
+
+        {/* 알림 개수 */}
+        <div 
+          className={`
+            ${props.chatUser.unreadCount === 0 ? 'hidden' : ''}
+            bg-light-signature text-light-white 
+            dark:bg-dark-signature dark:text-light-white
+            text-sm rounded-lg text-center
+          `}
+        >
+          {props.chatUser.unreadCount}
+        </div>
+
+      </div>
+
+
     </div>
   )
 }

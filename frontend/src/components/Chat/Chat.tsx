@@ -8,6 +8,8 @@ import { communityChatDetail } from '@services/communityChatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { setChatInProgress } from '@store/chatSlice';
+import ProductInfoChat from'@components/Chat/ProductInfoChat'
+import ChatTradePropser from './ChatTradePropser';
 
 export type Message = {
   messageId: number;
@@ -23,23 +25,24 @@ type Props = {
   setIsOpenChat: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Chat = ({otherId, setIsOpenChat}: Props) => {
+const Chat = ({ otherId, setIsOpenChat }: Props) => {
   const { sendMessage } = useWebSocket();
   const dispatch = useDispatch();
-  const scrollRef = useRef<HTMLDivElement>(null); 
+  const scrollRef = useRef<HTMLDivElement>(null);
   const roomId = useSelector((state: RootState) => state.chatStore.roomId);
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const [opponentNickname, setOpponentNickname] = useState('');
   const messages = useSelector((state: RootState) => state.chatStore.chatInProgress);
   const [userInput, setUserInput] = useState('');
+
   const fetchMessages = async () => {
     dispatch(setChatInProgress(await communityChatDetail(roomId)));
-  }
+  };
+
   const opponentInfo = async () => {
     const result = await userPage(otherId);
-    console.log(result);
     setOpponentNickname(result.nickname);
-  }
+  };
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -48,47 +51,57 @@ const Chat = ({otherId, setIsOpenChat}: Props) => {
   };
 
   useEffect(() => {
-    if(roomId !== 0){
+    if (roomId !== 0) {
       opponentInfo();
       fetchMessages();
     }
-    
-  }, [roomId])
+  }, [roomId]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages])
+  }, [messages]);
 
   const handleSendButton = () => {
-    sendMessage(`/pub/${roomId}/send`, { senderId: userId, content: userInput });
-    setUserInput('');
-  }
-  
+    if (userInput.trim() !== '') {
+      sendMessage(`/pub/${roomId}/send`, { senderId: userId, content: userInput });
+      setUserInput('');
+    }
+  };
+
+  // 공백일때 메세지 전송 막기
+  // 엔터키로 메세지 보내기
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && userInput.trim() !== '') {
+      handleSendButton();
+    }
+  };
 
   return (
     // 데스크탑, 태블릿
     <div 
       className={`
-        max-md:hidden fixed relative top-0 z-[35] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+        flex flex-col max-md:hidden fixed top-0 z-[35] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
         bg-light-white outline-light-border-1
         dark:bg-dark-white dark:outline-dark-border-1
         transition-all duration-300 ease-in-out outline outline-1
       `}
     >
+
+      {/* 채팅 상단 -> 상대방 프로팔 표시 */}
       <div 
         className={`
-          flex items-center mx-[2rem] py-[1rem]
-          border-light-border
-          dark:border-dark-border
+          flex items-center shrink-0 p-[0.8rem]
+          border-light-border-1
+          dark:border-dark-border-1
           border-b
         `}
       >
         <div 
           className={`
-            size-[3rem] me-[1rem]
+            size-[2.7rem] me-[1rem]
             border-light-border
             dark:border-dark-border
-            rounded-full border
+            rounded-full border overflow-hidden
           `}
         >
           <img 
@@ -97,87 +110,104 @@ const Chat = ({otherId, setIsOpenChat}: Props) => {
             className={`fit`}
           />
         </div>
-        <div className={`text-lg`}>
+        {/* 닉네임 */}
+        <div className={`text-lg font-medium`}>
           {opponentNickname}
         </div>
         <div className={`ms-auto`}>
           <CloseIcon 
             className={`
-              hidden md:block md:size-[2rem]
-              fill-light-black
-              dark:fill-dark-black
+              hidden md:block md:size-[1.8rem]
+              fill-light-border-icon
+              dark:fill-dark-border-icon
             `}
           />
         </div>
       </div>
-      <div 
-        className='h-[50rem] overflow-scroll'
+
+      {/* 채팅 부분 */}
+      <div
+        className='h-full ps-[0.75rem] overflow-scroll'
         ref={scrollRef}
       >
+        {/* 거래채팅 시 상단 상품정보 -> 거래채팅이 아니면 hidden 처리 */}
+        <ProductInfoChat />
+
+        {/* 실제 메세지 조작부분 */}
         {messages.map((message) => (
           message.senderId === otherId ? (
             <div
               className={`
-                flex justify-start items-center
+                flex justify-start items-center pe-[20%]
               `}
+              key={message.messageId}
             >
               <div 
                 className='
-                  ms-[0.75rem] my-[0.5rem] p-[1rem]
-                  bg-light-gray
-                  dark:bg-dark-gray   
-                  rounded-lg
+                  my-[0.5rem] px-[0.8rem] py-[0.3rem]
+                  bg-light-gray text-light-text
+                  dark:bg-dark-gray dark:text-dark-text
+                  rounded-md
                 '
               >
                 {message.content}
               </div>
               <div>
-                <div className='text-sm'>
-                  {message.read ? '읽음' : '안 읽음'}
+                <div className='shrink-0 ms-[0.5rem] text-xs'>
+                  {message.read ? '읽음' : '안읽음'}
                 </div>
               </div>
             </div>
           ) : (
             <div
               className={`
-                flex justify-end items-center
+                flex justify-end items-center ps-[20%]
               `}
             >
-              <div className='text-sm'>
-                {message.read ? '읽음' : '안 읽음'}
+              <div className='shrink-0 me-[0.5rem] text-xs'>
+                {message.read ? '읽음' : '안읽음'}
               </div>
               <div
                 className='
-                  my-[0.5rem] p-[1rem]
-                  bg-light-signature
-                  dark:bg-dark-signature
-                  rounded-lg
+                  my-[0.5rem] px-[0.8rem] py-[0.3rem]
+                  bg-light-signature text-light-text
+                  dark:bg-dark-signature dark:text-dark-text
+                  rounded-md
                 '
               >
                 {message.content}
+                {/* <ChatTradePropser /> */}
               </div>
             </div>
           )
         ))}
       </div>
+
+      {/* 전송 버튼 */}
       <div 
         className='
-          flex items-center fixed bottom-0 z-[10] w-full h-[3rem] px-[1rem] 
+          flex justify-between items-center shrink-0 w-full h-[3.5rem] px-[1rem] 
+          bg-light-gray
+          dark:bg-dark-gray
           border-t
         '
       >
         <input 
           className='
-            w-5/6
+            bg-transparent
             focus:outline-none
           '
+          placeholder='대화내용을 입력하세요.'
           value={userInput}
-          onChange={(event) => (setUserInput(event.target.value))} 
+          onChange={(event) => setUserInput(event.target.value)}
+          onKeyDown={handleKeyPress}
         />
         <div 
           className='
-            w-1/6 
-            text-center
+            text-center font-medium
+            hover:text-light-signature
+            dark:hover:text-dark-signature
+            duration-150
           '
           onClick={() => handleSendButton()}
         >
