@@ -18,9 +18,7 @@ const geolocationOptions = {
 
 type SelecetedLocType = {
   city: string; 
-  district: string;
-  lat: number;
-  lng: number;
+  districts: string[];
 }
 
 type FilterCondition = {
@@ -41,9 +39,9 @@ function CampingSearch() {
   const currentLng = useRef(127.7669);
   const [map, setMap] = useState<naver.maps.Map | null>(null);
 
-  const handleSelect = (city: string, district: string, lat: number, lng: number) => {
-    setSelectedLocation({ city, district, lat, lng });
-    console.log(city, district, lat, lng)
+  const handleSelect = (city: string, districts: string[]) => {
+    setSelectedLocation({ city, districts });
+    console.log(city, districts)
   };
 
   // 모달이 오픈될때 Modal을 block시킴
@@ -72,19 +70,30 @@ function CampingSearch() {
 
   // 다른 페이지로 이동할때는 항상 Modal Blocked 비활성화하기
   useEffect(() => {
-    setCurrentPos()
+    setCurrentPos();
 
-    try {
+    const loadNaverMap = () => {
+      return new Promise((resolve, reject) => {
+        const naverMapApiKey = process.env.REACT_APP_NAVERMAP_API_KEY;
+        const script = document.createElement('script');
+        script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${naverMapApiKey}`;
+        script.onload = () => resolve(window.naver);
+        script.onerror = () => reject(new Error('Naver Map script load error'));
+        document.head.appendChild(script);
+      });
+    };
+
+    loadNaverMap().then((naver) => {
       const mapOptions = {
-        center: new naver.maps.LatLng(currentLat.current, currentLng.current),
-        zoom: 8
+        center: new window.naver.maps.LatLng(currentLat.current, currentLng.current),
+        zoom: 8,
       };
-      const mapInstance = new naver.maps.Map('map', mapOptions);
+      const mapInstance = new window.naver.maps.Map('map', mapOptions);
       setMap(mapInstance); // map 객체를 상태에 저장
-    } catch (error) {
-      console.log(error)
-      console.log("Kakao map not loaded")
-    }
+    }).catch((error) => {
+      console.log(error);
+      console.log("Naver map not loaded");
+    });
 
     return () => {
       setIsModalOpen(false);
@@ -122,68 +131,39 @@ function CampingSearch() {
   }
 
 
-  // useEffect(() => {
-  //   setFilterCondition(prevConditions => {
-  //     // 이전의 Location 타입 조건을 제거
-  //     const updatedConditions = prevConditions.filter(condition => condition.type !== 'Location');
+  useEffect(() => {
+    setFilterCondition(prevConditions => {
+      // 이전의 Location 타입 조건을 제거
+      const updatedConditions = prevConditions.filter(condition => condition.type !== 'Location');
       
-  //     if (selectedLocation===null) return updatedConditions;
+      if (selectedLocation===null) return updatedConditions;
 
-  //     // 새로운 조건이 "전체"가 아니면 추가
-  //     selectedLocation.forEach(location => {
-  //       if (location.city !== "전체" || location.district !== "전체") {
-  //         const newCondition: FilterCondition = {
-  //           type: 'Location',
-  //           text: location.district === "전체" 
-  //             ? location.city 
-  //             : `${location.city} ${location.district}`
-  //         };
-  //         updatedConditions.push(newCondition);
-  //       }
-  //     });
+      // 새로운 조건 추가
+      const { city, districts } = selectedLocation;
       
-  //     return updatedConditions;
-  //   });
+      if (city !== "전체") {
+        if (districts.includes("전체")) {
+          // 시/도만 선택된 경우
+          updatedConditions.push({
+            type: 'Location',
+            text: city
+          });
+        } else {
+          // 특정 구/군들이 선택된 경우
+          districts.forEach(district => {
+            updatedConditions.push({
+              type: 'Location',
+              text: `${city} ${district}`
+            });
+          });
+        }
+      }
+      
+      return updatedConditions;
+    });
 
-  //   console.log(filterCondition)
-  // }, [selectedLocation])
-
-
-  // 여기서 이제 지역필터를 확인 하는순간 위치 변화되도록
-  // useEffect(() => {
-  //   if (selectedLocation?.city === '전체') {
-  //     moveMapCenter(selectedLocation.lat, selectedLocation.lng, 8)
-  //   } else if (selectedLocation?.district === '전체') {
-  //     // city는 선택되고 district는 선택안됐을때
-  //     moveMapCenter(selectedLocation.lat, selectedLocation.lng, 9)
-  //   } else {
-  //     // city, districts 둘다 선택됐을때
-  //     moveMapCenter(selectedLocation.lat, selectedLocation.lng, 14)
-  //   }
-  // }, [selectedLocation])
-
-
-
-
-
-  // useEffect(() => {
-    
-  //   const contentBox = document.querySelector('#contentBox') as HTMLElement;
-  //   const currentScrollY = window.scrollY;
-
-  //   if (isModalOpen) {
-  //     // 모달이 열릴 때 스크롤 방지
-  //     contentBox.style.top = `-${currentScrollY}px`;
-  //     contentBox.style.zIndex = '20';
-  //     console.log(contentBox.style.top)
-  //   } else {
-  //     // 모달이 닫힐 때 스크롤 허용
-  //     const scrollY = parseInt(contentBox.style.top || '0') * -1;
-  //     contentBox.style.top = '';
-  //     contentBox.style.zIndex = '';
-  //     window.scrollTo(0, scrollY || currentScrollY);
-  //   }
-  // }, [isModalOpen]);
+    console.log(filterCondition)
+  }, [selectedLocation])
 
   return (
     <div className={`lg:h-[calc(100vh-3.2rem)] z-[30]`}>

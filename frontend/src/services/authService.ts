@@ -98,9 +98,9 @@ export const refreshToken = async() => {
 
 export const logout = async () => {
   try {
-    const result = await axiosInstance.post('/user/auth/logout');
+    const response = await axiosInstance.post('/user/auth/logout');
     
-    console.log(result)
+    console.log(response)
 
     // 토큰 제거
     sessionStorage.removeItem('accessToken');
@@ -119,16 +119,108 @@ export const logout = async () => {
 
 export const kakaoLogin = async () => {
   try {
-    const result = await axios.get(`/login/kakao`,{
+    const response = await axios.get(`/login/kakao`,{
         withCredentials: true
     });
-    window.location.href = result.data.url;
+    window.location.href = response.data.url;
 
-    console.log(result)
+    console.log(response)
 
   } catch (error) {
     console.error('kakao Login failed:', error);
     throw error;
+  }
+};
+
+type RegistRequiredPayload = {
+  userName: string,
+  phoneNumber: string,
+  userEmail: string,
+  userPassword: string
+}
+
+type RegistOptionalPayload = {
+  profileImage: string | null,
+  nickname: string,
+  userBirthdate: string | null | undefined,
+  userGender: string,
+  introduction: string,
+  interests: string[] | null
+}
+
+type RegistForm = {
+  required: RegistRequiredPayload,
+  optional: RegistOptionalPayload
+}
+
+export const registByEmail = async (registForm: RegistForm) => {
+  const formData = new FormData();
+  const value = {
+    userName: registForm.required.userName,
+		email: registForm.required.userEmail,
+		password : registForm.required.userPassword,
+		role: "ROLE_USER",
+		birthdate: registForm.optional.userBirthdate,
+		gender : registForm.optional.userGender, // M or F
+		isOpen : true,
+		nickname : registForm.optional.nickname,
+		phoneNumber : registForm.required.phoneNumber,
+		provider : "local",
+	  providerId : null,
+		introduction : registForm.optional.introduction,
+		interests : registForm.optional.interests
+  }
+  const blob = new Blob([JSON.stringify(value)], {type: "application/json"})
+  formData.append('registUserDto', blob);
+
+  if (registForm.optional.profileImage !== null) {
+    const binaryString = window.atob(registForm.optional.profileImage.split(',')[1]);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const imageBlob = new Blob([bytes], { type: "image/png" })
+    formData.append(`profileImage`, imageBlob, `userProfileImage.png`);
+  }
+
+  try {
+    const response = await axios.post('/user/auth/regist', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log(response)
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+};
+
+export const requestEmail = async (email: string) => {
+  try {
+    const response = await axios.post(`/email/request`, {
+      email
+    });
+    console.log(response)
+
+    return response
+  } catch (error) {
+    console.error('이메일 인증 요청 오류:', error);
+  }
+};
+
+export const validateEmail = async (email: string, authCode: string) => {
+  try {
+    const response = await axios.post(`/email/validation`, {
+      email,
+      authCode
+    });
+    console.log(response);
+
+    return response
+  } catch (error) {
+    console.error('이메일 인증 확인 오류:', error);
   }
 };
 

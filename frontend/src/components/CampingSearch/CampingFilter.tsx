@@ -13,33 +13,44 @@ type AdministrativeDivision = {
 
 type SelecetedLocType = {
   city: string; 
-  district: string
+  districts: string[]
 }
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   divisions: AdministrativeDivision[];
-  onSelect: (city: string, district: string, lat: number, lng: number) => void;
+  onSelect: (city: string, district: string[]) => void;
   selectedLocation: SelecetedLocType | null;
 }
 
 const CampingFilter = (props: Props) => {
   const [selectedCity, setSelectedCity] = useState<string>('전체');
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('전체');
-
-  const [selectedLat, setSelectedLat] = useState(35.9078)
-  const [selectedLng, setSelectedLng] = useState(127.7669)
+  const [selectedDistricts, setSelectedDistricts] = useState<string[]>(['전체']);
 
   if (!props.isOpen) return null;
 
   const closeFilter = () => {
-    if (props.selectedLocation !== null) {
+    if (props.selectedLocation !== null)  {
       setSelectedCity(props.selectedLocation.city)
-      setSelectedDistrict(props.selectedLocation.district)
+      setSelectedDistricts(props.selectedLocation.districts)
     }
     props.onClose()
   }
+
+  const handleDistrictSelection = (districtName: string) => {
+    if (districtName === '전체') {
+      setSelectedDistricts(['전체']);
+    } else {
+      setSelectedDistricts(prev => {
+        const newSelection = prev.includes(districtName)
+          ? prev.filter(d => d !== districtName)
+          : [...prev.filter(d => d !== '전체'), districtName];
+        
+        return newSelection.length === 0 ? ['전체'] : newSelection;
+      });
+    }
+  };
 
   return (
     <div 
@@ -70,10 +81,10 @@ const CampingFilter = (props: Props) => {
                     rounded text-sm
                   `}
                   onClick={() => {
-                    setSelectedDistrict(division.districts[0].name);
-                    setSelectedLat(division.districts[0].lat);
-                    setSelectedLng(division.districts[0].lng);
-                    setSelectedCity(division.city);
+                    if (selectedCity !== division.city) {
+                      setSelectedDistricts(['전체']);
+                      setSelectedCity(division.city);
+                    }
                   }}
                 >
                   {division.city}
@@ -92,14 +103,12 @@ const CampingFilter = (props: Props) => {
                     <button
                       key={district.name}
                       className={`
-                        ${selectedDistrict === district.name ? 'bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white' : 'bg-light-gray dark:bg-dark-gray'}
+                        ${selectedDistricts.includes(district.name) ? 'bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white' : 'bg-light-gray dark:bg-dark-gray'}
                         p-[0.5rem]
                         rounded text-sm
                       `}
                       onClick={() => {
-                        setSelectedDistrict(district.name);
-                        setSelectedLat(district.lat);
-                        setSelectedLng(district.lng);
+                        handleDistrictSelection(district.name);
                       }}
                     >
                       {district.name}
@@ -124,7 +133,7 @@ const CampingFilter = (props: Props) => {
           
           <button
             onClick={() => {
-              props.onSelect(selectedCity, selectedDistrict, selectedLat, selectedLng);
+              props.onSelect(selectedCity, selectedDistricts);
               props.onClose();
             }}
             className={`

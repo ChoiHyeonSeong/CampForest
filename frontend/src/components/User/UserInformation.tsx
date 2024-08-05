@@ -7,39 +7,26 @@ import { registOptional } from '@store/registSlice';
 import ProfileImg from '@assets/images/profileimg2.png';
 import { ReactComponent as XIcon } from '@assets/icons/close-filled.svg';
 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 const UserInformation = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
   const registFormData = useSelector((state: RootState) => state.registStore);
 
   const [uploadedImage, setuploadedImage] = useState<string>(ProfileImg);
-  const [nickname, setNickname] = useState<string>(registFormData.nickname);
-  const [introduction, setIntroduction] = useState<string>(registFormData.introduction);
-  const [nicknameChars, setNicknameChars] = useState<number>(0);
-  const [introChars, setIntroChars] = useState<number>(0);
-  const [isNicknameAnimating, setIsNicknameAnimating] = useState<boolean>(false);
-  const [isIntroductionAnimating, setIsIntroductionAnimating] = useState<boolean>(false);
 
-  useEffect(() => {
-    setNicknameChars(nickname.length);
-    setIntroChars(introduction.length);
-  }, [nickname, introduction]);
-
-  useEffect(() => {
-    if (nickname.length === 10) {
-      setIsNicknameAnimating(true);
-      const timer = setTimeout(() => setIsNicknameAnimating(false), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [nickname]);
-
-  useEffect(() => {
-    if (introduction.length === 50) {
-      setIsIntroductionAnimating(true);
-      const timer = setTimeout(() => setIsIntroductionAnimating(false), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [introduction]);
+  const birthdate = registFormData.optional.userBirthdate ? new Date(registFormData.optional.userBirthdate) : null;
+  
+  const handleDateChange = (date: Date | null) => {
+    dispatch(
+      registOptional({
+        ...registFormData.optional, 
+        userBirthdate: date?.toISOString() || null,
+      }),
+    );
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -50,7 +37,7 @@ const UserInformation = () => {
         setuploadedImage(base64String);
         dispatch(
           registOptional({
-            ...registFormData,
+            ...registFormData.optional,
             profileImage: base64String,
           })
         );
@@ -59,65 +46,57 @@ const UserInformation = () => {
     }
   };
 
-  const handleInterestsUpload = (interests: object) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
     dispatch(
       registOptional({
-        profileImage: registFormData.profileImage,
-        nickname: nickname,
-        introduction: introduction,
+        profileImage: registFormData.optional.profileImage,
+        nickname: name === 'nickname' ? value : registFormData.optional.nickname,
+        userBirthdate: name === 'userBirthdate' ? value : registFormData.optional.userBirthdate,
+        userGender: name === 'userGender' ? value : registFormData.optional.userGender,
+        introduction: name === 'introduction' ? value : registFormData.optional.introduction,
+        interests: registFormData.optional.interests,
+      }),
+    );
+  };
+
+  const handleInterestsUpload = (interests: string[]) => {
+    dispatch(
+      registOptional({
+        ...registFormData.optional,
         interests: interests,
       })
     );
   };
 
-  const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    if (value.length <= 10) {
-      setNickname(value);
-      dispatch(
-        registOptional({
-          ...registFormData,
-          nickname: value,
-        })
-      );
-    }
-  };
-
-  const handleIntroductionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    if (value.length <= 50) {
-      setIntroduction(value);
-      dispatch(
-        registOptional({
-          ...registFormData,
-          introduction: value,
-        })
-      );
-    }
-  };
-
   const clearNickname = () => {
-    setNickname('');
     dispatch(
       registOptional({
-        ...registFormData,
+        ...registFormData.optional,
         nickname: '',
       })
     );
   };
 
   const clearIntroduction = () => {
-    setIntroduction('');
     dispatch(
       registOptional({
-        ...registFormData,
+        ...registFormData.optional,
         introduction: '',
       })
     );
   };
 
+  // 이미지 이상한거 올라가면 Default 이미지로 변경
   const handleImageError = () => {
     setuploadedImage(ProfileImg);
+
+    dispatch(
+      registOptional({
+        ...registFormData.optional,
+        profileImage: null,
+      })
+    );
   };
 
   return (
@@ -135,7 +114,7 @@ const UserInformation = () => {
             onClick={() => {fileInputRef.current?.click()}}
           >
             <img 
-              src={uploadedImage} 
+              src={uploadedImage}
               onError={handleImageError} 
               alt="프로필 사진" 
               className={`
@@ -199,18 +178,14 @@ const UserInformation = () => {
                 dark:bg-dark-white dark:placeholder-dark-text-secondary
                 focus:outline-none focus:ring-0
               `}
+              maxLength={10}
               placeholder='닉네임은 최대 10자 이하여야 합니다.'
               name='nickname'
-              value={nickname}
-              onChange={handleNicknameChange}
+              value={registFormData.optional.nickname}
+              onChange={handleChange}
             />
-            <span 
-              className={`
-                ${isNicknameAnimating ? 'text-light-signature dark:text-dark-signature animate-shake' : 'text-light-text-secondary dark:text-dark-text-secondary'}
-                me-[0.5rem] 
-              `}
-            >
-              {nicknameChars}/10
+            <span className={`me-[0.5rem]`}>
+              {registFormData.optional.nickname.length}/10
             </span>
             <XIcon 
               className={`
@@ -223,6 +198,85 @@ const UserInformation = () => {
             />
           </div>
         </div>
+        {/* 생년월일 성별 */}
+        <div 
+          className={`
+            my-[3rem] lg:my-[1.5rem]
+            border-light-border
+            dark:border-dark-border
+            md:border-b
+          `}
+        >
+          <div 
+            className={`
+              mb-[0.25rem]
+              font-medium 
+            `}
+          >
+            생년월일
+          </div>
+          <div className={`flex md:flex-row flex-col`}>
+            <DatePicker
+              placeholderText="날짜를 선택해주세요."
+              className={`
+                w-full px-[1rem] py-[0.75rem]
+                bg-light-white border-light-border
+                dark:bg-dark-white dark:border-dark-border
+                border-b md:border-none focus:outline-none
+              `}
+              dateFormat="yyyy.MM.dd"
+              formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
+              showYearDropdown
+              showMonthDropdown
+              scrollableYearDropdown
+              shouldCloseOnSelect
+              yearDropdownItemNumber={100}
+              minDate={new Date('1900-01-01')}
+              maxDate={new Date()}
+              selected={birthdate}
+              onChange={handleDateChange}
+            />
+            <div className={`md:hidden mt-[3rem] mb-[1rem]`}>
+              성별
+            </div>
+            <div className={`flex items-center space-x-[2rem] md:ms-auto me-[1rem]`}>
+              <div className={`flex items-center`}>
+                <input
+                  className={`
+                    size-[1rem] mx-[0.75rem]
+                    accent-light-black
+                    dark:accent-dark-black
+                  `}
+                  type="radio"
+                  name="userGender"
+                  value="M"
+                  checked={registFormData.optional.userGender === 'M'}
+                  onChange={handleChange}
+                />
+                <span>
+                  남자
+                </span>
+              </div>
+              <div className={`flex items-center`}>
+                <input
+                  className={`size-[1rem] mx-[0.75rem]
+                    accent-light-black
+                    dark:accent-dark-black
+                  `}
+                  type="radio"
+                  name="userGender"
+                  value="F"
+                  checked={registFormData.optional.userGender === 'F'}
+                  onChange={handleChange}
+                />
+                <span>
+                  여자
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* 자기소개 */}
         <div className={`relative mb-[1.5rem]`}>
           <label 
@@ -249,18 +303,14 @@ const UserInformation = () => {
                 dark:bg-dark-white dark:placeholder-dark-text-secondary 
                 focus:outline-none focus:ring-0
               `}
+              maxLength={50}
               placeholder='자기소개를 입력해주세요.'
               name='introduction'
-              value={introduction}
-              onChange={handleIntroductionChange}
+              value={registFormData.optional.introduction}
+              onChange={handleChange}
             />
-            <span 
-              className={`
-                ${isIntroductionAnimating ? 'text-light-signature dark:text-dark-signature animate-shake' : 'text-light-text-secondary dark:text-dark-text-secondary'}
-                  me-[0.5rem]
-                `}
-              >
-              {introChars}/50
+            <span className={`me-[0.5rem]`}>
+              {registFormData.optional.introduction.length}/50
             </span>
             <XIcon 
               className={`

@@ -159,40 +159,6 @@ const Navbar = () => {
     }
   };
 
-  // 스크롤 방지
-  const currentScrollY = useRef(0);
-  const isAnyModalOpened = useRef(false);
-  useEffect(() => {
-    // 스크롤 방지는 media width가 1024 이하일때만
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-    const contentBox = document.querySelector('#contentBox') as HTMLElement;
-
-    if (isMenuOpen) {
-      if (!contentBox.style.top) {
-        currentScrollY.current = window.scrollY;
-        isAnyModalOpened.current = false
-      } else {
-        currentScrollY.current = parseInt(contentBox.style.top.replace('-', '').replace('px', ''));
-        isAnyModalOpened.current = true
-      };
-    };
-
-    if (isMenuOpen && !lgQuery.matches) {
-      // 모달이 열릴 때 스크롤 방지
-      contentBox.classList.add('no-scroll');
-      contentBox.style.top = `-${currentScrollY.current}px`;
-    } else if (!isMenuOpen && !lgQuery.matches) {
-        // 모달이 닫힐 때 스크롤 허용
-        const scrollY = parseInt(contentBox.style.top || '0') * -1;
-        if (!isAnyModalOpened.current) {
-          contentBox.classList.remove('no-scroll');
-          contentBox.style.top = '';
-        };
-      window.scrollTo(0, scrollY || currentScrollY.current);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [isMenuOpen]);
-
   return (
     <div>
 
