@@ -17,6 +17,7 @@ type Props = {
 
 const ChatUser = (props: Props) => {
   const [nickname, setNickname] = useState('');
+  const [lastMessageTime, setLastMessageTime] = useState('');
   const fetchOtherUser = async () => {
     const result = await userPage(props.chatUser.otherUserId);
     setNickname(result.nickname);
@@ -24,7 +25,35 @@ const ChatUser = (props: Props) => {
 
   useEffect(() => {
     fetchOtherUser();
+    setLastMessageTime(calculateTimeDifference(props.chatUser.lastMessageTime));
   }, [])
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+  
+    return `${year}-${month}-${day}`;
+  };
+
+  const calculateTimeDifference = (modifiedAt: string) => {
+    const modifiedDate = new Date(modifiedAt);
+    const currentDate = new Date();
+    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
+  
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
+    const differenceInHours = Math.floor(differenceInMinutes / 60);
+  
+    if (differenceInMinutes >= 1440) {
+      return formatDate(modifiedDate);
+    }
+  
+    if (differenceInMinutes >= 60) {
+      return `${differenceInHours}시간 전`;
+    }
+  
+    return `${differenceInMinutes}분 전`;
+  };
 
   return (
     <div 
@@ -68,7 +97,7 @@ const ChatUser = (props: Props) => {
               text-xs
             `}
           >
-            {props.chatUser.lastMessageTime}
+            {lastMessageTime}
           </div>
         </div>
         <div className={`flex items-center`}>
@@ -83,6 +112,7 @@ const ChatUser = (props: Props) => {
           </div>
           <div 
             className={`
+              ${props.chatUser.unreadCount === 0 ? 'hidden' : ''}
               ms-auto px-[0.5rem]
               bg-light-signature text-light-white 
               dark:bg-dark-signature dark:text-light-white

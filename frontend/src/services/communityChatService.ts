@@ -12,4 +12,5 @@ export const communityChatDetail = async (roomId: number) => {
   const response = await axiosInstance.get(`/communitychat/room/${roomId}/messages`);
 
   console.log(response);
+  return response.data.data;
 }

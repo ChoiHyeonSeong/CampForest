@@ -1,4 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
+import { communityChatList } from "./communityChatService";
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -73,6 +74,10 @@ export const login = async (email: string, password: string): Promise<LoginRespo
       sessionStorage.setItem('similarUsers', JSON.stringify(data.similarUsers));
       sessionStorage.setItem('isLoggedIn', 'true');
       axiosInstance.defaults.headers['Authorization'] = Authorization;
+      
+      // 채팅방 목록 가져오기
+      const response = await communityChatList(user.userId);
+      sessionStorage.setItem('chatRoomList', JSON.stringify(response));
     } else {
       console.error('No access token received from server');
     }

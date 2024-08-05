@@ -1,13 +1,18 @@
+import { Message } from '@components/Chat/Chat';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type ChatState = {
   selectedCategory: string;
-  otherUserId: number;
+  roomId: number;
+  roomIds: number[];
+  chatInProgress: Message[];
 }
 
 const initialState: ChatState = {
-  selectedCategory: '일반',
-  otherUserId: 0,
+  selectedCategory: '',
+  roomId: 0,
+  roomIds: [],
+  chatInProgress: [],
 };
 
 const chatSlice = createSlice({
@@ -20,11 +25,17 @@ const chatSlice = createSlice({
     selectTransaction: (state) => {
       state.selectedCategory = '거래';
     },
-    setOtherUserId: (state, action: PayloadAction<number>) => {
-      state.otherUserId = action.payload;
+    setRoomId: (state, action: PayloadAction<number>) => {
+      state.roomId = action.payload;
+    },
+    setRoomIds: (state, action: PayloadAction<number[]>) => {
+      state.roomIds = action.payload;
+    },
+    setChatInProgress: (state, action: PayloadAction<Message[]>) => {
+      state.chatInProgress = action.payload;
     }
   }
 })
 
-export const {selectCommnunity, selectTransaction, setOtherUserId} = chatSlice.actions;
+export const {selectCommnunity, selectTransaction, setRoomId, setRoomIds, setChatInProgress } = chatSlice.actions;
 export default chatSlice.reducer;
