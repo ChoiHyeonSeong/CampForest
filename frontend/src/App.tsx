@@ -35,8 +35,14 @@ function App() {
   useThemeEffect();
 
   useEffect(() => {
+    // 네이버 API 호출
+    const naverMapApiKey = process.env.REACT_APP_NAVERMAP_API_KEY;
+    const script = document.createElement('script');
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${naverMapApiKey}`;
+    document.head.appendChild(script);
+
     const bodyBox = document.querySelector('body') as HTMLElement;
-    
+
     bodyBox.classList.add('bg-light-white')
     bodyBox.classList.add('dark:bg-dark-white')
     bodyBox.classList.add('text-light-black')

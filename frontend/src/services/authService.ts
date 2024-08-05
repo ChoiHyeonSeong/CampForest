@@ -1,6 +1,6 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-const API_URL = 'http://i11d208.p.ssafy.io/api';
+const API_URL = process.env.REACT_APP_BACKEND_URL
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
