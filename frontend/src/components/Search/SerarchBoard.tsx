@@ -1,8 +1,19 @@
 import React from 'react'
 
-type Props = {}
+export type BoardType = {
+  boardId: number;
+  boardOpen: boolean;
+  category: string;
+  title: string;
+  content: string;
+}
+
+type Props = {
+  board: BoardType
+}
 
 const SerarchBoard = (props: Props) => {
+
   return (
     <div className='flex justify-between items-center w-full px-[0.5rem] md:px-[1rem] py-[1.5rem] border-light-border-1 dark:border-dark-border-1 border-b'>
       {/* 게시물 내용 */}
@@ -12,7 +23,7 @@ const SerarchBoard = (props: Props) => {
           className='
             text-light-text
             dark:text-dark-text
-            font-bold md:text-lg break-all line-clamp-1'>캠핑은 장비빨 아닌가요?</p>
+            font-bold md:text-lg break-all line-clamp-1'>{props.board.title}</p>
 
         {/* 게시물 내용 */}
         <div
@@ -23,8 +34,7 @@ const SerarchBoard = (props: Props) => {
             line-clamp-2 break-all text-sm md:text-base
           '
         >
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum ex aliquid laboriosam numquam, blanditiis eos odio molestiae voluptas dolor, expedita optio ad quisquam ut quos doloribus aspernatur molestias id porro!
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus ab sapiente cum sequi in iusto possimus, unde architecto maxime voluptatum, quam accusantium quo dolorem ex delectus molestias asperiores eum eaque!
+          {props.board.content}
         </div>
 
         {/* 게시물 정보 */}
