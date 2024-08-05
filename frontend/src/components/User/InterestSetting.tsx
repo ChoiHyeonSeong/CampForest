@@ -3,7 +3,7 @@ import { ReactComponent as PlusIcon } from '@assets/icons/plus.svg'
 import { ReactComponent as CheckIcon } from '@assets/icons/check.svg'
 
 type Props = {
-  saveFunction: (params: object) => void;
+  saveFunction: (params: string[]) => void;
 }
 
 // 관심 태그 설정
@@ -22,27 +22,26 @@ const interestTagList: Record<string, string[]> = {
 };
 
 const InterestSetting = (props: Props) => {
-  const initialTagsState = Object.values(interestTagList).flat().reduce((acc, tag) => {
-    acc[tag as InterestTag] = false;
-    return acc;
-  }, {} as Record<InterestTag, boolean>);
 
-  const [interestChecking, setInterestChecking] = useState(initialTagsState);
+  const [interestChecking, setInterestChecking] = useState<string[]>([]);
   const [selectedCount, setSelectedCount] = useState(0);
   const [showWarning, setShowWarning] = useState(false);
 
   const handleTagClick = (tag: string) => {
-    if (selectedCount >= 6 && !interestChecking[tag as InterestTag]) {
+    if (interestChecking.length >= 6) {
       setShowWarning(true);
       return;
     }
 
     setInterestChecking(prev => {
-      const newState = {
-        ...prev,
-        [tag as InterestTag]: !prev[tag as InterestTag]
-      };
-      return newState;
+      // tag가 InterestTag 타입임을 보장
+      if (prev.includes(tag)) {
+        // tag가 이미 존재하면 제거
+        return prev.filter(item => item !== tag);
+      } else {
+        // tag가 존재하지 않으면 추가
+        return [...prev, tag];
+      }
     });
   };
 
@@ -176,7 +175,7 @@ const InterestSetting = (props: Props) => {
                     flex items-center ps-[0.75rem] py-[0.25rem] pr-[1rem]
                     duration-200 border-[1.5px] rounded-full cursor-pointer
 
-                    ${interestChecking[tag as InterestTag] ?
+                    ${interestChecking.includes(tag) ?
                       `border-light-signature text-light-signature
                         dark:border-dark-signature dark:text-dark-signature` :
                       `border-light-border-1 text-light-text-secondary hover:border-light-signature
@@ -185,7 +184,7 @@ const InterestSetting = (props: Props) => {
                   `}
                   onClick={() => handleTagClick(tag)}
                 >
-                  {interestChecking[tag as InterestTag] ?
+                  {interestChecking.includes(tag) ?
                     <CheckIcon
                       className={`
                         size-[1rem] lg:size-[1.25rem] mr-[0.25rem]
