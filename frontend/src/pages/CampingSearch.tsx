@@ -128,8 +128,10 @@ function CampingSearch() {
   }, [selectedLocation])
 
   useEffect(() => {
-    const currentScrollY = window.scrollY;
+    
     const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    const currentScrollY = window.scrollY;
+
     if (isModalOpen) {
       // 모달이 열릴 때 스크롤 방지
       contentBox.classList.add('no-scroll');

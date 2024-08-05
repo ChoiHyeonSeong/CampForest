@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = 'http://i11d208.p.ssafy.io/api';
+const API_URL = '/api';
 
 export const commentList = async (boardId: number) => {
   const params = { boardId: boardId };

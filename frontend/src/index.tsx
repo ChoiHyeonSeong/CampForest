@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import { store } from '@store/store';
 import { BrowserRouter } from 'react-router-dom';
 
-axios.defaults.baseURL = 'http://i11d208.p.ssafy.io/'
+axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true;
 
 const root = ReactDOM.createRoot(

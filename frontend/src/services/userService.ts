@@ -1,7 +1,7 @@
 import axios from 'axios'
 import axiosInstance from './authService';
 
-const API_URL = 'http://i11d208.p.ssafy.io/api';
+const API_URL = '/api';
 
 export const userPage = async (userId: number) => {
   const response = await axios.get(`${API_URL}/user/auth/info`, {params: {userId: userId}});

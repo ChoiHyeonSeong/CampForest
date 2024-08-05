@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = 'http://i11d208.p.ssafy.io/api';
+const API_URL = '/api';
 
 export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
   const formData = new FormData();
