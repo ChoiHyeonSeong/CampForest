@@ -1,6 +1,11 @@
 import React from 'react'
+export type profileType = {
+  nickname: string;
+}
 
-type Props = {}
+type Props = {
+  profile: profileType
+}
 
 const SearchProfile = (props: Props) => {
   return (
@@ -13,7 +18,7 @@ const SearchProfile = (props: Props) => {
 
         {/* 프로필 상세 */}
         <div>
-          <div className='md:text-lg font-medium'>닉네임</div>
+          <div className='md:text-lg font-medium'>{props.profile.nickname}</div>
           <div className='flex'>
             <div
               className='

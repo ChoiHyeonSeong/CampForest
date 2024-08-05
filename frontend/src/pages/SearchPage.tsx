@@ -112,7 +112,7 @@ const SearchPage = (props: Props) => {
         <div className='w-full pt-[1.5rem]'>
           <Routes>
             <Route path='/' element={<SearchAllList />} />
-            <Route path='profile' element={<SearchProfileList />} />
+            <Route path='profile' element={<SearchProfileList nickname={searchText} />} />
             <Route path='board' element={<SerarchBoardList />} />
             <Route path='product' element={<SearchProductList />} />
           </Routes>
