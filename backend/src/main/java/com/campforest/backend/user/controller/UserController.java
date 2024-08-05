@@ -1,8 +1,10 @@
 package com.campforest.backend.user.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -136,6 +138,22 @@ public class UserController {
 
 			ResponseInfoDTO responseDTO = ResponseInfoDTO.fromEntity(users);
 			return ApiResponse.createSuccess(responseDTO, "유저 정보 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+		}
+	}
+
+	@GetMapping("/auth/search")
+	public ApiResponse<?> searchUsersByNickname(@RequestParam("nickname") String nickname) {
+		try {
+			List<Users> usersList = userService.findByNicknameContaining(nickname);
+			if (usersList.isEmpty()) {
+				return ApiResponse.createSuccess(Collections.emptyList(), "검색 결과가 없습니다.");
+			}
+			List<ResponseInfoDTO> responseDTOList = usersList.stream()
+				.map(ResponseInfoDTO::fromEntity)
+				.collect(Collectors.toList());
+			return ApiResponse.createSuccess(responseDTOList, "유저 검색 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}

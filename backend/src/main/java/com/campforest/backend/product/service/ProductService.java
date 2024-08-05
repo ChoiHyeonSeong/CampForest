@@ -62,6 +62,9 @@ public class ProductService {
 		Users user = userRepository.findById(findProduct.getUserId())
 			.orElseThrow(() -> new IllegalArgumentException("유저 없음요 "));
 
+		findProduct.incrementHit(); // 조회수 증가
+
+		productRepository.save(findProduct); // 변경 사항 저장
 
 		List<String> imageUrls = findProduct.getProductImages()
 			.stream().map(ProductImage::getImageUrl)

@@ -96,4 +96,8 @@ public class Product {
 		this.location = productUpdateDto.getLocation();
 		this.category = productUpdateDto.getCategory();
 	}
+
+	public void incrementHit() {
+		this.hit++;
+	}
 }
