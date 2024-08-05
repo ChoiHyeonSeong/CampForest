@@ -9,7 +9,9 @@ import { Provider } from 'react-redux';
 import { store } from '@store/store';
 import { BrowserRouter } from 'react-router-dom';
 
-axios.defaults.baseURL = ''
+const baseURL = process.env.REACT_APP_BACKEND_URL
+
+axios.defaults.baseURL = baseURL
 axios.defaults.withCredentials = true;
 
 const root = ReactDOM.createRoot(

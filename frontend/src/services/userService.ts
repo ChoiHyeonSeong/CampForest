@@ -1,7 +1,7 @@
 import axios from 'axios'
 import axiosInstance from './authService';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_BACKEND_URL
 
 export const userPage = async (userId: number) => {
   const response = await axios.get(`${API_URL}/user/auth/info`, {params: {userId: userId}});

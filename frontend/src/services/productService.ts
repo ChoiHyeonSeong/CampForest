@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_BACKEND_URL
 
 type ProductRegistDto = {
   productName: string,
