@@ -31,4 +31,6 @@ public interface UserService {
 	List<ResponseFollowDTO> getFollowing(Long userId);
 
 	Map<String, Object> getPythonRecommendUsers(Long userId);
+
+	List<Users> findByNicknameContaining(String nickname);
 }

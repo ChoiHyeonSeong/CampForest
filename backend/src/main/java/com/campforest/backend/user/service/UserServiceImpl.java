@@ -170,6 +170,11 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public List<Users> findByNicknameContaining(String nickname) {
+		return userRepository.findByNicknameContaining(nickname);
+	}
+
 	private Users getUserFromAuthentication(Authentication auth) {
 		return userRepository.findByEmail(auth.getName())
 			.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
