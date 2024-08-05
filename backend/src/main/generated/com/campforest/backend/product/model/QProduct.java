@@ -24,11 +24,15 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
+    public final NumberPath<Long> deposit = createNumber("deposit", Long.class);
+
     public final NumberPath<Long> hit = createNumber("hit", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final NumberPath<Long> interest_hit = createNumber("interest_hit", Long.class);
+
+    public final BooleanPath isSold = createBoolean("isSold");
 
     public final StringPath location = createString("location");
 
@@ -42,9 +46,13 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final EnumPath<ProductType> productType = createEnum("productType", ProductType.class);
 
+    public final ListPath<com.campforest.backend.transaction.model.Rent, com.campforest.backend.transaction.model.QRent> rents = this.<com.campforest.backend.transaction.model.Rent, com.campforest.backend.transaction.model.QRent>createList("rents", com.campforest.backend.transaction.model.Rent.class, com.campforest.backend.transaction.model.QRent.class, PathInits.DIRECT2);
+
+    public final ListPath<com.campforest.backend.transaction.model.Sale, com.campforest.backend.transaction.model.QSale> sale = this.<com.campforest.backend.transaction.model.Sale, com.campforest.backend.transaction.model.QSale>createList("sale", com.campforest.backend.transaction.model.Sale.class, com.campforest.backend.transaction.model.QSale.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
-    public final NumberPath<Long> user_id = createNumber("user_id", Long.class);
+    public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
     public QProduct(String variable) {
         super(Product.class, forVariable(variable));
