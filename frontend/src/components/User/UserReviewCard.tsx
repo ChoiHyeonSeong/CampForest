@@ -14,7 +14,13 @@ const UserReviewCard = (props: Props) => {
       `}>
       {/* 평점 */}
       <div className={`flex items-center mb-[0.5rem]`}>
-        <StarIcon className={`size-[1.25rem] me-[0.5rem]`}/>
+        <StarIcon
+          className={`
+            size-[1.25rem] me-[0.5rem]
+            fill-light-star
+            dark:fill-dark-star  
+          `}
+        />
         <div className={`font-medium text-lg`}>
           4.0
         </div>
