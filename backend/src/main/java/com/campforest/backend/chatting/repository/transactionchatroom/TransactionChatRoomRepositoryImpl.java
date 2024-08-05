@@ -56,12 +56,12 @@ public class TransactionChatRoomRepositoryImpl implements TransactionChatRoomRep
         return room;
     }
     // @Override
-    // public List<TransactionChatRoom> findByUser1IdOrUser2Id(Long buyerId, Long sellerId) {
-    //     return queryFactory
-    //             .selectFrom(transactionChatRoom)
-    //             .where(transactionChatRoom.buyerId.eq(buyerId)
-    //                     .or(transactionChatRoom.sellerId.eq(sellerId)))
-    //             .fetch();
-    // }
+    public List<TransactionChatRoom> findByUser1IdOrUser2Id(Long buyerId, Long sellerId) {
+        return queryFactory
+                .selectFrom(transactionChatRoom)
+                .where(transactionChatRoom.buyerId.eq(buyerId)
+                        .or(transactionChatRoom.sellerId.eq(sellerId)))
+                .fetch();
+    }
 
 }

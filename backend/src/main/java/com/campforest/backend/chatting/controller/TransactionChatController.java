@@ -65,36 +65,26 @@ public class TransactionChatController {
 		}
 	}
 
-	// //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
-	// @PostMapping("/room/{roomId}/markAsRead")
-	// public ApiResponse<?> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
-	// 	try {
-	// 		transactionChatService.markMessagesAsRead(roomId, userId);
-	// 		return ApiResponse.createSuccessWithNoContent("메시지를 읽음 처리 성공.");
-	// 	} catch (Exception e) {
-	// 		return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
-	// 	}
-	// }
-	// //필요없을듯?
-	// @GetMapping("/room/{roomId}/unreadCount")
-	// public ApiResponse<?> getUnreadMessageCount(@PathVariable Long roomId, @RequestParam Long userId) {
-	// 	try {
-	// 		Long unreadCount = transactionChatService.getUnreadMessageCount(roomId, userId);
-	// 		return ApiResponse.createSuccess(unreadCount, "읽지 않은 메시지 수를 가져오기 성공.");
-	// 	} catch (Exception e) {
-	// 		return ApiResponse.createError(ErrorCode.CHAT_UNREAD_COUNT_FAILED);
-	// 	}
-	// }
-	//
+	//roomId에서 userId의 상대유저가 보낸메세지 읽음처리
+	@PostMapping("/room/{roomId}/markAsRead")
+	public ApiResponse<?> markMessagesAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
+		try {
+			transactionChatService.markMessagesAsRead(roomId, userId);
+			return ApiResponse.createSuccessWithNoContent("메시지를 읽음 처리 성공.");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
+		}
+	}
+
 	// //user가 속한 채팅방 목록 가져옴.
-	// // 각 채팅방 별 최근 메시지와, 안읽은 메세지 수 가져옴
-	// @GetMapping("/rooms")
-	// public ApiResponse<?> getChatRoomsForUser(@RequestParam Long userId) {
-	// 	try {
-	// 		List<TransactionChatRoomListDto> rooms = transactionChatService.getChatRoomsForUser(userId);
-	// 		return ApiResponse.createSuccess(rooms,"채팅방 목록 가져오기 성공");
-	// 	}catch (Exception e) {
-	// 		return ApiResponse.createError(ErrorCode.CHAT_ROOM_LIST_FAILED);
-	// 	}
-	// }
+	// 각 채팅방 별 최근 메시지와, 안읽은 메세지 수 가져옴
+	@GetMapping("/rooms")
+	public ApiResponse<?> getChatRoomsForUser(@RequestParam Long userId) {
+		try {
+			List<TransactionChatRoomListDto> rooms = transactionChatService.getChatRoomsForUser(userId);
+			return ApiResponse.createSuccess(rooms,"채팅방 목록 가져오기 성공");
+		}catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.CHAT_ROOM_LIST_FAILED);
+		}
+	}
 }
