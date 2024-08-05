@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,11 +24,13 @@ const RegistEmail: React.FC = () => {
   const [firstPassword, setFirstPassword] = useState<string>('');
   const [repeatPassword, setRepeatPassword] = useState<string>('');
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
+  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(false);
 
   const [inputPhoneValue, setInputPhoneValue] = useState<string>('');
   const [phoneValidateNumber, setPhoneValidateNumber] = useState<string>('');
   const [phoneCertificationState, setPhoneCertificationState] = useState<0 | 1 | 2>(0);
 
+  const [isEmailValid, setIsEmailValid] = useState(true);
   const [inputEmailValue, setInputEmailValue] = useState<string>('');
   const [emailValidateNumber, setEmailValidateNumber] = useState<string>('');
   const [emailCertificationState, setEmailCertificationState] = useState<0 | 1 | 2>(0);
@@ -82,21 +84,35 @@ const RegistEmail: React.FC = () => {
 
   // 이메일 인증
   const requestCertificationEmail = async () => {
-    try {
-      dispatch(setIsLoading(true))
-      const result = await requestEmail(inputEmailValue)
-      if (result?.data.status === 'C000') {
-        alert('이메일이 발송되었습니다.')
-        setEmailCertificationState(1)
-      } else {
-        alert('다시 요청해주세요.')
-      }
-      dispatch(setIsLoading(false))
-    } catch (error) {
-      console.log(error)
-    }
-  }
+    const isValidEmail = (email: string): boolean => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
 
+    if (isValidEmail(inputEmailValue)) {
+      try {
+        dispatch(setIsLoading(true))
+        const result = await requestEmail(inputEmailValue)
+        if (result?.data.status === 'C000') {
+          alert('이메일이 발송되었습니다.')
+          setEmailCertificationState(1)
+        } else {
+          alert('다시 요청해주세요.')
+        }
+        dispatch(setIsLoading(false))
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      setIsEmailValid(false)
+    }
+  };
+
+  useEffect(() => {
+    setIsEmailValid(true);
+  }, [inputEmailValue])
+
+  // 이메일 인증 확인
   const validateCertificationEmail = async () => {
     try {
       const result = await validateEmail(inputEmailValue, emailValidateNumber)
@@ -116,12 +132,12 @@ const RegistEmail: React.FC = () => {
     } catch (error) {
       console.log(error)
     }
-  }
+  };
 
   // 비밃번호 확인 로직
   useEffect(() => {
     // 비밀번호 유효성 검사
-    const validatePassword = (password: string) => {
+    const validatePassword = (password: string): boolean => {
       const lengthRegex = /^.{8,16}$/;
       const uppercaseRegex = /[A-Z]/;
       const lowercaseRegex = /[a-z]/;
@@ -150,6 +166,7 @@ const RegistEmail: React.FC = () => {
   useEffect(() => {
     // 비밀번호 일치 여부 확인
     if (repeatPassword === firstPassword) {
+      setIsPasswordMatch(true)
       dispatch(
         registRequired({
           ...registFormData.required,
@@ -157,6 +174,7 @@ const RegistEmail: React.FC = () => {
         })
       );
     } else {
+      setIsPasswordMatch(false)
       dispatch(
         registRequired({
           ...registFormData.required,
@@ -359,6 +377,17 @@ const RegistEmail: React.FC = () => {
               </button>
             </div>
           </div>
+          <div 
+            className={`
+              ${isEmailValid ? 'hidden' : 'block'}
+              my-[0.25rem]
+              text-light-warning
+              dark:text-dark-warning
+              text-xs 
+            `}
+          >
+            이메일이 유효하지 않습니다.
+          </div>
         </div>
         <div 
           className={`
@@ -395,10 +424,17 @@ const RegistEmail: React.FC = () => {
         <div 
           className={`
             my-[0.25rem]
+            text-light-warning
+            dark:text-dark-warning
             text-xs 
           `}
         >
-          비밀번호는 8~16자 사이로, 영문 대소문자, 숫자, 특수문자 중 3종류 이상을 포함해야 합니다.
+          {isPasswordValid ? (
+              ''
+            ) : (
+              '비밀번호는 8~16자 사이로, 영문 대소문자, 숫자, 특수문자 중 3종류 이상을 포함해야 합니다.'
+            )
+          }
         </div>
         <div 
           className={`
@@ -426,7 +462,23 @@ const RegistEmail: React.FC = () => {
             disabled={!isPasswordValid}
           />
         </div>
+        <div 
+          className={`
+            my-[0.25rem]
+            text-light-warning
+            dark:text-dark-warning
+            text-xs 
+          `}
+        >
+          {isPasswordValid && !isPasswordMatch && firstPassword.length <= repeatPassword.length ? (
+              '비밀번호가 일치하지 않습니다.'
+            ) : (
+              ''
+            )
+          }
+        </div>
       </form>
+
       <div className={`flex items-center mt-[2rem] mx-[0.75rem]`}>
         <input 
           className={`

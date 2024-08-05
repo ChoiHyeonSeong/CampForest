@@ -202,15 +202,15 @@ const UserInformation = () => {
         <div 
           className={`
             my-[3rem] lg:my-[1.5rem]
-            border-light-border
-            dark:border-dark-border
-            md:border-b
+            border-light-border-1
+            dark:border-dark-border-1
+            border-b
           `}
         >
           <div 
             className={`
-              mb-[0.25rem]
-              font-medium 
+              block
+              text-left font-medium text-lg
             `}
           >
             생년월일
@@ -220,9 +220,9 @@ const UserInformation = () => {
               placeholderText="날짜를 선택해주세요."
               className={`
                 w-full px-[1rem] py-[0.75rem]
-                bg-light-white border-light-border
-                dark:bg-dark-white dark:border-dark-border
-                border-b md:border-none focus:outline-none
+                bg-light-white placeholder-light-text-secondary
+                dark:bg-dark-white dark:placeholder-dark-text-secondary
+                focus:outline-none focus:ring-0
               `}
               dateFormat="yyyy.MM.dd"
               formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
