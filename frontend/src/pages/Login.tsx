@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
@@ -12,6 +12,7 @@ import { kakaoLogin } from '@services/authService'
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoginFailed, setIsLoginFailed] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,14 +25,22 @@ function Login() {
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
+      setIsLoginFailed(true);
     }
   };
+
+  useEffect(() => {
+    setIsLoginFailed(false);
+  }, [email, password])
 
   return (
     <div className={`flex justify-center items-center min-h-[100vh] -mt-[3rem]`}>
       <div className={`w-[100%] lg:w-[35rem] md:max-w-[42rem] p-[1.5rem] lg:p-0 bg-light-white dark:bg-dark-white`}>
         <h3 className={`pb-[0.75rem] mb-[2.5rem] text-[2rem] text-center`}>로그인</h3>
 
+        <p className={`${isLoginFailed ? 'block' : 'hidden'} mb-[2.5rem] text-light-warning dark:text-dark-warning text-center whitespace-pre-line`}>
+          {'로그인에 실패했습니다\n아이디 / 비밀번호를 다시확인해주세요.'}
+        </p>
         {/* 로그인 폼 */}
         <form onSubmit={handleLogin}>
           {/* 이메일 */}
