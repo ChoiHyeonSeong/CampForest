@@ -19,7 +19,7 @@ const SearchProduct = (props: Props) => {
   };
 
   return (
-    <div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 px-[1rem] py-[1.5rem]'>
+    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:px-[0.5rem] py-[1.5rem]'>
       <ProductCard product={sampleProduct} />
       <ProductCard product={sampleProduct} />
       <ProductCard product={sampleProduct} />
