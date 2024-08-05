@@ -110,6 +110,9 @@ public enum ErrorCode {
 	REVIEW_CREATION_FAILED("R008", HttpStatus.BAD_REQUEST, "리뷰 생성에 실패하였습니다."),
 	REVIEW_DELETE_FAILED("R009", HttpStatus.BAD_REQUEST, "리뷰 삭제에 실패하였습니다"),
 	REVIEW_READ_FAILED("R010", HttpStatus.BAD_REQUEST, "리뷰를 불러오는 데 실패하였습니다"),
+
+	// Notification Error
+	NOTIFICATION_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
 	;
 
 	private final String code;
