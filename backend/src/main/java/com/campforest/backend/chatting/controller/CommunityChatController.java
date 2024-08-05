@@ -43,7 +43,6 @@ public class CommunityChatController {
         }
             Users user = userService.findByEmail(authentication.getName())
                 .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-            ;
             Long nowId = user.getUserId();
             CommunityChatDto room = communityChatService.createOrGetChatRoom(nowId, user2);
         return ApiResponse.createSuccess(getChatHistory(room.getRoomId()),"채팅방 로드 성공하였습니다");
