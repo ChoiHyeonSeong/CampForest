@@ -95,6 +95,7 @@ public class UserController {
 				.path("/")
 				.secure(true)
 				.sameSite("None")
+				.domain("i11d208.p.ssafy.io")
 				.build();
 
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
@@ -173,9 +174,8 @@ public class UserController {
 				.httpOnly(true)
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
-				.secure(true)
-				// TODO : sameSite 설정 변경
-				.sameSite("None")
+				.sameSite("Lax")
+				.domain("i11d208.p.ssafy.io")
 				.build();
 
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);

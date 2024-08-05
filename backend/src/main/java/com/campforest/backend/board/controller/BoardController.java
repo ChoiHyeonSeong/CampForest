@@ -79,10 +79,22 @@ public class BoardController {
 
     //게시글 단일 조회
     @GetMapping("/detail")
-    public ApiResponse<?> getBoard(@RequestParam Long boardId) {
+    public ApiResponse<?> getBoard(
+        Authentication authentication,
+        @RequestParam Long boardId) {
         try {
-            BoardResponseDto board = boardService.getBoard(boardId);
-            return ApiResponse.createSuccess(board, "게시글 단일 조회 성공");
+            if (authentication == null) {
+                BoardResponseDto board = boardService.getBoard(-1L,boardId);
+                return ApiResponse.createSuccess(board, "비로그인 게시글 단일 조회 성공");
+            }
+            else {
+                Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+                Long nowId = user.getUserId();
+                BoardResponseDto board = boardService.getBoard(nowId, boardId);
+                return ApiResponse.createSuccess(board, "게시글 단일 조회 성공");
+            }
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.BOARD_NOT_FOUND);
         }
@@ -258,7 +270,8 @@ public class BoardController {
         try {
             Users user = userService.findByEmail(authentication.getName())
                     .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-            if (!boardService.getBoard(boardId).getUserId().equals(user.getUserId())) {
+            Long nowId = user.getUserId();
+            if (!boardService.getBoard(nowId,boardId).getUserId().equals(nowId)) {
                 return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
             }
 
@@ -280,7 +293,7 @@ public class BoardController {
                 return ApiResponse.createError(ErrorCode.LIKE_ALREADY_EXISTS);
             }
             boardService.likeBoard(boardId, userId);
-            return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(), "게시글 좋아요 성공하였습니다");
+            return ApiResponse.createSuccess(boardService.getBoard(userId,boardId).getLikeCount(), "게시글 좋아요 성공하였습니다");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -298,7 +311,7 @@ public class BoardController {
                 return ApiResponse.createError(ErrorCode.LIKE_NOT_FOUND);
             }
             boardService.deleteLike(boardId, userId);
-            return ApiResponse.createSuccess(boardService.getBoard(boardId).getLikeCount(), "게시글 좋아요 삭제 성공하였습니다");
+            return ApiResponse.createSuccess(boardService.getBoard(userId, boardId).getLikeCount(), "게시글 좋아요 삭제 성공하였습니다");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -352,14 +365,13 @@ public class BoardController {
     @PostMapping("/comment")
     public ApiResponse<?> writeComment(
             Authentication authentication,
-            @RequestParam Long boardId,
             @RequestBody CommentRequestDto commentRequestDto) {
         try {
             Users users = userService.findByEmail(authentication.getName())
                     .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
             commentRequestDto.setCommentWriterId(users.getUserId());
-            boardService.writeComment(boardId, commentRequestDto);
+            boardService.writeComment(commentRequestDto.getBoardId(), commentRequestDto);
             return ApiResponse.createSuccessWithNoContent("댓글 작성 성공");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.COMMENT_CREATION_FAILED);
