@@ -23,8 +23,9 @@ import SearchPage from '@pages/SearchPage';
 import { WebSocketProvider } from 'Context/WebSocketContext'
 import { communityChatList } from '@services/communityChatService';
 import { store } from '@store/store';
-import { setCommunityChatUserList } from '@store/chatSlice';
+import { setCommunityChatUserList, setTotalUnreadCount } from '@store/chatSlice';
 import logo from '@assets/logo192.png'
+import { ChatUserType } from '@components/Chat/ChatUser';
 
 function App() {
   const dispatch = useDispatch()
@@ -37,6 +38,11 @@ function App() {
     const userId = sessionStorage.getItem('userId');
     if (userId) {
       const response = await communityChatList(Number(userId));
+      let count = 0;
+      response.map((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setTotalUnreadCount(count));
       store.dispatch(setCommunityChatUserList(response));
     }
   }

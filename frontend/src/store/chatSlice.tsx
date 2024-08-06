@@ -9,6 +9,7 @@ type ChatState = {
   roomIds: number[];
   chatInProgress: Message[];
   communityChatUserList: ChatUserType[];
+  totalUnreadCount: number;
 }
 
 const initialState: ChatState = {
@@ -18,6 +19,7 @@ const initialState: ChatState = {
   roomIds: [],
   chatInProgress: [],
   communityChatUserList: [],
+  totalUnreadCount: 0,
 };
 
 const chatSlice = createSlice({
@@ -49,11 +51,30 @@ const chatSlice = createSlice({
       state.communityChatUserList = action.payload;
     },
     updateCommunityChatUserList: (state, action: PayloadAction<{roomId: number; content: string; createdAt: string; inProgress: boolean}>) => {
-      state.communityChatUserList = state.communityChatUserList.map(chatRoom =>
-        chatRoom.roomId === action.payload.roomId
-          ? { ...chatRoom, createdAt: action.payload.createdAt, unreadCount: action.payload.inProgress ? 0 : chatRoom.unreadCount + 1, lastMessage: action.payload.content }
-          : chatRoom
-      );
+      let totalUnreadCountDiff = 0;
+    
+      state.communityChatUserList = state.communityChatUserList.map(chatRoom => {
+        if (chatRoom.roomId === action.payload.roomId) {
+          const newUnreadCount = action.payload.inProgress ? 0 : chatRoom.unreadCount + 1;
+          
+          if (action.payload.inProgress) {
+            totalUnreadCountDiff -= chatRoom.unreadCount;
+          } else {
+            totalUnreadCountDiff += 1;
+          }
+    
+          return { 
+            ...chatRoom, 
+            createdAt: action.payload.createdAt, 
+            unreadCount: newUnreadCount, 
+            lastMessage: action.payload.content 
+          };
+        }
+        return chatRoom;
+      });
+    
+      // totalUnreadCount 업데이트
+      state.totalUnreadCount += totalUnreadCountDiff;
     },
     updateMessageReadStatus: (state, action: PayloadAction<{ roomId: number, readerId: number }>) => {
       state.chatInProgress = state.chatInProgress.map(message => 
@@ -61,6 +82,9 @@ const chatSlice = createSlice({
           ? { ...message, read: true }
           : message
       );
+    },
+    setTotalUnreadCount: (state, action: PayloadAction<number>) => {
+      state.totalUnreadCount = action.payload;
     },
   }
 })
@@ -75,5 +99,6 @@ export const {
   setCommunityChatUserList,
   updateCommunityChatUserList,
   updateMessageReadStatus,
+  setTotalUnreadCount
 } = chatSlice.actions;
 export default chatSlice.reducer;
