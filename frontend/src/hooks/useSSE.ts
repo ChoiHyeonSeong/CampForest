@@ -1,4 +1,3 @@
-// useSSE.ts
 import { useState, useEffect, useCallback } from 'react';
 
 export type Notification = {
@@ -18,40 +17,65 @@ interface UseSSEResult {
 const useSSE = (): UseSSEResult => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [error, setError] = useState<Error | null>(null);
-  const [eventSource, setEventSource] = useState<EventSource | null>(null);
+  const [controller, setController] = useState<AbortController | null>(null);
 
   const subscribe = useCallback(() => {
-    if (eventSource) {
-      eventSource.close();
+    if (controller) {
+      controller.abort();
     }
 
-    const newEventSource = new EventSource(`https://i11d208.p.ssafy.io/api/notification/subscribe`);
+    const newController = new AbortController();
+    setController(newController);
 
-    newEventSource.onmessage = (event: MessageEvent) => {
-      const notification: Notification = JSON.parse(event.data);
-      setNotifications(prev => [...prev, notification]);
-    };
+    const accessToken = sessionStorage.getItem('accessToken'); // 실제 accessToken을 여기에 넣으세요
 
-    newEventSource.onerror = (error: Event) => {
-      console.error('SSE error:', error);
-      setError(error instanceof Error ? error : new Error('Unknown error occurred'));
-      newEventSource.close();
-    };
+    fetch('https://i11d208.p.ssafy.io/api/notification/subscribe', {
+      headers: {
+        'Authorization': `${accessToken}`,
+      },
+      signal: newController.signal,
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
 
-    newEventSource.addEventListener('notification', (event: MessageEvent) => {
-      const notification: Notification = JSON.parse(event.data);
-      setNotifications(prev => [...prev, notification]);
+      function read() {
+        reader.read().then(({ done, value }) => {
+          if (done) {
+            console.log('Stream complete');
+            return;
+          }
+          const chunk = decoder.decode(value, { stream: true });
+          const notifications = chunk.split('\n\n')
+            .filter(notification => notification.trim() !== '')
+            .map(notification => {
+              const data = notification.replace('data: ', '');
+              return JSON.parse(data) as Notification;
+            });
+          
+          setNotifications(prev => [...prev, ...notifications]);
+          read();
+        }).catch(error => {
+          console.error('Stream error:', error);
+          setError(error);
+        });
+      }
+
+      read();
+    }).catch(error => {
+      console.error('Fetch error:', error);
+      setError(error);
     });
-
-    setEventSource(newEventSource);
   }, []);
 
   const unsubscribe = useCallback(() => {
-    if (eventSource) {
-      eventSource.close();
-      setEventSource(null);
+    if (controller) {
+      controller.abort();
+      setController(null);
     }
-  }, [eventSource]);
+  }, [controller]);
 
   useEffect(() => {
     return () => {

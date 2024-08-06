@@ -25,7 +25,6 @@ export const followingList = async (userId: number) => {
   return response.data.data;
 }
 export const nicknameSearch = async (key:string) => {
-  const params = {key:key};
   const response = await axios.get(`/user/auth/search?nickname=${key}`,);
 
   console.log(response.data);

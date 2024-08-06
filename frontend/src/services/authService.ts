@@ -1,7 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { communityChatList } from "./communityChatService";
-import { setCommunityChatUserList } from "@store/chatSlice";
-import { store } from "@store/store";
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;

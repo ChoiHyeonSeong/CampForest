@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from "react-router-dom";
-import Recommand from '@components/Board/Recommand';
 import Board, { BoardType } from '@components/Board/Board';
 import { boardList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';

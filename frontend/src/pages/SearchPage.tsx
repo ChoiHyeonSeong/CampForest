@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import SearchProfileList from '@components/Search/SearchProfileList'
 import SerarchBoardList from '@components/Search/SearchBoardList'
 import SearchProductList from '@components/Search/SearchProductList'

@@ -3,7 +3,6 @@ import { useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import FollowUsers from '@components/User/FollowUsers';
-import { useDispatch } from 'react-redux';
 
 import UBoard from '@components/User/UBoard';
 import UProduct from '@components/User/UProduct';
@@ -11,7 +10,6 @@ import UReview from '@components/User/UReview';
 
 const UserPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState('게시물');
