@@ -28,6 +28,8 @@ import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.user.dto.request.RequestLoginDTO;
 import com.campforest.backend.user.dto.request.RequestRefreshTokenDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
@@ -56,6 +58,7 @@ public class UserController {
 	private final TokenService tokenService;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final NotificationService notificationService;
 
 	@PostMapping("/auth/regist")
 	public ApiResponse<?> registUser(
@@ -214,6 +217,12 @@ public class UserController {
 	public ApiResponse<?> followUser(Authentication authentication, @PathVariable Long followeeId) {
 		try {
 			userService.followUser(authentication, followeeId);
+			Users fromUser = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+			Users toUser = userService.findByUserId(followeeId)
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+			notificationService.createNotification(toUser, NotificationType.FOLLOW, fromUser.getNickname() + "님이 팔로우를 시작했습니다.");
 			return ApiResponse.createSuccess(null, "팔로우 성공");
 		} catch (IllegalArgumentException e) {
 			return ApiResponse.createError(ErrorCode.FOLLOW_FAILED);

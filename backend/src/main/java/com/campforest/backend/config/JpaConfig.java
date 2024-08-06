@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		"com.campforest.backend.chatting.repository",
 		"com.campforest.backend.product.repository",
 		"com.campforest.backend.review.repository",
+		"com.campforest.backend.notification.repository",
 		"com.campforest.backend.transaction.repository",
 		"com.campforest.backend.user.repository.jpa"
 	}

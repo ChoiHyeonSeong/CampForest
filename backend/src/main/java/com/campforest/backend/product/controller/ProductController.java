@@ -172,7 +172,15 @@ public class ProductController {
 		@RequestParam(required = false) List<String> locations,
 		@RequestParam(required = false) String titleKeyword,
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "20") int size) {
+		@RequestParam(defaultValue = "20") int size,
+		Authentication authentication) {
+
+		Long userId = null;
+		if (authentication != null && authentication.isAuthenticated()) {
+			Users user = userService.findByEmail(authentication.getName()).orElse(null);
+			userId = user != null ? user.getUserId() : null;
+		}
+
 		Category categoryEnum = null;
 		if (category != null) {
 			try {
@@ -186,7 +194,7 @@ public class ProductController {
 		Page<ProductSearchDto> result;
 		try {
 			result = productService.findProductsByDynamicConditions(categoryEnum,
-				productType, minPrice, maxPrice, locations, titleKeyword, pageable);
+				productType, minPrice, maxPrice, locations, titleKeyword, pageable, userId);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}

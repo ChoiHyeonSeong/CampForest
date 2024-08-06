@@ -45,6 +45,11 @@ public enum ErrorCode {
 	INVALID_PRODUCT_TYPE("P007", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 유형입니다."),
 	INVALID_PRODUCT_LOCATION("P008", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 위치입니다."),
 	INVALID_AUTHORIZED("P009", HttpStatus.BAD_REQUEST, "인증되지 않은 사용자입니다."),
+
+	// SaveProduct Error
+	SAVEPRODUCT_CREATION_FAILED("P010", HttpStatus.BAD_REQUEST,  "장비 게시물 찜 생성에 실패했습니다."),
+	SAVEPRODUCT_DELETION_FAILED("P011", HttpStatus.BAD_REQUEST, "장비 게시물 찜 삭제에 실패했습니다."),
+	SAVEPRODUCT_NOT_FOUND("P012", HttpStatus.BAD_REQUEST, "장비 게시물 찜 목록 불러오기에 실패했습니다"),
 	
 	// Board Error
 	BOARD_NOT_FOUND("B001", HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
@@ -110,6 +115,9 @@ public enum ErrorCode {
 	REVIEW_CREATION_FAILED("R008", HttpStatus.BAD_REQUEST, "리뷰 생성에 실패하였습니다."),
 	REVIEW_DELETE_FAILED("R009", HttpStatus.BAD_REQUEST, "리뷰 삭제에 실패하였습니다"),
 	REVIEW_READ_FAILED("R010", HttpStatus.BAD_REQUEST, "리뷰를 불러오는 데 실패하였습니다"),
+
+	// Notification Error
+	NOTIFICATION_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
 	;
 
 	private final String code;
