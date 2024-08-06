@@ -29,7 +29,9 @@ const ProductCard = (props: Props) => {
 
   const [isLiked, setIsLiked] = useState(false);
 
-  const toggleLike = () => {
+  const toggleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setIsLiked(!isLiked);
   };
 
@@ -99,14 +101,14 @@ const ProductCard = (props: Props) => {
         <div 
           onClick={toggleLike} 
           className={`
-            absolute z-3 top-[0.25rem] right-[0.25rem] 
+            absolute z-[20] top-[0.25rem] right-[0.25rem] 
             cursor-pointer
           `}
         >
           {isLiked ? 
             (<HeartIcon 
                 className={`
-                  size-[1rem] md:size-[1.25rem]
+                  size-[1.2rem] md:size-[1.4rem]
                   fill-light-heart stroke-light-heart
                   dark:fill-dark-heart dark:stroke-dark-heart
                   `} 
@@ -114,9 +116,9 @@ const ProductCard = (props: Props) => {
             ) : 
             (<HeartIcon 
                 className={`
-                  size-[1rem] md:size-[1.25rem]
-                  fill-none stroke-light-border-icon
-                dark:stroke-dark-border-icon
+                  size-[1.2rem] md:size-[1.4rem]
+                  fill-white stroke-light-border-icon
+                  dark:stroke-dark-border-icon
                 `} 
               />
             )

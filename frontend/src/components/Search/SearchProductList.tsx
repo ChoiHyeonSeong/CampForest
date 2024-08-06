@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
-import SearchProduct from '@components/Search/SearchProduct'
+import React, { useEffect, useState, useCallback } from 'react';
+import { productSearch } from '@services/productService';
+import SearchProduct from '@components/Search/SearchProduct';
+import { ProductType } from '@components/Product/ProductCard';
+import NoResultSearch from '@components/Search/NoResultSearch'
 
-type Props = {}
+type Props = {
+  searchText: string;
+}
 
 const SearchProductList = (props: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('전체');
-  // const [productList, setProductList] = useState<ProductType[]>([]);
-  
+  const [productList, setProductList] = useState<ProductType[]>([]);
+  const [searchCount, setSearchCount] = useState(0);
+
   // API 연동
-  // const fetchProductList = async () => {
-  //   const result = await productSearch('제목', 0, 10);
-  //   setProductList(result);
-  // }
+  const fetchProductList = useCallback(async () => {
+    const result = await productSearch({ productType: '', titleKeyword: props.searchText });
+    if (result && result.content) {
+      setSearchCount(result.totalElements);
+      setProductList(result.content);
+    } else {
+      setSearchCount(0);
+      setProductList([]);
+    }
+  }, [props.searchText]);
+
+  
+  useEffect(() => {
+    fetchProductList();
+  }, [fetchProductList]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -20,14 +37,24 @@ const SearchProductList = (props: Props) => {
 
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
-    setIsDropdownOpen(false); // 메뉴 선택 후 드롭다운 닫기
+    setIsDropdownOpen(false);
   };
+
+  // 드롭다운 메뉴 필터링하기 (판매인지 대여인지)
+  const filteredProducts = productList.filter(product => {
+    if (selectedFilter === '전체') return true;
+    if (selectedFilter === '판매') return product.productType === 'SALE';
+    if (selectedFilter === '대여') return product.productType === 'RENT';
+    return true;
+  });
 
   return (
     <div>
       <div className='flex justify-between items-center'>
         <div className='flex items-center'>
-          <p className='font-medium text-lg md:text-xl'>장비거래<span className='ms-[0.5rem] font-bold'>79</span></p>
+          <p className='font-medium text-lg md:text-xl'>
+            장비거래<span className='ms-[0.5rem] font-bold'>{searchCount}</span>
+          </p>
           <p className='
             ms-[1rem]
             text-light-text-secondary
@@ -108,8 +135,12 @@ const SearchProductList = (props: Props) => {
           )}
         </div>
       </div>
-
-      <SearchProduct />
+      {filteredProducts.length !== 0 
+        ?
+        <SearchProduct product={filteredProducts}/>
+        :
+        <NoResultSearch />
+      }
     </div>
   )
 }

@@ -16,7 +16,7 @@ const EachCategory = (props: Props) => {
     >
       <div 
         className={`
-          ${props.imgWd} mb-[0.25rem] rounded-xl ${props.imgBgColor}
+          ${props.imgWd} mb-[0.25rem] rounded-xl overflow-hidden ${props.imgBgColor}
         `}
       >
         <img 

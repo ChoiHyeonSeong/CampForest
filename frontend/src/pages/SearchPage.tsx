@@ -7,12 +7,12 @@ import SerarchBoardList from '@components/Search/SearchBoardList'
 import SearchProductList from '@components/Search/SearchProductList'
 import SearchAllList from '@components/Search/SearchAllList';
 
-
-
 type Props = {}
 
 const SearchPage = (props: Props) => {
   const [searchText, setSearchText] = useState('');
+  const [searchExecuted, setSearchExecuted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,33 +41,68 @@ const SearchPage = (props: Props) => {
 
   const handleClearInput = () => {
     setSearchText('');
+    setSearchExecuted(false);
+  };
+
+  const handleSearch = () => {
+    if (searchText.length < 2) {
+      alert('검색어는 두 글자 이상 입력해야 합니다.');
+      return;
+    }
+    setSearchExecuted(true);
+    setSearchQuery(searchText);
+    navigate(location.pathname);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   return (
     <div className='flex justify-center min-h-screen'>
       <div className='w-full lg:w-[65%] lg:min-w-[56rem] max-lg:p-[1.5rem] lg:py-[2.5rem]'>
-        <h4 className='mb-[1.5rem] text-xl'><span className='font-medium me-[0.25rem]'>개발</span>에 대한 126개 검색결과</h4>
+        <h4 className='mb-[1.5rem] text-xl'>
+        <span className='font-medium me-[0.25rem]'>
+            {searchExecuted ? `${searchQuery}` : ''}
+          </span>
+          {searchExecuted ? `에 대한 검색결과` : '검색결과'}
+        </h4>
         
         {/* 검색창  */}
         <div
           className='
             flex justify-between items-center w-full h-[2.8rem] md:h-[3.1rem] mb-[0.5rem] px-[0.5rem]
             text-light-text bg-light-gray
-            dark:text-dark-text dark:bg-light-gray
+            dark:text-dark-text dark:bg-dark-gray
             font-medium text-lg rounded
             '
           >
           <div className='flex items-center'>
-          <SearchIcon className='size-[1.4rem] md:size-[1.6rem] me-[1rem] stroke-light-border-icon dark:stroke-light-dark-icon' />
+          <SearchIcon
+            className='
+              size-[1.4rem] md:size-[1.6rem] me-[1rem]
+              stroke-light-border-icon
+              dark:stroke-light-dark-icon
+              cursor-pointer
+            '
+            onClick={handleSearch}
+          />
           <input
               placeholder='키워드로 검색해보세요.'
               className='outline-none bg-transparent'
               value={searchText}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
           </div>
           <CloseIcon
-            className='size-[1.4rem] md:size-[1.6rem] fill-light-border-icon dark:fill-dark-border-icon cursor-pointer'
+            className='
+              size-[1.4rem] md:size-[1.6rem]
+              fill-light-border-icon
+              dark:fill-dark-border-icon
+              cursor-pointer'
             onClick={handleClearInput}
           />
         </div>
@@ -113,8 +148,8 @@ const SearchPage = (props: Props) => {
           <Routes>
             <Route path='/' element={<SearchAllList />} />
             <Route path='profile' element={<SearchProfileList nickname={searchText} />} />
-            <Route path='board' element={<SerarchBoardList />} />
-            <Route path='product' element={<SearchProductList />} />
+            <Route path='board' element={<SerarchBoardList searchText={searchText} />} />
+            <Route path='product' element={<SearchProductList searchText={searchText} />} />
           </Routes>
         </div>
       </div>

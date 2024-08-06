@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import SearchProfile from '@components/Search/SearchProfile'
-import SearchBoard from '@components/Search/SerarchBoard'
+// import SearchProfile from '@components/Search/SearchProfile'
+// import SearchBoard from '@components/Search/SerarchBoard'
 import SearchProduct from '@components/Search/SearchProduct'
 import { ReactComponent as ArrowRightIcon } from '@assets/icons/arrow-right.svg'
 
@@ -154,7 +154,7 @@ const SearchAllList = (props: Props) => {
           
         </div>
         <div>
-          <SearchProduct />
+          {/* <SearchProduct  /> */}
         </div>
       </div>
     
