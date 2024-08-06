@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ChatUser, { ChatUserType } from './ChatUser';
-import Chat, { Message } from './Chat';
+import Chat from './Chat';
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatList } from '@services/communityChatService';
-import { setChatInProgress, setRoomId } from '@store/chatSlice';
+import { setChatInProgress, setIsChatOpen, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
+import { useWebSocket } from 'Context/WebSocketContext';
+import { communityChatDetail } from '@services/communityChatService';
 
 type Props = {
   isLogin: boolean;
@@ -12,57 +13,55 @@ type Props = {
 }
 
 const ChatUserList = (props: Props) => {
+  const { markRead } = useWebSocket();
   const dispatch = useDispatch();
-  const selectedCategory = useSelector((state: RootState) => state.chatStore.selectedCategory);
+  const userId = useSelector((state: RootState) => state.userStore.userId);
+  const isChatOpen = useSelector((state: RootState) => state.chatStore.isChatOpen);
   const storedRoomId = useSelector((state: RootState) => state.chatStore.roomId);
-  const [isOpenChat, setIsOpenChat] = useState(false);
+  const communityChatUserList = useSelector((state: RootState) => state.chatStore.communityChatUserList);
   const [otherId, setOtherId] = useState(0);
-  const [chatUserList, setChatUserList] = useState<ChatUserType[]>([]);
 
-  const fetchCommunityChatList = async () => {
-    try {
-      const result = await communityChatList(props.userId);
-      setChatUserList(result);
-    } catch (error) {
-      console.error('일반 채팅방 목록 조회 실패: ', error);
-    }
-  }
-
-  useEffect(() => {
-    if(selectedCategory === '일반') {
-      fetchCommunityChatList();
-    } else {
-        
-    }
-  }, [selectedCategory])
-
-  const handleChatUser = async (roomId: number, otherId: number) => {
-    if(roomId !== storedRoomId) {
+  const handleChatUser = async (communityChatUser: ChatUserType) => {
+    if(communityChatUser.roomId !== storedRoomId) {
       dispatch(setChatInProgress([]));
-      dispatch(setRoomId(roomId));
+      dispatch(setRoomId(communityChatUser.roomId));
     }
-    setOtherId(otherId);
-    setIsOpenChat(true);
+    
+    setOtherId(communityChatUser.otherUserId);
+    markRead(`/communitychat/room/${communityChatUser.roomId}/markAsRead`, { userId: userId });
+    dispatch(updateCommunityChatUserList({
+      roomId: communityChatUser.roomId,
+      content: communityChatUser.lastMessage,
+      createdAt: communityChatUser.lastMessageTime
+    }))
+    dispatch(setChatInProgress(await communityChatDetail(communityChatUser.roomId)));
+    dispatch(setIsChatOpen(true));
   }
 
   return (
     <div>
-      {chatUserList.map((chatUser, index) => (
-        <div onClick={() => handleChatUser(chatUser.roomId, chatUser.otherUserId)}>
-          <ChatUser chatUser={chatUser}/>
+      {communityChatUserList.map((communityChatUser, index) => (
+        <div 
+          onClick={
+            () => handleChatUser(
+              communityChatUser
+            )
+          }
+        >
+          <ChatUser index={index}/>
         </div>
       ))}
 
     <div
       className={`
-        ${isOpenChat ? 'translate-x-[20rem]' : '-translate-x-full'} 
+        ${isChatOpen ? 'translate-x-[20rem]' : '-translate-x-full'} 
         max-md:hidden absolute top-0 -z-[100] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
         bg-light-white outline-light-border-1
         dark:bg-dark-white dark:outline-dark-border-1
         transition-all duration-300 ease-in-out outline outline-1
       `}
     >
-      <Chat otherId={otherId} setIsOpenChat={setIsOpenChat}/>
+      <Chat otherId={otherId} />
     </div>
       
     </div >

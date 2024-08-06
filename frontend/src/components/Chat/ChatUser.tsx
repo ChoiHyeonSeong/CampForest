@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import userImage from '@assets/logo192.png'
 import { userPage } from '@services/userService';
+import { store } from '@store/store';
 
 export type ChatUserType = {
   roomId: number;
@@ -12,20 +13,21 @@ export type ChatUserType = {
 }
 
 type Props = {
-  chatUser: ChatUserType;
+  index: number;
 }
 
 const ChatUser = (props: Props) => {
+  const chatUser = store.getState().chatStore.communityChatUserList[props.index];
   const [nickname, setNickname] = useState('');
   const [lastMessageTime, setLastMessageTime] = useState('');
   const fetchOtherUser = async () => {
-    const result = await userPage(props.chatUser.otherUserId);
+    const result = await userPage(chatUser.otherUserId);
     setNickname(result.nickname);
   }
 
   useEffect(() => {
     fetchOtherUser();
-    setLastMessageTime(calculateTimeDifference(props.chatUser.lastMessageTime));
+    setLastMessageTime(calculateTimeDifference(chatUser.lastMessageTime));
   }, [])
 
   const formatDate = (date: Date) => {
@@ -101,7 +103,7 @@ const ChatUser = (props: Props) => {
               text-sm line-clamp-1
             `}
           >
-            {props.chatUser.lastMessage}
+            {chatUser.lastMessage}
           </div>
         </div>
       </div>
@@ -122,13 +124,13 @@ const ChatUser = (props: Props) => {
         {/* 알림 개수 */}
         <div 
           className={`
-            ${props.chatUser.unreadCount === 0 ? 'hidden' : ''}
+            ${chatUser.unreadCount === 0 ? 'hidden' : ''}
             bg-light-signature text-light-white 
             dark:bg-dark-signature dark:text-light-white
             text-sm rounded-lg text-center
           `}
         >
-          {props.chatUser.unreadCount}
+          {chatUser.unreadCount}
         </div>
 
       </div>

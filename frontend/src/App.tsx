@@ -21,12 +21,28 @@ import BoardDetail from '@components/Board/BoardDetail';
 import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
 import { WebSocketProvider } from 'Context/WebSocketContext'
+import { communityChatList } from '@services/communityChatService';
+import { store } from '@store/store';
+import { setCommunityChatUserList } from '@store/chatSlice';
 
 function App() {
   const dispatch = useDispatch()
   const currentLoc = useLocation();
 
   useThemeEffect();
+
+  // 일반 채팅방 목록 가져오기
+  const fetchCommunityChatList = async () => {
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+      const response = await communityChatList(Number(userId));
+      store.dispatch(setCommunityChatUserList(response));
+    }
+  }
+  
+  useEffect(() => {
+    fetchCommunityChatList();
+  })
 
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;
