@@ -37,7 +37,7 @@ const UserPage = () => {
   async function fetchProducts() {
     try {
       dispatch(setIsLoading(true));
-      const productData = await productList({userId: userId});
+      const productData = await productList({productType: '', userId: userId});
       setProducts(productData);
     } catch (error) {
       console.error("Failed to fetch products: ", error);
