@@ -21,7 +21,6 @@ import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.oauth.model.OAuthCodeToken;
 import com.campforest.backend.oauth.repository.OAuthCodeTokenRepository;
 import com.campforest.backend.oauth.repository.TempUserRepository;
-import com.campforest.backend.oauth.dto.request.RequestTokenDTO;
 import com.campforest.backend.oauth.dto.response.ResponseOAuthInfoDTO;
 import com.campforest.backend.oauth.model.TempUser;
 
@@ -29,7 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/oauth")
 @RequiredArgsConstructor
 public class OAuthController {
 
@@ -48,9 +47,8 @@ public class OAuthController {
 	}
 
 	@GetMapping("/get-oauth-info")
-	public ApiResponse<?> getOAuthInfo(@RequestBody RequestTokenDTO requestDTO) {
+	public ApiResponse<?> getOAuthInfo(@RequestParam("token") String token) {
 		try {
-			String token = requestDTO.getToken();
 			TempUser tempUser = tempUserRepository.findById(token)
 				.orElseThrow(() -> new NotFoundException("토큰이 유효하지 않습니다."));
 
@@ -83,6 +81,7 @@ public class OAuthController {
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
 				.httpOnly(true)
+				.secure(true)
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
 				.sameSite("None")
