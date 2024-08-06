@@ -91,6 +91,7 @@ public class Product {
 	private boolean isSold;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
 	private List<SaveProduct> savedBy = new ArrayList<>();
 
 	public void update(ProductUpdateDto productUpdateDto) {

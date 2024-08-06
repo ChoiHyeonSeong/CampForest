@@ -3,6 +3,7 @@ package com.campforest.backend.product.model;
 import java.time.LocalDateTime;
 
 import com.campforest.backend.user.model.Users;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,10 +33,12 @@ public class SaveProduct {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private Users user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
+	@JsonBackReference
 	private Product product;
 
 	@Column(name = "created_at")
