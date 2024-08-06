@@ -11,10 +11,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.campforest.backend.board.dto.CreateRoomDto;
 import com.campforest.backend.chatting.dto.CommunityChatDto;
 import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
 import com.campforest.backend.chatting.dto.TransactionChatDto;
@@ -42,8 +45,7 @@ public class TransactionChatController {
 	@PostMapping("/room")
 	public ApiResponse<?> createChatRoom(
 		Authentication authentication,
-		@RequestParam Long productId,
-		@RequestParam Long seller) {
+		@RequestBody CreateRoomDto createRoomDto) {
 		try {
 			if (authentication == null) {
 				return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
@@ -51,7 +53,7 @@ public class TransactionChatController {
 			Users user = userService.findByEmail(authentication.getName())
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 			Long buyer = user.getUserId();
-			TransactionChatDto room = transactionChatService.createOrGetChatRoom(productId,buyer, seller);
+			TransactionChatDto room = transactionChatService.createOrGetChatRoom(createRoomDto.getProductId(),buyer, createRoomDto.getSeller());
 			return ApiResponse.createSuccess(transactionChatService.getChatHistory(room.getRoomId()),"채팅방 생성 성공하였습니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);

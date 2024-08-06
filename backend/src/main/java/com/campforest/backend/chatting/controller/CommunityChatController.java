@@ -36,7 +36,7 @@ public class CommunityChatController {
     @PostMapping("/room")
     public ApiResponse<?> createChatRoom(
         Authentication authentication,
-        @RequestParam Long user2) {
+        @RequestBody Long user2) {
         try {
         if (authentication == null) {
             return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
