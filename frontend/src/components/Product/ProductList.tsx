@@ -103,7 +103,7 @@ const ProductList = () => {
       if (result.data) {
         setNextPageExist(false);
       }
-      setProducts((prevProducts) => [...prevProducts, ...result.content]);
+      setProducts((prevProducts) => [...prevProducts, ...result.products]);
     } catch (error) {
       dispatch(setIsLoading(false));
       console.error('판매/대여 게시글 불러오기 실패: ', error);

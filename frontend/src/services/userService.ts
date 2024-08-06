@@ -3,7 +3,7 @@ import axiosInstance from './authService';
 
 export const userPage = async (userId: number) => {
   const response = await axios.get(`/user/auth/info`, {params: {userId: userId}});
-  console.log(response);  
+  // console.log(response);  
 
   return response.data.data;
 }
