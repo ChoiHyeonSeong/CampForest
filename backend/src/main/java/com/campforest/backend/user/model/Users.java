@@ -11,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.SaveProduct;
+import com.campforest.backend.notification.model.Notification;
 import com.campforest.backend.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -125,6 +126,10 @@ public class Users {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SaveProduct> savedProducts = new ArrayList<>();
+
+	@OneToMany(mappedBy = "receiver")
+	@JsonManagedReference
+	private List<Notification> notifications;
 
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
