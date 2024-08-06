@@ -24,4 +24,5 @@ public class ProductSearchDto {
 	private String imageUrl;
 	private Long deposit;
 	private boolean isSold;
+	private boolean isSaved;
 }

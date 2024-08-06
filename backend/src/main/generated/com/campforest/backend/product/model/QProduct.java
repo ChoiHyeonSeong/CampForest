@@ -50,6 +50,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final ListPath<com.campforest.backend.transaction.model.Sale, com.campforest.backend.transaction.model.QSale> sale = this.<com.campforest.backend.transaction.model.Sale, com.campforest.backend.transaction.model.QSale>createList("sale", com.campforest.backend.transaction.model.Sale.class, com.campforest.backend.transaction.model.QSale.class, PathInits.DIRECT2);
 
+    public final ListPath<SaveProduct, QSaveProduct> savedBy = this.<SaveProduct, QSaveProduct>createList("savedBy", SaveProduct.class, QSaveProduct.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);

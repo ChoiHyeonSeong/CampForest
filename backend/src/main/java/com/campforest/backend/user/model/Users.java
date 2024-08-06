@@ -1,5 +1,7 @@
 package com.campforest.backend.user.model;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -7,6 +9,9 @@ import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import com.campforest.backend.product.model.Product;
+import com.campforest.backend.product.model.SaveProduct;
+import com.campforest.backend.notification.model.Notification;
 import com.campforest.backend.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -119,6 +124,14 @@ public class Users {
 	@JsonManagedReference
 	private List<Review> receivedReviews;
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private List<SaveProduct> savedProducts = new ArrayList<>();
+
+	@OneToMany(mappedBy = "receiver")
+	@JsonManagedReference
+	private List<Notification> notifications;
+
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -132,5 +145,18 @@ public class Users {
 	public void updateOAuthInfo(String provider, String providerId) {
 		this.provider = provider;
 		this.providerId = providerId;
+	}
+
+	public void addSavedProduct(Product product) {
+		SaveProduct savedProduct = SaveProduct.builder()
+			.user(this)
+			.product(product)
+			.createdAt(LocalDateTime.now())
+			.build();
+		this.savedProducts.add(savedProduct);
+	}
+
+	public void deleteSavedProduct(SaveProduct product) {
+		this.savedProducts.removeIf(savedProduct -> savedProduct.getId().equals(product.getId()));
 	}
 }

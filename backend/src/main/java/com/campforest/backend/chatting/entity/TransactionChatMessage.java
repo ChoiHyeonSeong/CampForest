@@ -41,10 +41,6 @@ public class TransactionChatMessage {
 	@Column(name = "content")
 	private String content;
 
-	@Column(name = "message_type")
-	@Enumerated(EnumType.STRING)
-	private MessageType messageType;
-
 	@Column(name = "is_read")
 	private boolean isRead;
 
