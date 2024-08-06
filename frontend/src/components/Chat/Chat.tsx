@@ -63,7 +63,6 @@ const Chat = ({ otherId }: Props) => {
 
   const handleSendButton = () => {
     if (userInput.trim() !== '') {
-      console.log('userId', userId);
       sendMessage(`/pub/${roomId}/send`, { senderId: userId, content: userInput });
       setUserInput('');
     }
@@ -180,7 +179,7 @@ const Chat = ({ otherId }: Props) => {
               `}
             >
               <div className='shrink-0 me-[0.5rem] text-xs'>
-                {message.read ? '읽음' : '안읽음'}
+                {message.read ? '' : '1'}
               </div>
               <div
                 className='
