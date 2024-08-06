@@ -25,7 +25,8 @@ const Aside = (props: Props) => {
   };
 
   const scrollToTop = (): void => {
-    window.scrollTo({
+    const contentBox = document.getElementById('contentBox');
+    contentBox?.scrollTo({
       top: 0,
       behavior: 'smooth'
     });

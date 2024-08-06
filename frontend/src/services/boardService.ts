@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './authService';
 
-export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: string[]) => {
+export const boardWrite = async (userId: number, title: string, content: string, category: string, boardOpen: boolean, images: File[]) => {
   const formData = new FormData();
   const value = {
     userId: userId,
@@ -13,20 +13,10 @@ export const boardWrite = async (userId: number, title: string, content: string,
   const blob = new Blob([JSON.stringify(value)], {type: "application/json"})
   formData.append('boardRequestDto', blob);
 
-  if (images.length > 0) {
-    images.forEach((base64String, index) => {
-      const binaryString = window.atob(base64String.split(',')[1]);
-      const len = binaryString.length;
-      const bytes = new Uint8Array(len);
+  images.forEach((file, index) => {
+    formData.append(`files`, file);
+  });
 
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      const imageBlob = new Blob([bytes], { type: "image/png" })
-      formData.append(`files`, imageBlob, `${userId}_image_${index}.png`);
-    });
-  }
-  
   try {
     console.log('write', axiosInstance.defaults.headers['Authorization'] );
     const response = await axiosInstance.post(`/board`, formData, {
@@ -54,7 +44,7 @@ export const boardUserList = async (userId: number, page?: number, size?: number
 
   const response = await axios.get(`/board/user`, {params});
 
-  return response.data.data;
+  return response;
 }
 
 export const filteredBoardList = (category: string, page: number, size: number) => {

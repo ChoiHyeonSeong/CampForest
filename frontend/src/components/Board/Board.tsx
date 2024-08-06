@@ -55,7 +55,7 @@ const Board = (props: Props) => {
     try {
       const result = await boardDelete(props.board.boardId)
       console.log(result)
-      navigate('/');
+      props.deleteFunction()
     } catch (error) {
       console.log(error)
     };

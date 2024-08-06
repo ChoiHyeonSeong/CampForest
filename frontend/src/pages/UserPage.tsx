@@ -1,54 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import FollowUsers from '@components/User/FollowUsers';
 import { useDispatch } from 'react-redux';
-import { setIsLoading } from '@store/modalSlice';
-import { productList } from '@services/productService';
-import ProductCard from '@components/Product/ProductCard';
-import { boardUserList } from '@services/boardService';
-import Board from '@components/Board/Board';
-import UserReviewList from '@components/User/UserReviewList';
+
+import UBoard from '@components/User/UBoard';
+import UProduct from '@components/User/UProduct';
+import UReview from '@components/User/UReview';
 
 const UserPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState('게시물');
-  const [products, setProducts] = useState({ content: [], totalElements: 0 });
-  const [boards, setBoards] = useState({ content: [], totalElements: 0 });
+ 
   const userId = Number(useParams().userId);
 
-  const pageReload = () => {
-  }
-
-  async function fetchBoards() {
-    try {
-      const boardData = await boardUserList(userId);
-      setBoards(boardData);
-    } catch (error) {
-      console.error("Failed to fetch boards: ", error);
-    } finally {
-      dispatch(setIsLoading(false));
-    }
-  }
-
-  async function fetchProducts() {
-    try {
-      dispatch(setIsLoading(true));
-      const productData = await productList({productType: '', userId: userId});
-      setProducts(productData);
-    } catch (error) {
-      console.error("Failed to fetch products: ", error);
-    }
-  }
-
   useEffect(() => {
-
-    fetchProducts();
-    fetchBoards();
-  }, [])
+    if (selectedMenu === '게시물') {
+      navigate('')
+    } else if (selectedMenu === '판매/대여') {
+      navigate('product')
+    } else if (selectedMenu === '거래후기') {
+      navigate('review')
+    }
+  }, [selectedMenu])
 
   return (
     <>
@@ -86,35 +64,20 @@ const UserPage = () => {
           <div>
             {/* 목록전환박스 */}
             <MenuBar 
-              boardCount={boards.totalElements} 
-              productCount={products?.totalElements} 
+              boardCount={1} 
+              productCount={1}
+              reviewCount={1}
               selectedMenu={selectedMenu} 
-              setSelectedMenu={setSelectedMenu}/>
+              setSelectedMenu={setSelectedMenu}
+            />
 
             {/* 목록 */}
             <div className={`w-[100%] h-[14rem]`}>
-              {/* 게시물 목록 */}
-              <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
-              {boards?.content.map((board: any) => (
-                  <Board 
-                    board={board} 
-                    deleteFunction={pageReload} 
-                    isDetail={false}/>
-              ))}
-              </div>
-              {/* 판매/대여 목록 */}
-              <div className={`${selectedMenu === '판매/대여' ? '' : 'hidden'} grid grid-cols-2 md:grid-cols-3`}>
-                {products?.content.map((product: any) => (
-                  <ProductCard product={product}/>
-                ))}
-              </div>
-              {/* 거래후기 목록 */}
-              <div className={`${selectedMenu === '거래후기' ? '' : 'hidden'}`}>
-                {/* {reveiw?.content.map((reveiw: any) => ( */}
-                  <UserReviewList />
-                {/* ))} */}
-        
-              </div>
+              <Routes>
+                <Route path='/' element={<UBoard />} />
+                <Route path='/product' element={<UProduct />} />
+                <Route path='/review' element={<UReview />} />
+              </Routes>      
             </div>
 
           </div>
