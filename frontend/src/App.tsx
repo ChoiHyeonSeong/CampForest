@@ -26,10 +26,21 @@ import { store } from '@store/store';
 import { setCommunityChatUserList, setTotalUnreadCount } from '@store/chatSlice';
 import logo from '@assets/logo192.png'
 import { ChatUserType } from '@components/Chat/ChatUser';
+import { subscribeRequest } from '@services/notification';
+import useSSE from '@hooks/useSSE';
 
 function App() {
   const dispatch = useDispatch()
   const currentLoc = useLocation();
+  const { subscribe } = useSSE();
+
+  // 알림 구독
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    if(isLoggedIn) {
+      subscribe();
+    }
+  })
 
   useThemeEffect();
 

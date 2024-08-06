@@ -13,6 +13,7 @@ import NavbarLeftExtendSearch from './NavbarLeftExtendSearch'
 import Chat from '@components/Chat/Chat';
 import NavbarBottom from './NavbarBottom';
 import Aside from './Aside';
+import { setIsChatOpen } from '@store/chatSlice';
 
 const Navbar = () => {
   const user = useSelector((state: RootState) => state.userStore);
@@ -48,6 +49,7 @@ const Navbar = () => {
     setIsExtendChatListOpen(false);
     setIsExtendNotificationOpen(false);
     setIsExtendSearchOpen(false);
+    dispatch(setIsChatOpen(false));
   }
 
   const toggleExtendMenu = (selectedCategory: string): void => {

@@ -20,14 +20,6 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
   const clientRef = useRef<Client | null>(null);
 
   const subscribeInitial = useCallback((client: Client) => {
-    
-    if(store.getState().userStore.isLoggedIn) {
-      client.subscribe(`/notification/subscribe`, (message) => {
-        const response = JSON.parse(message.body);
-        console.log(response);
-      })
-    }
-
     // 사용자가 진행 중이었던 채팅방 목록 불러오고 구독
     const communityChatUserList = store.getState().chatStore.communityChatUserList;
     if (communityChatUserList) {
@@ -73,7 +65,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         Authorization: `${jwt}`,
       },
       debug: (str) => {
-        console.log(str);
+        // console.log(str);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
