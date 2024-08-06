@@ -70,6 +70,7 @@ public class CommunityChatController {
 
     //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
     @PostMapping("/room/{roomId}/markAsRead")
+    @SendTo("/sub/community/{roomId}")
     public ApiResponse<?> markMessagesAsRead(
         Authentication authentication,
         @PathVariable Long roomId) {
@@ -85,6 +86,19 @@ public class CommunityChatController {
         return ApiResponse.createSuccessWithNoContent("메시지를 읽음 처리 성공.");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
+        }
+    }
+    @MessageMapping("/room/{roomId}/markAsRead")
+    public void markMessagesAsReadWebSocket(
+        @DestinationVariable Long roomId,
+        @Payload Long userId) {
+        try {
+            communityChatService.markMessagesAsRead(roomId, userId);
+            // 읽음 처리 완료를 클라이언트에게 알림
+            messagingTemplate.convertAndSend("/sub/community/" + roomId + "/readStatus", userId);
+        } catch (Exception e) {
+            // 에러 처리
+            messagingTemplate.convertAndSend("/sub/community/" + roomId + "/error", "메시지 읽음 처리 실패");
         }
     }
     //필요없을듯?
