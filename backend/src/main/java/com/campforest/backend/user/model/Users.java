@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import com.campforest.backend.notification.model.Notification;
 import com.campforest.backend.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -118,6 +119,10 @@ public class Users {
 	@OneToMany(mappedBy = "reviewed", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<Review> receivedReviews;
+
+	@OneToMany(mappedBy = "receiver")
+	@JsonManagedReference
+	private List<Notification> notifications;
 
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

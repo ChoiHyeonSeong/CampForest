@@ -1,5 +1,6 @@
 package com.campforest.backend.common;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ApiResponse<T> {
+public class ApiResponse<T> implements Serializable {
 
 	private static final String SUCCESS_STATUS = "C000";
 
