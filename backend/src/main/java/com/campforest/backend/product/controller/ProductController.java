@@ -2,7 +2,9 @@ package com.campforest.backend.product.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -172,7 +174,7 @@ public class ProductController {
 		@RequestParam(required = false) List<String> locations,
 		@RequestParam(required = false) String titleKeyword,
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "20") int size,
+		@RequestParam(defaultValue = "2") int size,
 		Authentication authentication) {
 
 		Long userId = null;
@@ -190,6 +192,7 @@ public class ProductController {
 			}
 		}
 
+
 		Pageable pageable = PageRequest.of(page, size);
 		Page<ProductSearchDto> result;
 		try {
@@ -199,7 +202,14 @@ public class ProductController {
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 
-		return ApiResponse.createSuccess(result, "성공적으로 조회하였습니다.");
+		// 총 갯수 포함
+		Map<String, Object> responseMap = new HashMap<>();
+		responseMap.put("products", result.getContent());
+		responseMap.put("totalElements", result.getTotalElements());
+		responseMap.put("totalPages", result.getTotalPages());
+		responseMap.put("currentPage", result.getNumber());
+
+		return ApiResponse.createSuccess(responseMap, "성공적으로 조회하였습니다.");
 	}
 
 }
