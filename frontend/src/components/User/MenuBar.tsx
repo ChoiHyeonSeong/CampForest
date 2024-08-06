@@ -6,10 +6,11 @@ import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 type Props = {
   boardCount: number;
   productCount: number;
+  reviewCount: number;
   selectedMenu: string;
   setSelectedMenu: (menu: string) => void;
 }
-
+  
 const MenuBar = (props: Props) => {
   const handleMenuClick = (menu: string) => {
     props.setSelectedMenu(menu);
@@ -86,7 +87,7 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>거래후기</p>
-          <p>12</p>
+          <p>{props.reviewCount}</p>
         </div>
       </div>
 

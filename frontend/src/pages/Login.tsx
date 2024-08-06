@@ -7,7 +7,7 @@ import { login } from '@services/authService'
 import { setUser } from '@store/userSlice'
 import { useDispatch } from 'react-redux'
 
-import { kakaoLogin } from '@services/authService'
+import { kakaoLogin, naverLogin } from '@services/authService'
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -128,6 +128,7 @@ function Login() {
             <p>카카오로 로그인</p>
           </button>
           <button 
+            onClick={naverLogin}
             className={`
               flex flex-all-center w-[50%] max-md:w-[100%] py-[0.5rem] px-[1rem]
               bg-[#03C75A] text-white 

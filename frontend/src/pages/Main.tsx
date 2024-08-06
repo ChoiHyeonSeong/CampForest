@@ -1,12 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from "react-router-dom";
 import Recommand from '@components/Board/Recommand';
 import Board, { BoardType } from '@components/Board/Board';
 import { boardList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
+import { setUser } from '@store/userSlice';
+
+import { getOAuthAccessToken } from '@services/authService';
+
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+}
 
 function Main() {
+  const query = useQuery();
+
+  useEffect(() => {
+    const queryCode = query.get('code')
+
+    if (queryCode !== null) {
+      const getAccessToken = async () => {
+        try {
+          const response = await getOAuthAccessToken(queryCode)
+          dispatch(setUser(response.user));
+          console.log(response)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+      getAccessToken()
+    }
+  }, []);
+
   const dispatch = useDispatch();
 
   const [ref, inView] = useInView();
@@ -28,15 +56,17 @@ function Main() {
       const result = await boardList(boardPageRef.current, 10);
       dispatch(setIsLoading(false))
 
-      boardPageRef.current += 1
-      if (result.data.data.last) {
-        setNextPageExist(false);
+      if (result.data) {
+        boardPageRef.current += 1
+        if (result.data.data.last) {
+          setNextPageExist(false);
+        }
+        console.log(result.data)
+        if (reset) {
+          isFirstLoadRef.current = false;
+        } 
+        setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
       }
-      console.log(result.data)
-      if (reset) {
-        isFirstLoadRef.current = false;
-      } 
-      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);
