@@ -20,9 +20,8 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
   const clientRef = useRef<Client | null>(null);
 
   const subscribeInitial = useCallback((client: Client) => {
-    const state = store.getState();
-
-    if(state.userStore.isLoggedIn) {
+    
+    if(store.getState().userStore.isLoggedIn) {
       client.subscribe(`/notification/subscribe`, (message) => {
         const response = JSON.parse(message.body);
         console.log(response);
@@ -30,12 +29,13 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
     }
 
     // 사용자가 진행 중이었던 채팅방 목록 불러오고 구독
-    const communityChatUserList = state.chatStore.communityChatUserList;
+    const communityChatUserList = store.getState().chatStore.communityChatUserList;
     if (communityChatUserList) {
       communityChatUserList.forEach((chatRoom: any) => {
         // 읽음 처리를 받았을 때
         client.subscribe(`/sub/community/${chatRoom.roomId}/readStatus`, (message) => {
           const readerId = JSON.parse(message.body); // 읽은 사람 Id
+          const state = store.getState();
           if (state.userStore.userId !== readerId) {
             store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId }));
           }  
@@ -45,6 +45,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         client.subscribe(`/sub/community/${chatRoom.roomId}`, (message) => {
           const response = JSON.parse(message.body);
           // console.log('Received chat message:', response);
+          const state: RootState = store.getState();
           
           // 현재 열려 있는 채팅방 내용 갱신
           if (state.chatStore.roomId === response.roomId) {
@@ -72,7 +73,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         Authorization: `${jwt}`,
       },
       debug: (str) => {
-        // console.log(str);
+        console.log(str);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,

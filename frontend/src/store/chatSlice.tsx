@@ -29,6 +29,7 @@ const chatSlice = createSlice({
     setIsChatOpen: (state, action: PayloadAction<boolean>) => {
       state.isChatOpen = action.payload;
       if(!action.payload) {
+        console.log('뭔데 왜 0 되는데?')
         state.roomId = 0;
       }
     },

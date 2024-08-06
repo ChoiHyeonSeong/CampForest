@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ChatUser, { ChatUserType } from './ChatUser';
 import Chat from './Chat';
-import { RootState } from '@store/store';
+import { RootState, store } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setChatInProgress, setIsChatOpen, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
 import { useWebSocket } from 'Context/WebSocketContext';
