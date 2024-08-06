@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Builder
 public class ResponseInfoDTO {
+	private Long userId;
 	private String nickname;
 	private int followingCount;
 	private int followerCount;
@@ -22,6 +23,7 @@ public class ResponseInfoDTO {
 			imageUrl = users.getUserImage().getImageUrl();
 		}
 		return ResponseInfoDTO.builder()
+				.userId(users.getUserId())
 				.nickname(users.getNickname())
 				.followingCount(users.getFollowing().size())
 				.followerCount(users.getFollowers().size())
