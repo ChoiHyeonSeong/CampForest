@@ -2,12 +2,17 @@ package com.campforest.backend.transaction.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.repository.ProductRepository;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
@@ -26,16 +31,20 @@ public class RentService {
 
 	private final RentRepository rentRepository;
 	private final ProductRepository productRepository;
+	private final NotificationService notificationService;
 
 	@Transactional
-	public void rentRequest(RentRequestDto rentRequestDto) {
+	public Map<String, Long> rentRequest(RentRequestDto rentRequestDto) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		validateDuplicateRequest(rentRequestDto);
-
+		Map<String, Long> result = new HashMap<>();
 		Long requesterId = rentRequestDto.getRequesterId();
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
+
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
 
 		Rent rent = buildRent(rentRequestDto, product, requesterId, receiverId, TransactionStatus.REQUESTED);
 		rent.requestRent();
@@ -44,10 +53,11 @@ public class RentService {
 		Rent reverseRent = buildRent(rentRequestDto, product, receiverId, requesterId, TransactionStatus.RECEIVED);
 		reverseRent.receiveRent();
 		rentRepository.save(reverseRent);
+		return result;
 	}
 
 	@Transactional
-	public void acceptRent(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> acceptRent(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
@@ -58,8 +68,14 @@ public class RentService {
 		rents[0].acceptRent();
 		rents[1].acceptRent();
 
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
+
+		return result;
 	}
 
 	@Transactional

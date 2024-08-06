@@ -1,6 +1,8 @@
 package com.campforest.backend.transaction.service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,25 +28,33 @@ public class SaleService {
 	private final SaleRepository saleRepository;
 
 	@Transactional
-	public void saleRequest(SaleRequestDto saleRequestDto) {
+	public Map<String, Long> saleRequest(SaleRequestDto saleRequestDto) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		validateDuplicateRequest(saleRequestDto);
 
-		Sale sale = buildSale(saleRequestDto, product, saleRequestDto.getRequesterId(), saleRequestDto.getReceiverId(),
-			TransactionStatus.REQUESTED, saleRequestDto.getMeetingTime());
+		Map<String, Long> result = new HashMap<>();
+		Long requesterId = saleRequestDto.getRequesterId();
+		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
+
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+
+		Sale sale = buildSale(saleRequestDto, product, requesterId, receiverId, TransactionStatus.REQUESTED);
 		sale.requestSale();
 		saleRepository.save(sale);
 
-		Sale reverseSale = buildSale(saleRequestDto, product, saleRequestDto.getReceiverId(),
-			saleRequestDto.getRequesterId(), TransactionStatus.RECEIVED, saleRequestDto.getMeetingTime());
+		Sale reverseSale = buildSale(saleRequestDto, product, receiverId,
+			requesterId, TransactionStatus.RECEIVED);
 		reverseSale.receiveSale();
 		saleRepository.save(reverseSale);
+
+		return result;
 	}
 
 	@Transactional
-	public void acceptSale(SaleRequestDto saleRequestDto, Long requesterId) {
+	public Map<String, Long> acceptSale(SaleRequestDto saleRequestDto, Long requesterId) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
@@ -55,8 +65,14 @@ public class SaleService {
 		sales[0].acceptSale();
 		sales[1].acceptSale();
 
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
+
+		return result;
 	}
 
 	@Transactional
@@ -142,7 +158,7 @@ public class SaleService {
 	}
 
 	private Sale buildSale(SaleRequestDto saleRequestDto, Product product, Long requesterId, Long receiverId,
-		TransactionStatus status, LocalDateTime meetingTime) {
+		TransactionStatus status) {
 		return Sale.builder()
 			.product(product)
 			.requesterId(requesterId)
@@ -150,7 +166,7 @@ public class SaleService {
 			.sellerId(saleRequestDto.getSellerId())
 			.buyerId(saleRequestDto.getBuyerId())
 			.saleStatus(status)
-			.meetingTime(meetingTime)
+			.meetingTime(saleRequestDto.getMeetingTime())
 			.meetingPlace(saleRequestDto.getMeetingPlace())
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
