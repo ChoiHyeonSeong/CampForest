@@ -14,7 +14,8 @@ import Community from '@pages/Community';
 import BoardWrite from '@components/Board/BoardWrite';
 import LoadingModal from '@components/Public/LoadingModal';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
 import BoardDetail from '@components/Board/BoardDetail';
@@ -23,6 +24,7 @@ import SearchPage from '@pages/SearchPage';
 import { WebSocketProvider } from 'Context/WebSocketContext'
 
 function App() {
+  const modals = useSelector((state: RootState) => state.modalStore);
   const dispatch = useDispatch()
   const currentLoc = useLocation();
 
@@ -37,7 +39,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const contentBox = document.getElementById('contentBox');
+    contentBox?.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
     dispatch(setIsBoardWriteModal(false));
   }, [currentLoc]);
 
@@ -66,8 +72,8 @@ function App() {
           </div>
         </div>
         {/* 모달은 이 아래부터 */}
-        <BoardWrite />
-        <LoadingModal />
+        {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
+        {modals.isLoading ? <LoadingModal /> : <></>}
       </div>
     </WebSocketProvider>
   );

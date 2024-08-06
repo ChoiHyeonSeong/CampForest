@@ -27,6 +27,8 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
 
+  const [fireTemperature, setFireTemperature] = useState(400);
+
   useEffect(() => {
     if (userId === loginUserId) {
       setMyPage(true);
@@ -44,6 +46,8 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
 
     fetchUserInfo();
   }, [])
+
+  const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
 
   return (
     <div className={`px-[1rem] py-[1.5rem`}>
@@ -199,7 +203,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
             `}
           >
             <span>
-              653
+              {fireTemperature}
             </span>
             ℃
           </div>
@@ -215,16 +219,20 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
         >
           <div 
             className={`
-              relative w-1/2 h-full 
+              relative h-full 
               bg-gradient-to-r from-light-warning to-light-signature
               dark:from-dark-warning dark:to-dark-signature
               rounded-full
             `}
+            style={{ 
+              width: `${percentage}%` 
+            }}
           >
             <img 
               src={FireGif} 
               alt="불꽃" 
-              className={`absolute -right-[4rem] -top-[3.75rem] z-[0] size-[8rem]`}/>
+              className={`absolute -right-[4rem] -top-[4.5rem] z-[0] w-[128px] min-w-[128px] h-[160px] min-h-[160px]`}
+            />
           </div>
         </div>
       </div>

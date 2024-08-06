@@ -124,18 +124,78 @@ export const logout = async () => {
 
 export const kakaoLogin = async () => {
   try {
-    const response = await axios.get(`/login/kakao`,{
+    const response = await axios.get(`oauth/login/kakao`,{
         withCredentials: true
     });
     window.location.href = response.data.url;
-
-    console.log(response)
-
   } catch (error) {
     console.error('kakao Login failed:', error);
     throw error;
   }
 };
+
+export const naverLogin = async () => {
+  try {
+    const response = await axios.get(`oauth/login/naver`,{
+        withCredentials: true
+    });
+    window.location.href = response.data.url;
+  } catch (error) {
+    console.error('kakao Login failed:', error);
+    throw error;
+  }
+}
+
+export const getOAuthAccessToken = async (code: string): Promise<LoginResponse> => {
+  try {
+    const response = await axios.get(`oauth/get-user-token`, {
+      params: {
+        code
+      }
+    });
+    const data = response.data.data;
+    const Authorization = response.headers.authorization;
+    console.log(data)
+    const user = { userId: data.userId, 
+                   nickname: data.nickname, 
+                   profileImage: data.profileImage,
+                   similarUsers: data.similarUsers}
+    if (Authorization) {
+      sessionStorage.setItem('accessToken', Authorization);
+      sessionStorage.setItem('userId', data.userId);
+      sessionStorage.setItem('nickname', data.nickname);
+      sessionStorage.setItem('profileImage', data.profileImage);
+      sessionStorage.setItem('similarUsers', JSON.stringify(data.similarUsers));
+      sessionStorage.setItem('isLoggedIn', 'true');
+      axiosInstance.defaults.headers['Authorization'] = Authorization;
+      
+      const response = await communityChatList(user.userId);
+      sessionStorage.setItem('chatRoomList', JSON.stringify(response));
+    } else {
+      console.error('No access token received from server');
+    }
+
+    return { Authorization, user };
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+}
+
+export const getOAuthInformation = async (token: string) => {
+  try {
+    const response = await axios.get(`oauth/get-oauth-info`, {
+      params: {
+        token
+      }
+    });    
+    console.log(response)
+    return response
+  } catch (error) {
+    console.error('kakao Login failed:', error);
+    throw error;
+  }
+}
 
 type RegistRequiredPayload = {
   userName: string,
@@ -158,7 +218,12 @@ type RegistForm = {
   optional: RegistOptionalPayload
 }
 
-export const registByEmail = async (registForm: RegistForm) => {
+type ProviderInformation = {
+  provider: string,
+  providerId: string | null
+}
+
+export const registByEmail = async (registForm: RegistForm, providerInformation: ProviderInformation = {provider : 'local', providerId : null} ) => {
   const formData = new FormData();
   const value = {
     userName: registForm.required.userName,
@@ -170,8 +235,8 @@ export const registByEmail = async (registForm: RegistForm) => {
 		isOpen : true,
 		nickname : registForm.optional.nickname,
 		phoneNumber : registForm.required.phoneNumber,
-		provider : "local",
-	  providerId : null,
+		provider : providerInformation.provider,
+	  providerId : providerInformation.providerId,
 		introduction : registForm.optional.introduction,
 		interests : registForm.optional.interests
   }

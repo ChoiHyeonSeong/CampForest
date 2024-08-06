@@ -3,10 +3,11 @@ import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import Email from '@components/User/RegistEmail';
 import Information from '@components/User/UserInformation';
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
+import { registRequired } from '@store/registSlice';
 
-import { registByEmail } from '@services/authService';
+import { registByEmail, getOAuthInformation } from '@services/authService';
 
 type RegistRequired = {
   userName: string,
@@ -24,28 +25,72 @@ type RegistOptional = {
   interests: string[] | null
 }
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+}
+
 const Regist: React.FC = () => {
+  const query = useQuery();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const currentLocation = useLocation();
 
   const registFormData = useSelector((state: RootState) => state.registStore);
 
   const [isBtnActive, setIsBtnActive] = useState(false);
 
-  const handleNextClick = async () => {
-    console.log(currentLocation.pathname)
+  const [token, setToken] = useState<string | null>(null);
+  const [provider, setProvider] = useState({provider : 'local', providerId: null})
 
+  const handleNextClick = async () => {
     if (currentLocation.pathname === '/user/regist') {
       navigate('./information')
     } else if (currentLocation.pathname === '/user/regist/information') {
-      console.log(registFormData)
-      const response = await registByEmail(registFormData)
-      console.log(response)
+      if (token === null) {
+        const response = await registByEmail(registFormData)
+        console.log(response)
+      } else {
+        const response = await registByEmail(registFormData, provider)
+        console.log(response)
+      }
+      navigate('/')
     };
   };
 
   useEffect(() => {
-    console.log(isBtnActive)
+    const token = query.get('token')
+    setToken(token)
+  }, [currentLocation.pathname])
+
+  useEffect(() => {
+    const getOAuth = async () => {
+      try {
+        if (token !== null) {
+          const response = await getOAuthInformation(token)
+          dispatch(
+            registRequired({
+              userName: response.data.data.name,
+              phoneNumber: '',
+              userEmail: response.data.data.email,
+              userPassword: ''
+            })
+          )
+          setProvider(
+            {
+              provider: response.data.data.provider,
+              providerId: response.data.data.providerId
+            }
+          )
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    getOAuth()
+  }, [token])
+
+  useEffect(() => {
     if (currentLocation.pathname === '/user/regist') {
       setIsBtnActive(isRequiredFilled(registFormData.required))
     } else if (currentLocation.pathname === '/user/regist/information') {
@@ -63,7 +108,7 @@ const Regist: React.FC = () => {
   };
 
   return (
-    <div className={`lg:w-[40rem] md:max-w-[48rem] md:mt-[1rem] lg:mt-[3rem] mx-auto p-[1.5rem] lg:p-0`}>
+    <div className={`lg:w-[40rem] md:max-w-[48rem] md:mt-[1rem] lg:mt-[3rem] mb-[2rem] mx-auto p-[1.5rem] lg:p-0`}>
       <div 
         className={`
           mb-[3rem] pb-[0.75rem]

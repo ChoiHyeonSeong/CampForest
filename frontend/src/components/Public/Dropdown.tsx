@@ -40,6 +40,8 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
     <div 
       className={`
         inline-block relative 
+        bg-light-white
+        dark:bg-dark-white
         text-left
       `}
     >
@@ -77,9 +79,9 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
       {isOpen && (
         <div 
           className={`
-            origin-top-left absolute left-0 w-max mt-[0.5rem] 
-            border-light-border-2
-            dark:border-dark-border-2
+            origin-top-left absolute left-0 z-[10] w-max mt-[0.5rem] 
+            border-light-border-2 bg-light-white
+            dark:border-dark-border-2 dark:bg-dark-white
             rounded-md shadow-lg border focus:outline-none
           `}
         >
