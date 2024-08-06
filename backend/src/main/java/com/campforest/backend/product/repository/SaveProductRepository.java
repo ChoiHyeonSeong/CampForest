@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.campforest.backend.product.model.SaveProduct;
 
 public interface
-SaveProductRepository extends JpaRepository<SaveProduct, Integer> {
-	Optional<SaveProduct> findByUserIdAndProductId(Long userId, Long productId);
-	List<SaveProduct> findAllByUserId(Long userId);
+SaveProductRepository extends JpaRepository<SaveProduct, Long> {
+
+	Optional<SaveProduct> findByUserUserIdAndProductId(Long userId, Long productId);
+	List<SaveProduct> findAllByUserUserId(Long userId);
 }

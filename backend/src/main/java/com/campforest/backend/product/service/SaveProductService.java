@@ -39,8 +39,6 @@ public class SaveProductService {
 			.createdAt(LocalDateTime.now())
 			.build();
 
-		user.addSavedProduct(product);
-
 		return saveProductRepository.save(sProduct);
 	}
 
@@ -49,7 +47,7 @@ public class SaveProductService {
 		Users user = userRepository.findByUserId(userId)
 			.orElseThrow(() -> new IllegalArgumentException("찾는 사용자가 없습니다"));
 
-		SaveProduct saveProduct = saveProductRepository.findByUserIdAndProductId(userId, productId)
+		SaveProduct saveProduct = saveProductRepository.findByUserUserIdAndProductId(userId, productId)
 			.orElseThrow(() -> new IllegalArgumentException("관심 상품 없음요 "));
 
 		user.deleteSavedProduct(saveProduct);
@@ -58,6 +56,6 @@ public class SaveProductService {
 	}
 
 	public List<SaveProduct> getSaveList(Long userId) {
-		return saveProductRepository.findAllByUserId(userId);
+		return saveProductRepository.findAllByUserUserId(userId);
 	}
 }

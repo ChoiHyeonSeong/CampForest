@@ -125,6 +125,7 @@ public class Users {
 	private List<Review> receivedReviews;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
 	private List<SaveProduct> savedProducts = new ArrayList<>();
 
 	@OneToMany(mappedBy = "receiver")

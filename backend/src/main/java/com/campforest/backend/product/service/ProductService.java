@@ -151,7 +151,7 @@ public class ProductService {
 		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, titleKeyword, pageable);
 
 		Set<Long> savedProductIds = userId != null ?
-			saveProductRepository.findAllByUserId(userId).stream()
+			saveProductRepository.findAllByUserUserId(userId).stream()
 				.map(saveProduct -> saveProduct.getProduct().getId())
 				.collect(Collectors.toSet())
 			: Set.of();
