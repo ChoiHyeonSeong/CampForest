@@ -26,6 +26,9 @@ const chatSlice = createSlice({
   reducers: {
     setIsChatOpen: (state, action: PayloadAction<boolean>) => {
       state.isChatOpen = action.payload;
+      if(!action.payload) {
+        state.roomId = 0;
+      }
     },
     selectCommnunity: (state) => {
       state.selectedCategory = '일반';
