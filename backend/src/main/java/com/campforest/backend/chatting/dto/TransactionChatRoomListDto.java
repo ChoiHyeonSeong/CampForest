@@ -10,6 +10,7 @@ import lombok.Setter;
 public class TransactionChatRoomListDto {
 	private Long roomId;
 	private Long otherUserId;
+	private String productImage;
 	private String lastMessage;
 	private LocalDateTime lastMessageTime;
 	private Long unreadCount;

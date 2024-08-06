@@ -8,6 +8,7 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
+import com.campforest.backend.board.dto.CountResponseDto;
 import com.campforest.backend.board.entity.Comment;
 
 public interface BoardService {
@@ -62,4 +63,6 @@ public interface BoardService {
 	Page<BoardResponseDto> getSavedBoards(Long nowId, int page, int size);
 
 	Comment getCommentById(Long commentId);
+
+	CountResponseDto countAll(Long userId);
 }
