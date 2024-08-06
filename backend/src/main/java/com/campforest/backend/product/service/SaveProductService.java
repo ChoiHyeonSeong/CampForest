@@ -44,13 +44,8 @@ public class SaveProductService {
 
 	public void deleteProduct(Long userId, Long productId) {
 
-		Users user = userRepository.findByUserId(userId)
-			.orElseThrow(() -> new IllegalArgumentException("찾는 사용자가 없습니다"));
-
 		SaveProduct saveProduct = saveProductRepository.findByUserUserIdAndProductId(userId, productId)
 			.orElseThrow(() -> new IllegalArgumentException("관심 상품 없음요 "));
-
-		user.deleteSavedProduct(saveProduct);
 
 		saveProductRepository.delete(saveProduct);
 	}
