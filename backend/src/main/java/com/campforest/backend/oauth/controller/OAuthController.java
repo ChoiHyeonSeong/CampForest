@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +19,15 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.oauth.model.OAuthCodeToken;
 import com.campforest.backend.oauth.repository.OAuthCodeTokenRepository;
 import com.campforest.backend.oauth.repository.TempUserRepository;
 import com.campforest.backend.oauth.dto.response.ResponseOAuthInfoDTO;
 import com.campforest.backend.oauth.model.TempUser;
+import com.campforest.backend.user.dto.response.ResponseUserDTO;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +37,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OAuthController {
 
+	private final UserService userService;
+	private final JwtTokenProvider jwtTokenProvider;
 	private final TempUserRepository tempUserRepository;
 	private final OAuthCodeTokenRepository oAuthCodeTokenRepository;
 
@@ -91,7 +98,13 @@ public class OAuthController {
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 			response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
-			return ApiResponse.createSuccess(null, "토큰 발급에 성공했습니다.");
+			String email = jwtTokenProvider.getUserEmail(accessToken);
+			Users user = userService.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(user);
+
+			return ApiResponse.createSuccess(responseDTO, "토큰 발급에 성공했습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.OAUTH_CODE_NOT_FOUND);
 		}
