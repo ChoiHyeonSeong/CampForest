@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { communityChatDetail } from '@services/communityChatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { setChatInProgress } from '@store/chatSlice';
+import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';
 import ProductInfoChat from'@components/Chat/ProductInfoChat'
 
 export type Message = {
@@ -88,7 +88,7 @@ const Chat = ({ otherId }: Props) => {
       `}
     >
 
-      {/* 채팅 상단 -> 상대방 프로팔 표시 */}
+      {/* 채팅 상단 -> 상대방 프로필 표시 */}
       <div 
         className={`
           flex items-center shrink-0 p-[0.8rem]
@@ -115,7 +115,13 @@ const Chat = ({ otherId }: Props) => {
         <div className={`text-lg font-medium`}>
           {opponentNickname}
         </div>
-        <div className={`ms-auto`}>
+        <div 
+          className={`
+            ms-auto
+            cursor-pointer
+          `}
+          onClick={() => dispatch(setIsChatOpen(false))}
+        >
           <CloseIcon 
             className={`
               hidden md:block md:size-[1.8rem]
@@ -135,7 +141,7 @@ const Chat = ({ otherId }: Props) => {
         <ProductInfoChat />
 
         {/* 실제 메세지 조작부분 */}
-        {messages.map((message) => (
+        {messages.map((message, key) => (
           message.senderId === otherId ? (
             <div
               className={`
@@ -156,10 +162,10 @@ const Chat = ({ otherId }: Props) => {
               </div>
               <div 
                 className='
-                  px-[0.8rem] py-[0.3rem]
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
                   bg-light-gray text-light-text
                   dark:bg-dark-gray dark:text-dark-text
-                  rounded-md
+                  rounded-md break-words
                 '
               >
                 {message.content}
@@ -178,10 +184,10 @@ const Chat = ({ otherId }: Props) => {
               </div>
               <div
                 className='
-                  px-[0.8rem] py-[0.3rem]
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
                   bg-light-signature text-light-text
                   dark:bg-dark-signature dark:text-dark-text
-                  rounded-md
+                  rounded-md break-words
                 '
               >
                 {message.content}

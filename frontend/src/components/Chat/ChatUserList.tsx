@@ -28,11 +28,12 @@ const ChatUserList = (props: Props) => {
     }
     
     setOtherId(communityChatUser.otherUserId);
-    markRead(`/communitychat/room/${communityChatUser.roomId}/markAsRead`, { userId: userId });
+    markRead(`/pub/room/${communityChatUser.roomId}/markAsRead`, userId );
     dispatch(updateCommunityChatUserList({
       roomId: communityChatUser.roomId,
       content: communityChatUser.lastMessage,
-      createdAt: communityChatUser.lastMessageTime
+      createdAt: communityChatUser.lastMessageTime,
+      inProgress: true,
     }))
     dispatch(setChatInProgress(await communityChatDetail(communityChatUser.roomId)));
     dispatch(setIsChatOpen(true));
@@ -41,7 +42,11 @@ const ChatUserList = (props: Props) => {
   return (
     <div>
       {communityChatUserList.map((communityChatUser, index) => (
-        <div 
+        <div
+          className='
+            bg-light-white
+            dark:bg-dark-white
+          ' 
           onClick={
             () => handleChatUser(
               communityChatUser

@@ -45,11 +45,18 @@ const chatSlice = createSlice({
     setCommunityChatUserList: (state, action: PayloadAction<ChatUserType[]>) => {
       state.communityChatUserList = action.payload;
     },
-    updateCommunityChatUserList: (state, action: PayloadAction<{roomId: number; content: string; createdAt: string}>) => {
+    updateCommunityChatUserList: (state, action: PayloadAction<{roomId: number; content: string; createdAt: string; inProgress: boolean}>) => {
       state.communityChatUserList = state.communityChatUserList.map(chatRoom =>
         chatRoom.roomId === action.payload.roomId
-          ? { ...chatRoom, createdAt: action.payload.createdAt, unreadCount: 0, lastMessage: action.payload.content }
+          ? { ...chatRoom, createdAt: action.payload.createdAt, unreadCount: action.payload.inProgress ? 0 : chatRoom.unreadCount + 1, lastMessage: action.payload.content }
           : chatRoom
+      );
+    },
+    updateMessageReadStatus: (state, action: PayloadAction<{ roomId: number, readerId: number }>) => {
+      state.chatInProgress = state.chatInProgress.map(message => 
+        message.roomId === action.payload.roomId && message.senderId !== action.payload.readerId
+          ? { ...message, read: true }
+          : message
       );
     },
   }
@@ -64,5 +71,6 @@ export const {
   setChatInProgress,
   setCommunityChatUserList,
   updateCommunityChatUserList,
+  updateMessageReadStatus,
 } = chatSlice.actions;
 export default chatSlice.reducer;

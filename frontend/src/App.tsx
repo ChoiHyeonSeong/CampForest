@@ -24,6 +24,7 @@ import { WebSocketProvider } from 'Context/WebSocketContext'
 import { communityChatList } from '@services/communityChatService';
 import { store } from '@store/store';
 import { setCommunityChatUserList } from '@store/chatSlice';
+import logo from '@assets/logo192.png'
 
 function App() {
   const dispatch = useDispatch()
