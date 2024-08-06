@@ -4,11 +4,13 @@ import java.util.List;
 
 import com.campforest.backend.product.model.ProductType;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class ReviewRequestDto {
 
 	private Long transactionId; // Sale 또는 Rent의 ID

@@ -1,6 +1,7 @@
 package com.campforest.backend.review.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.campforest.backend.product.model.ProductImage;
@@ -75,7 +76,7 @@ public class Review {
 
 	@OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
-	private List<ReviewImage> reviewImages;
+	private List<ReviewImage> reviewImages = new ArrayList<>();
 
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
