@@ -1,10 +1,22 @@
 import React from 'react'
-
 import EachCategory from './EachCategory';
-
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
+
 import campfire from '@assets/images/campfire.png'
 import { useNavigate } from 'react-router-dom';
+
+// 카테고리 사진
+import cateAll from '@assets/category/cate-all.png' // 전체
+import cateTent from '@assets/category/cate-tent.png' // 텐트
+import cateChair from '@assets/category/cate-chair.png' // 의자
+import cateBed from '@assets/category/cate-bed.png' // 침낭매트
+import cateTable from '@assets/category/cate-table.png' // 테이블
+import cateLantern from '@assets/category/cate-lantern.png' // 랜턴
+import cateCook from '@assets/category/cate-cooking.png' // 코펠식기
+import cateSafety from '@assets/category/cate-safety.png' // 안전용품
+import cateBurner from '@assets/category/cate-burner.png' // 버너화로
+import cateEtc from '@assets/category/cate-etc.png' // 기타
+
 
 type Props = {
   isExtendMenuOpen: boolean;
@@ -30,70 +42,70 @@ const NavbarLeftExtendRental = (props: Props) => {
   const rentalCategory: RentalCategoryObj[] = [
     {
       title: "전체",
-      imgsrc: campfire,
+      imgsrc: cateAll,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "텐트",
-      imgsrc: campfire,
+      imgsrc: cateTent,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "의자",
-      imgsrc: campfire,
+      imgsrc: cateChair,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "침낭/매트",
-      imgsrc: campfire,
+      imgsrc: cateBed,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "테이블",
-      imgsrc: campfire,
+      imgsrc: cateTable,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "랜턴",
-      imgsrc: campfire,
+      imgsrc: cateLantern,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "코펠/식기",
-      imgsrc: campfire,
+      imgsrc: cateCook,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "안전용품",
-      imgsrc: campfire,
+      imgsrc: cateSafety,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "버너/화로",
-      imgsrc: campfire,
+      imgsrc: cateBurner,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'
     },
     {
       title: "기타",
-      imgsrc: campfire,
+      imgsrc: cateEtc,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
       linkUrl: 'product/list'

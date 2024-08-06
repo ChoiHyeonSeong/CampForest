@@ -1,24 +1,70 @@
-// useWebSocket.ts
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Client, Message } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { RootState, store } from '@store/store';
-import { setChatInProgress } from '@store/chatSlice';
+import { setChatInProgress, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
 
 type UseWebSocketProps = {
   jwt: string | null;
 }
 
 export type UseWebSocketReturn = {
-  client: Client | null;
   connected: boolean;
   sendMessage: (destination: string, body: any) => void;
+  markRead: (destination: string, body: any) => void;
   subscribe: (destination: string, callback: (message: Message) => void) => void;
 }
 
 export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => {
-  const [client, setClient] = useState<Client | null>(null);
   const [connected, setConnected] = useState(false);
+  const clientRef = useRef<Client | null>(null);
+
+  const subscribeInitial = useCallback((client: Client) => {
+    
+    if(store.getState().userStore.isLoggedIn) {
+      client.subscribe(`/notification/subscribe`, (message) => {
+        const response = JSON.parse(message.body);
+        console.log(response);
+      })
+    }
+
+    // 사용자가 진행 중이었던 채팅방 목록 불러오고 구독
+    const communityChatUserList = store.getState().chatStore.communityChatUserList;
+    if (communityChatUserList) {
+      communityChatUserList.forEach((chatRoom: any) => {
+        // 읽음 처리를 받았을 때
+        client.subscribe(`/sub/community/${chatRoom.roomId}/readStatus`, (message) => {
+          const readerId = JSON.parse(message.body); // 읽은 사람 Id
+          const state = store.getState();
+          if (state.userStore.userId !== readerId) {
+            store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId }));
+          }  
+        });
+
+        // 메시지를 받았을 때
+        client.subscribe(`/sub/community/${chatRoom.roomId}`, (message) => {
+          const response = JSON.parse(message.body);
+          // console.log('Received chat message:', response);
+          const state: RootState = store.getState();
+          
+          // 현재 열려 있는 채팅방 내용 갱신
+          if (state.chatStore.roomId === response.roomId) {
+            store.dispatch(updateCommunityChatUserList({...response, inProgress: true}));
+            if (clientRef.current && clientRef.current.active) {
+              clientRef.current.publish({
+                destination: `/pub/room/${response.roomId}/markAsRead`,
+                body: JSON.stringify(state.userStore.userId),
+              });
+            }
+            store.dispatch(setChatInProgress([...state.chatStore.chatInProgress, response]));
+          } else {
+            // 채팅방 목록 업데이트
+            store.dispatch(updateCommunityChatUserList({...response, inProgress: false}));
+          }
+        });
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const newClient = new Client({
@@ -34,31 +80,10 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
       heartbeatOutgoing: 4000,
     });
 
-    const subscribeToChatRooms = (client: Client) => {
-      const chatRoomListString = sessionStorage.getItem('chatRoomList');
-      if (chatRoomListString) {
-        const chatRoomList = JSON.parse(chatRoomListString);
-        chatRoomList.forEach((chatRoom: any) => {
-          console.log('subscribe 해보기', chatRoom.roomId);
-          client.subscribe(`/sub/community/${chatRoom.roomId}`, (message) => {
-            const response = JSON.parse(message.body);
-            console.log('Received chat message:', response);
-
-            const state: RootState = store.getState();
-
-            if (state.chatStore.roomId === response.roomId) {
-              console.log('메시지 저장함')
-              store.dispatch(setChatInProgress([...state.chatStore.chatInProgress, response]));
-            }
-          });
-        });
-      }
-    };
-
     newClient.onConnect = () => {
       setConnected(true);
       console.log('Connected to WebSocket');
-      subscribeToChatRooms(newClient);
+      subscribeInitial(newClient);
     };
 
     newClient.onDisconnect = () => {
@@ -67,29 +92,38 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
     };
 
     newClient.activate();
-    setClient(newClient);
+    clientRef.current = newClient;
 
     return () => {
       if (newClient.active) {
         newClient.deactivate();
       }
     };
-  }, [jwt]);
+  }, [jwt, subscribeInitial]);
 
   const sendMessage = useCallback((destination: string, body: any) => {
-    if (client && client.active) {
-      client.publish({
+    if (clientRef.current && clientRef.current.active) {
+      clientRef.current.publish({
         destination,
         body: JSON.stringify(body),
       });
     }
-  }, [client]);
+  }, []);
+
+  const markRead = useCallback((destination: string, body: any) => {
+    if (clientRef.current && clientRef.current.active) {
+      clientRef.current.publish({
+        destination,
+        body: JSON.stringify(body),
+      });
+    }
+  }, []);
 
   const subscribe = useCallback((destination: string, callback: (message: Message) => void) => {
-    if (client && client.active) {
-      client.subscribe(destination, callback);
+    if (clientRef.current && clientRef.current.active) {
+      clientRef.current.subscribe(destination, callback);
     }
-  }, [client]);
+  }, []);
 
-  return { client, connected, sendMessage, subscribe };
+  return { connected, sendMessage, markRead, subscribe };
 };

@@ -22,6 +22,11 @@ import BoardDetail from '@components/Board/BoardDetail';
 import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
 import { WebSocketProvider } from 'Context/WebSocketContext'
+import { communityChatList } from '@services/communityChatService';
+import { store } from '@store/store';
+import { setCommunityChatUserList, setTotalUnreadCount } from '@store/chatSlice';
+import logo from '@assets/logo192.png'
+import { ChatUserType } from '@components/Chat/ChatUser';
 
 function App() {
   const modals = useSelector((state: RootState) => state.modalStore);
@@ -29,6 +34,24 @@ function App() {
   const currentLoc = useLocation();
 
   useThemeEffect();
+
+  // 일반 채팅방 목록 가져오기
+  const fetchCommunityChatList = async () => {
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+      const response = await communityChatList(Number(userId));
+      let count = 0;
+      response.map((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setTotalUnreadCount(count));
+      store.dispatch(setCommunityChatUserList(response));
+    }
+  }
+  
+  useEffect(() => {
+    fetchCommunityChatList();
+  })
 
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;

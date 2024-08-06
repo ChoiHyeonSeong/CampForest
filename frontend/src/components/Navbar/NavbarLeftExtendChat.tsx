@@ -28,7 +28,12 @@ const NavbarLeftExtendChat = (props: Props) => {
       `}
     >
       {/* 상단 */}
-      <div className={`flex items-center h-[5rem] ps-[1rem]`}>
+      <div className={`
+          flex items-center h-[5rem] ps-[1rem]
+          bg-light-white
+          dark:bg-dark-white
+        `}
+      >
         <LeftArrow 
           onClick={() => props.toggleExtendMenu('chat')}
           className={`
@@ -45,6 +50,7 @@ const NavbarLeftExtendChat = (props: Props) => {
       <div 
         className={`
           flex w-full h-[2.5rem]
+          bg-light-white
         `}
       >
         <div

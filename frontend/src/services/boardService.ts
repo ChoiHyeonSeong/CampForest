@@ -86,6 +86,6 @@ export const boardTitleSearch = async (title: string, page?: number, size?: numb
   const params = { title: title, page: page, size: size };
   const response = await axiosInstance.get(`/board/title`, { params: params });
 
-  console.log(response.data.data.content);
+  // console.log(response.data.data.content);
   return (response.data.data.content);
 }

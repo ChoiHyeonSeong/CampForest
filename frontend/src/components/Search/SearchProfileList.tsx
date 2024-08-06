@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import SearchProfile, { profileType } from '@components/Search/SearchProfile'
 import { nicknameSearch } from '@services/userService';
+import NoResultSearch from '@components/Search/NoResultSearch'
 
 type Props = {
   nickname: string;
@@ -9,21 +10,39 @@ type Props = {
 const SearchProfileList = (props: Props) => {
   const [profileList, setProfileList] = useState<profileType[]>([]);
 
-  const fetchProfileList = async () => {
-    const result = await nicknameSearch('gim')
-    setProfileList(result)
-  }
+  const fetchProfileList = useCallback(async () => {
+    const result = await nicknameSearch(props.nickname);
+    if (result && Array.isArray(result)) {
+      // 정확히 일치하는 결과만 필터링하게 하기
+      const filteredResults = result.filter(profile => 
+        profile.nickname.includes(props.nickname)
+      );
+      setProfileList(filteredResults);
+    } else {
+      setProfileList([]);
+    }
+  }, [props.nickname]);
+
 
   useEffect(() => {
     fetchProfileList();
-  }, [])
+  }, [fetchProfileList]);
 
   return (
     <div>
-      <p className='font-medium text-lg md:text-xl'>프로필<span className='ms-[0.5rem] font-bold'>10</span></p>
-      {profileList.map((profile) => (
-        <SearchProfile profile={profile} />  
-      ))}
+      <p className='font-medium text-lg md:text-xl'>
+        프로필
+        <span className='ms-[0.5rem] font-bold'>
+          {profileList.length}
+        </span>
+      </p>
+
+      {profileList.length > 0 ? 
+        profileList.map((profile) => (
+          <SearchProfile profile={profile} />  
+        )) :
+      <NoResultSearch />
+      }
     </div>
   )
 }

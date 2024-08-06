@@ -7,9 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { communityChatDetail } from '@services/communityChatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { setChatInProgress } from '@store/chatSlice';
+import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';
 import ProductInfoChat from'@components/Chat/ProductInfoChat'
-import ChatTradePropser from './ChatTradePropser';
 
 export type Message = {
   messageId: number;
@@ -22,16 +21,16 @@ export type Message = {
 
 type Props = {
   otherId: number;
-  setIsOpenChat: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Chat = ({ otherId, setIsOpenChat }: Props) => {
+const Chat = ({ otherId }: Props) => {
   const { sendMessage } = useWebSocket();
   const dispatch = useDispatch();
   const scrollRef = useRef<HTMLDivElement>(null);
   const roomId = useSelector((state: RootState) => state.chatStore.roomId);
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const [opponentNickname, setOpponentNickname] = useState('');
+  const [opponentProfileImage, setOpponentProfileImage] = useState('');
   const messages = useSelector((state: RootState) => state.chatStore.chatInProgress);
   const [userInput, setUserInput] = useState('');
 
@@ -42,6 +41,7 @@ const Chat = ({ otherId, setIsOpenChat }: Props) => {
   const opponentInfo = async () => {
     const result = await userPage(otherId);
     setOpponentNickname(result.nickname);
+    setOpponentProfileImage(result.profileImage);
   };
 
   const scrollToBottom = () => {
@@ -87,7 +87,7 @@ const Chat = ({ otherId, setIsOpenChat }: Props) => {
       `}
     >
 
-      {/* 채팅 상단 -> 상대방 프로팔 표시 */}
+      {/* 채팅 상단 -> 상대방 프로필 표시 */}
       <div 
         className={`
           flex items-center shrink-0 p-[0.8rem]
@@ -114,7 +114,13 @@ const Chat = ({ otherId, setIsOpenChat }: Props) => {
         <div className={`text-lg font-medium`}>
           {opponentNickname}
         </div>
-        <div className={`ms-auto`}>
+        <div 
+          className={`
+            ms-auto
+            cursor-pointer
+          `}
+          onClick={() => dispatch(setIsChatOpen(false))}
+        >
           <CloseIcon 
             className={`
               hidden md:block md:size-[1.8rem]
@@ -134,45 +140,53 @@ const Chat = ({ otherId, setIsOpenChat }: Props) => {
         <ProductInfoChat />
 
         {/* 실제 메세지 조작부분 */}
-        {messages.map((message) => (
+        {messages.map((message, key) => (
           message.senderId === otherId ? (
             <div
               className={`
-                flex justify-start items-center pe-[20%]
+                flex justify-start items-center my-[0.75rem] pe-[20%]
               `}
               key={message.messageId}
             >
               <div 
                 className='
-                  my-[0.5rem] px-[0.8rem] py-[0.3rem]
+                  border-light-border size-[2.5rem] me-[0.5rem]
+                  border rounded-full shadow-md
+                '
+              >
+                <img 
+                  src={opponentProfileImage}
+                  alt='NoImg'  
+                />
+              </div>
+              <div 
+                className='
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
                   bg-light-gray text-light-text
                   dark:bg-dark-gray dark:text-dark-text
-                  rounded-md
+                  rounded-md break-words
                 '
               >
                 {message.content}
               </div>
               <div>
-                <div className='shrink-0 ms-[0.5rem] text-xs'>
-                  {message.read ? '읽음' : '안읽음'}
-                </div>
               </div>
             </div>
           ) : (
             <div
               className={`
-                flex justify-end items-center ps-[20%]
+                flex justify-end items-center my-[1rem] ps-[20%]
               `}
             >
               <div className='shrink-0 me-[0.5rem] text-xs'>
-                {message.read ? '읽음' : '안읽음'}
+                {message.read ? '' : '1'}
               </div>
               <div
                 className='
-                  my-[0.5rem] px-[0.8rem] py-[0.3rem]
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
                   bg-light-signature text-light-text
                   dark:bg-dark-signature dark:text-dark-text
-                  rounded-md
+                  rounded-md break-words
                 '
               >
                 {message.content}

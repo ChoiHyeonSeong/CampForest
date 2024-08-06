@@ -4,7 +4,12 @@ type Props = {}
 
 const ProductInfoChat = (props: Props) => {
   return (
-    <div className='flex justify-between items-center w-full border-b p-[0.8rem]'>
+    <div 
+      className='
+        flex justify-between items-center absolute top-[4.25rem] left-0 w-full p-[0.8rem] 
+        bg-light-white border-light-border
+        dark:bg-dark-white dark-border-dark-border
+        border-y'>
       {/* 상품정보 */}
       <div className='flex items-center'>
         {/* 상품이미지 */}

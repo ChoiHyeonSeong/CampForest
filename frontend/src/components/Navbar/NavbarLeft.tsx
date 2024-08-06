@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { RootState } from '@store/store';
+import { RootState, store } from '@store/store';
 import { Link } from 'react-router-dom';
 
 import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
@@ -18,7 +18,7 @@ import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { logout } from '@services/authService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '@store/userSlice';
 
 import ShortLogo from '@assets/logo/mini-logo.png'
@@ -48,6 +48,7 @@ const NavbarLeft = (props: Props) => {
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const dispatch = useDispatch();
+  const totalUnreadCount = useSelector((state: RootState) => state.chatStore.totalUnreadCount);
   const handleLogout = async () => {
     try {
       await logout();
@@ -202,14 +203,24 @@ const NavbarLeft = (props: Props) => {
             onClick={() => props.toggleExtendMenu('chat')}
             className={`flex h-[3.5rem] cursor-pointer`} 
           >
-            <div className={`flex flex-all-center w-[5rem]`}>
+            <div className={`flex flex-all-center relative w-[5rem]`}>
               <ChatIcon 
                 className={`
                   w-[2rem]
                   fill-light-border-icon
                   dark:fill-dark-border-icon
                 `} 
-              />
+                />
+                {totalUnreadCount > 0 && 
+                  <div 
+                    className='flex items-center justify-center absolute right-[0.75rem] top-0 min-w-[1rem] 
+                    bg-light-warning text-light-white
+                    dark:bg-dark-warning dark:text-dark-white
+                    text-sm rounded-full'
+                  >
+                    {totalUnreadCount}
+                </div>
+                }
             </div>
             <div
               className={`

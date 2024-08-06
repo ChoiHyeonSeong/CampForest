@@ -103,7 +103,7 @@ const ProductList = () => {
       if (result.data) {
         setNextPageExist(false);
       }
-      setProducts((prevProducts) => [...prevProducts, ...result.content]);
+      setProducts((prevProducts) => [...prevProducts, ...result.products]);
     } catch (error) {
       dispatch(setIsLoading(false));
       console.error('판매/대여 게시글 불러오기 실패: ', error);
@@ -175,7 +175,9 @@ const ProductList = () => {
             </div>
           </div>
         </div>
-        <div className={`flex flex-wrap gap-[0.5rem] items-center relative z-[10] mb-[0.75rem] ps-[0.75rem]`}>
+
+
+        <div className={`flex flex-wrap gap-[0.5rem] items-center relative z-[15] mb-[0.75rem] ps-[0.75rem]`}>
           <Dropdown
             label="카테고리"
             options={categories}

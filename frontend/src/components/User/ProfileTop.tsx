@@ -92,6 +92,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
                   font-medium text-sm md:text-lg 
                 `}
               >
+                
                 {userinfo?.nickname}
               </div>
               <div 
