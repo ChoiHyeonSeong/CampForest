@@ -98,7 +98,7 @@ public class JwtTokenProvider {
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
-	private String getUserEmail(String token) {
+	public String getUserEmail(String token) {
 		return getClaims(token).get("userEmail", String.class);
 	}
 
