@@ -3,6 +3,7 @@ package com.campforest.backend.product.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -18,8 +19,10 @@ import com.campforest.backend.product.model.Category;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductImage;
 import com.campforest.backend.product.model.ProductType;
+import com.campforest.backend.product.model.SaveProduct;
 import com.campforest.backend.product.repository.ProductImageRepository;
 import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.product.repository.SaveProductRepository;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.repository.jpa.UserRepository;
 
@@ -34,6 +37,7 @@ public class ProductService {
 
 	private final ProductRepository productRepository;
 	private final UserRepository userRepository;
+	private final SaveProductRepository saveProductRepository;
 	private final ProductImageRepository productImageRepository;
 
 	public void createProduct(ProductRegistDto productRegistDto) {
@@ -118,7 +122,7 @@ public class ProductService {
 		productImageRepository.delete(productImage);
 	}
 
-	private ProductSearchDto toDto(Product product) {
+	private ProductSearchDto toDto(Product product, boolean isSaved) {
 		ProductSearchDto dto = new ProductSearchDto();
 		dto.setProductId(product.getId());
 		dto.setUserId(product.getUserId());
@@ -131,6 +135,7 @@ public class ProductService {
 		dto.setLocation(product.getLocation());
 		List<ProductImage> productImages = product.getProductImages();
 		dto.setImageUrl(productImages.get(0).getImageUrl());
+		dto.setSaved(isSaved);
 		if(product.getProductType()==ProductType.RENT) {
 			dto.setDeposit(product.getDeposit());
 		}
@@ -141,9 +146,17 @@ public class ProductService {
 	}
 
 	public Page<ProductSearchDto> findProductsByDynamicConditions(Category category, ProductType productType, Long minPrice,
-		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable) {
+		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable, Long userId) {
+
 		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, titleKeyword, pageable);
-		return products.map(this::toDto);
+
+		Set<Long> savedProductIds = userId != null ?
+			saveProductRepository.findAllByUserId(userId).stream()
+				.map(saveProduct -> saveProduct.getProduct().getId())
+				.collect(Collectors.toSet())
+			: Set.of();
+
+		return products.map(product -> toDto(product, userId != null && savedProductIds.contains(product.getId())));
 	}
 
 	public Optional<Product> getProductById(Long productId) {
