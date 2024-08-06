@@ -90,8 +90,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		if(providerType.equals("kakao")) {
 			Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
 			return (String) kakaoAccount.get("email");
+		} else if (providerType.equals("naver")) {
+			Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+			return (String) response.get("email");
 		} else {
-			// TODO : Naver 구현
 			return null;
 		}
 	}
