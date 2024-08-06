@@ -175,7 +175,9 @@ const ProductList = () => {
             </div>
           </div>
         </div>
-        <div className={`flex flex-wrap gap-[0.5rem] items-center relative z-[10] mb-[0.75rem] ps-[0.75rem]`}>
+
+
+        <div className={`flex flex-wrap gap-[0.5rem] items-center relative z-[15] mb-[0.75rem] ps-[0.75rem]`}>
           <Dropdown
             label="카테고리"
             options={categories}

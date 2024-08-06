@@ -14,7 +14,7 @@ type ProductRegistDto = {
 type SearchParams = {
   category?: string,
   userId?: number,
-  productType?: string,
+  productType: string,
   minPrice?: number,
   maxPrice?: number,
   locations?: {},
@@ -55,10 +55,10 @@ export const productDetail = async (productId: number) => {
   return response.data.data;
 }
 
-export const productSearch = async ( productType:string) => {
-  const params = {productType: productType}
+export const productSearch = async ( searchParams: SearchParams ) => {
+  const params = { titleKeyword: searchParams.titleKeyword };
   const response = await axiosInstance.get(`/product/search`, { params: params });
 
-  console.log(response.data.data.content);
-  return (response)
+  console.log(response.data.data);
+  return response.data.data;
 }
