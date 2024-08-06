@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.review.dto.ReviewRequestDto;
 import com.campforest.backend.review.model.Review;
 import com.campforest.backend.review.service.ReviewService;
@@ -35,6 +38,7 @@ public class ReviewController {
 	private final ReviewService reviewService;
 	private final UserService userService;
 	private final S3Service s3Service;
+	private final NotificationService notificationService;
 
 	// 리뷰 작성
 	@PostMapping(consumes = { "application/json", "multipart/form-data" })
@@ -62,6 +66,8 @@ public class ReviewController {
 
 			reviewRequestDto.setReviewImageUrl(imageUrls);
 			Review review = reviewService.writeReview(reviewRequestDto);
+
+			notificationService.createNotification(review.getReviewed(), NotificationType.REVIEW, review.getReviewer().getNickname() + "님이 리뷰를 남기셨습니다.");
 
 			return ApiResponse.createSuccess(review, "리뷰 작성이 완료되었습니다.");
 		} catch (Exception e) {
