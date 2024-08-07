@@ -1,17 +1,14 @@
+import { RootState } from '@store/store';
 import React from 'react';
-import { ReactComponent as ArticleIcon } from '@assets/icons/article-outline.svg';
-import { ReactComponent as BookMarkIcon } from '@assets/icons/bookmark.svg';
-import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
+import { useSelector } from 'react-redux';
 
 type Props = {
-  boardCount: number;
-  productCount: number;
-  reviewCount: number;
   selectedMenu: string;
   setSelectedMenu: (menu: string) => void;
 }
   
 const MenuBar = (props: Props) => {
+  const profileState = useSelector((state: RootState) => state.profileStore);
   const handleMenuClick = (menu: string) => {
     props.setSelectedMenu(menu);
   }
@@ -45,7 +42,7 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>게시물</p>
-          <p>{props.boardCount}</p>
+          <p>{profileState.boardCount}</p>
         </div>
 
         {/* 판매/대여 */}
@@ -66,7 +63,7 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>판매/대여</p>
-          <p>{props.productCount}</p>
+          <p>{profileState.productCount}</p>
         </div>
 
         {/* 거래후기 */}
@@ -87,7 +84,7 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>거래후기</p>
-          <p>{props.reviewCount}</p>
+          <p>{profileState.reviewCount}</p>
         </div>
       </div>
 
