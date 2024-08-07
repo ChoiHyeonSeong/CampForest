@@ -10,11 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.campforest.backend.common.ApiResponse;
@@ -25,7 +23,7 @@ import com.campforest.backend.oauth.repository.OAuthCodeTokenRepository;
 import com.campforest.backend.oauth.repository.TempUserRepository;
 import com.campforest.backend.oauth.dto.response.ResponseOAuthInfoDTO;
 import com.campforest.backend.oauth.model.TempUser;
-import com.campforest.backend.user.dto.response.ResponseUserDTO;
+import com.campforest.backend.user.dto.response.ResponseLoginDTO;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.UserService;
 
@@ -102,7 +100,7 @@ public class OAuthController {
 			Users user = userService.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
 
-			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(user);
+			ResponseLoginDTO responseDTO = ResponseLoginDTO.fromEntity(user);
 
 			return ApiResponse.createSuccess(responseDTO, "토큰 발급에 성공했습니다.");
 		} catch (Exception e) {

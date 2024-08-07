@@ -1,5 +1,6 @@
 package com.campforest.backend.user.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,9 +20,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
 import com.campforest.backend.user.model.Follow;
 import com.campforest.backend.user.model.Interest;
@@ -39,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+	private final S3Service s3Service;
 	private final UserRepository userRepository;
 	private final UserImageRepository userImageRepository;
 	private final InterestRepository interestRepository;
@@ -89,6 +96,42 @@ public class UserServiceImpl implements UserService {
 
 		userRepository.delete(users);
 		tokenService.invalidateAllUserTokens(email);
+	}
+
+	@Override
+	@Transactional
+	public void updateUserProfile(String email, RequestUpdateDTO requestDTO, MultipartFile profileImageFile)
+		throws IOException {
+		Users user = userRepository.findByEmail(email)
+			.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+		if (profileImageFile != null && !profileImageFile.isEmpty()) {
+			String extension = profileImageFile.getOriginalFilename().substring(profileImageFile.getOriginalFilename().lastIndexOf("."));
+			String fileUrl = s3Service.upload(profileImageFile.getOriginalFilename(), profileImageFile, extension);
+
+			UserImage userImage = user.getUserImage();
+			if (userImage == null) {
+				userImage = UserImage.builder()
+					.user(user)
+					.imageUrl(fileUrl)
+					.build();
+			} else {
+				userImage.updateImageUrl(fileUrl);
+			}
+			userImageRepository.save(userImage);
+			user.setUserImage(userImage);
+		}
+
+		// 관심사 엔티티 조회 및 설정
+		Set<Interest> interests = new HashSet<>();
+		for (String interestName : requestDTO.getInterests()) {
+			Interest interest = interestRepository.findByInterest(interestName);
+			interests.add(interest);
+		}
+		user.updateInterests(interests);
+		user.updateUserInfo(requestDTO);
+
+		userRepository.save(user);
 	}
 
 	@Override

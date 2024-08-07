@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -30,6 +31,7 @@ public class UserImage {
 	@Column(name = "user_image_id")
 	private Long userImageId;
 
+	@Setter
 	@OneToOne
 	@JoinColumn(name = "user_id")
 	private Users user;
@@ -46,4 +48,8 @@ public class UserImage {
 		columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedAt;
+
+	public void updateImageUrl(String newImageUrl) {
+		this.imageUrl = newImageUrl;
+	}
 }
