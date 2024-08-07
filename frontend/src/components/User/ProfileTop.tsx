@@ -64,7 +64,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
             src={userinfo?.profileImage ? userinfo.profileImage : defaultImage} 
             alt='' 
             className={`
-              absolute rounded-full
+              absolute rounded-full w-full h-full
             `}
           />
           <div 
