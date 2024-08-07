@@ -40,7 +40,6 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>게시물</p>
-          <p>{props.boardCount}</p>
         </div>
 
         {/* 판매/대여 */}
@@ -61,7 +60,6 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>판매/대여</p>
-          <p>{props.productCount}</p>
         </div>
 
         {/* 거래후기 */}
@@ -82,7 +80,6 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>거래후기</p>
-          <p>{props.reviewCount}</p>
         </div>
       </div>
 

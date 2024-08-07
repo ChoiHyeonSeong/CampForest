@@ -40,8 +40,9 @@ const ChatUserList = (props: Props) => {
     <div>
       {/* 일반 채팅 */}
       <div className={`${chatState.selectedCategory === '일반' ? '' : 'hidden'}`}>
-        {chatState.communityChatUserList.map((communityChatUser, index) => (
+        {chatState.communityChatUserList.map((communityChatUser, key) => (
           <div
+            key={key}
             className='
               bg-light-white
               dark:bg-dark-white
@@ -52,7 +53,7 @@ const ChatUserList = (props: Props) => {
               )
             }
           >
-            <ChatUser index={index}/>
+            <ChatUser index={key}/>
           </div>
         ))}
       </div>

@@ -13,7 +13,7 @@ type ProductRegistDto = {
 
 type SearchParams = {
   category?: string,
-  userId?: number,
+  findUserId?: number,
   productType: string,
   minPrice?: number,
   maxPrice?: number,
@@ -45,8 +45,8 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
 }
 
 export const productList = async (searchParams: SearchParams) => {
-  const response = await axios.get(`/product/public/search`, {params: searchParams});
-
+  const response = await axiosInstance.get(`/product/public/search`, { params: searchParams});
+  console.log("API Response:", response.data);
   return response.data.data;
 }
 
@@ -55,10 +55,8 @@ export const productDetail = async (productId: number) => {
   return response.data.data;
 }
 
-export const productSearch = async ( searchParams: SearchParams ) => {
-  const params = { titleKeyword: searchParams.titleKeyword };
-  const response = await axiosInstance.get(`/product/public/search`, { params: params });
-
+export const likedList = async () => {
+  const response = await axiosInstance.get(`/saveproduct/list`);
   console.log(response.data.data);
-  return response.data.data;
+  return response.data.data
 }
