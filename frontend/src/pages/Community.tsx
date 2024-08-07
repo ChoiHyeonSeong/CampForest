@@ -17,17 +17,10 @@ const Community = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
 
-  const isFirstLoadRef = useRef(true);
   const boardPageRef = useRef(0);
 
-  const fetchBoards = async (reset = false) => {
+  const fetchBoards = async () => {
     try {
-      if (reset) {
-        boardPageRef.current = 0
-        setBoards([]);
-        setNextPageExist(true);
-      }
-
       dispatch(setIsLoading(true))
       let result: any;
       if (category === 'all') {
@@ -40,9 +33,6 @@ const Community = () => {
         if (!result.data.data.empty && !result.data.data.last) {
           boardPageRef.current += 1
         }
-        if (reset) {
-          isFirstLoadRef.current = false;
-        } 
         if (result.data.data.last) {
           setNextPageExist(false);
         }
@@ -54,6 +44,18 @@ const Community = () => {
     }
   };
 
+  const pageReload = () => {
+    boardPageRef.current = 0
+    setBoards([]);
+    setNextPageExist(true);
+
+    fetchBoards()
+  }
+
+  useEffect(() => {
+    pageReload()
+  }, [])
+
   useEffect(() => {
     if (inView && nextPageExist) {
       console.log(inView, '무한 스크롤 요청');
@@ -61,17 +63,6 @@ const Community = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
-
-  useEffect(() => {
-    isFirstLoadRef.current = true
-    fetchBoards(true)
-  // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [category])
-
-  const pageReload = () => {
-    isFirstLoadRef.current = true
-    fetchBoards(true)
-  }
 
   return (
     <div>
@@ -86,7 +77,7 @@ const Community = () => {
       </div>
 
       {/* intersection observer */}
-      <div ref={ref} className={`${isFirstLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
+      <div ref={ref} className={`${boards.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
     </div>
   )
 }

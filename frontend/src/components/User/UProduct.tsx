@@ -19,18 +19,11 @@ const UProduct = (props: Props) => {
 
   const [products, setProducts] = useState<ProductType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
-  
-  const isFirstLoadRef = useRef(true);
+
   const productPageRef = useRef(0);
 
-  const fetchProducts = async (reset = false) => {
+  const fetchProducts = async () => {
     try {
-      if (reset) {
-        productPageRef.current = 0
-        setProducts([]);
-        setNextPageExist(true);
-      }
-      
       dispatch(setIsLoading(true));
       const response = await productList({userId: userId, productType: ''});
       dispatch(setIsLoading(false));
@@ -40,16 +33,13 @@ const UProduct = (props: Props) => {
         if (response.data) {
           setNextPageExist(false);
         }
-        if(reset) {
-          isFirstLoadRef.current = false;
-        }
         setProducts((prevProducts) => [...prevProducts, ...response.products]);
       }
     } catch (error) {
       console.error("Failed to fetch products: ", error);
     }
   }
-
+  
   useEffect(() => {
     // inView가 true일 때만 실행한다.
     if (inView && nextPageExist) {
@@ -60,9 +50,11 @@ const UProduct = (props: Props) => {
 
   return (
     <div className={`grid grid-cols-2 md:grid-cols-3`}>
-      {/* {products?.content.map((product: any) => (
+      {products?.map((product: any) => (
         <ProductCard product={product}/>
-      ))} */}
+      ))}
+
+      <div ref={ref} className={`h-[0.25rem]`}></div>
     </div>
   )
 }

@@ -22,17 +22,12 @@ const UBoard = (props: Props) => {
   const [ref, inView] = useInView();
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
-  const isFirstLoadRef = useRef(true);
+
   const boardPageRef = useRef(0);
 
-  const fetchBoards = async (reset = false) => {
+  const fetchBoards = async () => {
     try {
-      if (reset) {
-        boardPageRef.current = 0;
-        setBoards([]);
-        setNextPageExist(true);
-      }
-      dispatch(setIsLoading(true));
+      dispatch(setIsLoading(true))
       const result = await boardUserList(userId, boardPageRef.current, 10);
       dispatch(setIsLoading(false));
 
@@ -41,11 +36,7 @@ const UBoard = (props: Props) => {
         boardPageRef.current += 1;
         if (result.data.data.last) {
           setNextPageExist(false);
-        }
-        console.log(result.data);
-        if (reset) {
-          isFirstLoadRef.current = false;
-        }
+        } 
         setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
       }
     } catch (error) {
@@ -55,13 +46,16 @@ const UBoard = (props: Props) => {
   };
 
   const pageReload = () => {
-    isFirstLoadRef.current = true;
-    fetchBoards(true);
-  };
+    boardPageRef.current = 0
+    setBoards([]);
+    setNextPageExist(true);
+
+    fetchBoards()
+  }
 
   useEffect(() => {
-    pageReload();
-  }, []);
+    pageReload()
+  }, [])
 
   useEffect(() => {
     // inView가 true 일때만 실행한다.
@@ -136,7 +130,7 @@ const UBoard = (props: Props) => {
         ))}
       </div>
 
-      <div ref={ref} className={`${isFirstLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
+      <div ref={ref} className={`${boards.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
     </div>
   );
 };
