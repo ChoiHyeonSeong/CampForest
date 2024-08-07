@@ -36,7 +36,7 @@ const BoardWrite = () => {
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
     try {
-      await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
+      const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
       dispatch(setIsBoardWriteModal(false));
     } catch (error) {
       console.log(error)

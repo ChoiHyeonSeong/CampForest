@@ -26,6 +26,8 @@ export const boardWrite = async (userId: number, title: string, content: string,
     });
     console.log(response);
     console.log('Board Write successful');
+    
+    return response
   } catch (error) {
     console.error('Board Write failed:', error);
     throw error;
