@@ -36,6 +36,7 @@ import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
 import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
+import com.campforest.backend.user.dto.response.ResponseSearchDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.TokenService;
@@ -153,10 +154,17 @@ public class UserController {
 			if (usersList.isEmpty()) {
 				return ApiResponse.createSuccess(Collections.emptyList(), "검색 결과가 없습니다.");
 			}
+
 			List<ResponseInfoDTO> responseDTOList = usersList.stream()
 				.map(ResponseInfoDTO::fromEntity)
 				.collect(Collectors.toList());
-			return ApiResponse.createSuccess(responseDTOList, "유저 검색 성공");
+
+			ResponseSearchDTO response = ResponseSearchDTO.builder()
+				.size(responseDTOList.size())
+				.users(responseDTOList)
+				.build();
+
+			return ApiResponse.createSuccess(response, "유저 검색 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}
@@ -175,9 +183,10 @@ public class UserController {
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
 				.httpOnly(true)
+				.secure(true)
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
-				.sameSite("Lax")
+				.sameSite("None")
 				.domain("i11d208.p.ssafy.io")
 				.build();
 
