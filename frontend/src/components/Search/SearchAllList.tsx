@@ -1,25 +1,69 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchProfile from '@components/Search/SearchProfile'
-// import SearchBoard from '@components/Search/SerarchBoard'
-// import SearchProduct from '@components/Search/SearchProduct'
+import SearchProfile, { profileType } from '@components/Search/SearchProfile'
+import SearchBoard from '@components/Search/SerarchBoard'
+import SearchProduct from '@components/Search/SearchProduct'
 import { ReactComponent as ArrowRightIcon } from '@assets/icons/arrow-right.svg'
-import { nicknameSearch } from '@services/userService';
+import { nicknameSearch } from '@services/userService'
+import { boardTitleSearch } from '@services/boardService'
+import { productList } from '@services/productService'
+import { BoardType } from '@components/Board/Board';
+import { ProductType } from '@components/Product/ProductCard';
 
 
 type Props = {
-  // searchText: string;
+  searchText: string;
 }
 
 const SearchAllList = (props: Props) => {
   const navigate = useNavigate();
-  const [profileList, setProfileList] = useState([]);
-  // const [productList, setProductList] = useState([]);
-  // const [boardList, setBoardList] = useState([]);
+  const [profileList, setProfileList] = useState<profileType[]>([]);
+  const [productsList, setProductsList] = useState<ProductType[]>([]);
+  const [boardList, setBoardList] = useState<BoardType[]>([]);
 
+  const fetchAllSearchResults = useCallback(async () => {
+    if (props.searchText.length < 2) {
+      setProfileList([]);
+      setProductsList([]);
+      setBoardList([]);
+      return;
+    }
 
+    try {
+      // 1. 프로필 검색
+      const profileResult = await nicknameSearch(props.searchText);
+      if (profileResult.users && Array.isArray(profileResult.users)) {
+        const filteredProfiles = profileResult.users.filter((profile: profileType) => 
+          profile.nickname.includes(props.searchText)
+        );
+        setProfileList(filteredProfiles);
+      }
 
+      // 상품 검색
+      const productResult = await productList({ 
+        titleKeyword: props.searchText, 
+        productType: '', // 전체 검색이므로 빈 문자열
+        page: 0,
+        size: 5, // 전체 검색에서는 각 카테고리별로 일부만 보여줄 것이므로 5개로 제한
+      });
+      if (productResult && productResult.products) {
+        setProductsList(productResult.products);
+      }
 
+      // 게시글 검색
+      const boardResult = await boardTitleSearch(props.searchText, 0, 3);
+      if (boardResult && Array.isArray(boardResult)) {
+        setBoardList(boardResult);
+      }
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  }, [props.searchText]);
+
+  useEffect(() => {
+    fetchAllSearchResults();
+  }, [fetchAllSearchResults]);
+  
 
   return (
     <>
@@ -34,7 +78,7 @@ const SearchAllList = (props: Props) => {
                 font-bold
               '
             >
-              10
+              {profileList.length}
             </span>
           </p>
           
@@ -66,12 +110,10 @@ const SearchAllList = (props: Props) => {
           
         </div>
         <div className=''>
-          {/* {profileList.length > 0 ? 
-            profileList.map((profile) => (
+          {profileList.map((profile) => (
               <SearchProfile profile={profile} />  
-            )) :
-          <NoResultSearch searchText={props.searchText} />
-          } */}
+            ))
+          }
         </div>
       </div>
 
@@ -86,7 +128,7 @@ const SearchAllList = (props: Props) => {
                 font-bold
               '
             >
-              10
+              {boardList.length}
             </span>
           </p>
           
@@ -118,9 +160,10 @@ const SearchAllList = (props: Props) => {
           
         </div>
         <div className=''>
-          {/* <SearchBoard />
-          <SearchBoard />
-          <SearchBoard /> */}
+          {boardList.map((board) =>
+              <SearchBoard board={board}/>  
+            )
+          }
         </div>
       </div>
 
@@ -135,7 +178,7 @@ const SearchAllList = (props: Props) => {
                 font-bold
               '
             >
-              10
+              {productsList.length}
             </span>
           </p>
           
@@ -167,7 +210,7 @@ const SearchAllList = (props: Props) => {
           
         </div>
         <div>
-          {/* <SearchProduct  /> */}
+          <SearchProduct product={productsList} />
         </div>
       </div>
     

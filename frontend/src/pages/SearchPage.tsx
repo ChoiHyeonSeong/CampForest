@@ -162,7 +162,7 @@ const SearchPage = () => {
         {/* 검색화면 */}
         <div className='w-full pt-[1.5rem]'>
           <Routes>
-            <Route path='/' element={<SearchAllList />} />
+            <Route path='/' element={<SearchAllList searchText={searchQuery} />} />
             <Route path='/profile' element={<SearchProfileList searchText={searchQuery} />} />
             <Route path='/board' element={<SearchBoardList searchText={searchQuery} />} />
             <Route path='/product' element={<SearchProductList searchText={searchQuery} />} />
