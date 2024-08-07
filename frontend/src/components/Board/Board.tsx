@@ -369,6 +369,7 @@ const Board = (props: Props) => {
         <div className={`w-1/3`}>
           {saved ? 
             (<BookmarkIcon
+              onClick={() => handleBookmark()}
               className={`
                 inline size-[1.75rem]
                 stroke-light-border-icon

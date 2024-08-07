@@ -34,9 +34,8 @@ const UserPage = () => {
         className={`
           ${isModalOpen ? 'flex' : 'hidden'} 
           md:items-center fixed z-[20] w-[100%] h-[100%] 
-          bg-light-black
-          dark:bg-dark-black
-          bg-opacity-80
+          bg-light-black bg-opacity-80
+          dark:bg-dark-black dark:bg-opacity-80
         `}
       >
         <div 
@@ -55,16 +54,12 @@ const UserPage = () => {
       <div className={`flex justify-center min-h-[100vh]`}>
         <div className={`w-[100%] lg:w-[54rem] bg-light-white dark:bg-dark-white p-[1.5rem] lg:p-0`}>
           <h3 className={`hidden lg:block pb-[0.75rem] text-lg md:text-[1.5rem]`}>유저 프로필</h3>
-          <ProfileTop 
-            userId={userId} 
+          <ProfileTop
             setIsModalOpen={setIsModalOpen} 
             setIsFollowing={setIsFollowing}/>
           <div>
             {/* 목록전환박스 */}
-            <MenuBar 
-              boardCount={1} 
-              productCount={1}
-              reviewCount={1}
+            <MenuBar
               selectedMenu={selectedMenu} 
               setSelectedMenu={setSelectedMenu}
             />

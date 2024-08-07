@@ -13,7 +13,7 @@ type ProductRegistDto = {
 
 type SearchParams = {
   category?: string,
-  userId?: number,
+  findUserId?: number,
   productType: string,
   minPrice?: number,
   maxPrice?: number,
@@ -70,6 +70,12 @@ export const productDetail = async (productId: number) => {
 //   const params = { titleKeyword: searchParams.titleKeyword };
 //   const response = await axiosInstance.get(`/product/public/search`, { params: params });
 
-//   console.log(response.data.data);
-//   return response.data.data;
-// }
+  console.log(response.data.data);
+  return response.data.data;
+}
+
+export const likedList = async () => {
+  const response = await axiosInstance.get(`/saveproduct/list`);
+
+  // console.log('라이크드리스트' ,response);
+}
