@@ -19,7 +19,7 @@ type FollowUserType = {
 const FollowUsers = ({userId, isFollowing, isModalOpen, setIsModalOpen}: Props) => {
   const [followUsers, setFollowUsers] = useState<FollowUserType[]>([]);
 
-  async function fetchFollowers() {
+  const fetchFollowers = async () => {
     try {
       const followerData = await followerList(userId);
       setFollowUsers(followerData);
@@ -28,7 +28,7 @@ const FollowUsers = ({userId, isFollowing, isModalOpen, setIsModalOpen}: Props) 
     }
   }
 
-  async function fetchFollowings() {
+  const fetchFollowings = async () => {
     try {
       const followingData = await followingList(userId);
       setFollowUsers(followingData);

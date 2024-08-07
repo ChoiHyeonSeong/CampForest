@@ -1,14 +1,15 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Props = {
-  selectedMenu: string;
-  setSelectedMenu: (menu: string) => void;
+  boardCount: number;
+  productCount: number;
+  reviewCount: number;
+  selectedMenu: string | null;
 }
   
 const MenuBar = (props: Props) => {
-  const handleMenuClick = (menu: string) => {
-    props.setSelectedMenu(menu);
-  }
+  const navigate = useNavigate()
 
   return (
     <div>
@@ -23,7 +24,7 @@ const MenuBar = (props: Props) => {
 
         {/* 게시물 */}
         <div 
-          onClick={() => handleMenuClick('게시물')}
+          onClick={() => navigate('')}
           className={`
             ${props.selectedMenu === '게시물' ?
               `
@@ -43,7 +44,7 @@ const MenuBar = (props: Props) => {
 
         {/* 판매/대여 */}
         <div 
-          onClick={() => handleMenuClick('판매/대여')}
+          onClick={() => navigate('product')}
           className={`
             ${props.selectedMenu === '판매/대여' ?
               `
@@ -63,7 +64,7 @@ const MenuBar = (props: Props) => {
 
         {/* 거래후기 */}
         <div 
-          onClick={() => handleMenuClick('거래후기')}
+          onClick={() => navigate('review')}
           className={`
             ${props.selectedMenu === '거래후기' ?
               `

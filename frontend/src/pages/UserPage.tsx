@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, Route, Routes, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react'
+import { useParams, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import FollowUsers from '@components/User/FollowUsers';
@@ -10,24 +10,26 @@ import UReview from '@components/User/UReview';
 
 const UserPage = () => {
   const navigate = useNavigate();
+  const currentLoc = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(true);
-  const [selectedMenu, setSelectedMenu] = useState('게시물');
+  const [selectedMenu, setSelectedMenu] = useState<string | null>('게시물');
  
-  const userId = Number(useParams().userId);
+  const params = useParams()
+  const userId = Number(params.userId);
 
   useEffect(() => {
-    if (selectedMenu === '게시물') {
-      navigate('')
-    } else if (selectedMenu === '판매/대여') {
-      navigate('product')
-    } else if (selectedMenu === '거래후기') {
-      navigate('review')
+    if (currentLoc.pathname.endsWith('/product')) {
+      setSelectedMenu('판매/대여')
+      console.log(1)
+    } else if (currentLoc.pathname.endsWith('/review')) {
+      setSelectedMenu('거래후기')
+      console.log(2)
+    } else {
+      setSelectedMenu('게시물')
+      console.log(3)
     }
-  }, [selectedMenu])
-  useEffect(() => {
-    
-  }, [])
+  }, [currentLoc.pathname])
 
   return (
     <>
@@ -64,7 +66,6 @@ const UserPage = () => {
             {/* 목록전환박스 */}
             <MenuBar
               selectedMenu={selectedMenu} 
-              setSelectedMenu={setSelectedMenu}
             />
 
             {/* 목록 */}
@@ -73,7 +74,7 @@ const UserPage = () => {
                 <Route path='/' element={<UBoard />} />
                 <Route path='/product' element={<UProduct />} />
                 <Route path='/review' element={<UReview />} />
-              </Routes>      
+              </Routes>
             </div>
 
           </div>

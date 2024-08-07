@@ -4,7 +4,7 @@ import { ReactComponent as ArticleIcon } from '@assets/icons/article-outline.svg
 import { ReactComponent as BookMarkIcon } from '@assets/icons/bookmark.svg';
 import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Board, { BoardType } from '@components/Board/Board';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +19,7 @@ type Props = {};
 const UBoard = (props: Props) => {
   const [myBoard, setMyBoard] = useState(true);
   const userId = Number(useParams().userId);
-  const userState = useSelector((state: RootState) => state.userStore);
+  const currentLoc = useLocation();
   const dispatch = useDispatch();
   const [ref, inView] = useInView();
   const [savedRef, savedInView] = useInView();
@@ -78,9 +78,8 @@ const UBoard = (props: Props) => {
   };
 
   useEffect(() => {
-    pageReload();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+    pageReload()
+  }, [currentLoc.pathname])
 
   useEffect(() => {
     // inView가 true 일때만 실행한다.
