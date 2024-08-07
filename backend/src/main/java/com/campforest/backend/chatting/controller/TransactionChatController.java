@@ -79,7 +79,7 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 			Long buyer = user.getUserId();
 			TransactionChatDto room = transactionChatService.createOrGetChatRoom(createRoomDto.getProductId(),buyer, createRoomDto.getSeller());
-			return ApiResponse.createSuccess(transactionChatService.getChatHistory(room.getRoomId()),"채팅방 생성 성공하였습니다");
+			return ApiResponse.createSuccess(room,"채팅방 생성 성공하였습니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
 		}
@@ -435,6 +435,8 @@ public class TransactionChatController {
 			return errorMessage;
 		}
 	}
+
+	////////////////SALE
 
 	// //user가 속한 채팅방 목록 가져옴.
 	// 각 채팅방 별 최근 메시지와, 안읽은 메세지 수 가져옴

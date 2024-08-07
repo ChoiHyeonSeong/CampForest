@@ -45,7 +45,7 @@ public class CommunityChatController {
                 .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
             Long nowId = user.getUserId();
             CommunityChatDto room = communityChatService.createOrGetChatRoom(nowId, user2);
-        return ApiResponse.createSuccess(getChatHistory(room.getRoomId()),"채팅방 로드 성공하였습니다");
+        return ApiResponse.createSuccess(room,"채팅방 로드 성공하였습니다");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
         }
