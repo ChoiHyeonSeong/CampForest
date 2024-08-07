@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react'
-
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import NotificationList from '@components/Notification/NotificationList';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 
 type Props = {
@@ -15,45 +14,96 @@ const EventSource = EventSourcePolyfill || NativeEventSource;
 
 const NavbarLeftExtendCommunity = (props: Props) => {
   const userState = useSelector((state: RootState) => state.userStore);
+  const dispatch = useDispatch();
   const eventSourceRef = useRef<EventSource | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const maxRetries = 5;
 
-  // useEffect(() => {
-  //   if (userState.isLoggedIn) {
-  //     const createEventSource = () => {
-  //       const eventSource = new EventSource(
-  //         `https://i11d208.p.ssafy.io/api/notification/subscribe`,
-  //         {
-  //           headers: {
-  //             Authorization: sessionStorage.getItem('accessToken') || '',
-  //           },
-  //           withCredentials: true,
-  //           heartbeatTimeout: 300000, // 5분으로 조정
-  //         }
-  //       );
+  const createEventSource = useCallback(() => {
+    if (retryCount >= maxRetries) {
+      console.error("최대 재시도 횟수 초과");
+      return;
+    }
 
-  //       eventSource.onmessage = async (event) => {
-  //         const result = await event.data;
-  //         console.log(result);
-  //       };
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+      console.error("액세스 토큰이 없습니다.");
+      return;
+    }
 
-  //       eventSource.onerror = (event) => {
-  //         console.error("SSE Error:", event);
-  //         eventSource.close();
-  //         setTimeout(createEventSource, 5000); // 5초 후 재연결 시도
-  //       };
+    console.log("SSE 연결 시도...");
+    const eventSource = new EventSource(
+      `${process.env.REACT_APP_BACKEND_URL}/notification/subscribe`,
+      {
+        headers: {
+          Authorization: `${accessToken}`,
+        },
+        withCredentials: true,
+        heartbeatTimeout: 300000, // 5분
+      }
+    );
 
-  //       eventSourceRef.current = eventSource;
-  //     };
+    eventSource.onopen = (event) => {
+      console.log("SSE 연결 성공", event);
+      setRetryCount(0);
+    };
 
-  //     createEventSource();
+    eventSource.onmessage = async (event) => {
+      console.log("SSE 메시지 수신:", event);
+      try {
+        const data = JSON.parse(event.data);
+        // dispatch(addNotification(data));
+        console.log(data);
+      } catch (error) {
+        console.error("알림 데이터 파싱 오류:", error);
+      }
+    };
 
-  //     return () => {
-  //       if (eventSourceRef.current) {
-  //         eventSourceRef.current.close();
-  //       }
-  //     };
-  //   }
-  // }, [userState.isLoggedIn]);
+    eventSource.onerror = (error) => {
+      console.error("SSE 오류:", error);
+      eventSource.close();
+      setRetryCount(prevCount => prevCount + 1);
+    };
+
+    eventSourceRef.current = eventSource;
+  }, [dispatch, retryCount]);
+
+  useEffect(() => {
+    let retryTimeout: NodeJS.Timeout;
+
+    const retryWithBackoff = () => {
+      if (retryCount < maxRetries) {
+        const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
+        console.log(`${backoffTime / 1000}초 후 재연결 시도`);
+        retryTimeout = setTimeout(() => {
+          createEventSource();
+        }, backoffTime);
+      }
+    };
+
+    if (userState.isLoggedIn) {
+      if (retryCount === 0) {
+        createEventSource();
+      } else {
+        retryWithBackoff();
+      }
+    }
+
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+      if (retryTimeout) {
+        clearTimeout(retryTimeout);
+      }
+    };
+  }, [userState.isLoggedIn, createEventSource, retryCount]);
+
+  // 디버깅을 위한 임시 함수
+  const testSSEConnection = () => {
+    console.log("SSE 연결 테스트 시작");
+    createEventSource();
+  };
 
   return (
     <div
@@ -76,6 +126,8 @@ const NavbarLeftExtendCommunity = (props: Props) => {
           `}
         />
         <p className={`text-2xl font-medium`}>알림</p>
+        {/* 디버깅을 위한 임시 버튼 */}
+        <button onClick={testSSEConnection}>SSE 테스트</button>
       </div>
       <NotificationList />
     </div>

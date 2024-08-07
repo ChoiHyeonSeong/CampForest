@@ -50,27 +50,8 @@ export const productList = async (searchParams: SearchParams) => {
   return response.data.data;
 }
 
-// export const productList = async (searchParams: SearchParams) => {
-//   try {
-//     const response = await axiosInstance.get(`/product/public/search`, { params: searchParams });
-//     console.log("API Response:", response.data);
-//     return response.data; // .data 제거, API 응답 구조에 따라 조정
-//   } catch (error) {
-//     console.error("Error fetching product list:", error);
-//     throw error; // 에러를 던져서 호출하는 쪽에서 처리할 수 있게 함
-//   }
-// }
-
 export const productDetail = async (productId: number) => {
   const response = await axios.get(`/product/public/${productId}`);
-  return response.data.data;
-}
-
-// export const productSearch = async ( searchParams: SearchParams ) => {
-//   const params = { titleKeyword: searchParams.titleKeyword };
-//   const response = await axiosInstance.get(`/product/public/search`, { params: params });
-
-  console.log(response.data.data);
   return response.data.data;
 }
 
