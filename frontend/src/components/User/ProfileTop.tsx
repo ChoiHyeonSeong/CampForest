@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import defaultImage from '@assets/logo192.png';
 import FireGif from '@assets/images/fire.gif';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { userPage } from '@services/userService';
-import { setIsLoading } from '@store/modalSlice';
 import { useDispatch } from 'react-redux';
 
 type UserInfo = {
@@ -16,13 +15,13 @@ type UserInfo = {
 }
 
 type Props = {
-  userId: number;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsFollowing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: Props) {
+export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
   const dispatch = useDispatch();
+  const userId = Number(useParams().userId);
   const [userinfo, setUserInfo] = useState<UserInfo>();
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
@@ -45,7 +44,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
     }
 
     fetchUserInfo();
-  }, [])
+  }, [userId])
 
   const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
 
