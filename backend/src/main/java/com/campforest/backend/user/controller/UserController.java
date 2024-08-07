@@ -177,7 +177,7 @@ public class UserController {
 		HttpServletResponse response) {
 		try {
 			if (refreshToken == null || refreshToken.isEmpty()) {
-				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
 			}
 
 			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(refreshToken);

@@ -1,22 +1,22 @@
 package com.campforest.backend.chatting.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.campforest.backend.chatting.dto.CommunityChatDto;
-import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
+import com.campforest.backend.chatting.dto.MessageWithTransactionDTO;
 import com.campforest.backend.chatting.dto.TransactionChatDto;
 import com.campforest.backend.chatting.dto.TransactionChatRoomListDto;
-import com.campforest.backend.chatting.entity.CommunityChatMessage;
-import com.campforest.backend.chatting.entity.CommunityChatRoom;
+import com.campforest.backend.chatting.entity.MessageType;
 import com.campforest.backend.chatting.entity.TransactionChatMessage;
 import com.campforest.backend.chatting.entity.TransactionChatRoom;
-import com.campforest.backend.chatting.repository.communitychatroom.CommunityChatRoomRepository;
-import com.campforest.backend.chatting.repository.communitymessage.CommunityChatMessageRepository;
 import com.campforest.backend.chatting.repository.transactionchatmessage.TransactionChatMessageRepository;
 import com.campforest.backend.chatting.repository.transactionchatroom.TransactionChatRoomRepository;
+import com.campforest.backend.product.model.ProductType;
+import com.campforest.backend.transaction.repository.RentRepository;
+import com.campforest.backend.transaction.repository.SaleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,9 @@ import lombok.RequiredArgsConstructor;
 public class TransactionChatServiceImpl implements TransactionChatService {
     private final TransactionChatRoomRepository transactionChatRoomRepository;
     private final TransactionChatMessageRepository transactionChatMessageRepository;
+    private final RentRepository rentRepository;
+    private final SaleRepository saleRepository;
+
     @Transactional
     @Override
     public TransactionChatDto createOrGetChatRoom(Long productId, Long buyer, Long seller) {
@@ -41,17 +44,39 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         message= TransactionChatMessage.builder()
                 .content(message.getContent())
                 .senderId(message.getSenderId())
+                .messageType(message.getMessageType())
                 .roomId(roomId)
                 .build();
-        System.out.println(message.getContent()+message.getSenderId());
+        if(message.getMessageType().equals(MessageType.TRANSACTION)) {
+            message.setTransactionId(message.getTransactionId());
+        }
         return transactionChatMessageRepository.save(message);
     }
 
     @Transactional
     @Override
-    public List<TransactionChatMessage> getChatHistory(Long roomId) {
-        return transactionChatMessageRepository.findByChatRoom(roomId);
+    public List<MessageWithTransactionDTO> getChatHistory(Long roomId) {
+        TransactionChatRoom room = transactionChatRoomRepository.findById(roomId)
+            .orElseThrow(() -> new RuntimeException("채팅룸 없습니다요"));
+        List<TransactionChatMessage> messages = transactionChatMessageRepository.findByChatRoom(roomId);
+
+        return messages.stream()
+            .map(message -> {
+                if (message.getMessageType() == MessageType.MESSAGE) {
+                    return new MessageWithTransactionDTO(message, null);
+                } else {
+                    Object transactionEntity = null;
+                    if (room.getProductType() == ProductType.RENT) {
+                        transactionEntity = rentRepository.findById(message.getTransactionId()).orElse(null);
+                    } else if (room.getProductType() == ProductType.SALE) {
+                        transactionEntity = saleRepository.findById(message.getTransactionId()).orElse(null);
+                    }
+                    return new MessageWithTransactionDTO(message, transactionEntity);
+                }
+            })
+            .collect(Collectors.toList());
     }
+
     @Transactional
     @Override
     public Long getUnreadMessageCount(Long roomId, Long userId) {
@@ -78,6 +103,12 @@ public class TransactionChatServiceImpl implements TransactionChatService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public Optional<TransactionChatRoom> getRoomById(Long roomId) {
+        return transactionChatRoomRepository.findById(roomId);
+    }
+
     private TransactionChatDto convertToDto(TransactionChatRoom room) {
         TransactionChatDto dto = new TransactionChatDto();
         dto.setRoomId(room.getRoomId());
