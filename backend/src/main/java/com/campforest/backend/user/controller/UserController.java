@@ -3,13 +3,14 @@ package com.campforest.backend.user.controller;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,12 +34,13 @@ import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.notification.model.NotificationType;
 import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.user.dto.request.RequestLoginDTO;
-import com.campforest.backend.user.dto.request.RequestRefreshTokenDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
 import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.dto.response.ResponseSearchDTO;
+import com.campforest.backend.user.dto.response.ResponseLoginDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.TokenService;
@@ -108,7 +111,7 @@ public class UserController {
 
 			Users users = userService.findByEmail(requestDTO.getEmail())
 				.orElseThrow(() -> new NotFoundException("유저 정보 조회 실패"));
-			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
+			ResponseLoginDTO responseDTO = ResponseLoginDTO.fromEntity(users);
 
 			Map<String, Object> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
 			responseDTO.setSimilarUsers(similarUsers);
@@ -207,6 +210,35 @@ public class UserController {
 			return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 		}
 	}
+
+	@GetMapping("/profile")
+	public ApiResponse<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
+		try {
+			Users users = userService.findByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
+
+			return ApiResponse.createSuccess(responseDTO, "프로필 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+		}
+	}
+
+	@PutMapping("/update")
+	public ApiResponse<?> updateProfile(
+		@AuthenticationPrincipal UserDetails userDetails,
+		@RequestPart(value = "profileImage", required = false) MultipartFile profileImageFile,
+		@RequestPart(value = "updateUserDto") RequestUpdateDTO requestDTO) {
+		try {
+			String userEmail = userDetails.getUsername();
+			userService.updateUserProfile(userEmail, requestDTO, profileImageFile);
+
+			return ApiResponse.createSuccess(null, "프로필 업데이트 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
 
 	@DeleteMapping
 	public ApiResponse<?> withdrawUser(Authentication authentication, HttpServletResponse response) {

@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.SaveProduct;
 import com.campforest.backend.notification.model.Notification;
 import com.campforest.backend.review.model.Review;
+import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -95,6 +97,7 @@ public class Users {
 	@Column(name = "introduction")
 	private String introduction;
 
+	@Setter
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private UserImage userImage;
@@ -137,6 +140,7 @@ public class Users {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
+	@UpdateTimestamp
 	@Column(name = "modified_at", nullable = false, insertable = false,
 		columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -145,6 +149,19 @@ public class Users {
 	public void updateOAuthInfo(String provider, String providerId) {
 		this.provider = provider;
 		this.providerId = providerId;
+	}
+
+	public void updateInterests(Set<Interest> newInterests) {
+		this.interests.clear();
+		this.interests.addAll(newInterests);
+	}
+
+	public void updateUserInfo(RequestUpdateDTO dto) {
+		this.birthdate = dto.getBirthdate();
+		this.gender = dto.getGender();
+		this.nickname = dto.getNickname();
+		this.introduction = dto.getIntroduction();
+		this.isOpen = dto.isOpen();
 	}
 
 	public void addSavedProduct(Product product) {
