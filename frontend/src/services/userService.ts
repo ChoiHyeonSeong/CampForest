@@ -24,8 +24,8 @@ export const followingList = async (userId: number) => {
 
   return response.data.data;
 }
-export const nicknameSearch = async (key:string) => {
-  const response = await axios.get(`/user/public/search?nickname=${key}`,);
+export const nicknameSearch = async (nickname: string) => {
+  const response = await axios.get(`/user/public/search?nickname=${nickname}`,);
 
   console.log(response.data);
   return (response.data.data);

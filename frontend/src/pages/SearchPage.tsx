@@ -9,6 +9,7 @@ import SearchAllList from '@components/Search/SearchAllList';
 const SearchPage = () => {
   const [inputText, setInputText] = useState(''); // 입력 중인 검색값임
   const [searchQuery, setSearchQuery] = useState(''); // 실제 검색에 사용될 쿼리임
+  const [activeTab, setActiveTab] = useState(''); // 현재 활성화된 탭
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,7 +18,9 @@ const SearchPage = () => {
     const query = params.get('query') || '';
     setInputText(query);
     setSearchQuery(query);
-  }, [location.search]);
+    const path = location.pathname.replace('/search', '') || '/';
+    setActiveTab(path);
+  }, [location.search, location.pathname]);
 
   // 검색어 길이가 2개 이상인지 확인
   const handleSearch = (path: string = '') => {
@@ -49,6 +52,7 @@ const SearchPage = () => {
 
   // 검색카테고리 탭 클릭 시 해당경로로 이동하기
   const handleTabClick = (path: string) => {
+    setActiveTab(path);
     navigate(`/search${path}?query=${encodeURIComponent(searchQuery)}`);
   };
 
@@ -60,7 +64,7 @@ const SearchPage = () => {
 
   // 현재 경로와 비교하여 탭 클래스 이름 설정
   const getTabClassName = (path: string) => {
-    return location.pathname.startsWith(`/search${path}`) ?
+    return location.pathname.startsWith(`/search${path}`) || activeTab === path ?
       `
         flex flex-all-center px-[0.5rem] md:px-[1.5rem] h-full
         border-light-signature text-light-text
@@ -129,25 +133,25 @@ const SearchPage = () => {
             '
           >
           <div
-            className={getTabClassName('/search')}
+            className={getTabClassName('')}
             onClick={() => handleTabClick('')}
             >
               전체
           </div>
           <div
-            className={getTabClassName('/search/profile')}
+            className={getTabClassName('/profile')}
             onClick={() => handleTabClick('/profile')}
             >
               프로필
           </div>
           <div
-            className={getTabClassName('/search/board')}
+            className={getTabClassName('/board')}
             onClick={() => handleTabClick('/board')}
             >
               커뮤니티
           </div>
           <div
-            className={getTabClassName('/search/product')}
+            className={getTabClassName('/product')}
             onClick={() => handleTabClick('/product')}
             >
               장비거래
@@ -159,7 +163,7 @@ const SearchPage = () => {
         <div className='w-full pt-[1.5rem]'>
           <Routes>
             <Route path='/' element={<SearchAllList />} />
-            <Route path='/profile' element={<SearchProfileList nickname={searchQuery} />} />
+            <Route path='/profile' element={<SearchProfileList searchText={searchQuery} />} />
             <Route path='/board' element={<SearchBoardList searchText={searchQuery} />} />
             <Route path='/product' element={<SearchProductList searchText={searchQuery} />} />
           </Routes>

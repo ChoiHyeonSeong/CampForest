@@ -51,7 +51,7 @@ const SearchBoardList = (props: Props) => {
         boardList.map((board) =>
           <SearchBoard key={board.boardId} board={board}/>  
         ) :
-        <NoResultSearch />
+        <NoResultSearch searchText={props.searchText} />
       }
     </div>
   )

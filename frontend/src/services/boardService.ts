@@ -84,11 +84,11 @@ export const boardDislike = async (boardId: number, userId: number) => {
   return response.data.data;
 }
 
-export const boardTitleSearch = async (title: string, page?: number, size?: number) => {
-  const params = { title: title, page: page, size: size };
-  const response = await axiosInstance.get(`/board/public/title`, { params: params });
+export const boardTitleSearch = async (keyword: string, page?: number, size?: number) => {
+  const params = { keyword, page, size };
+  const response = await axiosInstance.get(`/board/public/keyword`, { params: params });
 
-  // console.log(response.data.data.content);
+  console.log(response);
   return (response.data.data.content);
 }
 

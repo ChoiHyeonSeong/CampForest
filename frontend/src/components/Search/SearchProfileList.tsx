@@ -4,27 +4,27 @@ import { nicknameSearch } from '@services/userService';
 import NoResultSearch from '@components/Search/NoResultSearch'
 
 type Props = {
-  nickname: string;
+  searchText: string;
 }
 
 const SearchProfileList = (props: Props) => {
   const [profileList, setProfileList] = useState<profileType[]>([]);
 
   const fetchProfileList = useCallback(async () => {
-    const result = await nicknameSearch(props.nickname);
+    const result = await nicknameSearch(props.searchText);
     const list = result.users
     const size = result.size
     
     if (list && Array.isArray(list)) {
       // 정확히 일치하는 결과만 필터링하게 하기
       const filteredResults = list.filter(profile => 
-        profile.nickname.includes(props.nickname)
+        profile.nickname.includes(props.searchText)
       );
       setProfileList(filteredResults);
     } else {
       setProfileList([]);
     }
-  }, [props.nickname]);
+  }, [props.searchText]);
 
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const SearchProfileList = (props: Props) => {
         profileList.map((profile) => (
           <SearchProfile profile={profile} />  
         )) :
-      <NoResultSearch />
+      <NoResultSearch searchText={props.searchText} />
       }
     </div>
   )

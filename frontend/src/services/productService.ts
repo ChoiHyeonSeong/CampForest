@@ -46,7 +46,7 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
 
 export const productList = async (searchParams: SearchParams) => {
   const response = await axiosInstance.get(`/product/public/search`, { params: searchParams});
-  console.log("API Response:", response.data);
+
   return response.data.data;
 }
 
