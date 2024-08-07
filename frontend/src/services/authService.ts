@@ -44,7 +44,8 @@ axiosInstance.interceptors.response.use(
     if (status === 'A004' && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const newToken = await refreshToken();
+        console.log('check refresh')
+        const newToken = await getRefreshToken();
         originalRequest.headers['Authorization'] = newToken;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
@@ -85,7 +86,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   }
 };
 
-export const refreshToken = async() => {
+export const getRefreshToken = async () => {
  // refreshToken 요청에는 인터셉터를 적용하지 않음
  const response = await axios.post(`/user/public/refreshToken`, {}, {
     withCredentials: true
