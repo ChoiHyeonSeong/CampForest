@@ -8,6 +8,7 @@ type ChatState = {
   roomId: number;
   roomIds: number[];
   chatInProgress: Message[];
+  otherId: number;
   communityChatUserList: ChatUserType[];
   transactionChatUserList: ChatUserType[];
   totalUnreadCount: number;
@@ -19,6 +20,7 @@ const initialState: ChatState = {
   roomId: 0,
   roomIds: [],
   chatInProgress: [],
+  otherId: 0,
   communityChatUserList: [],
   transactionChatUserList: [],
   totalUnreadCount: 0,
@@ -48,6 +50,9 @@ const chatSlice = createSlice({
     },
     setChatInProgress: (state, action: PayloadAction<Message[]>) => {
       state.chatInProgress = action.payload;
+    },
+    setOtherId: (state, action: PayloadAction<number>) => {
+      state.otherId = action.payload;
     },
     setCommunityChatUserList: (state, action: PayloadAction<ChatUserType[]>) => {
       state.communityChatUserList = action.payload;
@@ -98,6 +103,7 @@ export const {
   setRoomId, 
   setRoomIds, 
   setChatInProgress,
+  setOtherId,
   setCommunityChatUserList,
   updateCommunityChatUserList,
   updateMessageReadStatus,

@@ -36,7 +36,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         // 메시지를 받았을 때
         client.subscribe(`/sub/community/${chatRoom.roomId}`, (message) => {
           const response = JSON.parse(message.body);
-          // console.log('Received chat message:', response);
+          console.log('Received chat message:', response);
           const state: RootState = store.getState();
           
           // 현재 열려 있는 채팅방 내용 갱신

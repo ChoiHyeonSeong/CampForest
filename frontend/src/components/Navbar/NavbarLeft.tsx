@@ -6,7 +6,7 @@ import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
 
 import DarkmodeBtn from './DarkmodeBtn';
 
-import tempImage from '@assets/logo192.png';
+import tempImage from '@assets/images/basic_profile.png';
 
 import { ReactComponent as BigLogoIcon } from '@assets/logo/logo.svg'
 

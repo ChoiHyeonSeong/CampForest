@@ -24,12 +24,11 @@ const SearchProductList = (props : Props) => {
     try {
       const result = await productList({ 
         titleKeyword: props.searchText, 
-        productType: selectedFilter === '전체' ? '' : selectedFilter,
+        productType: selectedFilter === '전체' ? '' : selectedFilter === '판매' ? 'SALE' : 'RENT',
         page: 0,
         size: 10,
       });
       
-      console.log(result)
       if (result && result.products) {
         setProducts(result.products);
         setSearchCount(result.totalElements || 0);
@@ -56,15 +55,9 @@ const SearchProductList = (props : Props) => {
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
     setIsDropdownOpen(false);
+    fetchProductList();
   };
-
-  const filteredProducts = products.filter(product => {
-    if (selectedFilter === '전체') return true;
-    if (selectedFilter === '판매') return product.productType === 'SALE';
-    if (selectedFilter === '대여') return product.productType === 'RENT';
-    return true;
-  });
-
+ 
   return (
     <div>
       <div className='flex justify-between items-center'>
@@ -126,7 +119,7 @@ const SearchProductList = (props : Props) => {
         </div>
       </div>
 
-      {filteredProducts.length !== 0 
+      {products.length !== 0 
         ? <SearchProduct product={products}/>
         : <NoResultSearch searchText={props.searchText} />
       }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 import { Link } from 'react-router-dom';
 import { commentDislike, commentLike } from '@services/commentService';
-import defaultProfileImage from '@assets/logo192.png'
+import defaultProfileImage from '@assets/images/basic_profile.png'
 
 export type CommentType = {
   commentId: number;

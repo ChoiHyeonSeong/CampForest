@@ -22,7 +22,15 @@ export const communityChatDetail = async (roomId: number) => {
     return response.data.data;
   } catch (err) {
     throw err;
-  }
+  }  
+}
+
+export const initCommunityChat = async (userId: number): Promise<number> => {
+  const response = await axiosInstance.post(`/communitychat/room`, userId, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
   
-  
+  return response.data.data.roomId;
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import noImg from '@assets/logo192.png'
+import noImg from '@assets/images/basic_profile.png'
 import { userPage } from '@services/userService';
 import { store } from '@store/store';
 
