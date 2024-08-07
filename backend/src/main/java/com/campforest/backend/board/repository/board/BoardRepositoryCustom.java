@@ -9,12 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BoardRepositoryCustom {
-	Page<Boards> findByUserId(Long userId, Pageable pageable);
-
-	Page<Boards> findByCategory(String category, Pageable pageable);
-
-	Page<Boards> findByTitle(String title, Pageable pageable);
-
 	void plusLikeCount(Long boardId);
 
 	void minusLikeCount(Long boardId);
@@ -23,7 +17,22 @@ public interface BoardRepositoryCustom {
 
 	void minusCommentCount(Long boardId);
 
-	Page<Boards> findSavedBoardsByUserId(Long nowId, Pageable pageable);
-
 	CountResponseDto countAllById(Long userId);
+
+	List<Boards> findTopN(int i);
+
+	List<Boards> findNextN(Long cursorId, int i);
+
+
+	List<Boards> findByUserIdTopN(Long userId, int limit);
+	 List<Boards> findByUserIdNextN(Long userId, Long cursorId, int limit) ;
+
+	List<Boards> findByCategoryTopN(String category, int limit);
+	 List<Boards> findByCategoryNextN(String category, Long cursorId, int limit);
+
+	List<Boards> findByTitleAndContentTopN(String keyword, int limit);
+	List<Boards> findByTitleAndContentNextN(String keyword, Long cursorId, int limit);
+
+	List<Boards> findSavedBoardsByUserIdTopN(Long nowId, int limit);
+	List<Boards> findSavedBoardsByUserIdNextN(Long nowId, Long cursorId, int limit);
 }
