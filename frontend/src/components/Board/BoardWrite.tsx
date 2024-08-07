@@ -7,6 +7,8 @@ import { setIsBoardWriteModal } from '@store/modalSlice'
 import { boardWrite } from '@services/boardService'
 import { RootState } from '@store/store'
 
+import MultiImageUpload from '@components/Public/MultiImageUpload'
+
 type CategoryType = {
   text: string;
   value: string;
@@ -27,14 +29,14 @@ const BoardWrite = () => {
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState<boolean>(false);
   const [boardOpen, setBoardOpen] = useState<boolean>(true);
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
-  const [uploadedImage, setUploadedImage] = useState<string[]>([])
+  const [boardImages, setBoardImages] = useState<File[]>([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const dispatch = useDispatch()
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
     try {
-      await boardWrite(user.userId, title, content, category.value, boardOpen, uploadedImage);
+      const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
       dispatch(setIsBoardWriteModal(false));
     } catch (error) {
       console.log(error)
@@ -98,22 +100,9 @@ const BoardWrite = () => {
     setIsBoardOpenDropdownOpen(false);
   } 
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setUploadedImage((prevImages: string[]) => [...prevImages, base64String]);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImagesChange = (images: File[]) => {
+    setBoardImages(images);
   };
-
-  const handleRemoveImage = (index: number) => {
-    setUploadedImage(prev => prev.filter((_, i) => i !== index));
-  };
-
 
   const formClear = () => {
     setTitle('');
@@ -122,7 +111,7 @@ const BoardWrite = () => {
     setIsCategoryDropdownOpen(false);
     setBoardOpen(true);
     setIsBoardOpenDropdownOpen(false);
-    setUploadedImage([]);
+    setBoardImages([]);
   }
 
   useEffect(() => {
@@ -140,7 +129,6 @@ const BoardWrite = () => {
   return (
     <div 
       className={`
-        ${isBoardWriteModal ? 'block' : 'hidden'} 
         fixed z-[10] md:z-[100] w-full h-[calc(100vh-5.95rem)] md:h-full mt-[3.2rem] md:mt-0
         bg-light-black bg-opacity-80
         dark:bg-dark-black dark:bg-opacity-80
@@ -278,7 +266,7 @@ const BoardWrite = () => {
               />
               <textarea 
                 className={`
-                  flex-grow h-[17rem] mb-[2rem] py-[0.5rem] ps-[1rem]
+                  flex-grow h-[17rem] mt-[1rem] mb-[2rem] py-[0.5rem] ps-[1rem]
                   bg-light-white
                   dark:bg-dark-white
                   resize-none focus:outline-none
@@ -290,50 +278,10 @@ const BoardWrite = () => {
             </div>
           </div>
           <div className={`flex flex-col`}>
+            <MultiImageUpload onImagesChange={handleImagesChange}/>
             <div 
               className={`
-                flex md:static mb-[1.25rem] 
-                overflow-x-auto scrollbar-hide
-              `}
-            >
-              {uploadedImage.map((eachImage, index) => (
-                <div 
-                  key={index} 
-                  className={`
-                    flex-shrink-0 size-[6rem] md:mb-[2rem] me-[1.25rem]
-                    cursor-pointer rounded-md
-                  `}
-                  onClick={() => handleRemoveImage(index)}
-                >
-                  <img 
-                    src={eachImage} 
-                    alt="NOIMG" 
-                    className={`
-                      w-full h-full
-                      rounded-md
-                    `}
-                  />
-                </div>
-              ))}
-              <div 
-                className={`
-                  flex-shrink-0 size-[6rem] md:mb-[2rem] me-[1.25rem]
-                  cursor-pointer rounded-md
-                `}
-                onClick={() => {fileInputRef.current?.click()}}
-              >
-                <input 
-                  type="file" 
-                  ref={fileInputRef}
-                  className={`hidden`}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                />
-              </div>
-            </div>
-            <div 
-              className={`
-                md:static w-full
+                md:static w-full mt-[1rem]
                 md:text-center
               `} 
               onClick={handleWrite}

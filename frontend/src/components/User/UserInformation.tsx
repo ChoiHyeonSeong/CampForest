@@ -213,16 +213,26 @@ const UserInformation = () => {
               text-left font-medium text-lg
             `}
           >
-            생년월일
+            생년월일<span className='max-md:hidden'> / 성별</span>
+
+            <span 
+              className={`
+                text-light-warning
+                dark:text-dark-warning
+                text-md
+              `}
+            > 
+              *
+            </span>
           </div>
           <div className={`flex md:flex-row flex-col`}>
             <DatePicker
               placeholderText="날짜를 선택해주세요."
               className={`
                 w-full px-[1rem] py-[0.75rem]
-                bg-light-white placeholder-light-text-secondary
-                dark:bg-dark-white dark:placeholder-dark-text-secondary
-                focus:outline-none focus:ring-0
+                bg-light-white placeholder-light-text-secondary max-md:border-light-border-1
+                dark:bg-dark-white dark:placeholder-dark-text-secondary max-md:dark:border-dark-border-1
+                focus:outline-none focus:ring-0 max-md:border-b
               `}
               dateFormat="yyyy.MM.dd"
               formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
@@ -236,10 +246,24 @@ const UserInformation = () => {
               selected={birthdate}
               onChange={handleDateChange}
             />
-            <div className={`md:hidden mt-[3rem] mb-[1rem]`}>
+            <div 
+              className={`
+                md:hidden block mt-[3rem] mb-[0.75rem]
+                text-left font-medium text-lg
+              `}
+            >
               성별
+              <span 
+                className={`
+                  text-light-warning
+                  dark:text-dark-warning
+                  text-md
+                `}
+              > 
+                *
+              </span>
             </div>
-            <div className={`flex items-center space-x-[2rem] md:ms-auto me-[1rem]`}>
+            <div className={`flex items-center space-x-[2rem] md:ms-auto me-[1rem] mb-[0.75rem] md:mb-0`}>
               <div className={`flex items-center`}>
                 <input
                   className={`

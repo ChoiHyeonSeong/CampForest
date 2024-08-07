@@ -1,7 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { communityChatList } from "./communityChatService";
-import { setCommunityChatUserList } from "@store/chatSlice";
-import { store } from "@store/store";
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -46,7 +44,8 @@ axiosInstance.interceptors.response.use(
     if (status === 'A004' && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const newToken = await refreshToken();
+        console.log('check refresh')
+        const newToken = await getRefreshToken();
         originalRequest.headers['Authorization'] = newToken;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
@@ -60,7 +59,7 @@ axiosInstance.interceptors.response.use(
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    const response = await axiosInstance.post('/user/auth/login', { email, password });
+    const response = await axiosInstance.post('/user/public/login', { email, password });
     const data = response.data.data;
     const Authorization = response.headers.authorization;
     const user = { userId: data.userId, 
@@ -87,9 +86,9 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   }
 };
 
-export const refreshToken = async() => {
+export const getRefreshToken = async () => {
  // refreshToken 요청에는 인터셉터를 적용하지 않음
- const response = await axios.post(`/user/auth/refreshToken`, {}, {
+ const response = await axios.post(`/user/public/refreshToken`, {}, {
     withCredentials: true
   });
   const accessToken = response.headers['Authorization'];
@@ -101,7 +100,7 @@ export const refreshToken = async() => {
 
 export const logout = async () => {
   try {
-    const response = await axiosInstance.post('/user/auth/logout');
+    const response = await axiosInstance.post('/user/public/logout');
     
     console.log(response)
 
@@ -122,18 +121,78 @@ export const logout = async () => {
 
 export const kakaoLogin = async () => {
   try {
-    const response = await axios.get(`/login/kakao`,{
+    const response = await axios.get(`oauth/login/kakao`,{
         withCredentials: true
     });
     window.location.href = response.data.url;
-
-    console.log(response)
-
   } catch (error) {
     console.error('kakao Login failed:', error);
     throw error;
   }
 };
+
+export const naverLogin = async () => {
+  try {
+    const response = await axios.get(`oauth/login/naver`,{
+        withCredentials: true
+    });
+    window.location.href = response.data.url;
+  } catch (error) {
+    console.error('kakao Login failed:', error);
+    throw error;
+  }
+}
+
+export const getOAuthAccessToken = async (code: string): Promise<LoginResponse> => {
+  try {
+    const response = await axios.get(`oauth/get-user-token`, {
+      params: {
+        code
+      }
+    });
+    const data = response.data.data;
+    const Authorization = response.headers.authorization;
+    console.log(data)
+    const user = { userId: data.userId, 
+                   nickname: data.nickname, 
+                   profileImage: data.profileImage,
+                   similarUsers: data.similarUsers}
+    if (Authorization) {
+      sessionStorage.setItem('accessToken', Authorization);
+      sessionStorage.setItem('userId', data.userId);
+      sessionStorage.setItem('nickname', data.nickname);
+      sessionStorage.setItem('profileImage', data.profileImage);
+      sessionStorage.setItem('similarUsers', JSON.stringify(data.similarUsers));
+      sessionStorage.setItem('isLoggedIn', 'true');
+      axiosInstance.defaults.headers['Authorization'] = Authorization;
+      
+      const response = await communityChatList(user.userId);
+      sessionStorage.setItem('chatRoomList', JSON.stringify(response));
+    } else {
+      console.error('No access token received from server');
+    }
+
+    return { Authorization, user };
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+}
+
+export const getOAuthInformation = async (token: string) => {
+  try {
+    const response = await axios.get(`oauth/get-oauth-info`, {
+      params: {
+        token
+      }
+    });    
+    console.log(response)
+    return response
+  } catch (error) {
+    console.error('kakao Login failed:', error);
+    throw error;
+  }
+}
 
 type RegistRequiredPayload = {
   userName: string,
@@ -156,7 +215,12 @@ type RegistForm = {
   optional: RegistOptionalPayload
 }
 
-export const registByEmail = async (registForm: RegistForm) => {
+type ProviderInformation = {
+  provider: string,
+  providerId: string | null
+}
+
+export const registByEmail = async (registForm: RegistForm, providerInformation: ProviderInformation = {provider : 'local', providerId : null} ) => {
   const formData = new FormData();
   const value = {
     userName: registForm.required.userName,
@@ -168,8 +232,8 @@ export const registByEmail = async (registForm: RegistForm) => {
 		isOpen : true,
 		nickname : registForm.optional.nickname,
 		phoneNumber : registForm.required.phoneNumber,
-		provider : "local",
-	  providerId : null,
+		provider : providerInformation.provider,
+	  providerId : providerInformation.providerId,
 		introduction : registForm.optional.introduction,
 		interests : registForm.optional.interests
   }
@@ -188,7 +252,7 @@ export const registByEmail = async (registForm: RegistForm) => {
   }
 
   try {
-    const response = await axios.post('/user/auth/regist', formData, {
+    const response = await axios.post('/user/public/regist', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

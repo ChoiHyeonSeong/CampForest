@@ -1,14 +1,53 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
+import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import NotificationList from '@components/Notification/NotificationList';
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 type Props = {
   isExtendMenuOpen: boolean;
   toggleExtendMenu: (param:string) => void;
 }
 
+const EventSource = EventSourcePolyfill || NativeEventSource;
+
 const NavbarLeftExtendCommunity = (props: Props) => {
+  const userState = useSelector((state: RootState) => state.userStore);
+
+  useEffect(() => {
+   if (userState.isLoggedIn) {
+    let eventSource: EventSource;
+    const fetchSSE = async () => {
+      try {
+        eventSource = new EventSource(
+          `https://i11d208.p.ssafy.io/api/notification/subscribe`,
+          {
+            headers: {
+              Authorization: sessionStorage.getItem('accessToken') || '',
+            },
+            withCredentials: true,
+            heartbeatTimeout: 86400000, // 연결 시간 24시간
+          }
+        );
+
+        eventSource.onmessage = async (event) => {
+          const result = await event.data;
+          console.log(result);
+        };
+
+        eventSource.onerror = async (event) => {
+          
+        };
+      } catch (error) {
+        console.error("fetchSSE error: ", error);
+      };
+    }
+    fetchSSE();
+    return () => eventSource.close();
+   }
+  })
 
   return (
     <div

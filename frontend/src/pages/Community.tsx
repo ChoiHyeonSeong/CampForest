@@ -36,16 +36,18 @@ const Community = () => {
         result = await filteredBoardList(category, boardPageRef.current, 10);
       }
       dispatch(setIsLoading(false))
-      if (!result.data.data.empty && !result.data.data.last) {
-        boardPageRef.current += 1
+      if (result.data) {
+        if (!result.data.data.empty && !result.data.data.last) {
+          boardPageRef.current += 1
+        }
+        if (reset) {
+          isFirstLoadRef.current = false;
+        } 
+        if (result.data.data.last) {
+          setNextPageExist(false);
+        }
+        setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
       }
-      if (reset) {
-        isFirstLoadRef.current = false;
-      } 
-      if (result.data.data.last) {
-        setNextPageExist(false);
-      }
-      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);
@@ -74,7 +76,6 @@ const Community = () => {
   return (
     <div>
       <div className={`flex justify-center`}>
-        <div className={`hidden lg:block w-[15rem]`}/>
         <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
             <div className={`my-[1.25rem]`} key={index}>

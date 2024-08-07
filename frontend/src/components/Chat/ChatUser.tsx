@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import userImage from '@assets/logo192.png'
+import noImg from '@assets/logo192.png'
 import { userPage } from '@services/userService';
 import { store } from '@store/store';
 
@@ -19,10 +19,12 @@ type Props = {
 const ChatUser = (props: Props) => {
   const chatUser = store.getState().chatStore.communityChatUserList[props.index];
   const [nickname, setNickname] = useState('');
+  const [profileImage, setProfileImage] = useState('');
   const [lastMessageTime, setLastMessageTime] = useState('');
   const fetchOtherUser = async () => {
     const result = await userPage(chatUser.otherUserId);
     setNickname(result.nickname);
+    setProfileImage(result.profileImage);
   }
 
   useEffect(() => {
@@ -30,24 +32,24 @@ const ChatUser = (props: Props) => {
     setLastMessageTime(calculateTimeDifference(chatUser.lastMessageTime));
   }, [])
 
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-  
-    return `${year}-${month}-${day}`;
-  };
-
   const calculateTimeDifference = (modifiedAt: string) => {
     const modifiedDate = new Date(modifiedAt);
     const currentDate = new Date();
     const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
-  
     const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
     const differenceInHours = Math.floor(differenceInMinutes / 60);
+    const year = modifiedDate.getFullYear();
+    const month = String(modifiedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(modifiedDate.getDate()).padStart(2, '0');
   
+    // 같은 해가 아니면 년, 월, 일로 표기
+    if (modifiedDate.getFullYear !== currentDate.getFullYear) {
+      return `${year}-${month}-${day}`;
+    } 
+    
+    // 같은 해, 하루 이상 차이 난다면 월, 일로 표기
     if (differenceInMinutes >= 1440) {
-      return formatDate(modifiedDate);
+      return `${month}-${day}`;
     }
   
     if (differenceInMinutes >= 60) {
@@ -77,8 +79,8 @@ const ChatUser = (props: Props) => {
           `}
         >
           <img 
-            src={userImage} 
-            alt="NoImg" 
+            src={profileImage ? profileImage : noImg}
+            alt={noImg}
             className={`fit`}
           />
         </div>

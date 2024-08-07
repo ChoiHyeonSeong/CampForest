@@ -3,7 +3,7 @@ import axiosInstance from './authService';
 
 export const commentList = async (boardId: number) => {
   const params = { boardId: boardId };
-  const response = await axiosInstance.get(`board/comment`, {params});
+  const response = await axiosInstance.get(`board/public/comment`, {params});
 
   console.log(response);
   return response.data.data;

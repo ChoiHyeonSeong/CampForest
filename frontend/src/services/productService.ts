@@ -45,19 +45,19 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
 }
 
 export const productList = async (searchParams: SearchParams) => {
-  const response = await axios.get(`/product/search`, { params: searchParams});
+  const response = await axios.get(`/product/public/search`, { params: searchParams});
 
   return response.data.data;
 }
 
 export const productDetail = async (productId: number) => {
-  const response = await axios.get(`/product/${productId}`);
+  const response = await axios.get(`/product/public/${productId}`);
   return response.data.data;
 }
 
 export const productSearch = async ( searchParams: SearchParams ) => {
   const params = { titleKeyword: searchParams.titleKeyword };
-  const response = await axiosInstance.get(`/product/search`, { params: params });
+  const response = await axiosInstance.get(`/product/public/search`, { params: params });
 
   console.log(response.data.data);
   return response.data.data;
