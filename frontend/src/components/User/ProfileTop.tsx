@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import defaultImage from '@assets/logo192.png';
 import FireGif from '@assets/images/fire.gif';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { userPage } from '@services/userService';
 import { setIsLoading } from '@store/modalSlice';
 import { useDispatch } from 'react-redux';
+
+import FollowBtn from './FollowBtn';
+import ChatBtn from './ChatBtn';
 
 type UserInfo = {
   nickname: string;
@@ -29,23 +32,23 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
 
   const [fireTemperature, setFireTemperature] = useState(400);
 
+  const fetchUserInfo = async () => {
+    try {
+      const userData = await userPage(userId);
+      setUserInfo(userData);
+    } catch (error) {
+      console.error("Failed to fetch user info: ", error);
+    }
+  }
+
   useEffect(() => {
     if (userId === loginUserId) {
       setMyPage(true);
     } else {
       setMyPage(false);
     }
-    async function fetchUserInfo() {
-      try {
-        const userData = await userPage(userId);
-        setUserInfo(userData);
-      } catch (error) {
-        console.error("Failed to fetch user info: ", error);
-      }
-    }
-
     fetchUserInfo();
-  }, [])
+  }, [userId])
 
   const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
 
@@ -70,6 +73,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
           />
           <div 
             className={`
+              ${myPage ? '' : 'hidden'}
               absolute w-full h-full rounded-full mx-auto 
               bg-light-black text-light-white
               dark:bg-dark-black dark:text-dark-white
@@ -77,7 +81,7 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
             `}
           >
             <p className={`flex justify-center items-center h-full`}>
-              사진변경
+              변경
             </p>
           </div>
         </div>
@@ -85,41 +89,26 @@ export default function ProfileTop({ userId, setIsModalOpen, setIsFollowing }: P
         {/* 닉네임, 팔로우, 프로필 수정 */}
         <div className={`w-[calc(100%-6rem)] md:w-[calc(100%-7rem)] lg:w-[calc(100%-8rem)] py-[0.75rem]`}>
           <div className={`flex justify-between`}>
-            <div className={`flex`}>
+            <div className={`flex items-center`}>
               <div 
                 className={`
                   me-[1.25rem]
                   font-medium text-sm md:text-lg 
                 `}
               >
-                
                 {userinfo?.nickname}
               </div>
               <div 
                 className={`
-                  ${myPage ? 'hidden' : '  ' }
+                  ${myPage ? 'hidden' : '' }
                   flex
                 `}
-              >
-                <div 
-                  className={`
-                    me-[0.5rem] px-[0.75rem] md:px-[1rem] py-[0.25rem]
-                    bg-light-signature text-light-white
-                    dark:bg-dark-signature
-                    text-xs md:text-base cursor-pointer rounded-md
-                  `}
-                >
-                  팔로우
+              > 
+                <div className='text-sm md:text-base'>
+                  <FollowBtn targetUserId={userId} callbackFunction={fetchUserInfo}/>
                 </div>
-                <div 
-                  className={`
-                    px-[0.75rem] md:px-[1rem] py-[0.25rem]
-                    bg-light-gray-1
-                    dark:bg-dark-gray-1
-                    text-xs md:text-base rounded-md cursor-pointer
-                  `}
-                >
-                  채팅
+                <div className='text-sm md:text-base'>
+                  <ChatBtn />
                 </div>
               </div>
             </div>

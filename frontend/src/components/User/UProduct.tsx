@@ -27,7 +27,7 @@ const UProduct = (props: Props) => {
       dispatch(setIsLoading(true));
       const response = await productList({userId: userId, productType: ''});
       dispatch(setIsLoading(false));
-
+      console.log(userId)
       console.log(response)
 
       productPageRef.current += 1;

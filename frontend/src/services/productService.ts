@@ -45,7 +45,7 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
 }
 
 export const productList = async (searchParams: SearchParams) => {
-  const response = await axios.get(`/product/public/search`, { params: searchParams});
+  const response = await axios.get(`/product/public/search`, {params: searchParams});
 
   return response.data.data;
 }
