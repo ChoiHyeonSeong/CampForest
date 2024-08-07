@@ -3,10 +3,14 @@ import defaultImage from '@assets/images/basic_profile.png';
 import FireGif from '@assets/images/fire.gif';
 import { Link, useParams } from 'react-router-dom';
 import { userPage } from '@services/userService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
+import { RootState } from '@store/store';
+import { setChatInProgress, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
+import { initCommunityChat } from '@services/communityChatService';
+import { useWebSocket } from 'Context/WebSocketContext';
 
 type UserInfo = {
   nickname: string;
@@ -24,10 +28,12 @@ type Props = {
 
 export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
   const dispatch = useDispatch();
+  const chatState = useSelector((state: RootState) => state.chatStore);
   const userId = Number(useParams().userId);
   const [userinfo, setUserInfo] = useState<UserInfo>();
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
+  const { subscribe, sendMessage } = useWebSocket();
 
   const [fireTemperature, setFireTemperature] = useState(400);
 
@@ -50,6 +56,46 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
   }, [userId])
 
   const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
+
+  async function handleChatButton() {
+    const matchedUser = chatState.communityChatUserList.find((chatUser) => chatUser.otherUserId === userId);
+  
+    if (matchedUser) {
+      dispatch(setOtherId(matchedUser.otherUserId));
+      dispatch(setRoomId(matchedUser.roomId));
+      dispatch(setIsChatOpen(true));
+    } else {
+      try {
+        const roomId = await initCommunityChat(userId);
+        console.log('방번호', roomId);
+        // 읽음 처리를 받았을 때
+        subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
+          const readerId = JSON.parse(message.body); // 읽은 사람 Id
+
+          if (loginUserId !== readerId) {
+            dispatch(updateMessageReadStatus({ roomId: roomId, readerId }));
+          }  
+        });
+        // 메세지를 받았을 때
+        subscribe(`/sub/community/${roomId}`, (message) => {
+          const response = JSON.parse(message.body);
+
+          if (chatState.roomId === response.roomId) {
+            dispatch(updateCommunityChatUserList({...response, inProgress: true}));
+            sendMessage(`/pub/room/${response.roomId}/markAsRead`, userId);
+            dispatch(setChatInProgress([...chatState.chatInProgress, response]));
+          } else {
+            dispatch(updateCommunityChatUserList({...response, inProgress: false}));
+          }
+        })
+        dispatch(setOtherId(userId));
+        dispatch(setRoomId(roomId));
+        dispatch(setIsChatOpen(true));
+      } catch (error) {
+
+      }
+    }
+  }
 
   return (
     <div className={`px-[1rem] py-[1.5rem`}>
@@ -99,15 +145,19 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
               </div>
               <div 
                 className={`
-                  ${myPage ? 'hidden' : '' }
+                  ${myPage || !loginUserId  ? 'hidden' : '' }
                   flex
                 `}
               > 
                 <div className='text-sm md:text-base'>
                   <FollowBtn targetUserId={userId} callbackFunction={fetchUserInfo}/>
                 </div>
-                <div className='text-sm md:text-base'>
-                  <ChatBtn />
+                <div 
+                  className={`
+                    text-sm md:text-base
+                  `}
+                >
+                  <ChatBtn handleChatButton={handleChatButton}/>
                 </div>
               </div>
             </div>

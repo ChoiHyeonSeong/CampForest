@@ -20,14 +20,13 @@ export type Message = {
 }
 
 type Props = {
-  otherId: number;
 }
 
-const Chat = ({ otherId }: Props) => {
+const Chat = () => {
   const { sendMessage } = useWebSocket();
   const dispatch = useDispatch();
+  const chatState = useSelector((state: RootState) => state.chatStore);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const roomId = useSelector((state: RootState) => state.chatStore.roomId);
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const [opponentNickname, setOpponentNickname] = useState('');
   const [opponentProfileImage, setOpponentProfileImage] = useState('');
@@ -35,11 +34,11 @@ const Chat = ({ otherId }: Props) => {
   const [userInput, setUserInput] = useState('');
 
   const fetchMessages = async () => {
-    dispatch(setChatInProgress(await communityChatDetail(roomId)));
+    dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
   };
 
   const opponentInfo = async () => {
-    const result = await userPage(otherId);
+    const result = await userPage(chatState.otherId);
     setOpponentNickname(result.nickname);
     setOpponentProfileImage(result.profileImage);
   };
@@ -51,11 +50,11 @@ const Chat = ({ otherId }: Props) => {
   };
 
   useEffect(() => {
-    if (roomId !== 0) {
+    if (chatState.roomId !== 0) {
       opponentInfo();
       fetchMessages();
     }
-  }, [roomId]);
+  }, [chatState.roomId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -63,7 +62,7 @@ const Chat = ({ otherId }: Props) => {
 
   const handleSendButton = () => {
     if (userInput.trim() !== '') {
-      sendMessage(`/pub/${roomId}/send`, { senderId: userId, content: userInput });
+      sendMessage(`/pub/${chatState.roomId}/send`, { senderId: userId, content: userInput });
       setUserInput('');
     }
   };
@@ -140,8 +139,8 @@ const Chat = ({ otherId }: Props) => {
         <ProductInfoChat />
 
         {/* 실제 메세지 조작부분 */}
-        {messages.map((message, key) => (
-          message.senderId === otherId ? (
+        {messages.map((message) => (
+          message.senderId === chatState.otherId ? (
             <div
               className={`
                 flex justify-start items-center my-[0.75rem] pe-[20%]

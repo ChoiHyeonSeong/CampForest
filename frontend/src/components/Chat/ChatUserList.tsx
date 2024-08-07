@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
 import ChatUser, { ChatUserType } from './ChatUser';
 import Chat from './Chat';
-import { RootState, store } from '@store/store';
+import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { setChatInProgress, setIsChatOpen, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
+import { setChatInProgress, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { communityChatDetail } from '@services/communityChatService';
 
@@ -17,14 +16,13 @@ const ChatUserList = (props: Props) => {
   const dispatch = useDispatch();
   const userState = useSelector((state: RootState) => state.userStore);
   const chatState = useSelector((state: RootState) => state.chatStore);
-  const [otherId, setOtherId] = useState(0);
 
   const handleChatUser = async (communityChatUser: ChatUserType) => {
     if(communityChatUser.roomId !== chatState.roomId) {
       dispatch(setChatInProgress([]));
       dispatch(setRoomId(communityChatUser.roomId));
     }
-    setOtherId(communityChatUser.otherUserId);
+    dispatch(setOtherId(communityChatUser.otherUserId));
     markRead(`/pub/room/${communityChatUser.roomId}/markAsRead`, userState.userId );
     dispatch(updateCommunityChatUserList({
       roomId: communityChatUser.roomId,
@@ -84,7 +82,7 @@ const ChatUserList = (props: Props) => {
           transition-all duration-300 ease-in-out outline outline-1
         `}
       >
-        <Chat otherId={otherId} />
+        <Chat />
       </div>
       
     </div >

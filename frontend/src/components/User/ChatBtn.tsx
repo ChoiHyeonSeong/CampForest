@@ -1,10 +1,14 @@
 import React from 'react'
 
-type Props = {}
+type Props = {
+  handleChatButton: () => void;
+}
 
-const ChatBtn = (props: Props) => {
+const ChatBtn = ({ handleChatButton }: Props) => {
+
   return (
     <div 
+      onClick={handleChatButton}
       className={`
         px-[0.75rem] md:px-[1rem] py-[0.25rem]
         bg-light-gray-1

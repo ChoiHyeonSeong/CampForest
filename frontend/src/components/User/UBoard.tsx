@@ -72,8 +72,12 @@ const UBoard = (props: Props) => {
   }
 
   const pageReload = () => {
+    boardPageRef.current = 0;
+    savedBoardPageRef.current = 0;
     isFirstLoadRef.current = true;
     isFirstSavedLoadRef.current = true;
+    setBoards([]);
+    setSavedBoards([]);
     fetchBoards();
     fetchSavedBoard();
   };
