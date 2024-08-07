@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.campforest.backend.product.dto.PageResult;
 import com.campforest.backend.product.dto.ProductDetailDto;
+import com.campforest.backend.product.dto.ProductSearchDto;
 import com.campforest.backend.product.dto.SaveProductDto;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductImage;
@@ -68,24 +69,26 @@ public class SaveProductService {
 
 		List<SaveProductDto> saveProducts = saveProductsPage.stream()
 			.map(saveProduct -> {
-				ProductDetailDto productDetailDto = getProduct(saveProduct.getProduct().getId());
-				return new SaveProductDto(saveProduct, productDetailDto);
+				ProductSearchDto productSearchDto = getProductSearchDto(saveProduct.getProduct().getId());
+				return new SaveProductDto(saveProduct, productSearchDto);
 			})
 			.collect(Collectors.toList());
 
 		return new PageResult<>(saveProducts, saveProductsPage.getTotalElements(), saveProductsPage.getNumber(), saveProductsPage.getSize());
 	}
 
-	public ProductDetailDto getProduct(Long productId) {
+	public ProductSearchDto getProductSearchDto(Long productId) {
 		Product findProduct = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
 
 		Users user = userRepository.findById(findProduct.getUserId())
 			.orElseThrow(() -> new IllegalArgumentException("유저 없음요"));
 
-		List<String> imageUrls = findProduct.getProductImages()
+		String imageUrl = findProduct.getProductImages()
 			.stream().map(ProductImage::getImageUrl)
-			.collect(Collectors.toList());
-		return new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
+			.findFirst()
+			.orElse(null); // 사진이 없을 경우 null 반환
+
+		return new ProductSearchDto(findProduct, imageUrl, user.getNickname(), user.getUserImage());
 	}
 }
