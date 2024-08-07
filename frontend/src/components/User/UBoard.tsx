@@ -18,6 +18,7 @@ type Props = {};
 
 const UBoard = (props: Props) => {
   const [myBoard, setMyBoard] = useState(true);
+  const userState = useSelector((state: RootState) => state.userStore);
   const userId = Number(useParams().userId);
   const currentLoc = useLocation();
   const dispatch = useDispatch();

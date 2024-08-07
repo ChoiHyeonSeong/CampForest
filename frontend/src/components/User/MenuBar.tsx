@@ -2,9 +2,6 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 type Props = {
-  boardCount: number;
-  productCount: number;
-  reviewCount: number;
   selectedMenu: string | null;
 }
   

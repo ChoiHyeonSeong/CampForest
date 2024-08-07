@@ -57,6 +57,5 @@ export const productDetail = async (productId: number) => {
 
 export const likedList = async () => {
   const response = await axiosInstance.get(`/saveproduct/list`);
-  console.log(response.data.data);
   return response.data.data
 }
