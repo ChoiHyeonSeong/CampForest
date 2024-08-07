@@ -41,16 +41,10 @@ function Main() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
 
-  const isFirstLoadRef = useRef(true);
   const boardPageRef = useRef(0);
 
-  const fetchBoards = async (reset = false) => {
+  const fetchBoards = async () => {
     try {
-      if (reset) {
-        boardPageRef.current = 0
-        setBoards([]);
-        setNextPageExist(true);
-      }
       dispatch(setIsLoading(true))
       const result = await boardList(boardPageRef.current, 10);
       dispatch(setIsLoading(false))
@@ -60,10 +54,6 @@ function Main() {
         if (result.data.data.last) {
           setNextPageExist(false);
         }
-        console.log(result.data)
-        if (reset) {
-          isFirstLoadRef.current = false;
-        } 
         setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
       }
     } catch (error) {
@@ -71,6 +61,18 @@ function Main() {
       console.error('게시글 불러오기 실패: ', error);
     }
   };
+
+  const pageReload = () => {
+    boardPageRef.current = 0
+    setBoards([]);
+    setNextPageExist(true);
+
+    fetchBoards()
+  }
+
+  useEffect(() => {
+    pageReload()
+  }, [])
 
   useEffect(() => {
     // inView가 true 일때만 실행한다.
@@ -80,15 +82,6 @@ function Main() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
-  
-  useEffect(() => {
-    pageReload()
-  }, [])
-
-  const pageReload = () => {
-    isFirstLoadRef.current = true
-    fetchBoards(true)
-  }
 
   return (
     <div>
@@ -106,7 +99,7 @@ function Main() {
       </div>
 
       {/* intersection observer */}
-      <div ref={ref} className={`${isFirstLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
+      <div ref={ref} className={`${boards.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
     </div> 
   )
 }
