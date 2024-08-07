@@ -91,65 +91,6 @@ const MenuBar = (props: Props) => {
         </div>
       </div>
 
-      {/* 탭 아래에 표시되는 곳 -> 조건문 */}
-      <div>
-        <div
-          className={`
-            ${props.selectedMenu === '거래후기'?
-              'hidden' :
-              ''
-            }
-            flex justify-center relative mt-[1.5rem] mb-[1.5rem]
-          `}
-        >
-          {/* 작성글 */}
-          <div className='flex items-center'>
-            <ArticleIcon className='size-[1rem]'/>
-            <span
-              className={`
-                ms-[0.5rem]
-                text-[0.875rem]
-              `}
-            >
-              작성글
-            </span>
-          </div>
-
-          {/* 북마크 */}
-          <div className='flex items-center ms-[2.5rem]'>
-            <BookMarkIcon className='size-[1.25rem]'/>
-            <span
-              className={`
-                ms-[0.5rem]
-                text-[0.875rem]
-              `}
-            >
-              저장됨
-            </span>
-          </div>
-
-        {/* 필터 */}
-        <div className='flex justify-end absolute right-0'>
-          <div className='flex items-center ms-auto px-[0.5rem] text-sm'>
-            <div
-              className={`
-                ms-[0.5rem]
-                text-[0.875rem]
-              `}
-            >
-              필터
-            </div>
-            <FilterIcon
-              className={`
-                size-[1.25rem] ms-[0.5rem] 
-                fill-light-border-icon 
-                dark:fill-dark-border-icon
-              `}  
-            />
-          </div>
-        </div>
-        </div>
-      </div>
     </div>
   )
 }

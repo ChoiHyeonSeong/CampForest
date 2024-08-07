@@ -50,7 +50,7 @@ function App() {
   
   useEffect(() => {
     fetchCommunityChatList();
-  })
+  }, []);
 
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;
