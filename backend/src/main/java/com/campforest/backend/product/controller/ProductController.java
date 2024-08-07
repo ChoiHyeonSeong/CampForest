@@ -173,6 +173,7 @@ public class ProductController {
 		@RequestParam(required = false) Long maxPrice,
 		@RequestParam(required = false) List<String> locations,
 		@RequestParam(required = false) String titleKeyword,
+		@RequestParam(required = false) Long findUserId,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "2") int size,
 		Authentication authentication) {
@@ -197,7 +198,7 @@ public class ProductController {
 		Page<ProductSearchDto> result;
 		try {
 			result = productService.findProductsByDynamicConditions(categoryEnum,
-				productType, minPrice, maxPrice, locations, titleKeyword, pageable, userId);
+				productType, minPrice, maxPrice, locations, titleKeyword, pageable, userId, findUserId);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}

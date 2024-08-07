@@ -2,13 +2,21 @@ package com.campforest.backend.chatting.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import com.campforest.backend.chatting.dto.MessageWithTransactionDTO;
+import com.campforest.backend.chatting.entity.MessageType;
 import com.campforest.backend.notification.model.Notification;
 import com.campforest.backend.notification.model.NotificationType;
 import com.campforest.backend.notification.service.NotificationService;
+import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.service.ProductService;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
+import com.campforest.backend.transaction.dto.Sale.SaleRequestDto;
+import com.campforest.backend.transaction.model.Rent;
+import com.campforest.backend.transaction.repository.RentRepository;
+import com.campforest.backend.transaction.repository.SaleRepository;
 import com.campforest.backend.transaction.service.RentService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -37,6 +45,7 @@ import com.campforest.backend.chatting.service.CommunityChatService;
 import com.campforest.backend.chatting.service.TransactionChatService;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.transaction.service.SaleService;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.UserService;
 
@@ -52,6 +61,10 @@ public class TransactionChatController {
 	private final RentService rentService;
 	private final NotificationService notificationService;
 	private final ProductService productService;
+	private final SaleService saleService;
+	private final RentRepository rentRepository;
+	private final SaleRepository saleRepository;
+
 	@PostMapping("/room")
 	public ApiResponse<?> createChatRoom(
 		Authentication authentication,
@@ -80,7 +93,7 @@ public class TransactionChatController {
 	@GetMapping("/room/{roomId}/messages")
 	public  ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
 		try {
-			List<TransactionChatMessage> messages = transactionChatService.getChatHistory(roomId);
+			List<MessageWithTransactionDTO> messages = transactionChatService.getChatHistory(roomId);
 			return  ApiResponse.createSuccess(messages, "채팅 메시지 조회 성공");
 		}catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);
@@ -105,12 +118,12 @@ public class TransactionChatController {
 	@MessageMapping("/transaction/{roomId}/{userId}/rentRequest")
 	@SendTo("/sub/transaction/{roomId}/{userId}")
 	public TransactionChatMessage sendRentRequest(
-			@DestinationVariable Long roomId,
-			@DestinationVariable Long userId,
-			@Payload RentRequestDto rentRequestDto
-			) throws Exception {
+		@DestinationVariable Long roomId,
+		@DestinationVariable Long userId,
+		@Payload RentRequestDto rentRequestDto
+	) throws Exception {
 		try {
-			Long productId=rentRequestDto.getProductId();
+			Long productId = rentRequestDto.getProductId();
 
 			// 요청자 ID 설정
 			rentRequestDto.setRequesterId(userId);
@@ -118,34 +131,116 @@ public class TransactionChatController {
 			// 대여 요청 처리
 			Map<String, Long> result = rentService.rentRequest(rentRequestDto);
 			Long receiverId = result.get("receiverId");
+			Long requesterId = result.get("requesterId");
+			Long rentId = result.get("rentId");
+			Long reverseRentId = result.get("reverseRentId");
+
 			// 요청자 정보 조회
 			Users requester = userService.findByUserId(userId)
-					.orElseThrow(() -> new Exception("요청자 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("요청자 정보 조회 실패"));
 
 			// 수신자 정보 조회
 			Users receiver = userService.findByUserId(receiverId)
-					.orElseThrow(() -> new Exception("수신자 정보 조회 실패"));
+				.orElseThrow(() -> new Exception("수신자 정보 조회 실패"));
 
 			// 알림 생성
 			notificationService.createNotification(receiver, NotificationType.RENT,
-					requester.getNickname() + "님이 대여예약을 요청하였습니다.");
+				requester.getNickname() + "님이 대여예약을 요청하였습니다.");
 
-			// 메시지 생성
-			TransactionChatMessage message = TransactionChatMessage.builder()
-					.roomId(roomId)
-					.senderId(userId)
-					.content("새로운 렌트 요청이 도착했습니다." + " 상품ID: "+ productId+" 상품 이름: " +productService.getProduct(productId).getProductName())
-					.build();
+			// 요청자에게 전송할 메시지 생성
+			TransactionChatMessage requesterMessage = TransactionChatMessage.builder()
+				.roomId(roomId)
+				.senderId(userId)
+				.messageType(MessageType.TRANSACTION)
+				.transactionId(rentId)
+				.content("새로운 렌트 요청이 도착했습니다. 상품ID: " + productId + " 상품 이름: " + productService.getProduct(productId).getProductName())
+				.build();
+			transactionChatService.saveMessage(roomId, requesterMessage);
 
-			// 메시지 저장 및 반환
-			return transactionChatService.saveMessage(roomId, message);
+			// 수신자에게 전송할 메시지 생성
+			TransactionChatMessage receiverMessage = TransactionChatMessage.builder()
+				.roomId(roomId)
+				.senderId(userId)
+				.messageType(MessageType.TRANSACTION)
+				.transactionId(reverseRentId)
+				.content("새로운 렌트 요청이 도착했습니다. 상품ID: " + productId + " 상품 이름: " + productService.getProduct(productId).getProductName())
+				.build();
+			transactionChatService.saveMessage(roomId, receiverMessage);
+
+			// 요청자에게 전송할 메시지를 반환
+			return requesterMessage;
 		} catch (Exception e) {
 			// 에러 처리
 			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
-					.roomId(roomId)
-					.senderId(userId)
-					.content("대여 요청 처리 중 오류가 발생했습니다: " + e.getMessage())
-					.build();
+				.roomId(roomId)
+				.senderId(userId)
+				.content("대여 요청 처리 중 오류가 발생했습니다: " + e.getMessage())
+				.build();
+			return errorMessage;
+		}
+	}
+
+	@MessageMapping("/transaction/{roomId}/{userId}/saleRequest")
+	@SendTo("/sub/transaction/{roomId}/{userId}")
+	public TransactionChatMessage sendRentRequest(
+		@DestinationVariable Long roomId,
+		@DestinationVariable Long userId,
+		@Payload SaleRequestDto saleRequestDto
+	) throws Exception {
+		try {
+			Long productId = saleRequestDto.getProductId();
+
+			// 요청자 ID 설정
+			saleRequestDto.setRequesterId(userId);
+
+			// 대여 요청 처리
+			Map<String, Long> result = saleService.saleRequest(saleRequestDto);
+			Long receiverId = result.get("receiverId");
+			Long requesterId = result.get("requesterId");
+			Long rentId = result.get("rentId");
+			Long reverseRentId = result.get("reverseRentId");
+
+			// 요청자 정보 조회
+			Users requester = userService.findByUserId(userId)
+				.orElseThrow(() -> new Exception("요청자 정보 조회 실패"));
+
+			// 수신자 정보 조회
+			Users receiver = userService.findByUserId(receiverId)
+				.orElseThrow(() -> new Exception("수신자 정보 조회 실패"));
+
+			// 알림 생성
+			notificationService.createNotification(receiver, NotificationType.RENT,
+				requester.getNickname() + "님이 대여예약을 요청하였습니다.");
+
+			// 요청자에게 전송할 메시지 생성
+			TransactionChatMessage requesterMessage = TransactionChatMessage.builder()
+				.roomId(roomId)
+				.senderId(userId)
+				.messageType(MessageType.TRANSACTION)
+				.transactionId(rentId)
+				.content("새로운 렌트 요청이 도착했습니다. 상품ID: " + productId + " 상품 이름: " + productService.getProduct(productId).getProductName())
+				.build();
+			transactionChatService.saveMessage(roomId, requesterMessage);
+
+			// 수신자에게 전송할 메시지 생성
+			TransactionChatMessage receiverMessage = TransactionChatMessage.builder()
+				.roomId(roomId)
+				.senderId(userId)
+				.messageType(MessageType.TRANSACTION)
+				.transactionId(reverseRentId)
+				.content("새로운 렌트 요청이 도착했습니다. 상품ID: " + productId + " 상품 이름: " + productService.getProduct(productId).getProductName())
+				.build();
+			transactionChatService.saveMessage(roomId, receiverMessage);
+
+			// 요청자에게 전송할 메시지를 반환
+			return requesterMessage;
+		} catch (Exception e) {
+			// 에러 처리
+			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
+				.roomId(roomId)
+				.senderId(userId)
+				.content("대여 요청 처리 중 오류가 발생했습니다: " + e.getMessage())
+				.build();
 			return errorMessage;
 		}
 	}
@@ -172,4 +267,6 @@ public class TransactionChatController {
 			return ApiResponse.createError(ErrorCode.CHAT_ROOM_LIST_FAILED);
 		}
 	}
+
+
 }

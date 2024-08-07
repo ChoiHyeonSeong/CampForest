@@ -146,9 +146,9 @@ public class ProductService {
 	}
 
 	public Page<ProductSearchDto> findProductsByDynamicConditions(Category category, ProductType productType, Long minPrice,
-		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable, Long userId) {
+		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable, Long userId, Long findUserId) {
 
-		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, titleKeyword, pageable);
+		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, findUserId, titleKeyword, pageable);
 
 		Set<Long> savedProductIds = userId != null ?
 			saveProductRepository.findAllByUserUserId(userId).stream()

@@ -30,7 +30,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
 	@Override
 	public Page<Product> findProductsByDynamicConditions(Category category, ProductType productType,
-		List<String> locations, Long minPrice, Long maxPrice, String titleKeyword, Pageable pageable) {
+		List<String> locations, Long minPrice, Long maxPrice, Long findUserId, String titleKeyword, Pageable pageable) {
 		QProduct product = QProduct.product;
 
 		var query = queryFactory.selectFrom(product)
@@ -40,7 +40,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 				minPrice != null ? product.productPrice.goe(minPrice) : null,
 				maxPrice != null ? product.productPrice.loe(maxPrice) : null,
 				locations != null && !locations.isEmpty() ? product.location.in(locations) : null,
-				titleKeyword != null && !titleKeyword.isEmpty() ? product.productName.containsIgnoreCase(titleKeyword) : null
+				titleKeyword != null && !titleKeyword.isEmpty() ? product.productName.containsIgnoreCase(titleKeyword) : null,
+				findUserId != null ? product.userId.eq(findUserId) : null
 			);
 
 		long total = query.fetchCount();

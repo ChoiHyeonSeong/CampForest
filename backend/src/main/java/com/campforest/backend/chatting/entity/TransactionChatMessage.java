@@ -3,6 +3,7 @@ package com.campforest.backend.chatting.entity;
 import java.time.LocalDateTime;
 
 import com.campforest.backend.product.model.ProductType;
+import com.campforest.backend.transaction.model.Sale;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -43,6 +45,11 @@ public class TransactionChatMessage {
 
 	@Column(name = "is_read")
 	private boolean isRead;
+
+	@Enumerated(EnumType.STRING)
+	private MessageType messageType;
+
+	private Long transactionId;
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
