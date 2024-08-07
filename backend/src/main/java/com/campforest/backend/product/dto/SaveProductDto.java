@@ -13,13 +13,13 @@ public class SaveProductDto {
 
 	private Long id;
 	private Long userId;
-	private ProductDetailDto product;
+	private ProductSearchDto product;
 	private LocalDateTime createdAt;
 
-	public SaveProductDto(SaveProduct saveProduct, ProductDetailDto productDetailDto) {
+	public SaveProductDto(SaveProduct saveProduct, ProductSearchDto productSearchDto) {
 		this.id = saveProduct.getId();
 		this.userId = saveProduct.getUser().getUserId();
-		this.product = productDetailDto;
+		this.product = productSearchDto;
 		this.createdAt = saveProduct.getCreatedAt();
 	}
 }
