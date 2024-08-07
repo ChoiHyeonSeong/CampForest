@@ -123,7 +123,7 @@ public class RentController {
 		}
 	}
 
-	@GetMapping("/rentable")
+	@GetMapping("/public/rentable")
 	public ApiResponse<?> getRentable(@RequestParam Long productId,
 		@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate currentDate) {
 		try {

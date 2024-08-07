@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,7 +62,7 @@ public class UserController {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final NotificationService notificationService;
 
-	@PostMapping("/auth/regist")
+	@PostMapping("/public/regist")
 	public ApiResponse<?> registUser(
 		@RequestPart(value = "profileImage", required = false) MultipartFile profileImageFile,
 		@RequestPart(value = "registUserDto") RequestRegisterDTO requestDTO) {
@@ -83,7 +84,7 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/auth/login")
+	@PostMapping("/public/login")
 	public ApiResponse<?> login(@RequestBody RequestLoginDTO requestDTO, HttpServletResponse response) {
 		Authentication authentication = userService.authenticateUser(requestDTO.getEmail(), requestDTO.getPassword());
 
@@ -117,7 +118,7 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 	}
 
-	@PostMapping("/auth/logout")
+	@PostMapping("/public/logout")
 	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
 		String refreshToken = extractRefreshToken(request);
 
@@ -134,7 +135,7 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 	}
 
-	@GetMapping("/auth/info")
+	@GetMapping("/public/info")
 	public ApiResponse<?> getUserInfo(@RequestParam("userId") Long userId) {
 		try {
 			Users users = userService.findByUserId(userId)
@@ -147,7 +148,7 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/auth/search")
+	@GetMapping("/public/search")
 	public ApiResponse<?> searchUsersByNickname(@RequestParam("nickname") String nickname) {
 		try {
 			List<Users> usersList = userService.findByNicknameContaining(nickname);
@@ -170,18 +171,24 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/auth/refreshToken")
-	public ApiResponse<?> refreshToken(@RequestBody RequestRefreshTokenDTO requestDTO, HttpServletResponse response) {
+	@PostMapping("/public/refreshToken")
+	public ApiResponse<?> refreshToken(
+		@CookieValue(name = "refreshToken", required = false) String refreshToken,
+		HttpServletResponse response) {
 		try {
-			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(requestDTO.getRefreshToken());
+			if (refreshToken == null || refreshToken.isEmpty()) {
+				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+			}
+
+			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(refreshToken);
 
 			if (responseDTO == null) {
 				throw new IllegalArgumentException("Refresh Token이 만료되었거나 존재하지 않습니다.");
 			}
 			String accessToken = responseDTO.getAccessToken();
-			String refreshToken = responseDTO.getRefreshToken();
+			String newRefreshToken = responseDTO.getRefreshToken();
 
-			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
+			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
 				.httpOnly(true)
 				.secure(true)
 				.maxAge(60 * 60 * 24 * 14)
@@ -248,7 +255,7 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/auth/follower/{userId}")
+	@GetMapping("/public/follower/{userId}")
 	public ApiResponse<?> getFollowers(@PathVariable Long userId) {
 		try {
 			List<ResponseFollowDTO> followers = userService.getFollowers(userId);
@@ -258,7 +265,7 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/auth/following/{userId}")
+	@GetMapping("/public/following/{userId}")
 	public ApiResponse<?> getFollowing(@PathVariable Long userId) {
 		try {
 			List<ResponseFollowDTO> following = userService.getFollowing(userId);

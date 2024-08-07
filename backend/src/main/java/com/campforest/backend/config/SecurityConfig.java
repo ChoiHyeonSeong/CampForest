@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -56,9 +57,9 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/api/user/auth/**", "/api/email/**", "/api/oauth/**",
-					"/api/board/**", "/api/product/search", "/api/product/{productId}",
-					"/ws/**", "/pub/", "/sub/", "/api/communitychat/**").permitAll()
+				.requestMatchers("/api/user/public/**", "/api/email/**", "/api/oauth/**",
+					"/api/board/public/**", "/api/product/public/**", "/api/rent/public/**",
+					"/ws/**", "/pub/", "/sub/").permitAll()
 				.anyRequest().authenticated())
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))

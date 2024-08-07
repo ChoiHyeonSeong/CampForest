@@ -74,7 +74,7 @@ public class ProductController {
 	}
 
 	//게시물 정보 가져오기
-	@GetMapping("/{productId}")
+	@GetMapping("/public/{productId}")
 	public ApiResponse<?> getProduct(@PathVariable Long productId) {
 		ProductDetailDto findProduct;
 		try {
@@ -165,7 +165,7 @@ public class ProductController {
 
 	// 게시물 조회 - 카테고리, 검색, 지역, 대여&판매, 페이지
 	@Transactional(readOnly = true)
-	@GetMapping("/search")
+	@GetMapping("/public/search")
 	public ApiResponse<?> findProductsByDynamicConditions(
 		@RequestParam(required = false) String category,
 		@RequestParam(required = false) ProductType productType,

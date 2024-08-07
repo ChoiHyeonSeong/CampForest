@@ -78,7 +78,7 @@ public class BoardController {
     }
 
     //게시글 단일 조회
-    @GetMapping("/detail")
+    @GetMapping("/public/detail")
     public ApiResponse<?> getBoard(
         Authentication authentication,
         @RequestParam Long boardId) {
@@ -101,7 +101,7 @@ public class BoardController {
     }
 
     //전체 게시글 조회
-    @GetMapping
+    @GetMapping("/public")
     public ApiResponse<?> getAllBoard(
             Authentication authentication,
             @RequestParam(defaultValue = "0") int page,
@@ -129,7 +129,7 @@ public class BoardController {
     }
 
     //사용자별 게시글 조회
-    @GetMapping("/user")
+    @GetMapping("/public/user")
     public ApiResponse<?> getUserBoard(
             Authentication authentication,
             @RequestParam Long userId,
@@ -157,7 +157,7 @@ public class BoardController {
     }
 
     //제목 검색
-    @GetMapping("/title")
+    @GetMapping("/public/title")
     public ApiResponse<?> getTitleBoard(
             Authentication authentication,
             @RequestParam String title,
@@ -182,7 +182,7 @@ public class BoardController {
     }
 
     //카테고리별 게시글 조회
-    @GetMapping("/category")
+    @GetMapping("/public/category")
     public ApiResponse<?> getCategoryBoard(
             Authentication authentication,
             @RequestParam String category,
@@ -300,7 +300,7 @@ public class BoardController {
     }
 
     //게시글 좋아요 삭제
-    @DeleteMapping("like")
+    @DeleteMapping("/like")
     public ApiResponse<?> deleteLike(Authentication authentication, @RequestParam Long boardId) {
         try {
             Users user = userService.findByEmail(authentication.getName())
@@ -319,7 +319,7 @@ public class BoardController {
     }
 
     //게시글별 좋아요 갯수 조회
-    @GetMapping("/like/count")
+    @GetMapping("/public/like/count")
     public ApiResponse<?> countBoardLike(@RequestParam Long boardId) {
         try {
             Long count = boardService.countBoardLike(boardId);
@@ -379,7 +379,7 @@ public class BoardController {
     }
 
     //게시글에 달려있는 댓글 목록 조회
-    @GetMapping("/comment")
+    @GetMapping("/public/comment")
     public ApiResponse<?> getComment(
             Authentication authentication,
             @RequestParam Long boardId,
@@ -434,7 +434,7 @@ public class BoardController {
     }
 
     //게시글별 댓글 갯수 조회
-    @GetMapping("/comment/count")
+    @GetMapping("/public/comment/count")
     public ApiResponse<?> countBoardComment(@RequestParam Long boardId) {
         try {
             Long count = boardService.countBoardComment(boardId);
@@ -481,7 +481,7 @@ public class BoardController {
         }
     }
 
-    @GetMapping("/commentlike/count")
+    @GetMapping("/public/commentlike/count")
     public ApiResponse<?> countCommentLike(@RequestParam Long commentId) {
         try {
             Long count = boardService.countCommentLike(commentId);
