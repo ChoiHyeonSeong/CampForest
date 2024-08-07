@@ -29,10 +29,6 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       return;
     }
 
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
-
     console.log("SSE 연결 시도...");
     const eventSource = new EventSourcePolyfill(
       `${process.env.REACT_APP_BACKEND_URL}/notification/subscribe`,
@@ -41,7 +37,6 @@ const NavbarLeftExtendCommunity = (props: Props) => {
           Authorization: `${accessToken}`,
         },
         withCredentials: true,
-        heartbeatTimeout: 45000,
       }
     );
 
@@ -55,7 +50,7 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       try {
         const data = JSON.parse(event.data);
         // dispatch(addNotification(data));
-        console.log(data);
+        console.log('메시지 들어왓슴', data);
       } catch (error) {
         console.error("알림 데이터 파싱 오류:", error);
       }
@@ -65,33 +60,41 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       console.error("SSE 오류:", error);
       eventSource.close();
       setRetryCount(prevCount => prevCount + 1);
-      retryWithBackoff();
     };
 
     eventSourceRef.current = eventSource;
-  }, [retryCount]);
-
-  const retryWithBackoff = useCallback(() => {
-    if (retryCount < maxRetries) {
-      const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
-      console.log(`${backoffTime / 1000}초 후 재연결 시도`);
-      setTimeout(() => {
-        createEventSource();
-      }, backoffTime);
-    }
-  }, [retryCount, createEventSource]);
+  }, [dispatch, retryCount]);
 
   useEffect(() => {
+    let retryTimeout: NodeJS.Timeout;
+
+    const retryWithBackoff = () => {
+      if (retryCount < maxRetries) {
+        const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
+        console.log(`${backoffTime / 1000}초 후 재연결 시도`);
+        retryTimeout = setTimeout(() => {
+          createEventSource();
+        }, backoffTime);
+      }
+    };
+
     if (userState.isLoggedIn) {
-      createEventSource();
+      if (retryCount === 0) {
+        createEventSource();
+      } else {
+        retryWithBackoff();
+      }
     }
 
     return () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }
+      if (retryTimeout) {
+        clearTimeout(retryTimeout);
+      }
     };
-  }, [userState.isLoggedIn, createEventSource]);
+  }, [userState.isLoggedIn, createEventSource, retryCount]);
 
   // 디버깅을 위한 임시 함수
   const testSSEConnection = () => {
