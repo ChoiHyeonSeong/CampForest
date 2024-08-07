@@ -187,6 +187,7 @@ const UBoard = (props: Props) => {
           </div>
         </div>
       </div>
+
       <div className={`${myBoard ? '' : 'hidden'}`}>
         {boards?.map((board, index) => (
           <div className={`my-[1.25rem]`} key={index}>

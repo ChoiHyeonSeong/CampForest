@@ -64,7 +64,6 @@ function App() {
     const contentBox = document.getElementById('contentBox');
     contentBox?.scrollTo({
       top: 0,
-      behavior: 'smooth'
     });
     dispatch(setIsBoardWriteModal(false));
   }, [currentLoc]);

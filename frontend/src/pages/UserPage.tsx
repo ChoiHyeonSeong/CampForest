@@ -34,9 +34,8 @@ const UserPage = () => {
         className={`
           ${isModalOpen ? 'flex' : 'hidden'} 
           md:items-center fixed z-[20] w-[100%] h-[100%] 
-          bg-light-black
-          dark:bg-dark-black
-          bg-opacity-80
+          bg-light-black bg-opacity-80
+          dark:bg-dark-black dark:bg-opacity-80
         `}
       >
         <div 
