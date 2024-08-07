@@ -126,7 +126,7 @@ const UProduct = (props: Props) => {
           >
             <ArticleIcon 
               className={`
-                ${myBoard ? '' : 'stroke-light-gray-1'}
+                ${myBoard ? 'fill-light-black' : 'fill-light-gray-1'}
                 size-[1rem]
               `}
             />
