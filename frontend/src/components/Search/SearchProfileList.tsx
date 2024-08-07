@@ -12,9 +12,12 @@ const SearchProfileList = (props: Props) => {
 
   const fetchProfileList = useCallback(async () => {
     const result = await nicknameSearch(props.nickname);
-    if (result && Array.isArray(result)) {
+    const list = result.users
+    const size = result.size
+    
+    if (list && Array.isArray(list)) {
       // 정확히 일치하는 결과만 필터링하게 하기
-      const filteredResults = result.filter(profile => 
+      const filteredResults = list.filter(profile => 
         profile.nickname.includes(props.nickname)
       );
       setProfileList(filteredResults);

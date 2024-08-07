@@ -16,6 +16,7 @@ const SearchProduct = (props: Props) => {
       ))}
     </div>
   )
+  
 }
 
 export default SearchProduct
