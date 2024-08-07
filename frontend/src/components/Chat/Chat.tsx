@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
-import userImage from '@assets/logo192.png'
+import userImage from '@assets/images/basic_profile.png'
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { communityChatDetail } from '@services/communityChatService';

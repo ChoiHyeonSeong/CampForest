@@ -8,7 +8,7 @@ import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
 import { Link, useNavigate } from 'react-router-dom'
-import defaultProfileImage from '@assets/logo192.png'
+import defaultProfileImage from '@assets/images/basic_profile.png'
 
 import { boardDelete, boardLike, boardDislike, boardSave, deleteSave } from '@services/boardService';
 
@@ -175,7 +175,7 @@ const Board = (props: Props) => {
               <img 
                 src={props.board.userImage ? props.board.userImage : defaultProfileImage}
                 alt=''
-                className='w-full'
+                className='w-full aspect-1'
               />
             </Link>
             <div className={`ms-[1rem]`}>

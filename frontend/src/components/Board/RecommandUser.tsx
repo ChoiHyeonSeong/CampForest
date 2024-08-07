@@ -1,6 +1,6 @@
 import React from 'react'
 
-import userImage from '@assets/logo192.png'
+import userImage from '@assets/images/basic_profile.png'
 
 const RecommandUser = () => {
   return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import defaultImage from '@assets/logo192.png';
+import defaultImage from '@assets/images/basic_profile.png';
 import FireGif from '@assets/images/fire.gif';
 import { Link, useParams } from 'react-router-dom';
 import { userPage } from '@services/userService';
