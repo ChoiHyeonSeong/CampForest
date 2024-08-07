@@ -1,21 +1,19 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import NotificationList from '@components/Notification/NotificationList';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 type Props = {
   isExtendMenuOpen: boolean;
   toggleExtendMenu: (param:string) => void;
 }
 
-const EventSource = EventSourcePolyfill || NativeEventSource;
-
 const NavbarLeftExtendCommunity = (props: Props) => {
   const userState = useSelector((state: RootState) => state.userStore);
   const dispatch = useDispatch();
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const maxRetries = 5;
 
@@ -32,14 +30,13 @@ const NavbarLeftExtendCommunity = (props: Props) => {
     }
 
     console.log("SSE 연결 시도...");
-    const eventSource = new EventSource(
+    const eventSource = new EventSourcePolyfill(
       `${process.env.REACT_APP_BACKEND_URL}/notification/subscribe`,
       {
         headers: {
           Authorization: `${accessToken}`,
         },
         withCredentials: true,
-        heartbeatTimeout: 300000, // 5분
       }
     );
 
@@ -67,37 +64,6 @@ const NavbarLeftExtendCommunity = (props: Props) => {
 
     eventSourceRef.current = eventSource;
   }, [dispatch, retryCount]);
-
-  useEffect(() => {
-    let retryTimeout: NodeJS.Timeout;
-
-    const retryWithBackoff = () => {
-      if (retryCount < maxRetries) {
-        const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
-        console.log(`${backoffTime / 1000}초 후 재연결 시도`);
-        retryTimeout = setTimeout(() => {
-          createEventSource();
-        }, backoffTime);
-      }
-    };
-
-    if (userState.isLoggedIn) {
-      if (retryCount === 0) {
-        createEventSource();
-      } else {
-        retryWithBackoff();
-      }
-    }
-
-    return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
-      if (retryTimeout) {
-        clearTimeout(retryTimeout);
-      }
-    };
-  }, [userState.isLoggedIn, createEventSource, retryCount]);
 
   // 디버깅을 위한 임시 함수
   const testSSEConnection = () => {
