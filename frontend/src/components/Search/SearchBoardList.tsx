@@ -12,14 +12,20 @@ const SearchBoardList = (props: Props) => {
   const [boardList, setBoardList] = useState<BoardType[]>([]);
 
   const fetchBoardList = useCallback(async () => {
-    const result = await boardTitleSearch(props.searchText, 0, 10);
-    if (result && Array.isArray(result.content)) {
-      // 정확히 일치하는 결과만 필터링
-      const filteredResults = result.content.filter((board: BoardType) => 
-        board.title.includes(props.searchText)
-      );
-      setBoardList(filteredResults);
-    } else {
+    if (props.searchText.length < 2) {
+      setBoardList([]);
+      return;
+    }
+
+    try {
+      const result = await boardTitleSearch(props.searchText, 0, 10);
+      if (result && Array.isArray(result)) {
+        setBoardList(result);
+      } else {
+        setBoardList([]);
+      }
+    } catch (error) {
+      console.error("Error fetching board list:", error);
       setBoardList([]);
     }
   }, [props.searchText]);

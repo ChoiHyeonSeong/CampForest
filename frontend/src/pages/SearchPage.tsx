@@ -1,53 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import SearchProfileList from '@components/Search/SearchProfileList'
-import SerarchBoardList from '@components/Search/SearchBoardList'
+import SearchBoardList from '@components/Search/SearchBoardList'
 import SearchProductList from '@components/Search/SearchProductList'
 import SearchAllList from '@components/Search/SearchAllList';
 
 const SearchPage = () => {
-  const [searchText, setSearchText] = useState('');
-  const [searchExecuted, setSearchExecuted] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [inputText, setInputText] = useState(''); // 입력 중인 검색값임
+  const [searchQuery, setSearchQuery] = useState(''); // 실제 검색에 사용될 쿼리임
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const query = params.get('query') || '';
-    setSearchText(query);
-    setSearchExecuted(!!query);
+    setInputText(query);
+    setSearchQuery(query);
   }, [location.search]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const handleSearch = () => {
-    if (searchText.length < 2) {
+  // 검색어 길이가 2개 이상인지 확인
+  const handleSearch = (path: string = '') => {
+    if (inputText.length < 2) {
       alert('검색어는 두 글자 이상 입력해야 합니다.');
       return;
     }
-    navigate(`/search?query=${searchText}`);
-    setSearchExecuted(true);
+    setSearchQuery(inputText);
+    navigate(`/search${path}?query=${encodeURIComponent(inputText)}`);
   };
 
+  // 엔터키로 검색 가능하게 하기
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleSearch();
+      // 현재 경로를 확인하여 적절한 path를 결정
+      const currentPath = location.pathname;
+      let searchPath = '';
+      if (currentPath.includes('/search/profile')) {
+        searchPath = '/profile';
+      } else if (currentPath.includes('/search/board')) {
+        searchPath = '/board';
+      } else if (currentPath.includes('/search/product')) {
+        searchPath = '/product';
+      }
+      // 결정된 path로 검색 실행
+      handleSearch(searchPath);
     }
   };
 
+  // 검색카테고리 탭 클릭 시 해당경로로 이동하기
   const handleTabClick = (path: string) => {
-    navigate(`/search${path}?query=${encodeURIComponent(searchText)}`);
+    navigate(`/search${path}?query=${encodeURIComponent(searchQuery)}`);
   };
 
+  // input 값 변경 처리
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputText(e.target.value);
+  };
+
+
+  // 현재 경로와 비교하여 탭 클래스 이름 설정
   const getTabClassName = (path: string) => {
-    return location.pathname === path ?
+    return location.pathname.startsWith(`/search${path}`) ?
       `
         flex flex-all-center px-[0.5rem] md:px-[1.5rem] h-full
-        border-light-signature text-light-text dark:text-dark-text
+        border-light-signature text-light-text
+        dark:text-dark-text
         font-semibold border-b-2 cursor-pointer
       ` :
       `
@@ -84,8 +101,8 @@ const SearchPage = () => {
             <input
                 placeholder='두글자 이상 입력해주세요.'
                 className='w-full outline-none bg-transparent'
-                value={searchText}
-                onChange={handleInputChange}
+                value={inputText}
+                onChange={handleInputChange} 
                 onKeyDown={handleKeyDown}
               />
           </div>
@@ -96,7 +113,7 @@ const SearchPage = () => {
               dark:text-dark-text-secondary
               cursor-pointer font-semibold
             '
-            onClick={handleSearch}
+            onClick={() => handleSearch(location.pathname.replace('/search', ''))}
           >
             검색
           </div>
@@ -142,9 +159,9 @@ const SearchPage = () => {
         <div className='w-full pt-[1.5rem]'>
           <Routes>
             <Route path='/' element={<SearchAllList />} />
-            <Route path='profile' element={<SearchProfileList nickname={searchText} />} />
-            <Route path='board' element={<SerarchBoardList searchText={searchText} />} />
-            <Route path='product' element={<SearchProductList searchText={searchText} />} />
+            <Route path='/profile' element={<SearchProfileList nickname={searchQuery} />} />
+            <Route path='/board' element={<SearchBoardList searchText={searchQuery} />} />
+            <Route path='/product' element={<SearchProductList searchText={searchQuery} />} />
           </Routes>
         </div>
       </div>
