@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
@@ -15,39 +15,45 @@ const EventSource = EventSourcePolyfill || NativeEventSource;
 
 const NavbarLeftExtendCommunity = (props: Props) => {
   const userState = useSelector((state: RootState) => state.userStore);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
-  // useEffect(() => {
-  //  if (userState.isLoggedIn) {
-  //   let eventSource: EventSource;
-  //   const fetchSSE = async () => {
-  //     try {
-  //       eventSource = new EventSource(
-  //         `https://i11d208.p.ssafy.io/api/notification/subscribe`,
-  //         {
-  //           headers: {
-  //             Authorization: sessionStorage.getItem('accessToken') || '',
-  //           },
-  //           withCredentials: true,
-  //           heartbeatTimeout: 86400000, // 연결 시간 24시간
-  //         }
-  //       );
+  useEffect(() => {
+    if (userState.isLoggedIn) {
+      const createEventSource = () => {
+        const eventSource = new EventSource(
+          `https://i11d208.p.ssafy.io/api/notification/subscribe`,
+          {
+            headers: {
+              Authorization: sessionStorage.getItem('accessToken') || '',
+            },
+            withCredentials: true,
+            heartbeatTimeout: 300000, // 5분으로 조정
+          }
+        );
 
-  //       eventSource.onmessage = async (event) => {
-  //         const result = await event.data;
-  //         console.log(result);
-  //       };
+        eventSource.onmessage = async (event) => {
+          const result = await event.data;
+          console.log(result);
+        };
 
-  //       eventSource.onerror = async (event) => {
-          
-  //       };
-  //     } catch (error) {
-  //       console.error("fetchSSE error: ", error);
-  //     };
-  //   }
-  //   fetchSSE();
-  //   return () => eventSource.close();
-  //  }
-  // })
+        eventSource.onerror = (event) => {
+          console.error("SSE Error:", event);
+          eventSource.close();
+          setTimeout(createEventSource, 5000); // 5초 후 재연결 시도
+        };
+
+        eventSourceRef.current = eventSource;
+      };
+
+      createEventSource();
+
+      return () => {
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+        }
+      };
+    }
+  }, [userState.isLoggedIn]);
 
   return (
     <div
