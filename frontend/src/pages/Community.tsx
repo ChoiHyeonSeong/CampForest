@@ -17,25 +17,23 @@ const Community = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
 
-  const boardPageRef = useRef(0);
+  const boardCursorIdRef = useRef<number | null>(null);
 
   const fetchBoards = async () => {
     try {
       dispatch(setIsLoading(true))
-      let result: any;
+      let response: any;
       if (category === 'all') {
-        result = await boardList(boardPageRef.current, 10);
+        response = await boardList(boardCursorIdRef.current, 10);
       } else {
-        result = await filteredBoardList(category, boardPageRef.current, 10);
+        response = await filteredBoardList(category, boardCursorIdRef.current, 10);
       }
       dispatch(setIsLoading(false))
-      if (!result.data.data.empty && !result.data.data.last) {
-        boardPageRef.current += 1
-      }
-      if (result.data.data.last) {
+      boardCursorIdRef.current = response.data.data.nextCursor
+      if (!response.data.data.hasNext) {
         setNextPageExist(false);
       }
-      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
+      setBoards((prevBoards) => [...prevBoards, ...response.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);
@@ -43,7 +41,7 @@ const Community = () => {
   };
 
   const pageReload = () => {
-    boardPageRef.current = 0
+    boardCursorIdRef.current = null
     setBoards([]);
     setNextPageExist(true);
 

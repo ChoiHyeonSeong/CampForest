@@ -123,7 +123,7 @@ const UProduct = (props: Props) => {
           >
             <ArticleIcon 
               className={`
-                ${myBoard ? 'fill-light-black' : 'fill-light-gray-1'}
+                ${myBoard ? 'fill-light-black dark:fill-dark-black' : 'fill-light-gray-1 dark:fill-dark-gray-1'}
                 size-[1rem]
               `}
             />
@@ -146,7 +146,7 @@ const UProduct = (props: Props) => {
           >
             <Heart 
               className={`
-                ${myBoard ? 'fill-light-gray-1' : ''}
+                ${myBoard ? 'fill-light-gray-1 dark:fill-dark-gray-1' : 'fill-light-black dark:fill-dark-black'}
                 size-[1.25rem]
               `}
             />
