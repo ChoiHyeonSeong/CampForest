@@ -13,7 +13,6 @@ import { useInView } from 'react-intersection-observer';
 import { likedList, productList } from '@services/productService';
 import { setIsLoading } from '@store/modalSlice';
 import { RootState } from '@store/store';
-import { setProductCount } from '@store/profileSlice';
 import { savedList } from '@services/boardService';
 
 
@@ -39,7 +38,7 @@ const UProduct = (props: Props) => {
     try {
       dispatch(setIsLoading(true));
       const response = await productList({findUserId: userId, productType: ''});
-      dispatch(setProductCount(response.products.length));
+      console.log('product', response)
       dispatch(setIsLoading(false));
 
       productPageRef.current += 1;
@@ -57,14 +56,14 @@ const UProduct = (props: Props) => {
     try {
       dispatch(setIsLoading(true));
       const response = await likedList();
-      // console.log(response);
+      console.log('liked', response);
       dispatch(setIsLoading(false));
 
-      // likedProductPageRef.current += 1;
-      // if (response.products.last) {
-      //   setNextLikedPageExist(false);
-      // }
-      // setLikedProducts((prevProducts) => [...prevProducts, ...response.products]);
+      likedProductPageRef.current += 1;
+      if (response.last) {
+        setNextLikedPageExist(false);
+      }
+      setLikedProducts((prevProducts) => [...prevProducts, ...response]);
     } catch (error) {
       console.error("Failed to fetch likedProducts: ", error);
     }
@@ -112,7 +111,6 @@ const UProduct = (props: Props) => {
         {/* 작성글, 저장됨, 필터 */}
         <div
           className={`
-            ${userId !== userState.userId ? 'hidden' : ''}
             flex justify-center relative mt-[1.5rem] mb-[1.5rem]
           `}
         >
@@ -136,13 +134,14 @@ const UProduct = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              작성글
+              작성글 {products.length}
             </span>
           </div>
           {/* 북마크 */}
           <div 
             onClick={() => handleType(false)}
             className={`
+            ${userId !== userState.userId ? 'hidden' : ''}
               flex items-center ms-[2.5rem]
             `}
           >
@@ -159,7 +158,7 @@ const UProduct = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              관심
+              관심 {likedList.length}
             </span>
           </div>
           {/* 필터 */}
@@ -202,7 +201,7 @@ const UProduct = (props: Props) => {
         `}
       >
         {likedProducts?.map((product: any, key) => (
-          <ProductCard key={key} product={product}/>
+          <ProductCard key={key} product={product.product}/>
         ))}
         <div ref={likedRef} className={`${isFirstLikedLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
       </div>

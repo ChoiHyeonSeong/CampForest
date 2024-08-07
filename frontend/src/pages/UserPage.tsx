@@ -25,6 +25,9 @@ const UserPage = () => {
       navigate('review')
     }
   }, [selectedMenu])
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <>

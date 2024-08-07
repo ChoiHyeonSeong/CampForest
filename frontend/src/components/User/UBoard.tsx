@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { boardUserList, savedList } from '@services/boardService';
 import { setIsLoading } from '@store/modalSlice';
 import { useInView } from 'react-intersection-observer';
-import { setBoardCount } from '@store/profileSlice';
 import { RootState } from '@store/store';
 
 type Props = {};
@@ -37,8 +36,6 @@ const UBoard = (props: Props) => {
     try {
       dispatch(setIsLoading(true));
       const result = await boardUserList(userId, boardPageRef.current, 10);
-      
-      dispatch(setBoardCount(result.data.data.content.length));
       dispatch(setIsLoading(false));
 
       boardPageRef.current += 1;
@@ -64,6 +61,8 @@ const UBoard = (props: Props) => {
         setNextSavedPageExist(false);
       }
       setSavedBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
+
+      
       
     } catch (error) {
       dispatch(setIsLoading(false));
@@ -115,7 +114,6 @@ const UBoard = (props: Props) => {
         {/* 작성글, 저장됨, 필터 */}
         <div
           className={`
-            ${userId !== userState.userId ? 'hidden' : ''}
             flex justify-center relative mt-[1.5rem] mb-[1.5rem]
           `}
         >
@@ -139,13 +137,14 @@ const UBoard = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              작성글
+              작성글 {boards.length}
             </span>
           </div>
           {/* 북마크 */}
           <div 
             onClick={() => handleType(false)}
             className={`
+              ${userId !== userState.userId ? 'hidden' : ''}
               flex items-center ms-[2.5rem]
             `}
           >
@@ -162,7 +161,7 @@ const UBoard = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              저장됨
+              저장됨 {savedBoards.length}
             </span>
           </div>
           {/* 필터 */}

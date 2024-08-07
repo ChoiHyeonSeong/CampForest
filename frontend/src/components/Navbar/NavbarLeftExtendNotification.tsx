@@ -65,36 +65,36 @@ const NavbarLeftExtendCommunity = (props: Props) => {
     eventSourceRef.current = eventSource;
   }, [dispatch, retryCount]);
 
-  useEffect(() => {
-    let retryTimeout: NodeJS.Timeout;
+  // useEffect(() => {
+  //   let retryTimeout: NodeJS.Timeout;
 
-    const retryWithBackoff = () => {
-      if (retryCount < maxRetries) {
-        const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
-        console.log(`${backoffTime / 1000}초 후 재연결 시도`);
-        retryTimeout = setTimeout(() => {
-          createEventSource();
-        }, backoffTime);
-      }
-    };
+  //   const retryWithBackoff = () => {
+  //     if (retryCount < maxRetries) {
+  //       const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
+  //       console.log(`${backoffTime / 1000}초 후 재연결 시도`);
+  //       retryTimeout = setTimeout(() => {
+  //         createEventSource();
+  //       }, backoffTime);
+  //     }
+  //   };
 
-    if (userState.isLoggedIn) {
-      if (retryCount === 0) {
-        createEventSource();
-      } else {
-        retryWithBackoff();
-      }
-    }
+  //   if (userState.isLoggedIn) {
+  //     if (retryCount === 0) {
+  //       createEventSource();
+  //     } else {
+  //       retryWithBackoff();
+  //     }
+  //   }
 
-    return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
-      if (retryTimeout) {
-        clearTimeout(retryTimeout);
-      }
-    };
-  }, [userState.isLoggedIn, createEventSource, retryCount]);
+  //   return () => {
+  //     if (eventSourceRef.current) {
+  //       eventSourceRef.current.close();
+  //     }
+  //     if (retryTimeout) {
+  //       clearTimeout(retryTimeout);
+  //     }
+  //   };
+  // }, [userState.isLoggedIn, createEventSource, retryCount]);
 
   // 디버깅을 위한 임시 함수
   const testSSEConnection = () => {
