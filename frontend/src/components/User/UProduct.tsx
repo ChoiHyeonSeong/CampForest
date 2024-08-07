@@ -56,14 +56,13 @@ const UProduct = (props: Props) => {
     try {
       dispatch(setIsLoading(true));
       const response = await likedList();
-      console.log('liked', response);
       dispatch(setIsLoading(false));
 
       likedProductPageRef.current += 1;
       if (response.last) {
         setNextLikedPageExist(false);
       }
-      setLikedProducts((prevProducts) => [...prevProducts, ...response]);
+      setLikedProducts((prevProducts) => [...prevProducts, ...response.content]);
     } catch (error) {
       console.error("Failed to fetch likedProducts: ", error);
     }
@@ -158,7 +157,7 @@ const UProduct = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              관심 {likedList.length}
+              관심 {likedProducts.length}
             </span>
           </div>
           {/* 필터 */}

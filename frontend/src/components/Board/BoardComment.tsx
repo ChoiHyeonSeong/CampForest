@@ -65,6 +65,7 @@ const BoardComment = (props: Props) => {
   }
 
   useEffect(() => {
+    console.log(props.comment)
     setTimeDifference(calculateTimeDifference(props.comment.createdAt));
   }, [])
 
