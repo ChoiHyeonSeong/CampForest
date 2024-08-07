@@ -1,15 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import SearchProfile from '@components/Search/SearchProfile'
+import SearchProfile from '@components/Search/SearchProfile'
 // import SearchBoard from '@components/Search/SerarchBoard'
-import SearchProduct from '@components/Search/SearchProduct'
+// import SearchProduct from '@components/Search/SearchProduct'
 import { ReactComponent as ArrowRightIcon } from '@assets/icons/arrow-right.svg'
+import { nicknameSearch } from '@services/userService';
 
 
-type Props = {}
+type Props = {
+  // searchText: string;
+}
 
 const SearchAllList = (props: Props) => {
   const navigate = useNavigate();
+  const [profileList, setProfileList] = useState([]);
+  // const [productList, setProductList] = useState([]);
+  // const [boardList, setBoardList] = useState([]);
+
+
+
+
 
   return (
     <>
@@ -56,9 +66,12 @@ const SearchAllList = (props: Props) => {
           
         </div>
         <div className=''>
-          {/* <SearchProfile />
-          <SearchProfile />
-          <SearchProfile /> */}
+          {/* {profileList.length > 0 ? 
+            profileList.map((profile) => (
+              <SearchProfile profile={profile} />  
+            )) :
+          <NoResultSearch searchText={props.searchText} />
+          } */}
         </div>
       </div>
 

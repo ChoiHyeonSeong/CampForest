@@ -24,9 +24,12 @@ const SearchProductList = (props : Props) => {
     try {
       const result = await productList({ 
         titleKeyword: props.searchText, 
-        productType: selectedFilter === '전체' ? '' : selectedFilter 
+        productType: selectedFilter === '전체' ? '' : selectedFilter,
+        page: 0,
+        size: 10,
       });
       
+      console.log(result)
       if (result && result.products) {
         setProducts(result.products);
         setSearchCount(result.totalElements || 0);
@@ -123,9 +126,9 @@ const SearchProductList = (props : Props) => {
         </div>
       </div>
 
-      {products.length !== 0 
+      {filteredProducts.length !== 0 
         ? <SearchProduct product={products}/>
-        : <NoResultSearch />
+        : <NoResultSearch searchText={props.searchText} />
       }
     </div>
   )
