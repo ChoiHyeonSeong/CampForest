@@ -291,4 +291,31 @@ export const validateEmail = async (email: string, authCode: string) => {
   }
 };
 
+export const requestPhone = async (phoneNumber: string) => {
+  try {
+    const response = await axios.post(`/sms/request`, {
+      phoneNumber
+    });
+    console.log(response)
+
+    return response
+  } catch (error) {
+    console.error('휴대폰 인증 요청 오류:', error);
+  }
+};
+
+export const validatePhone = async (phoneNumber: string, authCode: string) => {
+  try {
+    const response = await axios.post(`/sms/validation`, {
+      phoneNumber,
+      authCode
+    });
+    console.log(response);
+
+    return response
+  } catch (error) {
+    console.error('휴대폰 인증 확인 오류:', error);
+  }
+};
+
 export default axiosInstance;

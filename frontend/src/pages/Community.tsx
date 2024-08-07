@@ -29,15 +29,13 @@ const Community = () => {
         result = await filteredBoardList(category, boardPageRef.current, 10);
       }
       dispatch(setIsLoading(false))
-      if (result.data) {
-        if (!result.data.data.empty && !result.data.data.last) {
-          boardPageRef.current += 1
-        }
-        if (result.data.data.last) {
-          setNextPageExist(false);
-        }
-        setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
+      if (!result.data.data.empty && !result.data.data.last) {
+        boardPageRef.current += 1
       }
+      if (result.data.data.last) {
+        setNextPageExist(false);
+      }
+      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);
@@ -54,7 +52,7 @@ const Community = () => {
 
   useEffect(() => {
     pageReload()
-  }, [])
+  }, [category])
 
   useEffect(() => {
     if (inView && nextPageExist) {

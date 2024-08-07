@@ -49,13 +49,11 @@ function Main() {
       const result = await boardList(boardPageRef.current, 10);
       dispatch(setIsLoading(false))
 
-      if (result.data) {
-        boardPageRef.current += 1
-        if (result.data.data.last) {
-          setNextPageExist(false);
-        }
-        setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
+      boardPageRef.current += 1
+      if (result.data.data.last) {
+        setNextPageExist(false);
       }
+      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);

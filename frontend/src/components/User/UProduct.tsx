@@ -28,13 +28,13 @@ const UProduct = (props: Props) => {
       const response = await productList({userId: userId, productType: ''});
       dispatch(setIsLoading(false));
 
+      console.log(response)
+
+      productPageRef.current += 1;
       if (response.data) {
-        productPageRef.current += 1;
-        if (response.data) {
-          setNextPageExist(false);
-        }
-        setProducts((prevProducts) => [...prevProducts, ...response.products]);
+        setNextPageExist(false);
       }
+      setProducts((prevProducts) => [...prevProducts, ...response.products]);
     } catch (error) {
       console.error("Failed to fetch products: ", error);
     }
@@ -50,8 +50,8 @@ const UProduct = (props: Props) => {
 
   return (
     <div className={`grid grid-cols-2 md:grid-cols-3`}>
-      {products?.map((product: any) => (
-        <ProductCard product={product}/>
+      {products?.map((product: any, index) => (
+        <ProductCard key={index} product={product}/>
       ))}
 
       <div ref={ref} className={`h-[0.25rem]`}></div>
