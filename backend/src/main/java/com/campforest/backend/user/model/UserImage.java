@@ -2,6 +2,9 @@ package com.campforest.backend.user.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +35,7 @@ public class UserImage {
 
 	@OneToOne
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private Users user;
 
 	@Column(name = "image_url")
