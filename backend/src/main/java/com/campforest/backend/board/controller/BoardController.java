@@ -490,7 +490,7 @@ public class BoardController {
             return ApiResponse.createError(ErrorCode.COMMENT_NOT_FOUND);
         }
     }
-    @GetMapping("/count")
+    @GetMapping("/public/count")
     public ApiResponse<?> countAll(Authentication authentication) {
         try {
             Users user = userService.findByEmail(authentication.getName())
