@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
-import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import SearchProfileList from '@components/Search/SearchProfileList'
 import SerarchBoardList from '@components/Search/SearchBoardList'
 import SearchProductList from '@components/Search/SearchProductList'
 import SearchAllList from '@components/Search/SearchAllList';
 
-type Props = {}
-
-const SearchPage = (props: Props) => {
+const SearchPage = () => {
   const [searchText, setSearchText] = useState('');
   const [searchExecuted, setSearchExecuted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get('query') || '';
+    setSearchText(query);
+    setSearchExecuted(!!query);
+  }, [location.search]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleSearch = () => {
+    if (searchText.length < 2) {
+      alert('검색어는 두 글자 이상 입력해야 합니다.');
+      return;
+    }
+    navigate(`/search?query=${searchText}`);
+    setSearchExecuted(true);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const handleTabClick = (path: string) => {
-    navigate(path);
+    navigate(`/search${path}?query=${encodeURIComponent(searchText)}`);
   };
 
   const getTabClassName = (path: string) => {
@@ -35,40 +58,10 @@ const SearchPage = (props: Props) => {
       `
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const handleClearInput = () => {
-    setSearchText('');
-    setSearchExecuted(false);
-  };
-
-  const handleSearch = () => {
-    if (searchText.length < 2) {
-      alert('검색어는 두 글자 이상 입력해야 합니다.');
-      return;
-    }
-    setSearchExecuted(true);
-    setSearchQuery(searchText);
-    navigate(location.pathname);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
 
   return (
     <div className='flex justify-center min-h-screen'>
       <div className='w-full lg:w-[65%] lg:min-w-[56rem] max-lg:p-[1.5rem] lg:py-[2.5rem]'>
-        <h4 className='mb-[1.5rem] text-xl'>
-        <span className='font-medium me-[0.25rem]'>
-            {searchExecuted ? `${searchQuery}` : ''}
-          </span>
-          {searchExecuted ? `에 대한 검색결과` : '검색결과'}
-        </h4>
         
         {/* 검색창  */}
         <div
@@ -79,32 +72,34 @@ const SearchPage = (props: Props) => {
             font-medium text-lg rounded
             '
           >
-          <div className='flex items-center'>
-          <SearchIcon
+          <div className='flex items-center w-full'>
+            <SearchIcon
+              className='
+                shrink-0 size-[1.4rem] md:size-[1.6rem] me-[1rem]
+                stroke-light-border-icon
+                dark:stroke-light-dark-icon
+                cursor-pointer
+              '
+            />
+            <input
+                placeholder='두글자 이상 입력해주세요.'
+                className='w-full outline-none bg-transparent'
+                value={searchText}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+              />
+          </div>
+          <div
             className='
-              size-[1.4rem] md:size-[1.6rem] me-[1rem]
-              stroke-light-border-icon
-              dark:stroke-light-dark-icon
-              cursor-pointer
+              shrink-0 ps-[1.5rem] pe-[0.5rem]
+              text-light-text-secondary
+              dark:text-dark-text-secondary
+              cursor-pointer font-semibold
             '
             onClick={handleSearch}
-          />
-          <input
-              placeholder='키워드로 검색해보세요.'
-              className='outline-none bg-transparent'
-              value={searchText}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-            />
+          >
+            검색
           </div>
-          <CloseIcon
-            className='
-              size-[1.4rem] md:size-[1.6rem]
-              fill-light-border-icon
-              dark:fill-dark-border-icon
-              cursor-pointer'
-            onClick={handleClearInput}
-          />
         </div>
 
         {/* 검색 카테고리 탭 */}
@@ -118,25 +113,25 @@ const SearchPage = (props: Props) => {
           >
           <div
             className={getTabClassName('/search')}
-            onClick={() => handleTabClick('/search')}
+            onClick={() => handleTabClick('')}
             >
               전체
           </div>
           <div
             className={getTabClassName('/search/profile')}
-            onClick={() => handleTabClick('/search/profile')}
+            onClick={() => handleTabClick('/profile')}
             >
               프로필
           </div>
           <div
             className={getTabClassName('/search/board')}
-            onClick={() => handleTabClick('/search/board')}
+            onClick={() => handleTabClick('/board')}
             >
               커뮤니티
           </div>
           <div
             className={getTabClassName('/search/product')}
-            onClick={() => handleTabClick('/search/product')}
+            onClick={() => handleTabClick('/product')}
             >
               장비거래
           </div>

@@ -176,7 +176,7 @@ const Navbar = () => {
         <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
         <NavbarLeftExtendChatList isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
         <NavbarLeftExtendNotification isExtendMenuOpen={isExtendNotificationOpen} toggleExtendMenu={toggleExtendMenu} />
-        <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} />
+        <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
       </div>
       {/* 모바일용 하단 네비게이션바 */}
       <NavbarBottom toggleMenu={toggleMenu} closeMenu={closeMenu}/>
