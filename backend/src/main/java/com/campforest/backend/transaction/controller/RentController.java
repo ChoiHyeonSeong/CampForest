@@ -2,6 +2,7 @@ package com.campforest.backend.transaction.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
 import com.campforest.backend.transaction.service.RentService;
@@ -24,6 +27,7 @@ public class RentController {
 
 	private final RentService rentService;
 	private final UserService userService;
+	private final NotificationService notificationService;
 
 	@PostMapping("/request")
 	public ApiResponse<?> rentRequest(Authentication authentication, @RequestBody RentRequestDto rentRequestDto) {
@@ -33,7 +37,14 @@ public class RentController {
 
 			rentRequestDto.setRequesterId(requester.getUserId());
 
-			rentService.rentRequest(rentRequestDto);
+			Map<String, Long> map = rentService.rentRequest(rentRequestDto);
+			Long receiverId = map.get("receiverId");
+
+			Users receiver = userService.findByUserId(receiverId)
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+			notificationService.createNotification(receiver, NotificationType.RENT, requester.getNickname() + "님이 대여예약을 요청하였습니다.");
+
 			return ApiResponse.createSuccessWithNoContent("대여 요청이 완료되었습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.RENT_REQUEST_FAILED);
@@ -46,7 +57,14 @@ public class RentController {
 			Users requester = userService.findByEmail(authentication.getName())
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			rentService.acceptRent(rentRequestDto, requester.getUserId());
+			Map<String, Long> map = rentService.acceptRent(rentRequestDto, requester.getUserId());
+			Long receiverId = map.get("receiverId");
+
+			Users receiver = userService.findByUserId(receiverId)
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+			notificationService.createNotification(receiver, NotificationType.RENT, requester.getNickname() + "님이 대여예약 요청을 수락하였습니다.");
+
 			return ApiResponse.createSuccessWithNoContent("대여 요청에 승낙하였습니다. 대여 예약 됩니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.RENT_ACCEPT_FAILED);

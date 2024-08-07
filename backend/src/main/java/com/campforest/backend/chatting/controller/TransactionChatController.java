@@ -1,7 +1,15 @@
 package com.campforest.backend.chatting.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import com.campforest.backend.notification.model.Notification;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
+import com.campforest.backend.product.service.ProductService;
+import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
+import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
+import com.campforest.backend.transaction.service.RentService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -41,7 +49,9 @@ public class TransactionChatController {
 	private final TransactionChatService transactionChatService;
 	private final SimpMessagingTemplate messagingTemplate;
 	private final UserService userService;
-
+	private final RentService rentService;
+	private final NotificationService notificationService;
+	private final ProductService productService;
 	@PostMapping("/room")
 	public ApiResponse<?> createChatRoom(
 		Authentication authentication,
@@ -96,6 +106,72 @@ public class TransactionChatController {
 			return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
 		}
 	}
+//	@MessageMapping("/transaction/{roomId}/markAsRead")
+//	public void markMessagesAsReadWebSocket(
+//			@DestinationVariable Long roomId,
+//			@Payload Long userId) {
+//		try {
+//			transactionChatService.markMessagesAsRead(roomId, userId);
+//			// 읽음 처리 완료를 클라이언트에게 알림
+//			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/readStatus", userId);
+//		} catch (Exception e) {
+//			// 에러 처리
+//			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/error", "메시지 읽음 처리 실패");
+//		}
+//	}
+
+	//
+	@MessageMapping("/transaction/{roomId}/{userId}/rentRequest")
+	@SendTo("/sub/transaction/{roomId}/{userId}")
+	public TransactionChatMessage sendRentRequest(
+			@DestinationVariable Long roomId,
+			@DestinationVariable Long userId,
+			@Payload RentRequestDto rentRequestDto
+			) throws Exception {
+		try {
+			Long productId=rentRequestDto.getProductId();
+
+			// 요청자 ID 설정
+			rentRequestDto.setRequesterId(userId);
+
+			// 대여 요청 처리
+			Map<String, Long> result = rentService.rentRequest(rentRequestDto);
+			Long receiverId = result.get("receiverId");
+			// 요청자 정보 조회
+			Users requester = userService.findByUserId(userId)
+					.orElseThrow(() -> new Exception("요청자 정보 조회 실패"));
+
+			// 수신자 정보 조회
+			Users receiver = userService.findByUserId(receiverId)
+					.orElseThrow(() -> new Exception("수신자 정보 조회 실패"));
+
+			// 알림 생성
+			notificationService.createNotification(receiver, NotificationType.RENT,
+					requester.getNickname() + "님이 대여예약을 요청하였습니다.");
+
+			// 메시지 생성
+			TransactionChatMessage message = TransactionChatMessage.builder()
+					.roomId(roomId)
+					.senderId(userId)
+					.content("새로운 렌트 요청이 도착했습니다." + " 상품ID: "+ productId+" 상품 이름: " +productService.getProduct(productId).getProductName())
+					.build();
+
+			// 메시지 저장 및 반환
+			return transactionChatService.saveMessage(roomId, message);
+		} catch (Exception e) {
+			// 에러 처리
+			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
+					.roomId(roomId)
+					.senderId(userId)
+					.content("대여 요청 처리 중 오류가 발생했습니다: " + e.getMessage())
+					.build();
+			return errorMessage;
+		}
+	}
+
+
+
+	//
 
 	// //user가 속한 채팅방 목록 가져옴.
 	// 각 채팅방 별 최근 메시지와, 안읽은 메세지 수 가져옴
