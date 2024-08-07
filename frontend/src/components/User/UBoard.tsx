@@ -22,6 +22,7 @@ const UBoard = (props: Props) => {
   const [ref, inView] = useInView();
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
+  const [isSavedBoards, setIsSavedBoards] = useState(true);
 
   const boardPageRef = useRef(0);
 
@@ -31,14 +32,11 @@ const UBoard = (props: Props) => {
       const result = await boardUserList(userId, boardPageRef.current, 10);
       dispatch(setIsLoading(false));
 
-      console.log(result);
-      if (result.data) {
-        boardPageRef.current += 1;
-        if (result.data.data.last) {
-          setNextPageExist(false);
-        } 
-        setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
-      }
+      boardPageRef.current += 1;
+      if (result.data.data.last) {
+        setNextPageExist(false);
+      } 
+      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false));
       console.error('게시글 불러오기 실패: ', error);
@@ -75,8 +73,8 @@ const UBoard = (props: Props) => {
           `}
         >
           {/* 작성글 */}
-          <div className="flex items-center">
-            <ArticleIcon className="size-[1rem]" />
+          <div onClick={() => setIsSavedBoards(false)} className="flex items-center cursor-pointer">
+            <ArticleIcon className="size-[1rem] fill-light-black dark:fill-dark-black"/>
             <span
               className={`
                 ms-[0.5rem]
@@ -88,8 +86,8 @@ const UBoard = (props: Props) => {
           </div>
 
           {/* 북마크 */}
-          <div className="flex items-center ms-[2.5rem]">
-            <BookMarkIcon className="size-[1.25rem]" />
+          <div onClick={() => setIsSavedBoards(true)} className="flex items-center ms-[2.5rem] cursor-pointer">
+            <BookMarkIcon className="size-[1.25rem] fill-light-black stroke-light-white dark:fill-dark-black dark:stroke-dark-white"/>
             <span
               className={`
                 ms-[0.5rem]
@@ -122,6 +120,7 @@ const UBoard = (props: Props) => {
           </div>
         </div>
       </div>
+
       <div className={`${myBoard ? '' : 'hidden'}`}>
         {boards?.map((board, index) => (
           <div className={`my-[1.25rem]`} key={index}>
