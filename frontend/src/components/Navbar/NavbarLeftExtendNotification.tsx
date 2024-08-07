@@ -16,38 +16,38 @@ const EventSource = EventSourcePolyfill || NativeEventSource;
 const NavbarLeftExtendCommunity = (props: Props) => {
   const userState = useSelector((state: RootState) => state.userStore);
 
-  useEffect(() => {
-   if (userState.isLoggedIn) {
-    let eventSource: EventSource;
-    const fetchSSE = async () => {
-      try {
-        eventSource = new EventSource(
-          `https://i11d208.p.ssafy.io/api/notification/subscribe`,
-          {
-            headers: {
-              Authorization: sessionStorage.getItem('accessToken') || '',
-            },
-            withCredentials: true,
-            heartbeatTimeout: 86400000, // 연결 시간 24시간
-          }
-        );
+  // useEffect(() => {
+  //  if (userState.isLoggedIn) {
+  //   let eventSource: EventSource;
+  //   const fetchSSE = async () => {
+  //     try {
+  //       eventSource = new EventSource(
+  //         `https://i11d208.p.ssafy.io/api/notification/subscribe`,
+  //         {
+  //           headers: {
+  //             Authorization: sessionStorage.getItem('accessToken') || '',
+  //           },
+  //           withCredentials: true,
+  //           heartbeatTimeout: 86400000, // 연결 시간 24시간
+  //         }
+  //       );
 
-        eventSource.onmessage = async (event) => {
-          const result = await event.data;
-          console.log(result);
-        };
+  //       eventSource.onmessage = async (event) => {
+  //         const result = await event.data;
+  //         console.log(result);
+  //       };
 
-        eventSource.onerror = async (event) => {
+  //       eventSource.onerror = async (event) => {
           
-        };
-      } catch (error) {
-        console.error("fetchSSE error: ", error);
-      };
-    }
-    fetchSSE();
-    return () => eventSource.close();
-   }
-  })
+  //       };
+  //     } catch (error) {
+  //       console.error("fetchSSE error: ", error);
+  //     };
+  //   }
+  //   fetchSSE();
+  //   return () => eventSource.close();
+  //  }
+  // })
 
   return (
     <div
