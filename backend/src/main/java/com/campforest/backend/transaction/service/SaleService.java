@@ -50,6 +50,9 @@ public class SaleService {
 		reverseSale.receiveSale();
 		saleRepository.save(reverseSale);
 
+		result.put("saleId", sale.getId());
+		result.put("reverseSaleId", reverseSale.getId());
+
 		return result;
 	}
 
