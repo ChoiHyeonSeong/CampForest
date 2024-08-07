@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.product.dto.PageResult;
+import com.campforest.backend.product.dto.SaveProductDto;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.SaveProduct;
 import com.campforest.backend.product.service.ProductService;
@@ -64,13 +66,15 @@ public class SaveProductController {
 	}
 
 	@GetMapping("/list")
-	public ApiResponse<?> getSaveList(Authentication authentication) throws Exception {
-
+	public ApiResponse<?> getSaveList(
+		Authentication authentication,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "20") int size) throws Exception {
 		Users user = userService.findByEmail(authentication.getName())
 			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 		try {
-			List<SaveProduct> saveProducts = saveProductService.getSaveList(user.getUserId());
+			PageResult<SaveProductDto> saveProducts = saveProductService.getSaveList(user.getUserId(), page, size);
 			return ApiResponse.createSuccess(saveProducts, "찜한 장비 게시물 목록 조회에 성공하였습니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.SAVEPRODUCT_DELETION_FAILED);
