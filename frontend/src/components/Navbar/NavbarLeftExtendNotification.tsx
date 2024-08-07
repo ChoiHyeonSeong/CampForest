@@ -29,6 +29,10 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       return;
     }
 
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
+
     console.log("SSE 연결 시도...");
     const eventSource = new EventSourcePolyfill(
       `${process.env.REACT_APP_BACKEND_URL}/notification/subscribe`,
@@ -37,6 +41,7 @@ const NavbarLeftExtendCommunity = (props: Props) => {
           Authorization: `${accessToken}`,
         },
         withCredentials: true,
+        heartbeatTimeout: 45000,
       }
     );
 
@@ -60,10 +65,33 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       console.error("SSE 오류:", error);
       eventSource.close();
       setRetryCount(prevCount => prevCount + 1);
+      retryWithBackoff();
     };
 
     eventSourceRef.current = eventSource;
-  }, [dispatch, retryCount]);
+  }, [retryCount]);
+
+  const retryWithBackoff = useCallback(() => {
+    if (retryCount < maxRetries) {
+      const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
+      console.log(`${backoffTime / 1000}초 후 재연결 시도`);
+      setTimeout(() => {
+        createEventSource();
+      }, backoffTime);
+    }
+  }, [retryCount, createEventSource]);
+
+  useEffect(() => {
+    if (userState.isLoggedIn) {
+      createEventSource();
+    }
+
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+    };
+  }, [userState.isLoggedIn, createEventSource]);
 
   // 디버깅을 위한 임시 함수
   const testSSEConnection = () => {
