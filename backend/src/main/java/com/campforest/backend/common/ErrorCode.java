@@ -20,6 +20,11 @@ public enum ErrorCode {
 	USER_DELETE_FAILED("U006", HttpStatus.BAD_REQUEST, "회원 탈퇴에 실패했습니다."),
 	TEMP_USER_NOT_FOUND("U007", HttpStatus.NOT_FOUND, "임시 사용자를 찾을 수 없습니다."),
 	OAUTH_CODE_NOT_FOUND("U008", HttpStatus.NOT_FOUND, "OAuth 코드를 찾을 수 없습니다."),
+	ALREADY_EXIST_PHONE_NUMBER("U009", HttpStatus.BAD_REQUEST, "이미 존재하는 전화번호입니다."),
+
+	// SMS Error
+	SMS_SEND_FAIL("SM001", HttpStatus.BAD_REQUEST, "SMS 전송에 실패했습니다."),
+	SMS_CODE_NOT_MATCH("SM002", HttpStatus.BAD_REQUEST, "SMS 인증 코드가 일치하지 않습니다."),
 
 	// Follow Error
 	FOLLOW_ALREADY_EXISTS("F001", HttpStatus.BAD_REQUEST, "이미 팔로우한 사용자입니다."),
