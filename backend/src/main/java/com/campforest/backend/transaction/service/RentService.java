@@ -53,6 +53,10 @@ public class RentService {
 		Rent reverseRent = buildRent(rentRequestDto, product, receiverId, requesterId, TransactionStatus.RECEIVED);
 		reverseRent.receiveRent();
 		rentRepository.save(reverseRent);
+
+		result.put("rentId", rent.getId());
+		result.put("reverseRentId", reverseRent.getId());
+
 		return result;
 	}
 
@@ -205,5 +209,6 @@ public class RentService {
 			.orElseThrow(() -> new IllegalArgumentException("상대방 요청을 찾을 수 없습니다."));
 		return new Rent[] {rent1, rent2};
 	}
+
 
 }
