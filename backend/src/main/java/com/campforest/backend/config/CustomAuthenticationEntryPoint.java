@@ -26,7 +26,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 			errorCode = ErrorCode.PASSWORD_NOT_MATCH;
 		} else if (authException instanceof UsernameNotFoundException) {
 			errorCode = ErrorCode.USER_NOT_FOUND;
-		} else {
+		} else if (response.getStatus() == HttpServletResponse.SC_NOT_FOUND) {
+			errorCode = ErrorCode.RESOURCE_NOT_FOUND;
+		}
+		else {
 			errorCode = ErrorCode.AUTHENTICATION_FAILED;
 		}
 
