@@ -140,14 +140,14 @@ const Board = (props: Props) => {
         deleteSave(props.board.boardId);
         setSaved(false);
       } catch (error) {
-
+        console.error('북마크 취소 실패: ', error);
       }
     } else {
       try {
         boardSave(props.board.boardId);
         setSaved(true);
       } catch (error) {
-
+        console.error('북마크 실패: ', error);
       }
     }
   }
@@ -168,13 +168,14 @@ const Board = (props: Props) => {
             <Link
               to={`/user/${props.board.userId}`}
               className={`
-                overflow-hidden size-[2.75rem] md:size-[3rem]
-                rounded-full shadow-md
+                flex items-center justify-center size-[2.75rem] md:size-[3rem]
+                rounded-full shadow-md overflow-hidden
               `}
             >
               <img 
                 src={props.board.userImage ? props.board.userImage : defaultProfileImage}
                 alt=''
+                className='w-full'
               />
             </Link>
             <div className={`ms-[1rem]`}>
@@ -382,6 +383,7 @@ const Board = (props: Props) => {
                 inline size-[1.75rem]
                 fill-none stroke-light-border-icon
                 dark:stroke-dark-border-icon
+                cursor-pointer
               `}
             />)
           }

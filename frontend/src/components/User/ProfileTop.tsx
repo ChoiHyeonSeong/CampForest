@@ -54,17 +54,17 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
         {/* 프로필사진 */}
         <div 
           className={`
-            relative size-[4rem] md:size-[5rem] me-[1.5rem]
+            flex items-center justify-center relative size-[4rem] md:size-[5rem] me-[1.5rem]
             border-light-border
             dark:border-dark-border
-            rounded-full border-[0.1rem]
+            rounded-full border-[0.1rem] overflow-hidden
           `}
         >
           <img 
             src={userinfo?.profileImage ? userinfo.profileImage : defaultImage} 
             alt='' 
             className={`
-              absolute rounded-full w-full h-full
+              absolute rounded-full w-full
             `}
           />
           <div 

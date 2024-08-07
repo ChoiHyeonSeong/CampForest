@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 import { Link } from 'react-router-dom';
 import { commentDislike, commentLike } from '@services/commentService';
+import defaultProfileImage from '@assets/logo192.png'
 
 export type CommentType = {
   commentId: number;
@@ -80,9 +81,10 @@ const BoardComment = (props: Props) => {
     >
       <div className={`flex items-center`}>
         {/* 프로필 이미지 */}
-        <div 
+        <Link
+          to={`/user/${props.comment.commentWriterId}`}
           className={`
-            shrink-0 size-[2.5rem] me-[1rem]
+            flex items-center justify-center rshrink-0 size-[2.5rem] me-[1rem]
           border-light-border
             dark:border-dark-border  
             shadow-sm border rounded-full overflow-hidden
@@ -90,11 +92,11 @@ const BoardComment = (props: Props) => {
         >
           {/* 사용자 프로필 이미지 받아와서 넣을 곳 ! */}
           <img 
-            src={props.comment.userImage} 
+            src={props.comment.userImage ? props.comment.userImage : defaultProfileImage } 
             alt='NOIMG'
-            className='fit'
+            className='w-full'
           />
-        </div>
+        </Link>
 
         {/* 닉네임 및 글 */}
         <div>
