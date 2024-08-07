@@ -17,43 +17,43 @@ const NavbarLeftExtendCommunity = (props: Props) => {
   const userState = useSelector((state: RootState) => state.userStore);
   const eventSourceRef = useRef<EventSource | null>(null);
 
-  useEffect(() => {
-    if (userState.isLoggedIn) {
-      const createEventSource = () => {
-        const eventSource = new EventSource(
-          `https://i11d208.p.ssafy.io/api/notification/subscribe`,
-          {
-            headers: {
-              Authorization: sessionStorage.getItem('accessToken') || '',
-            },
-            withCredentials: true,
-            heartbeatTimeout: 300000, // 5분으로 조정
-          }
-        );
+  // useEffect(() => {
+  //   if (userState.isLoggedIn) {
+  //     const createEventSource = () => {
+  //       const eventSource = new EventSource(
+  //         `https://i11d208.p.ssafy.io/api/notification/subscribe`,
+  //         {
+  //           headers: {
+  //             Authorization: sessionStorage.getItem('accessToken') || '',
+  //           },
+  //           withCredentials: true,
+  //           heartbeatTimeout: 300000, // 5분으로 조정
+  //         }
+  //       );
 
-        eventSource.onmessage = async (event) => {
-          const result = await event.data;
-          console.log(result);
-        };
+  //       eventSource.onmessage = async (event) => {
+  //         const result = await event.data;
+  //         console.log(result);
+  //       };
 
-        eventSource.onerror = (event) => {
-          console.error("SSE Error:", event);
-          eventSource.close();
-          setTimeout(createEventSource, 5000); // 5초 후 재연결 시도
-        };
+  //       eventSource.onerror = (event) => {
+  //         console.error("SSE Error:", event);
+  //         eventSource.close();
+  //         setTimeout(createEventSource, 5000); // 5초 후 재연결 시도
+  //       };
 
-        eventSourceRef.current = eventSource;
-      };
+  //       eventSourceRef.current = eventSource;
+  //     };
 
-      createEventSource();
+  //     createEventSource();
 
-      return () => {
-        if (eventSourceRef.current) {
-          eventSourceRef.current.close();
-        }
-      };
-    }
-  }, [userState.isLoggedIn]);
+  //     return () => {
+  //       if (eventSourceRef.current) {
+  //         eventSourceRef.current.close();
+  //       }
+  //     };
+  //   }
+  // }, [userState.isLoggedIn]);
 
   return (
     <div

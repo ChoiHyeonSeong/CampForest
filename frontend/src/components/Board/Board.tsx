@@ -7,9 +7,10 @@ import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg'
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import defaultProfileImage from '@assets/logo192.png'
 
-import { boardDelete, boardLike, boardDislike } from '@services/boardService';
+import { boardDelete, boardLike, boardDislike, boardSave, deleteSave } from '@services/boardService';
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -45,6 +46,7 @@ type Props = {
 const Board = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
   const [liked, setLiked] = useState(props.board.liked);
+  const [saved, setSaved] = useState(props.board.saved);
   const [likeCount, setLikeCount] = useState(props.board.likeCount);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
@@ -132,6 +134,24 @@ const Board = (props: Props) => {
     };
   }, []);
 
+  function handleBookmark () {
+    if (saved) {
+      try {
+        deleteSave(props.board.boardId);
+        setSaved(false);
+      } catch (error) {
+
+      }
+    } else {
+      try {
+        boardSave(props.board.boardId);
+        setSaved(true);
+      } catch (error) {
+
+      }
+    }
+  }
+
   return (
     <div 
       className={`
@@ -145,14 +165,23 @@ const Board = (props: Props) => {
         {/* 포스팅 상단바 */}
         <div className={`flex justify-between h-[5rem] px-[0.5rem] py-[1rem]`}>
           <div className={`flex`}>
-            <div 
+            <Link
+              to={`/user/${props.board.userId}`}
               className={`
                 overflow-hidden size-[2.75rem] md:size-[3rem]
                 rounded-full shadow-md
               `}
-            />
+            >
+              <img 
+                src={props.board.userImage ? props.board.userImage : defaultProfileImage}
+                alt=''
+              />
+            </Link>
             <div className={`ms-[1rem]`}>
-              <div className={`text-xl md:text-lg`}>{props.board.nickname}</div>
+              <Link
+                to={`/user/${props.board.userId}`} 
+                className={`text-xl md:text-lg`}>{props.board.nickname}
+              </Link>
               <div className={`md:text-sm`}>{props.board.category}</div>
             </div>
           </div>
@@ -318,7 +347,10 @@ const Board = (props: Props) => {
             {likeCount}
           </div>
         </div>
-        <div className={`relative w-1/3`}>
+        <Link
+          to={`/board/detail/${props.board.boardId}`}
+          className={`relative w-1/3`}
+        >
           <CommentIcon 
             className={`
               absolute left-[45%] size-[1.75rem]
@@ -333,9 +365,9 @@ const Board = (props: Props) => {
           >
               {props.board.commentCount}
           </div>
-        </div>
+        </Link>
         <div className={`w-1/3`}>
-          {props.board.saved ? 
+          {saved ? 
             (<BookmarkIcon
               className={`
                 inline size-[1.75rem]
@@ -344,11 +376,11 @@ const Board = (props: Props) => {
                 cursor-pointer
               `}
             />) : (<BookmarkIcon
+              onClick={() => handleBookmark()}
               className={`
                 inline size-[1.75rem]
                 fill-none stroke-light-border-icon
                 dark:stroke-dark-border-icon
-                cursor-pointer
               `}
             />)
           }

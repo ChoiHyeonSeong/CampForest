@@ -91,3 +91,15 @@ export const boardTitleSearch = async (title: string, page?: number, size?: numb
   // console.log(response.data.data.content);
   return (response.data.data.content);
 }
+
+export const boardSave = async (boardId: number) => {
+  const response = await axiosInstance.post(`/board/save?boardId=${boardId}`);
+
+  console.log(response);
+}
+
+export const deleteSave = async (boardId: number) => {
+  const response = await axiosInstance.post(`/board/save?boardId=${boardId}`);
+
+  console.log(response);
+}
