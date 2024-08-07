@@ -58,7 +58,7 @@ axiosInstance.interceptors.response.use(
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    const response = await axiosInstance.post('/user/auth/login', { email, password });
+    const response = await axiosInstance.post('/user/public/login', { email, password });
     const data = response.data.data;
     const Authorization = response.headers.authorization;
     const user = { userId: data.userId, 
@@ -87,7 +87,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 
 export const refreshToken = async() => {
  // refreshToken 요청에는 인터셉터를 적용하지 않음
- const response = await axios.post(`/user/auth/refreshToken`, {}, {
+ const response = await axios.post(`/user/public/refreshToken`, {}, {
     withCredentials: true
   });
   const accessToken = response.headers['Authorization'];
@@ -99,7 +99,7 @@ export const refreshToken = async() => {
 
 export const logout = async () => {
   try {
-    const response = await axiosInstance.post('/user/auth/logout');
+    const response = await axiosInstance.post('/user/public/logout');
     
     console.log(response)
 
@@ -251,7 +251,7 @@ export const registByEmail = async (registForm: RegistForm, providerInformation:
   }
 
   try {
-    const response = await axios.post('/user/auth/regist', formData, {
+    const response = await axios.post('/user/public/regist', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

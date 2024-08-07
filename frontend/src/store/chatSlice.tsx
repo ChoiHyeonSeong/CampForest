@@ -9,16 +9,18 @@ type ChatState = {
   roomIds: number[];
   chatInProgress: Message[];
   communityChatUserList: ChatUserType[];
+  transactionChatUserList: ChatUserType[];
   totalUnreadCount: number;
 }
 
 const initialState: ChatState = {
   isChatOpen: false,
-  selectedCategory: '',
+  selectedCategory: '일반',
   roomId: 0,
   roomIds: [],
   chatInProgress: [],
   communityChatUserList: [],
+  transactionChatUserList: [],
   totalUnreadCount: 0,
 };
 

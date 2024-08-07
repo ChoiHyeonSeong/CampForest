@@ -2,7 +2,7 @@ import axios from 'axios'
 import axiosInstance from './authService';
 
 export const userPage = async (userId: number) => {
-  const response = await axios.get(`/user/auth/info`, {params: {userId: userId}});
+  const response = await axios.get(`/user/public/info`, {params: {userId: userId}});
   // console.log(response);  
 
   return response.data.data;
@@ -14,18 +14,18 @@ export const deleteUser = async () => {
 }
 
 export const followerList = async (userId: number) => {
-  const response = await axios.get(`/user/auth/follower/${userId}`);
+  const response = await axios.get(`/user/public/follower/${userId}`);
 
   return response.data.data;
 }
 
 export const followingList = async (userId: number) => {
-  const response = await axios.get(`/user/auth/following/${userId}`);
+  const response = await axios.get(`/user/public/following/${userId}`);
 
   return response.data.data;
 }
 export const nicknameSearch = async (key:string) => {
-  const response = await axios.get(`/user/auth/search?nickname=${key}`,);
+  const response = await axios.get(`/user/public/search?nickname=${key}`,);
 
   console.log(response.data);
   return (response.data.data);

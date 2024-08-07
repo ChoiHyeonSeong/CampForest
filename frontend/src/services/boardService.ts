@@ -35,14 +35,14 @@ export const boardWrite = async (userId: number, title: string, content: string,
 export const boardList = (page: number, size: number) => {
   const params = { page: page, size: size };
   
-  const response = axiosInstance.get(`/board`, {params});
+  const response = axiosInstance.get(`/board/public`, {params});
   return response;
 }
 
 export const boardUserList = async (userId: number, page?: number, size?: number) => {
   const params = { userId: userId, page: page, size: size };
 
-  const response = await axios.get(`/board/user`, {params});
+  const response = await axios.get(`/board/public/user`, {params});
 
   return response;
 }
@@ -50,14 +50,14 @@ export const boardUserList = async (userId: number, page?: number, size?: number
 export const filteredBoardList = (category: string, page: number, size: number) => {
   const params = { category: category, page: page, size: size };
   
-  const response = axios.get(`/board/category`, {params});
+  const response = axios.get(`/board/public/category`, {params});
   return response;
 }
 
 export const boardDetail = (boardId: number) => {
   const params = { boardId: boardId };
 
-  const response = axiosInstance.get(`/board/detail`, {params});
+  const response = axiosInstance.get(`/board/public/detail`, {params});
   return response;
 }
 
@@ -84,7 +84,7 @@ export const boardDislike = async (boardId: number, userId: number) => {
 
 export const boardTitleSearch = async (title: string, page?: number, size?: number) => {
   const params = { title: title, page: page, size: size };
-  const response = await axiosInstance.get(`/board/title`, { params: params });
+  const response = await axiosInstance.get(`/board/public/title`, { params: params });
 
   // console.log(response.data.data.content);
   return (response.data.data.content);
