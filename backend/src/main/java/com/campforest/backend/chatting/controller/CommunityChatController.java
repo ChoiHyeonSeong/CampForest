@@ -69,25 +69,8 @@ public class CommunityChatController {
     }
 
     //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
-    @PostMapping("/room/{roomId}/markAsRead")
-    @SendTo("/sub/community/{roomId}")
-    public ApiResponse<?> markMessagesAsRead(
-        Authentication authentication,
-        @PathVariable Long roomId) {
-        try {
-            if (authentication == null) {
-                return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
-            }
-            Users user = userService.findByEmail(authentication.getName())
-                .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-            Long nowId = user.getUserId();
-
-            communityChatService.markMessagesAsRead(roomId, nowId);
-        return ApiResponse.createSuccessWithNoContent("메시지를 읽음 처리 성공.");
-        } catch (Exception e) {
-            return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
-        }
-    }
+    // @MessageMapping("/{roomId}/send")
+    // @SendTo("/sub/community/{roomId}")
     @MessageMapping("/room/{roomId}/markAsRead")
     public void markMessagesAsReadWebSocket(
         @DestinationVariable Long roomId,

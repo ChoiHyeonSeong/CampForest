@@ -1,8 +1,13 @@
 package com.campforest.backend.board.repository.board;
 
+import com.campforest.backend.board.dto.CountResponseDto;
 import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.QBoards;
 import com.campforest.backend.board.entity.QSave;
+import com.campforest.backend.product.model.QProduct;
+import com.campforest.backend.review.model.QReview;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.util.List;
@@ -127,5 +132,32 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 			.fetchCount();
 
 		return new PageImpl<>(results, pageable, total);
+	}
+
+	@Override
+	public CountResponseDto countAllById(Long userId) {
+		QBoards boards = QBoards.boards;
+		QReview qReview = QReview.review;
+		QProduct qProduct = QProduct.product;
+
+		Long boardCount = queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.userId.eq(userId))
+			.fetchOne();
+
+		Long reviewCount = queryFactory
+			.select(qReview.count())
+			.from(qReview)
+			.where(qReview.reviewer.userId.eq(userId))
+			.fetchOne();
+
+		Long productCount = queryFactory
+			.select(qProduct.count())
+			.from(qProduct)
+			.where(qProduct.userId.eq(userId))
+			.fetchOne();
+
+		return new CountResponseDto(boardCount, productCount, reviewCount);
 	}
 }

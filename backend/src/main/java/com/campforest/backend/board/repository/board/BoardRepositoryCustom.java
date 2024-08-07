@@ -1,5 +1,6 @@
 package com.campforest.backend.board.repository.board;
 
+import com.campforest.backend.board.dto.CountResponseDto;
 import com.campforest.backend.board.entity.Boards;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface BoardRepositoryCustom {
 	void minusCommentCount(Long boardId);
 
 	Page<Boards> findSavedBoardsByUserId(Long nowId, Pageable pageable);
+
+	CountResponseDto countAllById(Long userId);
 }

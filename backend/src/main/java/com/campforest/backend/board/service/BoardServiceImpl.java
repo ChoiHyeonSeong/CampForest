@@ -16,6 +16,7 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
+import com.campforest.backend.board.dto.CountResponseDto;
 import com.campforest.backend.board.entity.BoardImage;
 import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
@@ -405,6 +406,11 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
+    }
+
+    @Override
+    public CountResponseDto countAll(Long userId) {
+        return boardRepository.countAllById(userId);
     }
 
     private BoardResponseDto convertToDto(Boards boards) {

@@ -490,4 +490,18 @@ public class BoardController {
             return ApiResponse.createError(ErrorCode.COMMENT_NOT_FOUND);
         }
     }
+    @GetMapping("/public/count")
+    public ApiResponse<?> countAll(Authentication authentication) {
+        try {
+            Users user = userService.findByEmail(authentication.getName())
+                .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+            Long userId = user.getUserId();
+            return ApiResponse.createSuccess(boardService.countAll(userId), "사용자 콘텐츠 작성 수 조회 성공");
+
+        } catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
 }

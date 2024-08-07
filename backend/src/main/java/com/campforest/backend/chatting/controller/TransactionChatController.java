@@ -87,38 +87,19 @@ public class TransactionChatController {
 		}
 	}
 
-	//roomId에서 userId의 상대유저가 보낸메세지 읽음처리
-	@PostMapping("/room/{roomId}/markAsRead")
-	public ApiResponse<?> markMessagesAsRead(
-		Authentication authentication,
-		@PathVariable Long roomId
-	) {
+	@MessageMapping("/transaction/{roomId}/markAsRead")
+	public void markMessagesAsReadWebSocket(
+			@DestinationVariable Long roomId,
+			@Payload Long userId) {
 		try {
-			if (authentication == null) {
-				return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
-			}
-			Users user = userService.findByEmail(authentication.getName())
-				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-			Long nowId = user.getUserId();
-			transactionChatService.markMessagesAsRead(roomId, nowId);
-			return ApiResponse.createSuccessWithNoContent("메시지를 읽음 처리 성공.");
+			transactionChatService.markMessagesAsRead(roomId, userId);
+			// 읽음 처리 완료를 클라이언트에게 알림
+			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/readStatus", userId);
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.CHAT_MARK_READ_FAILED);
+			// 에러 처리
+			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/error", "메시지 읽음 처리 실패");
 		}
 	}
-//	@MessageMapping("/transaction/{roomId}/markAsRead")
-//	public void markMessagesAsReadWebSocket(
-//			@DestinationVariable Long roomId,
-//			@Payload Long userId) {
-//		try {
-//			transactionChatService.markMessagesAsRead(roomId, userId);
-//			// 읽음 처리 완료를 클라이언트에게 알림
-//			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/readStatus", userId);
-//		} catch (Exception e) {
-//			// 에러 처리
-//			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/error", "메시지 읽음 처리 실패");
-//		}
-//	}
 
 	//
 	@MessageMapping("/transaction/{roomId}/{userId}/rentRequest")
