@@ -9,6 +9,7 @@ import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
+import com.campforest.backend.board.dto.CursorResult;
 import com.campforest.backend.board.entity.Comment;
 
 public interface BoardService {
@@ -16,13 +17,16 @@ public interface BoardService {
 
 	BoardResponseDto getBoard(Long nowId, Long boardId);
 
-	Page<BoardResponseDto> getAllBoards(Long nowId, int page, int size);
+	CursorResult<BoardResponseDto> getAllBoards(Long nowId, Long cursorId, int size);
 
-	Page<BoardResponseDto> getUserBoards(Long nowId,Long userId, int page, int size);
+	CursorResult<BoardResponseDto> getUserBoards(Long nowId,Long userId, Long cursorId, int size);
 
-	Page<BoardResponseDto> getTitleBoards(Long nowId,String title, int page, int size);
+	CursorResult<BoardResponseDto> getKeywordBoards(Long nowId,String title, Long cursorId, int size);
 
-	Page<BoardResponseDto> getCategoryBoards(Long nowId,String category, int page, int size);
+	CursorResult<BoardResponseDto> getCategoryBoards(Long nowId,String category, Long cursorId, int size);
+
+	CursorResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size);
+
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 
@@ -59,8 +63,6 @@ public interface BoardService {
 	boolean checkCommentLike(Long commentId, Long userId);
 
 	Long countCommentLike(Long commentId);
-
-	Page<BoardResponseDto> getSavedBoards(Long nowId, int page, int size);
 
 	Comment getCommentById(Long commentId);
 

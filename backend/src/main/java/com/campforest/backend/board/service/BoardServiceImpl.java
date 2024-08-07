@@ -17,6 +17,7 @@ import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
+import com.campforest.backend.board.dto.CursorResult;
 import com.campforest.backend.board.entity.BoardImage;
 import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
@@ -102,97 +103,205 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public Page<BoardResponseDto> getAllBoards(Long nowId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Boards> boardsPage = boardRepository.findAll(pageable);
+    public CursorResult<BoardResponseDto> getAllBoards(Long nowId, Long cursorId, int size) {
+        List<Boards> boards;
+        if (cursorId == null) {
+            boards = boardRepository.findTopN(size + 1);
+        } else {
+            boards = boardRepository.findNextN(cursorId, size + 1);
+        }
 
         List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
         List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
-        return boardsPage.map(board -> {
+
+
+        List<BoardResponseDto> dtos = new ArrayList<>();
+        boolean hasNext = false;
+
+
+        if (boards.size() > size) {
+            hasNext = true;
+            boards = boards.subList(0, size);
+        }
+
+        for (Boards board : boards) {
             BoardResponseDto dto = convertToDto(board);
             Users user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
             UserImage userImage = user.getUserImage();
             String imageUrl = userImage != null ? userImage.getImageUrl() : null;
-            if (!(imageUrl == null)) {
-                dto.setUserImage(user.getUserImage().getImageUrl());
+            if (imageUrl != null) {
+                dto.setUserImage(imageUrl);
             }
             dto.setNickname(user.getNickname());
             dto.setLiked(likeBoardsId.contains(board.getBoardId()));
             dto.setSaved(saveBoardsId.contains(board.getBoardId()));
-            return dto;
-        });
+            dtos.add(dto);
+        }
+
+        Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
+        return new CursorResult<>(dtos, nextCursorId, hasNext);
+    }
+    @Override
+    public CursorResult<BoardResponseDto> getUserBoards(Long nowId, Long userId, Long cursorId, int size) {
+        List<Boards> boards;
+        if (cursorId == null) {
+            boards = boardRepository.findByUserIdTopN(userId, size + 1);
+        } else {
+            boards = boardRepository.findByUserIdNextN(userId, cursorId, size + 1);
+        }
+
+        List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
+        List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
+
+        List<BoardResponseDto> dtos = new ArrayList<>();
+        boolean hasNext = false;
+
+
+        if (boards.size() > size) {
+            hasNext = true;
+            boards = boards.subList(0, size);
+        }
+
+        for (Boards board : boards) {
+            BoardResponseDto dto = convertToDto(board);
+            Users user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            UserImage userImage = user.getUserImage();
+            String imageUrl = userImage != null ? userImage.getImageUrl() : null;
+            if (imageUrl != null) {
+                dto.setUserImage(imageUrl);
+            }
+            dto.setNickname(user.getNickname());
+            dto.setLiked(likeBoardsId.contains(board.getBoardId()));
+            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
+            dtos.add(dto);
+        }
+
+        Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
+        return new CursorResult<>(dtos, nextCursorId, hasNext);
     }
 
     @Override
-    public Page<BoardResponseDto> getUserBoards(Long nowId, Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Boards> boardsPage = boardRepository.findByUserId(userId, pageable);
+    public CursorResult<BoardResponseDto> getCategoryBoards(Long nowId,String category, Long cursorId, int size) {
+        List<Boards> boards;
+        if (cursorId == null) {
+            boards = boardRepository.findByCategoryTopN(category, size + 1);
+        } else {
+            boards = boardRepository.findByCategoryNextN(category, cursorId, size + 1);
+        }
+
         List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
         List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
 
-        return boardsPage.map(board -> {
+        List<BoardResponseDto> dtos = new ArrayList<>();
+        boolean hasNext = false;
+
+
+        if (boards.size() > size) {
+            hasNext = true;
+            boards = boards.subList(0, size);
+        }
+
+        for (Boards board : boards) {
             BoardResponseDto dto = convertToDto(board);
             Users user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
             UserImage userImage = user.getUserImage();
             String imageUrl = userImage != null ? userImage.getImageUrl() : null;
-            if (!(imageUrl == null)) {
-                dto.setUserImage(user.getUserImage().getImageUrl());
+            if (imageUrl != null) {
+                dto.setUserImage(imageUrl);
             }
             dto.setNickname(user.getNickname());
-
-            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
             dto.setLiked(likeBoardsId.contains(board.getBoardId()));
-            return dto;
-        });
+            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
+            dtos.add(dto);
+        }
+
+        Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
+        return new CursorResult<>(dtos, nextCursorId, hasNext);
     }
 
     @Override
-    public Page<BoardResponseDto> getCategoryBoards(Long nowId, String category, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Boards> boardsPage = boardRepository.findByCategory(category, pageable);
+    public CursorResult<BoardResponseDto> getKeywordBoards(Long nowId, String keyword, Long cursorId, int size) {
+        List<Boards> boards;
+        if (cursorId == null) {
+            boards = boardRepository.findByTitleAndContentTopN(keyword, size + 1);
+        } else {
+            boards = boardRepository.findByTitleAndContentNextN(keyword,cursorId, size + 1);
+        }
+
         List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
         List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
-        return boardsPage.map(board -> {
+
+        List<BoardResponseDto> dtos = new ArrayList<>();
+        boolean hasNext = false;
+
+
+        if (boards.size() > size) {
+            hasNext = true;
+            boards = boards.subList(0, size);
+        }
+
+        for (Boards board : boards) {
             BoardResponseDto dto = convertToDto(board);
             Users user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
             UserImage userImage = user.getUserImage();
             String imageUrl = userImage != null ? userImage.getImageUrl() : null;
-            if (!(imageUrl == null)) {
-                dto.setUserImage(user.getUserImage().getImageUrl());
+            if (imageUrl != null) {
+                dto.setUserImage(imageUrl);
             }
             dto.setNickname(user.getNickname());
-
-            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
             dto.setLiked(likeBoardsId.contains(board.getBoardId()));
-            return dto;
-        });
+            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
+            dtos.add(dto);
+        }
+
+        Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
+        return new CursorResult<>(dtos, nextCursorId, hasNext);
     }
 
     @Override
-    public Page<BoardResponseDto> getTitleBoards(Long nowId, String title, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Boards> boardsPage = boardRepository.findByTitle(title, pageable);
+    public CursorResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size) {
+        List<Boards> boards;
+        if (cursorId == null) {
+            boards = boardRepository.findSavedBoardsByUserIdTopN(nowId, size + 1);
+        } else {
+            boards = boardRepository.findSavedBoardsByUserIdNextN(nowId,cursorId, size + 1);
+        }
+
         List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
         List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
-        return boardsPage.map(board -> {
+
+        List<BoardResponseDto> dtos = new ArrayList<>();
+        boolean hasNext = false;
+
+
+        if (boards.size() > size) {
+            hasNext = true;
+            boards = boards.subList(0, size);
+        }
+
+        for (Boards board : boards) {
             BoardResponseDto dto = convertToDto(board);
             Users user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
             UserImage userImage = user.getUserImage();
             String imageUrl = userImage != null ? userImage.getImageUrl() : null;
-            if (!(imageUrl == null)) {
-                dto.setUserImage(user.getUserImage().getImageUrl());
+            if (imageUrl != null) {
+                dto.setUserImage(imageUrl);
             }
             dto.setNickname(user.getNickname());
-
-            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
             dto.setLiked(likeBoardsId.contains(board.getBoardId()));
-            return dto;
-        });
+            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
+            dtos.add(dto);
+        }
+
+        Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
+        return new CursorResult<>(dtos, nextCursorId, hasNext);
     }
+
 
     @Transactional
     @Override
@@ -377,31 +486,7 @@ public class BoardServiceImpl implements BoardService {
         return commentLikeRepository.countAllByCommentId(commentId);
     }
 
-    @Override
-    public Page<BoardResponseDto> getSavedBoards(Long nowId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Boards> savedBoardsPage = boardRepository.findSavedBoardsByUserId(nowId, pageable);
-        List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
-        List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
 
-        return savedBoardsPage.map(board -> {
-            BoardResponseDto dto = convertToDto(board);
-            Users user = userRepository.findById(nowId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            UserImage userImage = user.getUserImage();
-            String imageUrl = userImage != null ? userImage.getImageUrl() : null;
-
-            dto.setNickname(user.getNickname());
-            if (imageUrl != null) {
-                dto.setUserImage(imageUrl);
-            }
-            dto.setLiked(likeBoardsId.contains(board.getBoardId()));
-            dto.setSaved(saveBoardsId.contains(board.getBoardId()));  // 저장된 게시글이므로 true로 설정
-
-            return dto;
-        });
-    }
 
     @Override
     public Comment getCommentById(Long commentId) {

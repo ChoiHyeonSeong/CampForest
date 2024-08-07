@@ -26,57 +26,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 	}
 
 	@Override
-	public Page<Boards> findByUserId(Long userId, Pageable pageable) {
-		List<Boards> content = queryFactory
-			.selectFrom(boards)
-			.where(boards.userId.eq(userId))
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.orderBy(boards.createdAt.desc())
-			.fetch();
-
-		long total = queryFactory
-			.selectFrom(boards)
-			.where(boards.userId.eq(userId))
-			.fetchCount();
-
-		return new PageImpl<>(content, pageable, total);
-	}
-
-	@Override
-	public Page<Boards> findByCategory(String category, Pageable pageable) {
-		List<Boards> content = queryFactory
-			.selectFrom(boards)
-			.where(boards.category.eq(category))
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.orderBy(boards.createdAt.desc())
-			.fetch();
-		long total = queryFactory
-			.selectFrom(boards)
-			.where(boards.category.eq(category))
-			.fetchCount();
-		return new PageImpl<>(content, pageable, total);
-	}
-
-	@Override
-	public Page<Boards> findByTitle(String title, Pageable pageable) {
-		title = "%" + title + "%";
-		List<Boards> content = queryFactory
-			.selectFrom(boards)
-			.where(boards.title.like(title))
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.orderBy(boards.createdAt.desc())
-			.fetch();
-		long total = queryFactory
-			.selectFrom(boards)
-			.where(boards.category.like(title))
-			.fetchCount();
-		return new PageImpl<>(content, pageable, total);
-	}
-
-	@Override
 	public void plusLikeCount(Long boardId) {
 		queryFactory
 			.update(boards)
@@ -113,28 +62,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 	}
 
 	@Override
-	public Page<Boards> findSavedBoardsByUserId(Long userId, Pageable pageable) {
-		QSave savedBoards = QSave.save;
-
-		List<Boards> results = queryFactory
-			.selectFrom(boards)
-			.join(savedBoards).on(boards.boardId.eq(savedBoards.boardId))
-			.where(savedBoards.userId.eq(userId))
-			.orderBy(savedBoards.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		long total = queryFactory
-			.selectFrom(boards)
-			.join(savedBoards).on(boards.boardId.eq(savedBoards.boardId))
-			.where(savedBoards.userId.eq(userId))
-			.fetchCount();
-
-		return new PageImpl<>(results, pageable, total);
-	}
-
-	@Override
 	public CountResponseDto countAllById(Long userId) {
 		QBoards boards = QBoards.boards;
 		QReview qReview = QReview.review;
@@ -159,5 +86,113 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 			.fetchOne();
 
 		return new CountResponseDto(boardCount, productCount, reviewCount);
+	}
+
+	@Override
+	public List<Boards> findTopN(int limit) {
+		return queryFactory
+			.selectFrom(boards)
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public List<Boards> findNextN(Long cursorId, int limit) {
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.boardId.lt(cursorId))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+	public List<Boards> findByUserIdTopN(Long userId, int limit) {
+
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.userId.eq(userId))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	public List<Boards> findByUserIdNextN(Long userId, Long cursorId, int limit) {
+
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.userId.eq(userId)
+				.and(boards.boardId.lt(cursorId)))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+	public List<Boards> findByCategoryTopN(String category, int limit) {
+
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.category.eq(category))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	public List<Boards> findByCategoryNextN(String category, Long cursorId, int limit) {
+
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.category.eq(category)
+				.and(boards.boardId.lt(cursorId)))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+	public List<Boards> findByTitleAndContentTopN(String keyword, int limit) {
+
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.title.like("%" + keyword + "%")
+			.or(boards.content.like("%" + keyword + "%")))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	public List<Boards> findByTitleAndContentNextN(String keyword, Long cursorId, int limit) {
+
+		return queryFactory
+			.selectFrom(boards)
+			.where((boards.title.like("%" + keyword + "%")
+				.or(boards.content.like("%" + keyword + "%")))
+				.and(boards.boardId.lt(cursorId)))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public List<Boards> findSavedBoardsByUserIdTopN(Long userId, int limit) {
+		QSave savedBoards = QSave.save;
+
+		return queryFactory
+			.selectFrom(boards)
+			.join(savedBoards).on(boards.boardId.eq(savedBoards.boardId))
+			.where(savedBoards.userId.eq(userId))
+			.orderBy(savedBoards.boardId.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public List<Boards> findSavedBoardsByUserIdNextN(Long userId, Long cursorId, int limit) {
+		QSave savedBoards = QSave.save;
+
+		return queryFactory
+			.selectFrom(boards)
+			.join(savedBoards).on(boards.boardId.eq(savedBoards.boardId))
+			.where(savedBoards.userId.eq(userId)
+				.and(savedBoards.boardId.lt(cursorId)))
+			.orderBy(savedBoards.boardId.desc())
+			.limit(limit)
+			.fetch();
 	}
 }

@@ -24,6 +24,7 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
+import com.campforest.backend.board.dto.CursorResult;
 import com.campforest.backend.board.service.BoardService;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
@@ -104,25 +105,23 @@ public class BoardController {
     @GetMapping("/public")
     public ApiResponse<?> getAllBoard(
             Authentication authentication,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size
     ) {
         try {
-            if (page < 0 || size <= 0) {
+            if (size <= 0) {
                 return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
-            } else if (authentication == null) {
-                Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(-1L, page, size);
-
-                return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 목록 조회 성공하였습니다");
-
-            } else {
-                Users user = userService.findByEmail(authentication.getName())
-                        .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-                Long nowId = user.getUserId();
-                Page<BoardResponseDto> boardResponseDtos = boardService.getAllBoards(nowId, page, size);
-
-                return ApiResponse.createSuccess(boardResponseDtos, "게시글 목록 조회 성공하였습니다");
             }
+            Long nowId=-1L;
+            if (authentication != null) {
+                Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+                 nowId = user.getUserId();
+            }
+            CursorResult<BoardResponseDto> result = boardService.getAllBoards(nowId,cursorId,size);
+            String message = authentication == null ? "비로그인 게시글 목록 조회 성공하였습니다" : "게시글 목록 조회 성공하였습니다";
+
+            return ApiResponse.createSuccess(result, message);
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -133,49 +132,51 @@ public class BoardController {
     public ApiResponse<?> getUserBoard(
             Authentication authentication,
             @RequestParam Long userId,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size
     ) {
 
         try {
-            if (page < 0 || size <= 0) {
+            if (size <= 0) {
                 return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
-            } else if (authentication == null) {
-                Page<BoardResponseDto> boardResponseDtos = boardService.getUserBoards(-1L, userId, page, size);
-                return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 사용자별 조회 성공하였습니다");
-            } else {
-                Users user = userService.findByEmail(authentication.getName())
-                        .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-                ;
-                Long nowId = user.getUserId();
-                Page<BoardResponseDto> boardResponseDtos = boardService.getUserBoards(nowId, userId, page, size);
-                return ApiResponse.createSuccess(boardResponseDtos, "게시글 사용자별 조회에 성공하였습니다");
             }
+            Long nowId=-1L;
+            if (authentication != null) {
+                Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+                 nowId = user.getUserId();
+               }
+            CursorResult<BoardResponseDto> result = boardService.getUserBoards(nowId,userId,cursorId,size);
+            String message = authentication == null ? "비로그인 사용자별 게시글 목록 조회 성공하였습니다" : "사용자별 게시글 목록 조회 성공하였습니다";
+
+                return ApiResponse.createSuccess(result, message);
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
         }
     }
 
     //제목 검색
-    @GetMapping("/public/title")
-    public ApiResponse<?> getTitleBoard(
+    @GetMapping("/public/keyword")
+    public ApiResponse<?> getKeywordBoard(
             Authentication authentication,
-            @RequestParam String title,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam String keyword,
+            @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size) {
         try {
-            if (page < 0 || size <= 0) {
+            if (size <= 0) {
                 return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
-            } else if (authentication == null) {
-                Page<BoardResponseDto> boardResponseDtos = boardService.getTitleBoards(-1L, title, page, size);
-                return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 제목으로 검색에 성공하였습니다");
-            } else {
-                Users user = userService.findByEmail(authentication.getName())
-                        .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-                Long nowId = user.getUserId();
-                Page<BoardResponseDto> boardResponseDtos = boardService.getTitleBoards(nowId, title, page, size);
-                return ApiResponse.createSuccess(boardResponseDtos, "게시글 제목으로 검색에 성공하였습니다");
             }
+            Long nowId=-1L;
+            if (authentication != null) {
+                Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+                nowId = user.getUserId();
+            }
+
+            CursorResult<BoardResponseDto> boardResponseDtos = boardService.getKeywordBoards(-1L, keyword, cursorId, size);
+            String message = authentication ==null  ? "비로그인 키워드별 게시글 목록 조회 성공하였습니다" : "키워드별 게시글 목록 조회 성공하였습니다";
+            return ApiResponse.createSuccess(boardResponseDtos, message);
+
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.INVALID_BOARD_CATEGORY);
         }
@@ -186,23 +187,23 @@ public class BoardController {
     public ApiResponse<?> getCategoryBoard(
             Authentication authentication,
             @RequestParam String category,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size) {
         try {
-            if (page < 0 || size <= 0) {
+            if (size <= 0) {
                 return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
-            } else if (authentication == null) {
-                Page<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(-1L, category, page, size);
-                return ApiResponse.createSuccess(boardResponseDtos, "비로그인 게시글 카테고리별 조회에 성공하였습니다");
-
-            } else {
-                Users user = userService.findByEmail(authentication.getName())
-                        .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-                ;
-                Long nowId = user.getUserId();
-                Page<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(nowId, category, page, size);
-                return ApiResponse.createSuccess(boardResponseDtos, "게시글 카테고리별 조회에 성공하였습니다");
             }
+            Long nowId=-1L;
+            if (authentication != null) {
+                Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+                nowId = user.getUserId();
+            }
+
+            CursorResult<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(-1L, category, cursorId, size);
+            String message = authentication ==null  ? "비로그인 카테고리별 게시글 목록 조회 성공하였습니다" : "카테고리별 게시글 목록 조회 성공하였습니다";
+            return ApiResponse.createSuccess(boardResponseDtos, message);
+
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.INVALID_BOARD_CATEGORY);
         }
@@ -212,10 +213,10 @@ public class BoardController {
     @GetMapping("/saved")
     public ApiResponse<?> getSavedBoard(
             Authentication authentication,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size) {
         try {
-            if (page < 0 || size <= 0) {
+            if (size <= 0) {
                 return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
             }
             if (authentication == null) {
@@ -225,7 +226,7 @@ public class BoardController {
                         .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
                 ;
                 Long nowId = user.getUserId();
-                Page<BoardResponseDto> boardResponseDtos = boardService.getSavedBoards(nowId, page, size);
+                CursorResult<BoardResponseDto> boardResponseDtos = boardService.getSavedBoards(nowId, cursorId, size);
                 return ApiResponse.createSuccess(boardResponseDtos, "저장한 게시 조회에 성공하였습니다");
             }
         } catch (Exception e) {
