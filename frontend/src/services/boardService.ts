@@ -44,7 +44,7 @@ export const boardList = (page: number, size: number) => {
 export const boardUserList = async (userId: number, page?: number, size?: number) => {
   const params = { userId: userId, page: page, size: size };
 
-  const response = await axios.get(`/board/public/user`, {params});
+  const response = await axiosInstance.get(`/board/public/user`, {params});
 
   return response;
 }
@@ -99,7 +99,14 @@ export const boardSave = async (boardId: number) => {
 }
 
 export const deleteSave = async (boardId: number) => {
-  const response = await axiosInstance.post(`/board/save?boardId=${boardId}`);
+  const response = await axiosInstance.delete(`/board/save?boardId=${boardId}`);
 
   console.log(response);
+}
+
+export const savedList = async (page: number, size: number) => {
+  const params = { page: page, size: size }
+  const response = await axiosInstance.get(`/board/saved`, { params: params });
+
+  return response;
 }

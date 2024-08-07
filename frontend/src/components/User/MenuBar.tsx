@@ -1,20 +1,15 @@
 import React from 'react';
-import { ReactComponent as ArticleIcon } from '@assets/icons/article-outline.svg';
-import { ReactComponent as BookMarkIcon } from '@assets/icons/bookmark.svg';
-import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Props = {
   boardCount: number;
   productCount: number;
   reviewCount: number;
-  selectedMenu: string;
-  setSelectedMenu: (menu: string) => void;
+  selectedMenu: string | null;
 }
   
 const MenuBar = (props: Props) => {
-  const handleMenuClick = (menu: string) => {
-    props.setSelectedMenu(menu);
-  }
+  const navigate = useNavigate()
 
   return (
     <div>
@@ -29,7 +24,7 @@ const MenuBar = (props: Props) => {
 
         {/* 게시물 */}
         <div 
-          onClick={() => handleMenuClick('게시물')}
+          onClick={() => navigate('')}
           className={`
             ${props.selectedMenu === '게시물' ?
               `
@@ -45,12 +40,11 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>게시물</p>
-          <p>{props.boardCount}</p>
         </div>
 
         {/* 판매/대여 */}
         <div 
-          onClick={() => handleMenuClick('판매/대여')}
+          onClick={() => navigate('product')}
           className={`
             ${props.selectedMenu === '판매/대여' ?
               `
@@ -66,12 +60,11 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>판매/대여</p>
-          <p>{props.productCount}</p>
         </div>
 
         {/* 거래후기 */}
         <div 
-          onClick={() => handleMenuClick('거래후기')}
+          onClick={() => navigate('review')}
           className={`
             ${props.selectedMenu === '거래후기' ?
               `
@@ -87,7 +80,6 @@ const MenuBar = (props: Props) => {
             }
           >
           <p className='me-2'>거래후기</p>
-          <p>{props.reviewCount}</p>
         </div>
       </div>
 

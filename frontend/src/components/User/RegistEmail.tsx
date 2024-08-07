@@ -6,7 +6,9 @@ import { RootState } from '@store/store';
 import { registRequired, registClear } from '@store/registSlice';
 import { setIsLoading } from '@store/modalSlice';
 
-import { requestEmail, validateEmail } from '@services/authService';
+import { requestEmail, validateEmail, requestPhone, validatePhone } from '@services/authService';
+
+import Timer from '@components/Public/Timer';
 
 const RegistEmail: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,7 +36,7 @@ const RegistEmail: React.FC = () => {
   const [inputEmailValue, setInputEmailValue] = useState<string>('');
   const [emailValidateNumber, setEmailValidateNumber] = useState<string>('');
   const [emailCertificationState, setEmailCertificationState] = useState<0 | 1 | 2>(0);
-  
+
   const certificationBtnClass = {
     0: 'bg-light-gray-3 dark:bg-dark-gray-3 hover:bg-light-signature dark:hover:bg-dark-signature', // 인증전
     1: 'bg-light-signature dark:bg-dark-signature hover:bg-light-signature-hover dark:hover:bg-dark-signature-hover', // 인증중
@@ -67,19 +69,41 @@ const RegistEmail: React.FC = () => {
 
   // 휴대폰 인증
   const requestCertificationPhone = async () => {
-    alert('아직 기능 미구현(아무숫자나 넣고 인증 누르기)')
-    setPhoneCertificationState(1)
+    try {
+      dispatch(setIsLoading(true))
+      const result = await requestPhone(inputPhoneValue)
+      if (result?.data.status === 'C000') {
+        alert('SMS가 발송되었습니다.')
+        setPhoneCertificationState(1)
+      } else {
+        alert('다시 요청해주세요.')
+      }
+      dispatch(setIsLoading(false))
+    } catch (error) {
+      dispatch(setIsLoading(false))
+      console.log(error)
+    }
   }
 
   const validateCertificationPhone = async () => {
-    alert('인증 완료되었습니다. (기능미구현임)')
-    setPhoneCertificationState(2)
-    dispatch(
-      registRequired({
-        ...registFormData.required,
-        phoneNumber: inputPhoneValue,
-      })
-    );
+    try {
+      const result = await validatePhone(inputPhoneValue, phoneValidateNumber)
+      if (result?.data.status === 'C000') {
+        alert('정상적으로 인증되었습니다.');
+        setPhoneCertificationState(2);
+        dispatch(
+          registRequired({
+            ...registFormData.required,
+            phoneNumber: inputPhoneValue,
+          })
+        );
+      } else {
+        alert('인증에 실패했습니다. 다시 요청해주세요.')
+        setPhoneCertificationState(0)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // 이메일 인증
@@ -101,6 +125,7 @@ const RegistEmail: React.FC = () => {
         }
         dispatch(setIsLoading(false))
       } catch (error) {
+        dispatch(setIsLoading(false))
         console.log(error)
       }
     } else {
@@ -256,7 +281,7 @@ const RegistEmail: React.FC = () => {
             </div>
             <div 
               className={`
-                w-[45%] min-w-[20rem] 
+                flex justify-between items-center w-[45%] min-w-[20rem] 
                 border-light-border
                 dark:border-dark-border
                 border-b
@@ -264,8 +289,9 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
+                  ${phoneCertificationState === 1 ? '' : 'dark:placeholder-dark-gray-1 placeholder-light-gray-1'}
                   ${certificationInputTextClass[phoneCertificationState]}
-                  w-[75%] px-[1rem] py-[0.75rem]
+                  w-[55%] px-[1rem] py-[0.75rem]
                   bg-light-white
                   dark:bg-dark-white
                   focus:outline-none
@@ -277,8 +303,17 @@ const RegistEmail: React.FC = () => {
                 onChange={(event) => {
                   setPhoneValidateNumber(event.target.value);
                 }}
-                disabled={phoneCertificationState === 2}
+                disabled={phoneCertificationState !== 1}
               />
+              
+              <div className='flex-grow text-center'>
+                { 
+                  phoneCertificationState === 1 ? 
+                  <Timer onTimerEnd={() => setPhoneCertificationState(0)} totalSec={180}/> :
+                  <></>
+                }
+              </div>
+
               <button 
                 onClick={(event) => {
                   event.preventDefault();
@@ -286,7 +321,7 @@ const RegistEmail: React.FC = () => {
                 }}
                 className={`
                   ${certificationBtnClass[phoneCertificationState]}
-                  w-[20%] h-[1.75rem] 
+                  w-[20%] h-[1.75rem] me-[1rem]
                   text-light-white
                   dark:text-dark-white
                   text-[0.75rem] transition-all duration-300 rounded-sm 
@@ -336,7 +371,7 @@ const RegistEmail: React.FC = () => {
             </div>
             <div 
               className={`
-                flex items-center w-[45%] min-w-[20rem] 
+                flex items-center justify-between w-[45%] min-w-[20rem] 
                 border-light-border
                 dark:border-dark-border
                 border-b
@@ -344,8 +379,9 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
+                  ${emailCertificationState === 1 ? '' : 'dark:placeholder-dark-gray-1 placeholder-light-gray-1'}
                   ${certificationInputTextClass[emailCertificationState]}
-                  w-[75%] px-[1rem] py-[0.75rem]
+                  w-[55%] px-[1rem] py-[0.75rem]
                   bg-light-white
                   dark:bg-dark-white
                   focus:outline-none
@@ -357,8 +393,17 @@ const RegistEmail: React.FC = () => {
                 onChange={(event) => {
                   setEmailValidateNumber(event.target.value);
                 }}
-                disabled={emailCertificationState === 2}
+                disabled={emailCertificationState !== 1}
               />
+
+              <div className='flex-grow text-center'>
+                { 
+                  emailCertificationState === 1 ? 
+                  <Timer onTimerEnd={() => setEmailCertificationState(0)} totalSec={180}/> :
+                  <></>
+                }
+              </div>
+
               <button
                 onClick={(event) => {
                   event.preventDefault();
@@ -366,7 +411,7 @@ const RegistEmail: React.FC = () => {
                 }}
                 className={`
                   ${certificationBtnClass[emailCertificationState]}
-                  w-[20%] h-[1.75rem] 
+                  w-[20%] h-[1.75rem] me-[1rem]
                   text-light-white
                   dark:text-dark-white 
                   text-[0.75rem] transition-all duration-300 rounded-sm 

@@ -140,14 +140,14 @@ const Board = (props: Props) => {
         deleteSave(props.board.boardId);
         setSaved(false);
       } catch (error) {
-
+        console.error('북마크 취소 실패: ', error);
       }
     } else {
       try {
         boardSave(props.board.boardId);
         setSaved(true);
       } catch (error) {
-
+        console.error('북마크 실패: ', error);
       }
     }
   }
@@ -168,13 +168,14 @@ const Board = (props: Props) => {
             <Link
               to={`/user/${props.board.userId}`}
               className={`
-                overflow-hidden size-[2.75rem] md:size-[3rem]
-                rounded-full shadow-md
+                flex items-center justify-center size-[2.75rem] md:size-[3rem]
+                rounded-full shadow-md overflow-hidden
               `}
             >
               <img 
                 src={props.board.userImage ? props.board.userImage : defaultProfileImage}
                 alt=''
+                className='w-full'
               />
             </Link>
             <div className={`ms-[1rem]`}>
@@ -206,69 +207,69 @@ const Board = (props: Props) => {
           >
             {props.board.imageUrls.length > 0 && (
               <Swiper
-              className="w-full aspect-1"
-              style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
-              modules={[Navigation, Pagination]}
-              spaceBetween={0}
-              slidesPerView={1}
-              navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
-              pagination={{ clickable: true }}
-            >
-              {props.board.imageUrls.map((imageUrl, index) => (
-                <SwiperSlide key={index} >
-                  <img
-                    src={imageUrl}
-                    alt="ProductImg"
-                    className="
-                      w-full h-full 
-                      object-contain
-                    "
-                  />
-                </SwiperSlide>
-              ))}
-              <button 
-                className={`
-                  my-next-button 
-                  absolute top-1/2 right-[0.5rem] z-[10] p-[0.5rem]
-                  transform -translate-y-1/2 rounded-full
-                  bg-white bg-opacity-50
-                `}
+                className="w-full aspect-1"
+                style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
+                modules={[Navigation, Pagination]}
+                spaceBetween={0}
+                slidesPerView={1}
+                navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
+                pagination={{ clickable: true }}
               >
-                <RightArrowIcon className="w-[1.5rem] h-[1.5rem]" />
-              </button>
-              <button 
-                className={`
-                  my-prev-button
-                  absolute top-1/2 left-2 z-10 p-2
-                  transform -translate-y-1/2 rounded-full
-                  bg-white bg-opacity-50
-                `}
-              >
-                <LeftArrowIcon className="w-[1.5rem] h-[1.5rem]" />
-              </button>
-              <style
-                dangerouslySetInnerHTML={{
-                  __html: `
-                  .swiper-container {
-                    width: 100% !important;
-                    height: 100% !important;
-                  }
-                  .swiper-slide {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  }
-                  .swiper-pagination-bullet {
-                    background-color: #888 !important;
-                    opacity: 0.5 !important;
-                  }
-                  .swiper-pagination-bullet-active {
-                    background-color: #555 !important;
-                    opacity: 1 !important;
-                  }
-                `,
-                }}
-              />
+                {props.board.imageUrls.map((imageUrl, index) => (
+                  <SwiperSlide key={index} >
+                    <img
+                      src={imageUrl}
+                      alt="ProductImg"
+                      className="
+                        w-full h-full 
+                        object-contain
+                      "
+                    />
+                  </SwiperSlide>
+                ))}
+                <button 
+                  className={`
+                    my-next-button 
+                    absolute top-1/2 right-[0.5rem] z-[10] p-[0.5rem]
+                    transform -translate-y-1/2 rounded-full
+                    bg-white bg-opacity-50
+                  `}
+                >
+                  <RightArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+                </button>
+                <button 
+                  className={`
+                    my-prev-button
+                    absolute top-1/2 left-2 z-10 p-2
+                    transform -translate-y-1/2 rounded-full
+                    bg-white bg-opacity-50
+                  `}
+                >
+                  <LeftArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+                </button>
+                <style
+                  dangerouslySetInnerHTML={{
+                    __html: `
+                    .swiper-container {
+                      width: 100% !important;
+                      height: 100% !important;
+                    }
+                    .swiper-slide {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    }
+                    .swiper-pagination-bullet {
+                      background-color: #888 !important;
+                      opacity: 0.5 !important;
+                    }
+                    .swiper-pagination-bullet-active {
+                      background-color: #555 !important;
+                      opacity: 1 !important;
+                    }
+                  `,
+                  }}
+                />
             </Swiper>
             )}
           </div>
@@ -369,6 +370,7 @@ const Board = (props: Props) => {
         <div className={`w-1/3`}>
           {saved ? 
             (<BookmarkIcon
+              onClick={() => handleBookmark()}
               className={`
                 inline size-[1.75rem]
                 stroke-light-border-icon
@@ -381,6 +383,7 @@ const Board = (props: Props) => {
                 inline size-[1.75rem]
                 fill-none stroke-light-border-icon
                 dark:stroke-dark-border-icon
+                cursor-pointer
               `}
             />)
           }

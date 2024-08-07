@@ -119,9 +119,9 @@ const BoardDetail = () => {
               lg:overflow-y-scroll 
             `}
           >
-            {comments.map((comment, index) => (
+            {comments.map((comment) => (
               <BoardComment 
-                key={index} 
+                key={comment.commentId} 
                 comment={comment}
               />
             ))}

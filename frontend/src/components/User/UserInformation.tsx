@@ -127,11 +127,11 @@ const UserInformation = () => {
                 absolute w-full h-full mx-auto
                 bg-light-black text-light-white
                 dark:bg-dark-black dark:text-dark-white
-                cursor-pointer opacity-60 hover:opacity-100 duration-200 rounded-full
+                cursor-pointer opacity-0 hover:opacity-80 duration-200 rounded-full
               `}
             >
               <p className={`flex justify-center items-center h-full`}>
-                사진변경
+                변경
               </p>
             </div>
             <input 

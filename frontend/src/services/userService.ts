@@ -30,3 +30,15 @@ export const nicknameSearch = async (nickname: string) => {
   console.log(response.data);
   return (response.data.data);
 }
+
+export const userFollow = async (userId: number) => {
+  const response = await axiosInstance.post(`/user/follow/${userId}`);
+
+  return response;
+}
+
+export const userUnfollow = async (userId: number) => {
+  const response = await axiosInstance.post(`/user/unfollow/${userId}`);
+
+  return response;
+}
