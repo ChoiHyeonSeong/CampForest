@@ -1,4 +1,4 @@
-package com.campforest.backend.board.dto;
+package com.campforest.backend.common;
 
 import java.util.List;
 
@@ -10,7 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CursorResult <T> {
+
 	private List<T> content;
 	private Long nextCursor;
 	private boolean hasNext;
+	private long totalCount;
 }

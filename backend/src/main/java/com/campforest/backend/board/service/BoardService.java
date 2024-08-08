@@ -9,9 +9,9 @@ import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
-import com.campforest.backend.board.dto.CursorResult;
 import com.campforest.backend.board.dto.SearchResult;
 import com.campforest.backend.board.entity.Comment;
+import com.campforest.backend.common.CursorResult;
 
 public interface BoardService {
 	void writeBoard(BoardRequestDto boardRequestDto);

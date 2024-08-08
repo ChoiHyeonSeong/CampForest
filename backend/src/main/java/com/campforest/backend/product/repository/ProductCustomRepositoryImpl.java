@@ -10,6 +10,7 @@ import com.campforest.backend.product.model.Category;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.model.QProduct;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -28,29 +29,50 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
 	private final JPAQueryFactory queryFactory;
 
+
 	@Override
-	public Page<Product> findProductsByDynamicConditions(Category category, ProductType productType,
-		List<String> locations, Long minPrice, Long maxPrice, Long findUserId, String titleKeyword, Pageable pageable) {
+	public List<Product> findProductsByDynamicConditionsWithCursor(
+		Category category, ProductType productType, List<String> locations, Long minPrice, Long maxPrice,
+		Long findUserId, String titleKeyword, int limit, Long cursorId) {
+
 		QProduct product = QProduct.product;
 
-		var query = queryFactory.selectFrom(product)
-			.where(
-				category != null ? product.category.eq(category) : null,
-				productType != null ? product.productType.eq(productType) : null,
-				minPrice != null ? product.productPrice.goe(minPrice) : null,
-				maxPrice != null ? product.productPrice.loe(maxPrice) : null,
-				locations != null && !locations.isEmpty() ? product.location.in(locations) : null,
-				titleKeyword != null && !titleKeyword.isEmpty() ? product.productName.containsIgnoreCase(titleKeyword) : null,
-				findUserId != null ? product.userId.eq(findUserId) : null
-			);
+		BooleanBuilder whereClause = new BooleanBuilder();
 
-		long total = query.fetchCount();
+		if (category != null) whereClause.and(product.category.eq(category));
+		if (productType != null) whereClause.and(product.productType.eq(productType));
+		if (minPrice != null) whereClause.and(product.productPrice.goe(minPrice));
+		if (maxPrice != null) whereClause.and(product.productPrice.loe(maxPrice));
+		if (locations != null && !locations.isEmpty()) whereClause.and(product.location.in(locations));
+		if (titleKeyword != null && !titleKeyword.isEmpty()) whereClause.and(product.productName.containsIgnoreCase(titleKeyword));
+		if (findUserId != null) whereClause.and(product.userId.eq(findUserId));
+		if (cursorId != null) whereClause.and(product.id.lt(cursorId));
 
-		List<Product> results = query
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
+		return queryFactory.selectFrom(product)
+			.where(whereClause)
+			.orderBy(product.id.desc())
+			.limit(limit)
 			.fetch();
+	}
 
-		return new PageImpl<>(results, pageable, total);
+	public long countProductsByDynamicConditions(
+		Category category, ProductType productType, List<String> locations, Long minPrice, Long maxPrice,
+		Long findUserId, String titleKeyword) {
+
+		QProduct product = QProduct.product;
+
+		BooleanBuilder whereClause = new BooleanBuilder();
+
+		if (category != null) whereClause.and(product.category.eq(category));
+		if (productType != null) whereClause.and(product.productType.eq(productType));
+		if (minPrice != null) whereClause.and(product.productPrice.goe(minPrice));
+		if (maxPrice != null) whereClause.and(product.productPrice.loe(maxPrice));
+		if (locations != null && !locations.isEmpty()) whereClause.and(product.location.in(locations));
+		if (titleKeyword != null && !titleKeyword.isEmpty()) whereClause.and(product.productName.containsIgnoreCase(titleKeyword));
+		if (findUserId != null) whereClause.and(product.userId.eq(findUserId));
+
+		return queryFactory.selectFrom(product)
+			.where(whereClause)
+			.fetchCount();
 	}
 }

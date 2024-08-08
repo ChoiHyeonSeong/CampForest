@@ -24,14 +24,12 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
-import com.campforest.backend.board.dto.CursorResult;
 import com.campforest.backend.board.dto.SearchResult;
 import com.campforest.backend.board.service.BoardService;
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
-import com.campforest.backend.product.dto.ProductRegistDto;
-import com.campforest.backend.product.dto.ProductUpdateDto;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.UserService;
 

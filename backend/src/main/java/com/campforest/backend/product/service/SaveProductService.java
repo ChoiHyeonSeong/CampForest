@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.product.dto.PageResult;
 import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductSearchDto;
@@ -18,6 +19,7 @@ import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductImage;
 import com.campforest.backend.product.model.SaveProduct;
 import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.product.repository.SaveProductCustomRepository;
 import com.campforest.backend.product.repository.SaveProductRepository;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.repository.jpa.UserRepository;
@@ -90,5 +92,24 @@ public class SaveProductService {
 			.orElse(null); // 사진이 없을 경우 null 반환
 
 		return new ProductSearchDto(findProduct, imageUrl, user.getNickname(), user.getUserImage());
+	}
+
+	public CursorResult<SaveProductDto> getSaveListWithCursor(Long userId, Long cursorId, int size) {
+		long totalCount = saveProductRepository.countByUserId(userId);
+
+		List<SaveProduct> saveProducts = saveProductRepository.findAllByUserUserIdWithCursor(userId, cursorId, size + 1);
+
+		List<SaveProductDto> saveProductDtos = saveProducts.stream()
+			.limit(size)
+			.map(saveProduct -> {
+				ProductSearchDto productSearchDto = getProductSearchDto(saveProduct.getProduct().getId());
+				return new SaveProductDto(saveProduct, productSearchDto);
+			})
+			.collect(Collectors.toList());
+
+		boolean hasNext = saveProducts.size() > size;
+		Long nextCursorId = hasNext ? saveProducts.get(size).getId() : null;
+
+		return new CursorResult<>(saveProductDtos, nextCursorId, hasNext, totalCount);
 	}
 }

@@ -42,4 +42,10 @@ public interface BoardRepositoryCustom {
 	Long getKeywordBoardCount(String keyword);
 
 	Long getSavedBoardCount(Long nowId);
+
+	long countAll();
+	long countByUserId(Long userId);
+	long countByCategory(String category);
+	long countByKeyword(String keyword);
+	long countSavedByUserId(Long userId);
 }

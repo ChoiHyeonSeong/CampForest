@@ -234,4 +234,54 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 			.where(save.userId.eq(nowId))
 			.fetchOne();
 	}
+
+	public long countAll() {
+		Long count = queryFactory
+			.select(boards.count())
+			.from(boards)
+			.fetchOne();
+		return count != null ? count : 0;
+	}
+
+	public long countByUserId(Long userId) {
+		Long count = queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.userId.eq(userId))
+			.fetchOne();
+		return count != null ? count : 0;
+	}
+
+	public long countByCategory(String category) {
+		Long count = queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.category.eq(category))
+			.fetchOne();
+		return count != null ? count : 0;
+	}
+
+	public long countByKeyword(String keyword) {
+		Long count = queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.title.like("%" + keyword + "%")
+				.or(boards.content.like("%" + keyword + "%")))
+			.fetchOne();
+		return count != null ? count : 0;
+	}
+
+	public long countSavedByUserId(Long userId) {
+		QSave savedBoards = QSave.save;
+
+		Long count = queryFactory
+			.select(boards.count())
+			.from(boards)
+			.join(savedBoards).on(boards.boardId.eq(savedBoards.boardId))
+			.where(savedBoards.userId.eq(userId))
+			.fetchOne();
+		return count != null ? count : 0;
+	}
+
+
 }

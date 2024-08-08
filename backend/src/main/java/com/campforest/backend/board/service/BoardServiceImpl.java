@@ -17,7 +17,6 @@ import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
-import com.campforest.backend.board.dto.CursorResult;
 import com.campforest.backend.board.dto.SearchResult;
 import com.campforest.backend.board.entity.BoardImage;
 import com.campforest.backend.board.entity.Boards;
@@ -31,6 +30,7 @@ import com.campforest.backend.board.repository.commentlike.CommentLikeRepository
 import com.campforest.backend.board.repository.comment.CommentRepository;
 import com.campforest.backend.board.repository.like.LikeRepository;
 import com.campforest.backend.board.repository.save.SaveRepository;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.user.model.UserImage;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.repository.jpa.UserRepository;
@@ -105,6 +105,9 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public CursorResult<BoardResponseDto> getAllBoards(Long nowId, Long cursorId, int size) {
+
+        long totalCount = boardRepository.countAll();
+
         List<Boards> boards;
         if (cursorId == null) {
             boards = boardRepository.findTopN(size + 1);
@@ -141,7 +144,7 @@ public class BoardServiceImpl implements BoardService {
         }
 
         Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
-        return new CursorResult<>(dtos, nextCursorId, hasNext);
+        return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
     }
     @Override
     public SearchResult<BoardResponseDto> getUserBoards(Long nowId, Long userId, Long cursorId, int size) {
