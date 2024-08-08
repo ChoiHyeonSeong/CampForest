@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef  } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
@@ -8,7 +8,6 @@ import LogoWhite from '@assets/logo/logo-darkmode.svg'
 const LandingPage = () => {
   const [currentPage, setCurrentPage] = useState(0)
   const [direction, setDirection] = useState('down')
-  const textRef = useRef(null)
 
   const texts = [
     '잠자던 캠핑용품,<br/>새로운 시작이 되다',
@@ -35,7 +34,7 @@ const LandingPage = () => {
 
 
   return (
-    <div className='fixed inset-0 w-screen h-screen z-[100] pt-[10%] bg-landing-bg-lg bg-cover bg-center bg-no-repeat overflow-hidden'>
+    <div className='fixed inset-0 w-screen h-screen z-[100] pt-[35%] md:pt-[10%] bg-landing-bg-sm md:bg-landing-bg-lg bg-cover bg-center bg-no-repeat overflow-hidden'>
       <div className='flex flex-col justify-between items-center h-[50%] text-white text-center'>
         <div>
           <img
@@ -48,7 +47,7 @@ const LandingPage = () => {
           {texts.map((text, index) => (
             <div
               key={index}
-              className='text-[3.2rem] font-bold transition-transform duration-500 absolute left-0 right-0'
+              className='text-3xl md:text-6xl font-bold transition-transform duration-500 absolute left-0 right-0'
               style={{
                 transform: `translateY(${(index - currentPage) * 100}%)`,
                 opacity: index === currentPage ? 1 : 0,
