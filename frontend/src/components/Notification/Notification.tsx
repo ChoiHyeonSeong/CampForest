@@ -4,14 +4,19 @@ import userImage from '@assets/images/basic_profile.png'
 
 const Notification = () => {
   return (
-    <div className={`flex items-center py-[0.75rem]`}>
+    <div
+      className={`
+        flex items-center p-[0.75rem]
+        bg-light-white border-light-border-1
+        dark:bg-dark-white dark:border-dark-border-1
+        border-b overflow-hidden  
+      `}
+    >
       {/* 사용자 이미지 */}
       <div 
         className={`
           shrink-0 size-[2.5rem]
-          border-light-border
-          dark:border-dark-border
-          rounded-full border
+          rounded-full border overflow-hidden
         `}
       >
           <img 
@@ -48,10 +53,10 @@ const Notification = () => {
         </div>
         <div 
           className={`
-            shrink-0 w-[3.5rem] py-[0.35rem]
+            shrink-0 px-[0.75rem] py-[0.35rem]
             bg-light-signature text-light-white hover:bg-light-signature-hover
             dark:bg-dark-signature hover:dark:bg-dark-signature-hover
-            text-xs text-center rounded-md cursor-pointer
+            text-[0.8rem] text-center rounded-md cursor-pointer
           `}
         >
           팔로우

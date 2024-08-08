@@ -8,6 +8,7 @@ import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
 import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 
 import ProfileImage from '@assets/images/profileimgs.png'
+import NavTopPushModal from './NavTopPushModal';
 
 type Props = {
   toggleMenu: () => void;
@@ -19,9 +20,24 @@ const NavbarTop = (props: Props) => {
   const currentLoc = useLocation();
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isPushModalOpen, setIsPushModalOpen] = useState(false);
+
+  const togglePushModal = () => {
+    setIsPushModalOpen(!isPushModalOpen);
+    if (!isPushModalOpen) {
+      setIsProfileModalOpen(false);
+    }
+  };
+
+  const closePushModal = () => {
+    setIsPushModalOpen(false);
+  };
 
   const toggleProfileModal = () => {
     setIsProfileModalOpen(!isProfileModalOpen);
+    if (!isProfileModalOpen) {
+      setIsPushModalOpen(false);
+    }
   };
 
   const closeProfileModal = () => {
@@ -69,15 +85,25 @@ const NavbarTop = (props: Props) => {
         </Link>
       </div>
 
+      {/* 알림 */}
       <div className={`flex items-center justify-end w-[6rem] lg:w-[1.75rem] lg:ms-auto me-[0.75rem] lg:me-0`}>
-        <PushIcon 
-          className={`
-            block lg:hidden size-[1.75rem] 
-            stroke-light-black
-            dark:stroke-dark-black
-            cursor-pointer
-          `}
-        />
+        <div className='relative'>
+          <PushIcon
+            onClick={togglePushModal}
+            className={`
+              block lg:hidden size-[1.55rem] 
+              stroke-light-black
+              dark:stroke-dark-black
+              cursor-pointer
+            `}
+          />
+          <NavTopPushModal
+            isOpen={isPushModalOpen}
+            onClose={closePushModal}
+          />
+        </div>
+        
+        {/* 마이프로필 */}
         <div className={`relative`}>
           <div 
             onClick={toggleProfileModal}
@@ -90,7 +116,10 @@ const NavbarTop = (props: Props) => {
           >
             <img src={ProfileImage} alt="NOIMG" />
           </div>
-          <ProfileModal isOpen={isProfileModalOpen} onClose={closeProfileModal}/>
+          <ProfileModal
+            isOpen={isProfileModalOpen}
+            onClose={closeProfileModal}
+          />
         </div>
       </div>
     </div>
