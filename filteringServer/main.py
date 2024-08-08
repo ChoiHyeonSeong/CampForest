@@ -51,14 +51,19 @@ def calculate_common_follows(user_id_1, user_id_2):
 
 # 유사한 사용자 추천 함수
 def find_most_similar_users(user_id, interest_similarity_df, follow_similarity_df, follow_df, follow_weight=0.9, interest_weight=0.1, top_n=10):
-    if user_id not in interest_similarity_df.index or user_id not in follow_similarity_df.index:
-        raise ValueError(f"User ID {user_id} not found in the data.")
+    if user_id not in interest_similarity_df.index:
+        raise ValueError(f"User ID {user_id} not found in the interest data.")
 
-    # 사용자가 이미 팔로우한 사용자 목록 추출
-    followed_users = follow_df[follow_df['follower_id'] == user_id]['followee_id'].tolist()
+    # 팔로우 데이터가 없는 경우 카테고리 기반으로만 추천
+    if user_id not in follow_similarity_df.index:
+        similar_users = interest_similarity_df[user_id].sort_values(ascending=False).index[1:]  # 자기 자신 제외
+        return [{"user_id": int(user), "similarity_score": float(interest_similarity_df[user_id][user]), "common_follows_count": 0} for user in similar_users[:top_n]]
 
+    # 기존 로직 (팔로우 + 관심사 결합)
     combined_similarity = follow_weight * follow_similarity_df[user_id] + interest_weight * interest_similarity_df[user_id]
     similar_users = combined_similarity.sort_values(ascending=False).index[1:]  # 자기 자신 제외
+
+    followed_users = follow_df[follow_df['follower_id'] == user_id]['followee_id'].tolist()
 
     similar_users_with_common_follows = []
     for similar_user in similar_users:
