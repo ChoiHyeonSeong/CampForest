@@ -152,19 +152,23 @@ public class UserController {
 	}
 
 	@GetMapping("/public/search")
-	public ApiResponse<?> searchUsersByNickname(@RequestParam("nickname") String nickname) {
+	public ApiResponse<?> searchUsersByNickname(
+		@RequestParam("nickname") String nickname,
+		@RequestParam(value = "cursor", defaultValue = "0") Long cursor,
+		@RequestParam(value = "limit", defaultValue = "10") int limit){
 		try {
-			List<Users> usersList = userService.findByNicknameContaining(nickname);
+			List<Users> usersList = userService.findByNicknameContaining(nickname, cursor, limit);
 			if (usersList.isEmpty()) {
 				return ApiResponse.createSuccess(Collections.emptyList(), "검색 결과가 없습니다.");
 			}
+			long totalCount = userService.countByNicknameContaining(nickname);
 
 			List<ResponseInfoDTO> responseDTOList = usersList.stream()
 				.map(ResponseInfoDTO::fromEntity)
 				.collect(Collectors.toList());
 
 			ResponseSearchDTO response = ResponseSearchDTO.builder()
-				.size(responseDTOList.size())
+				.totalCount(totalCount)
 				.users(responseDTOList)
 				.build();
 

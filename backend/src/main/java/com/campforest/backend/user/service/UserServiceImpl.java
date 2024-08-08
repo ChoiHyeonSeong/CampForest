@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -214,8 +216,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<Users> findByNicknameContaining(String nickname) {
-		return userRepository.findByNicknameContaining(nickname);
+	public List<Users> findByNicknameContaining(String nickname, Long cursor, int limit) {
+		Pageable pageable = PageRequest.of(0, limit);
+		return userRepository.findByNicknameContainingAndIdGreaterThan(nickname, cursor, pageable);
+	}
+
+	@Override
+	public long countByNicknameContaining(String nickname) {
+		return userRepository.countByNicknameContaining(nickname);
 	}
 
 	private Users getUserFromAuthentication(Authentication auth) {

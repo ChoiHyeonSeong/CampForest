@@ -38,5 +38,7 @@ public interface UserService {
 
 	Map<String, Object> getPythonRecommendUsers(Long userId);
 
-	List<Users> findByNicknameContaining(String nickname);
+	List<Users> findByNicknameContaining(String nickname, Long cursor, int limit);
+
+	long countByNicknameContaining(String nickname);
 }
