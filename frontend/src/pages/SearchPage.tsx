@@ -9,7 +9,7 @@ import SearchAllList from '@components/Search/SearchAllList';
 const SearchPage = () => {
   const [inputText, setInputText] = useState(''); // 입력 중인 검색값임
   const [searchQuery, setSearchQuery] = useState(''); // 실제 검색에 사용될 쿼리임
-  const [activeTab, setActiveTab] = useState(''); // 현재 활성화된 탭
+  const [activeTab, setActiveTab] = useState('/');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -64,7 +64,7 @@ const SearchPage = () => {
 
   // 현재 경로와 비교하여 탭 클래스 이름 설정
   const getTabClassName = (path: string) => {
-    return location.pathname.startsWith(`/search${path}`) || activeTab === path ?
+    return activeTab === path ?
       `
         flex flex-all-center px-[0.5rem] md:px-[1.5rem] h-full
         border-light-signature text-light-text
@@ -133,8 +133,8 @@ const SearchPage = () => {
             '
           >
           <div
-            className={getTabClassName('')}
-            onClick={() => handleTabClick('')}
+            className={getTabClassName('/')}
+            onClick={() => handleTabClick('/')}
             >
               전체
           </div>
@@ -145,18 +145,17 @@ const SearchPage = () => {
               프로필
           </div>
           <div
-            className={getTabClassName('/board')}
-            onClick={() => handleTabClick('/board')}
-            >
-              커뮤니티
-          </div>
-          <div
             className={getTabClassName('/product')}
             onClick={() => handleTabClick('/product')}
             >
               장비거래
           </div>
-
+          <div
+            className={getTabClassName('/board')}
+            onClick={() => handleTabClick('/board')}
+            >
+              커뮤니티
+          </div>
         </div>
 
         {/* 검색화면 */}

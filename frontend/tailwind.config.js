@@ -3,6 +3,10 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        'landing-bg-lg': "url('@assets/images/landing-lg.png')",
+        'landing-bg-sm': "url('@assets/images/landing-sm.png')",
+      },
       animation: {
         'shake': 'shake 0.5s 3', // 애니메이션 이름과 지속 시간 설정
       },

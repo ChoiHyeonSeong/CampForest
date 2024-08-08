@@ -20,6 +20,9 @@ const SearchAllList = (props: Props) => {
   const [profileList, setProfileList] = useState<profileType[]>([]);
   const [productsList, setProductsList] = useState<ProductType[]>([]);
   const [boardList, setBoardList] = useState<BoardType[]>([]);
+  const [totalProfileCount, setTotalProfileCount] = useState<number>(0);
+  const [totalBoardCount, setTotalBoardCount] = useState<number>(0);
+  const [totalProductCount, setTotalProductCount] = useState<number>(0);
 
   const fetchAllSearchResults = useCallback(async () => {
     if (props.searchText.length < 2) {
@@ -36,24 +39,27 @@ const SearchAllList = (props: Props) => {
         const filteredProfiles = profileResult.users.filter((profile: profileType) => 
           profile.nickname.includes(props.searchText)
         );
-        setProfileList(filteredProfiles);
+        setProfileList(filteredProfiles.slice(0, 5));
+        setTotalProfileCount(filteredProfiles.length);
       }
 
-      // 상품 검색
+      // 2. 상품 검색
       const productResult = await productList({ 
         titleKeyword: props.searchText, 
-        productType: '', // 전체 검색이므로 빈 문자열
+        productType: '',
         page: 0,
-        size: 5, // 전체 검색에서는 각 카테고리별로 일부만 보여줄 것이므로 5개로 제한
+        size: 1000,
       });
       if (productResult && productResult.products) {
-        setProductsList(productResult.products);
+        setProductsList(productResult.products.slice(0, 5));
+        setTotalProductCount(productResult.products.length);
       }
 
-      // 게시글 검색
-      const boardResult = await boardTitleSearch(props.searchText, 0, 3);
+      // 3. 게시글 검색
+      const boardResult = await boardTitleSearch(props.searchText, 0, 1000);
       if (boardResult && Array.isArray(boardResult)) {
-        setBoardList(boardResult);
+        setBoardList(boardResult.slice(0, 3));
+        setTotalBoardCount(boardResult.length);
       }
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -67,8 +73,8 @@ const SearchAllList = (props: Props) => {
 
   return (
     <>
-    {/* 프로필 */}
-      <div className='mb-[3.5rem]'>
+      {/* 프로필 */}
+      <div className='mb-[3rem]'>
         <div className='flex justify-between mb-1'>
           <p className='font-bold text-lg '>
             프로필
@@ -78,7 +84,7 @@ const SearchAllList = (props: Props) => {
                 font-bold
               '
             >
-              {profileList.length}
+              {totalProfileCount}
             </span>
           </p>
           
@@ -107,18 +113,65 @@ const SearchAllList = (props: Props) => {
               '
             /> 
           </div>
-          
         </div>
-        <div className=''>
+        <div>
           {profileList.map((profile) => (
-              <SearchProfile profile={profile} />  
+              <SearchProfile key={profile.id} profile={profile} />  
             ))
           }
         </div>
       </div>
 
+      {/* 판매/대여 */}
+      <div className='mb-[3rem]'>
+      <div className='flex justify-between mb-1'>
+          <p className='font-bold text-lg '>
+            장비거래
+            <span 
+              className='
+                ms-[0.5rem]
+                font-bold
+              '
+            >
+              {totalProductCount}
+            </span>
+          </p>
+          
+          {/* 모두보기 -> 장비거래 검색으로 이동 */}
+          <div
+            className='
+            flex items-center
+            cursor-pointer
+            '
+            onClick={() => navigate('/search/product')}
+          >
+            <button
+              className='
+                text-light-text-secondary
+                dark:text-dark-text-secondary
+                text-[0.9rem]
+              '
+            >
+              모두보기       
+            </button>
+            <ArrowRightIcon
+              className='
+                size-[1.1rem]
+                fill-light-border-icon
+                dark:fill-dark-border-icon
+              '
+            /> 
+          </div>
+          
+        </div>
+        <div>
+          <SearchProduct product={productsList} />
+        </div>
+      </div>
+
+
       {/* 커뮤니티 */}
-      <div className='mb-[3.5rem]'>
+      <div className='mb-[3rem]'>
       <div className='flex justify-between mb-1'>
           <p className='font-bold text-lg '>
             커뮤니티
@@ -128,7 +181,7 @@ const SearchAllList = (props: Props) => {
                 font-bold
               '
             >
-              {boardList.length}
+              {totalBoardCount}
             </span>
           </p>
           
@@ -166,55 +219,6 @@ const SearchAllList = (props: Props) => {
           }
         </div>
       </div>
-
-      {/* 판매/대여 */}
-      <div className='mb-[2rem]'>
-      <div className='flex justify-between mb-1'>
-          <p className='font-bold text-lg '>
-            장비거래
-            <span 
-              className='
-                ms-[0.5rem]
-                font-bold
-              '
-            >
-              {productsList.length}
-            </span>
-          </p>
-          
-          {/* 모두보기 -> 장비거래 검색으로 이동 */}
-          <div
-            className='
-            flex items-center
-            cursor-pointer
-            '
-            onClick={() => navigate('/search/product')}
-          >
-            <button
-              className='
-                text-light-text-secondary
-                dark:text-dark-text-secondary
-                text-[0.9rem]
-              '
-            >
-              모두보기       
-            </button>
-            <ArrowRightIcon
-              className='
-                size-[1.1rem]
-                fill-light-border-icon
-                dark:fill-dark-border-icon
-              '
-            /> 
-          </div>
-          
-        </div>
-        <div>
-          <SearchProduct product={productsList} />
-        </div>
-      </div>
-    
-    
     </>
   )
 }

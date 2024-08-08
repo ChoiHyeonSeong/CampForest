@@ -1,6 +1,9 @@
 import React from 'react'
 export type profileType = {
+  id: number;
   nickname: string;
+  followerCount : number;
+  followingCount : number;
 }
 
 type Props = {
@@ -12,35 +15,35 @@ const SearchProfile = (props: Props) => {
     <div className='flex justify-between items-center w-full px-[0.5rem] md:px-[1rem] py-[1.5rem] border-light-border-1 dark:border-dark-border-1 border-b'>
       <div className='flex items-center'>
         {/* 프로필 이미지 */}
-        <div className='size-[2.9rem] md:size-[3.25rem] me-[0.5rem] rounded-full overflow-hidden border border-light-border-1'>
+        <div className='size-[2.9rem] md:size-[3.1rem] me-[0.5rem] rounded-full overflow-hidden border border-light-border-1'>
           <img src='' alt='프로필 이미지' className='size-full'></img>
         </div>
 
         {/* 프로필 상세 */}
         <div>
-          <div className='md:text-lg font-medium'>{props.profile.nickname}</div>
+          <div className='md:text-[1.05rem] font-medium mb-[0.25rem]'>{props.profile.nickname}</div>
           <div className='flex'>
             <div
               className='
                 me-[0.5rem]
                 text-light-text-secondary 
                 dark:text-dark-text-secondary
-                text-xs md:text-sm
+                text-xs md:text-[0.85rem]
                 '
               >
                 팔로워
-                <span className='font-medium'>20</span>
+                <span className='font-medium'>{props.profile.followerCount}</span>
             </div>
             <div
               className='
                 me-[0.5rem]
                 text-light-text-secondary 
                 dark:text-dark-text-secondary
-                text-xs md:text-sm
+                text-xs md:text-[0.85rem]
                 '
               >
-                작성글
-                <span className='font-medium'>20</span>
+                팔로잉
+                <span className='font-medium'>{props.profile.followingCount}</span>
             </div>
           </div>
         </div>
