@@ -29,8 +29,11 @@ const ChatUser = (props: Props) => {
 
   useEffect(() => {
     fetchOtherUser();
-    setLastMessageTime(calculateTimeDifference(chatUser.lastMessageTime));
   }, [])
+  
+  useEffect(() => {
+    setLastMessageTime(calculateTimeDifference(chatUser.lastMessageTime));
+  }, [chatUser.lastMessageTime])
 
   const calculateTimeDifference = (modifiedAt: string) => {
     const modifiedDate = new Date(modifiedAt);
@@ -75,7 +78,7 @@ const ChatUser = (props: Props) => {
             shrink-0 size-[2.6rem] me-[0.75rem]
             border-light-border
             dark:border-dark-border
-            rounded-full border
+            rounded-full border overflow-hidden
           `}
         >
           <img 

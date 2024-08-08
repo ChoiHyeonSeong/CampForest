@@ -32,6 +32,30 @@ const Chat = () => {
   const [opponentProfileImage, setOpponentProfileImage] = useState('');
   const messages = useSelector((state: RootState) => state.chatStore.chatInProgress);
   const [userInput, setUserInput] = useState('');
+  
+  const calculateTimeDifference = (modifiedAt: string) => {
+    const modifiedDate = new Date(modifiedAt);
+    const currentDate = new Date();
+    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
+    const year = modifiedDate.getFullYear();
+    const month = String(modifiedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(modifiedDate.getDate()).padStart(2, '0');
+    const hour = String(modifiedDate.getHours()).padStart(2, '0');
+    const minute = String(modifiedDate.getMinutes()).padStart(2, '0');
+  
+    // 같은 해가 아니면 년, 월, 일로 표기
+    if (modifiedDate.getFullYear !== currentDate.getFullYear) {
+      return `${year}-${month}-${day}`;
+    } 
+    
+    // 같은 해, 하루 이상 차이 난다면 월, 일로 표기
+    if (differenceInMinutes >= 1440) {
+      return `${month}-${day}`;
+    }
+    
+    return `${hour}:${minute}`;
+  };
 
   const fetchMessages = async () => {
     dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
@@ -79,7 +103,7 @@ const Chat = () => {
     // 데스크탑, 태블릿
     <div 
       className={`
-        flex flex-col max-md:hidden fixed top-0 z-[35] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+        flex flex-col max-md:hidden fixed top-0 w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
         bg-light-white outline-light-border-1
         dark:bg-dark-white dark:outline-dark-border-1
         transition-all duration-300 ease-in-out outline outline-1
@@ -104,7 +128,7 @@ const Chat = () => {
           `}
         >
           <img 
-            src={userImage} 
+            src={opponentProfileImage} 
             alt="NoImg" 
             className={`fit`}
           />
@@ -175,8 +199,16 @@ const Chat = () => {
                 flex justify-end items-center my-[1rem] ps-[20%]
               `}
             >
-              <div className='shrink-0 me-[0.5rem] text-xs'>
-                {message.read ? '' : '1'}
+              <div 
+                className='
+                shrink-0 me-[0.5rem] 
+                text-xs text-end'>
+                <div>
+                  {message.read ? '' : '1'}
+                </div>
+                <div>
+                  {calculateTimeDifference(message.createdAt)}
+                </div>
               </div>
               <div
                 className='
@@ -218,7 +250,7 @@ const Chat = () => {
             text-center font-medium
             hover:text-light-signature
             dark:hover:text-dark-signature
-            duration-150
+            duration-150 cursor-pointer
           '
           onClick={() => handleSendButton()}
         >

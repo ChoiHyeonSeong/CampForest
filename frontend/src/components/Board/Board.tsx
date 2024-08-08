@@ -313,16 +313,16 @@ const Board = (props: Props) => {
       {/* 좋아요, 댓글, 북마크 아이콘 */}
       <div 
         className={`
-          flex justify-between mb-[1rem]
+          flex mb-[1rem] px-[1rem]
           text-center
         `}
       >
-        <div className={`relative w-1/3`}>
+        <div className={`flex items-center`}>
         {liked ? (
           <HeartIcon 
             onClick={dislike}
             className={`
-              absolute left-1/2 size-[1.75rem]
+              size-[1.5rem]
               fill-light-heart stroke-light-heart
               dark:fill-dark-heart dark:stroke-dark-heart
               cursor-pointer
@@ -332,7 +332,7 @@ const Board = (props: Props) => {
           <HeartIcon 
             onClick={like}
             className={`
-              absolute left-1/2 size-[1.75rem]
+              size-[1.5rem]
               fill-none stroke-light-border-icon
               dark:stroke-dark-border-icon
               cursor-pointer  
@@ -341,38 +341,40 @@ const Board = (props: Props) => {
         )}
           <div 
             className={`
-              absolute left-[calc(50%+1.75rem)] top-[0.25rem] w-[3rem] mx-[0.5rem]
+              w-[3rem] mx-[0.5rem]
               text-start md:text-sm
             `}
           >
             {likeCount}
           </div>
         </div>
-        <Link
-          to={`/board/detail/${props.board.boardId}`}
-          className={`relative w-1/3`}
-        >
-          <CommentIcon 
-            className={`
-              absolute left-[45%] size-[1.75rem]
-              cursor-pointer 
-            `}
-          />
-          <div 
-            className={`
-              absolute left-[calc(45%+1.75rem)] top-[0.25rem] w-[3rem] mx-[0.5rem]
-              text-start md:text-sm
-            `}
+        <div className='flex items-center'>
+          <Link 
+            to={`/board/detail/${props.board.boardId}`}
+            className='flex'
           >
-              {props.board.commentCount}
-          </div>
-        </Link>
-        <div className={`w-1/3`}>
+            <CommentIcon 
+              className={`
+                size-[1.25rem]
+                cursor-pointer 
+              `}
+            />
+            <div 
+              className={`
+                w-[3rem] mx-[0.5rem]
+                text-start md:text-sm
+              `}
+            >
+                {props.board.commentCount}
+            </div>
+          </Link>
+        </div>
+        <div className={`ms-auto`}>
           {saved ? 
             (<BookmarkIcon
               onClick={() => handleBookmark()}
               className={`
-                inline size-[1.75rem]
+                inline size-[1.5rem]
                 stroke-light-border-icon
                 dark:stroke-dark-border-icon
                 cursor-pointer
@@ -380,7 +382,7 @@ const Board = (props: Props) => {
             />) : (<BookmarkIcon
               onClick={() => handleBookmark()}
               className={`
-                inline size-[1.75rem]
+                inline size-[1.5rem]
                 fill-none stroke-light-border-icon
                 dark:stroke-dark-border-icon
                 cursor-pointer

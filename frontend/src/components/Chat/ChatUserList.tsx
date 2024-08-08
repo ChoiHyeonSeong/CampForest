@@ -35,7 +35,12 @@ const ChatUserList = (props: Props) => {
   }
 
   return (
-    <div>
+    <div 
+      className='h-full 
+      bg-light-white
+      dark:bg-dark-white
+      '
+    >
       {/* 일반 채팅 */}
       <div className={`${chatState.selectedCategory === '일반' ? '' : 'hidden'}`}>
         {chatState.communityChatUserList.map((communityChatUser, key) => (
@@ -76,7 +81,7 @@ const ChatUserList = (props: Props) => {
       <div
         className={`
           ${chatState.isChatOpen ? 'translate-x-[20rem]' : '-translate-x-full'} 
-          max-md:hidden absolute top-0 -z-[100] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+          max-md:hidden absolute top-0 -z-[135] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
           bg-light-white outline-light-border-1
           dark:bg-dark-white dark:outline-dark-border-1
           transition-all duration-300 ease-in-out outline outline-1
