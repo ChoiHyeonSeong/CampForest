@@ -26,6 +26,7 @@ import { communityChatList } from '@services/communityChatService';
 import { store } from '@store/store';
 import { setCommunityChatUserList, setTotalUnreadCount } from '@store/chatSlice';
 import { ChatUserType } from '@components/Chat/ChatUser';
+import LandingPage from '@pages/LandingPage';
 
 function App() {
   const modals = useSelector((state: RootState) => state.modalStore);
@@ -88,6 +89,7 @@ function App() {
               <Route path="/community/:category" element={<Community />} />
               <Route path="/board/detail/:boardId" element={<BoardDetail />} />
               <Route path="/search/*" element={<SearchPage />} />
+              <Route path="/landing" element={<LandingPage />} />
             </Routes>
             {/* 여기까지 컨텐츠 */}
           </div>

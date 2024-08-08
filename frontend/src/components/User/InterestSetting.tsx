@@ -28,18 +28,16 @@ const InterestSetting = (props: Props) => {
   const [showWarning, setShowWarning] = useState(false);
 
   const handleTagClick = (tag: string) => {
-    if (interestChecking.length >= 6) {
-      setShowWarning(true);
-      return;
-    }
-
     setInterestChecking(prev => {
-      // tag가 InterestTag 타입임을 보장
       if (prev.includes(tag)) {
-        // tag가 이미 존재하면 제거
+        // 이미 선택된 태그라면 항상 제거 가능
         return prev.filter(item => item !== tag);
       } else {
-        // tag가 존재하지 않으면 추가
+        // 새로운 태그를 추가하려 할 때만 6개 제한 적용
+        if (prev.length >= 6) {
+          setShowWarning(true);
+          return prev; // 변경 없이 이전 상태 반환
+        }
         return [...prev, tag];
       }
     });
