@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.product.dto.PageResult;
 import com.campforest.backend.product.dto.SaveProductDto;
@@ -68,16 +69,16 @@ public class SaveProductController {
 	@GetMapping("/list")
 	public ApiResponse<?> getSaveList(
 		Authentication authentication,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "20") int size) throws Exception {
-		Users user = userService.findByEmail(authentication.getName())
-			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-
+		@RequestParam(required = false) Long cursorId,
+		@RequestParam(defaultValue = "20") int size) {
 		try {
-			PageResult<SaveProductDto> saveProducts = saveProductService.getSaveList(user.getUserId(), page, size);
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+			CursorResult<SaveProductDto> saveProducts = saveProductService.getSaveListWithCursor(user.getUserId(), cursorId, size);
 			return ApiResponse.createSuccess(saveProducts, "찜한 장비 게시물 목록 조회에 성공하였습니다");
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.SAVEPRODUCT_DELETION_FAILED);
+			return ApiResponse.createError(ErrorCode.SAVEPRODUCT_NOT_FOUND);
 		}
 	}
 }

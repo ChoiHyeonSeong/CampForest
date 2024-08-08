@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.product.dto.ProductDetailDto;
@@ -174,8 +175,8 @@ public class ProductController {
 		@RequestParam(required = false) List<String> locations,
 		@RequestParam(required = false) String titleKeyword,
 		@RequestParam(required = false) Long findUserId,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "2") int size,
+		@RequestParam(required = false) Long cursorId,
+		@RequestParam(defaultValue = "10") int size,
 		Authentication authentication) {
 
 		Long userId = null;
@@ -193,24 +194,19 @@ public class ProductController {
 			}
 		}
 
-
-		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSearchDto> result;
 		try {
-			result = productService.findProductsByDynamicConditions(categoryEnum,
-				productType, minPrice, maxPrice, locations, titleKeyword, pageable, userId, findUserId);
+			CursorResult<ProductSearchDto> result = productService.findProductsByDynamicConditionsWithCursor(
+				categoryEnum, productType, minPrice, maxPrice, locations, titleKeyword, size, userId, findUserId, cursorId);
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("products", result.getContent());
+			responseMap.put("nextCursorId", result.getNextCursor());
+			responseMap.put("hasNext", result.isHasNext());
+
+			return ApiResponse.createSuccess(responseMap, "성공적으로 조회하였습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-
-		// 총 갯수 포함
-		Map<String, Object> responseMap = new HashMap<>();
-		responseMap.put("products", result.getContent());
-		responseMap.put("totalElements", result.getTotalElements());
-		responseMap.put("totalPages", result.getTotalPages());
-		responseMap.put("currentPage", result.getNumber());
-
-		return ApiResponse.createSuccess(responseMap, "성공적으로 조회하였습니다.");
 	}
 
 }

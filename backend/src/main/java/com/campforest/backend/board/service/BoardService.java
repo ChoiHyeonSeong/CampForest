@@ -9,7 +9,7 @@ import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
-import com.campforest.backend.board.dto.CursorResult;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.board.entity.Comment;
 
 public interface BoardService {

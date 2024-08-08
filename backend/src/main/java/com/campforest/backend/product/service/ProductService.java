@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.product.dto.ProductDetailDto;
 import com.campforest.backend.product.dto.ProductRegistDto;
 import com.campforest.backend.product.dto.ProductSearchDto;
@@ -145,10 +146,20 @@ public class ProductService {
 		return dto;
 	}
 
-	public Page<ProductSearchDto> findProductsByDynamicConditions(Category category, ProductType productType, Long minPrice,
-		Long maxPrice, List<String> locations, String titleKeyword, Pageable pageable, Long userId, Long findUserId) {
 
-		Page<Product> products = productRepository.findProductsByDynamicConditions(category, productType, locations, minPrice, maxPrice, findUserId, titleKeyword, pageable);
+	public Optional<Product> getProductById(Long productId) {
+		return productRepository.findById(productId);
+	}
+
+	public CursorResult<ProductSearchDto> findProductsByDynamicConditionsWithCursor(
+		Category category, ProductType productType, Long minPrice, Long maxPrice,
+		List<String> locations, String titleKeyword, int size, Long userId, Long findUserId, Long cursorId) {
+
+		long totalCount = productRepository.countProductsByDynamicConditions(
+			category, productType, locations, minPrice, maxPrice, findUserId, titleKeyword);
+
+		List<Product> products = productRepository.findProductsByDynamicConditionsWithCursor(
+			category, productType, locations, minPrice, maxPrice, findUserId, titleKeyword, size + 1, cursorId);
 
 		Set<Long> savedProductIds = userId != null ?
 			saveProductRepository.findAllByUserUserId(userId).stream()
@@ -156,10 +167,14 @@ public class ProductService {
 				.collect(Collectors.toSet())
 			: Set.of();
 
-		return products.map(product -> toDto(product, userId != null && savedProductIds.contains(product.getId())));
-	}
+		List<ProductSearchDto> dtos = products.stream()
+			.limit(size)
+			.map(product -> toDto(product, userId != null && savedProductIds.contains(product.getId())))
+			.collect(Collectors.toList());
 
-	public Optional<Product> getProductById(Long productId) {
-		return productRepository.findById(productId);
+		boolean hasNext = products.size() > size;
+		Long nextCursorId = hasNext ? products.get(size).getId() : null;
+
+		return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
 	}
 }

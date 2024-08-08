@@ -10,6 +10,11 @@ import com.campforest.backend.product.model.ProductType;
 
 public interface ProductCustomRepository {
 
-	Page<Product> findProductsByDynamicConditions(Category category, ProductType productType, List<String> locations, Long minPrice, Long maxPrice,Long findUserId, String titleKeyword, Pageable pageable);
+	List<Product> findProductsByDynamicConditionsWithCursor(
+		Category category, ProductType productType, List<String> locations, Long minPrice, Long maxPrice,
+		Long findUserId, String titleKeyword, int limit, Long cursorId);
 
+	long countProductsByDynamicConditions(
+		Category category, ProductType productType, List<String> locations, Long minPrice, Long maxPrice,
+		Long findUserId, String titleKeyword);
 }

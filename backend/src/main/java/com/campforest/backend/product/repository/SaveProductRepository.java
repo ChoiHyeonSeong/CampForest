@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.campforest.backend.product.model.SaveProduct;
 
 public interface
-SaveProductRepository extends JpaRepository<SaveProduct, Long> {
+SaveProductRepository extends JpaRepository<SaveProduct, Long>, SaveProductCustomRepository {
 
 	Optional<SaveProduct> findByUserUserIdAndProductId(Long userId, Long productId);
 

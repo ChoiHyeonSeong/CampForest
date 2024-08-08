@@ -35,4 +35,10 @@ public interface BoardRepositoryCustom {
 
 	List<Boards> findSavedBoardsByUserIdTopN(Long nowId, int limit);
 	List<Boards> findSavedBoardsByUserIdNextN(Long nowId, Long cursorId, int limit);
+
+	long countAll();
+	long countByUserId(Long userId);
+	long countByCategory(String category);
+	long countByKeyword(String keyword);
+	long countSavedByUserId(Long userId);
 }
