@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.campforest.backend.notification.dto.NotificationDTO;
 import com.campforest.backend.notification.model.Notification;
 
 @Component
@@ -23,7 +24,7 @@ public class SseEmitters {
 		return emitter;
 	}
 
-	public void send(Long userId, Notification notification) {
+	public void send(Long userId, NotificationDTO notification) {
 		SseEmitter emitter = emitters.get(userId);
 		if (emitter != null) {
 			try {

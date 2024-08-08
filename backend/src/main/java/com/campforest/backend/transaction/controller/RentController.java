@@ -43,7 +43,7 @@ public class RentController {
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			notificationService.createNotification(receiver, NotificationType.RENT, requester.getNickname() + "님이 대여예약을 요청하였습니다.");
+			notificationService.createNotification(receiver, requester, NotificationType.RENT, "님이 대여예약을 요청하였습니다.");
 
 			return ApiResponse.createSuccessWithNoContent("대여 요청이 완료되었습니다.");
 		} catch (Exception e) {
@@ -63,7 +63,7 @@ public class RentController {
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			notificationService.createNotification(receiver, NotificationType.RENT, requester.getNickname() + "님이 대여예약 요청을 수락하였습니다.");
+			notificationService.createNotification(receiver, requester, NotificationType.RENT, "님이 대여예약 요청을 수락하였습니다.");
 
 			return ApiResponse.createSuccessWithNoContent("대여 요청에 승낙하였습니다. 대여 예약 됩니다.");
 		} catch (Exception e) {

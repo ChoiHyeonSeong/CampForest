@@ -145,8 +145,8 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("수신자 정보 조회 실패"));
 
 			// 알림 생성
-			notificationService.createNotification(receiver, NotificationType.RENT,
-				requester.getNickname() + "님이 대여예약을 요청하였습니다.");
+			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+				"님이 대여예약을 요청하였습니다.");
 
 			TransactionChatMessage requesterMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
@@ -206,8 +206,8 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("수신자 정보 조회 실패"));
 
 			// 알림 생성
-			notificationService.createNotification(receiver, NotificationType.RENT,
-				requester.getNickname() + "님이 대여예약을 요청하였습니다.");
+			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+				"님이 대여예약을 요청하였습니다.");
 
 			TransactionChatMessage requesterMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
@@ -260,8 +260,8 @@ public class TransactionChatController {
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			notificationService.createNotification(receiver, NotificationType.RENT,
-				requester.getNickname() + "님이 대여예약 요청을 수락하였습니다.");
+			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+				"님이 대여예약 요청을 수락하였습니다.");
 
 			TransactionChatMessage acceptMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
