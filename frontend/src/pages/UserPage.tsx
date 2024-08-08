@@ -1,15 +1,24 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useParams, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useParams, Route, Routes, useLocation } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import FollowUsers from '@components/User/FollowUsers';
 
+import { userPage } from '@services/userService';
 import UBoard from '@components/User/UBoard';
 import UProduct from '@components/User/UProduct';
 import UReview from '@components/User/UReview';
 
+type UserInfo = {
+  nickname: string;
+  followingCount: number;
+  followerCount: number;
+  introduction: string;
+  profileImage: string;
+  isOpen: boolean;
+}
+
 const UserPage = () => {
-  const navigate = useNavigate();
   const currentLoc = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(true);
@@ -18,16 +27,24 @@ const UserPage = () => {
   const params = useParams()
   const userId = Number(params.userId);
 
+  const [userinfo, setUserInfo] = useState<UserInfo>();
+
+  const fetchUserInfo = async () => {
+    try {
+      const userData = await userPage(userId);
+      setUserInfo(userData);
+    } catch (error) {
+      console.error("Failed to fetch user info: ", error);
+    }
+  }
+
   useEffect(() => {
     if (currentLoc.pathname.endsWith('/product')) {
       setSelectedMenu('판매/대여')
-      console.log(1)
     } else if (currentLoc.pathname.endsWith('/review')) {
       setSelectedMenu('거래후기')
-      console.log(2)
     } else {
       setSelectedMenu('게시물')
-      console.log(3)
     }
   }, [currentLoc.pathname])
 
@@ -51,7 +68,9 @@ const UserPage = () => {
             userId={userId}
             isModalOpen={isModalOpen}
             isFollowing={isFollowing} 
-            setIsModalOpen={setIsModalOpen}/>
+            setIsModalOpen={setIsModalOpen}
+            fetchUserInfo={fetchUserInfo}  
+          />
         </div>
       </div>
 
@@ -61,7 +80,10 @@ const UserPage = () => {
           <h3 className={`hidden lg:block pb-[0.75rem] text-lg md:text-[1.5rem]`}>유저 프로필</h3>
           <ProfileTop
             setIsModalOpen={setIsModalOpen} 
-            setIsFollowing={setIsFollowing}/>
+            setIsFollowing={setIsFollowing}
+            userinfo={userinfo}
+            fetchUserInfo={fetchUserInfo}
+          />
           <div>
             {/* 목록전환박스 */}
             <MenuBar

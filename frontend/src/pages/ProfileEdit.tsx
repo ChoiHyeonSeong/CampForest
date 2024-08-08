@@ -1,11 +1,113 @@
-import React from 'react'
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import UserInformation from '@components/User/UserInformation'
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+import { registClear, registOptional } from '@store/registSlice';
+import { userGetProfile, userUpdateProfile } from '@services/userService';
 
 type Props = {}
 
+type Interests = {
+  interestId: number;
+  interest: string;
+}
+
+type OriginalData = {
+  birthdate: string;
+  gender: string;
+  interests: Interests[];
+  introduction: string;
+  nickname: string;
+  open: boolean;
+  profileImage: string;
+  userId: number;
+}
+
+type RegistOptional = {
+  profileImage: string | null,
+  nickname: string,
+  userBirthdate: string | null | undefined,
+  userGender: string,
+  introduction: string,
+  interests: string[] | null
+}
+
 const ProfileEdit = (props: Props) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.userStore);
+  const optionalData = useSelector((state: RootState) => state.registStore.optional)
+  const [originalImage, setOriginalImage] = useState<string | null>('');
+  const [isBtnActive, setIsBtnActive] = useState(false);
+
+  useEffect(() => {
+    dispatch(registClear())
+    let originalData: OriginalData;
+    const getOriginalData = async () => {
+      try {
+        const response = await userGetProfile()
+        
+        console.log(response)
+
+        originalData = response.data.data
+        setOriginalImage(originalData?.profileImage);
+
+        console.log(originalData)
+        dispatch(registOptional({
+          userBirthdate: originalData.birthdate,
+          userGender: originalData.gender,
+          interests: originalData.interests.map(obj => obj.interest),
+          introduction: originalData.introduction,
+          nickname: originalData.nickname,
+          profileImage: originalData.profileImage,
+        }))
+      } catch (error) {
+        console.log(error)
+        throw(error)
+      }
+    }
+
+    getOriginalData()
+  }, [])
+
+  const submitUpdate = async () => {
+    try {
+      if (originalImage === optionalData.profileImage) {
+        const response = await userUpdateProfile(optionalData, user.userId, false)
+        console.log(response)
+      } else {
+        const response = await userUpdateProfile(optionalData, user.userId, true)
+        console.log(response)
+      }
+
+      navigate(`/user/${user.userId}`)
+    } catch (error) {
+      console.log(error)
+      throw(error)
+    }
+  }
+
+  const isOptionalFilled = (optional: RegistOptional): boolean => {
+    const { profileImage, introduction, interests, ...rest } = optional;
+
+    const isInterestsValid = interests !== null && interests.length === 6;
+
+    const areOtherFieldsValid = Object.entries(rest).every(([key, value]) => {
+      if (key === 'userBirthdate') {
+        return value !== undefined && value !== '' && value !== null;
+      }
+      return typeof value === 'string' && value.trim() !== '';
+    });
+  
+    return isInterestsValid && areOtherFieldsValid;
+  };
+
+  useEffect(() => {
+    setIsBtnActive(isOptionalFilled(optionalData))
+  }, [optionalData])
+
   return (
     <div className={`md:w-[40rem] md:mt-[1rem] lg:mt-[3rem] mb-[2.5rem] mx-auto p-[1.5rem] lg:p-0`}>
       <div 
@@ -36,12 +138,16 @@ const ProfileEdit = (props: Props) => {
       {/* 완료 버튼 */}
       <div className={`text-center`}>
         <button 
+          onClick={submitUpdate}
           className={`
+            ${isBtnActive ? 
+              'border-light-black hover:bg-light-black hover:text-light-text-white dark:border-dark-black dark:hover:bg-dark-black dark:hover:text-dark-text-white' :
+              'border-light-gray bg-light-gray dark:border-dark-gray dark:bg-dark-gray'
+            }
             w-[20rem] md:w-[11rem] h-[2.5rem] md:mt-[3rem]
-            border-light-black hover:bg-light-black hover:text-light-text-white 
-            dark:border-dark-black dark:hover:bg-dark-black dark:hover:text-dark-text-white
             border-2 md:rounded-none rounded-md transition-all duration-300 font-bold 
           `}
+          disabled={!isBtnActive}
         >
           완료
         </button>

@@ -58,7 +58,7 @@ type UpdateForm = {
   profileImage: string | null,
 }
 
-export const userUpdateProfile = async (updateForm: UpdateForm, userId: number) => {
+export const userUpdateProfile = async (updateForm: UpdateForm, userId: number, isImageChanged: boolean = false) => {
   const formData = new FormData();
 
   const value = {
@@ -74,15 +74,17 @@ export const userUpdateProfile = async (updateForm: UpdateForm, userId: number) 
   const blob = new Blob([JSON.stringify(value)], {type: "application/json"})
   formData.append('updateUserDto', blob);
 
-  if (updateForm.profileImage !== null) {
-    const binaryString = window.atob(updateForm.profileImage.split(',')[1]);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+  if (isImageChanged) {
+    if (updateForm.profileImage !== null) {
+      const binaryString = window.atob(updateForm.profileImage.split(',')[1]);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const imageBlob = new Blob([bytes], { type: "image/png" })
+      formData.append(`profileImage`, imageBlob, `userProfileImage.png`);
     }
-    const imageBlob = new Blob([bytes], { type: "image/png" })
-    formData.append(`profileImage`, imageBlob, `userProfileImage.png`);
   }
 
   const response = await axiosInstance.put(`/user/update`, formData, {
