@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +24,10 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
-import com.campforest.backend.common.CursorResult;
+import com.campforest.backend.board.dto.SearchResult;
 import com.campforest.backend.board.service.BoardService;
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.user.model.Users;
@@ -142,7 +145,7 @@ public class BoardController {
                     .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
                  nowId = user.getUserId();
                }
-            CursorResult<BoardResponseDto> result = boardService.getUserBoards(nowId,userId,cursorId,size);
+            SearchResult<BoardResponseDto> result = boardService.getUserBoards(nowId,userId,cursorId,size);
             String message = authentication == null ? "비로그인 사용자별 게시글 목록 조회 성공하였습니다" : "사용자별 게시글 목록 조회 성공하였습니다";
 
                 return ApiResponse.createSuccess(result, message);
@@ -151,7 +154,7 @@ public class BoardController {
         }
     }
 
-    //제목 검색
+    //제목+내용 검색
     @GetMapping("/public/keyword")
     public ApiResponse<?> getKeywordBoard(
             Authentication authentication,
@@ -169,7 +172,7 @@ public class BoardController {
                 nowId = user.getUserId();
             }
 
-            CursorResult<BoardResponseDto> boardResponseDtos = boardService.getKeywordBoards(-1L, keyword, cursorId, size);
+            SearchResult<BoardResponseDto> boardResponseDtos = boardService.getKeywordBoards(-1L, keyword, cursorId, size);
             String message = authentication ==null  ? "비로그인 키워드별 게시글 목록 조회 성공하였습니다" : "키워드별 게시글 목록 조회 성공하였습니다";
             return ApiResponse.createSuccess(boardResponseDtos, message);
 
@@ -196,7 +199,7 @@ public class BoardController {
                 nowId = user.getUserId();
             }
 
-            CursorResult<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(-1L, category, cursorId, size);
+            SearchResult<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(-1L, category, cursorId, size);
             String message = authentication ==null  ? "비로그인 카테고리별 게시글 목록 조회 성공하였습니다" : "카테고리별 게시글 목록 조회 성공하였습니다";
             return ApiResponse.createSuccess(boardResponseDtos, message);
 
@@ -222,7 +225,7 @@ public class BoardController {
                         .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
                 ;
                 Long nowId = user.getUserId();
-                CursorResult<BoardResponseDto> boardResponseDtos = boardService.getSavedBoards(nowId, cursorId, size);
+                SearchResult<BoardResponseDto> boardResponseDtos = boardService.getSavedBoards(nowId, cursorId, size);
                 return ApiResponse.createSuccess(boardResponseDtos, "저장한 게시 조회에 성공하였습니다");
             }
         } catch (Exception e) {

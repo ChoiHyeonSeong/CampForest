@@ -12,18 +12,22 @@ import lombok.Setter;
 @Builder
 public class ResponseLoginDTO {
 
-    private Long userId;
-    private String email;
-    private String nickname;
-    private String profileImage;
-    @Setter
-    private Map<String, Object> similarUsers;
+	private Long userId;
+	private String email;
+	private String nickname;
+	private String profileImage;
+	@Setter
+	private Map<String, Object> similarUsers;
 
-    public static ResponseLoginDTO fromEntity(Users user) {
-        return ResponseLoginDTO.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .build();
-    }
+	public static ResponseLoginDTO fromEntity(Users user) {
+		String imageUrl =
+			user.getUserImage() == null ? null : user.getUserImage().getImageUrl();
+
+		return ResponseLoginDTO.builder()
+			.userId(user.getUserId())
+			.email(user.getEmail())
+			.nickname(user.getNickname())
+			.profileImage(imageUrl)
+			.build();
+	}
 }

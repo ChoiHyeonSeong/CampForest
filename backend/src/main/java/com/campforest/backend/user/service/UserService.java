@@ -21,6 +21,8 @@ public interface UserService {
 
 	Optional<Users> findByUserId(Long userId);
 
+	boolean isEmailExist(String email);
+
 	void deleteByEmail(String email);
 
 	void updateUserProfile(String email, RequestUpdateDTO requestDTO, MultipartFile profileImageFile) throws
@@ -38,5 +40,7 @@ public interface UserService {
 
 	Map<String, Object> getPythonRecommendUsers(Long userId);
 
-	List<Users> findByNicknameContaining(String nickname);
+	List<Users> findByNicknameContaining(String nickname, Long cursor, int limit);
+
+	long countByNicknameContaining(String nickname);
 }

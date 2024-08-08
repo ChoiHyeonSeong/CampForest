@@ -17,7 +17,7 @@ import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
-import com.campforest.backend.common.CursorResult;
+import com.campforest.backend.board.dto.SearchResult;
 import com.campforest.backend.board.entity.BoardImage;
 import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
@@ -30,6 +30,7 @@ import com.campforest.backend.board.repository.commentlike.CommentLikeRepository
 import com.campforest.backend.board.repository.comment.CommentRepository;
 import com.campforest.backend.board.repository.like.LikeRepository;
 import com.campforest.backend.board.repository.save.SaveRepository;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.user.model.UserImage;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.repository.jpa.UserRepository;
@@ -146,10 +147,7 @@ public class BoardServiceImpl implements BoardService {
         return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
     }
     @Override
-    public CursorResult<BoardResponseDto> getUserBoards(Long nowId, Long userId, Long cursorId, int size) {
-
-        long totalCount = boardRepository.countByUserId(userId);
-
+    public SearchResult<BoardResponseDto> getUserBoards(Long nowId, Long userId, Long cursorId, int size) {
         List<Boards> boards;
         if (cursorId == null) {
             boards = boardRepository.findByUserIdTopN(userId, size + 1);
@@ -183,16 +181,13 @@ public class BoardServiceImpl implements BoardService {
             dto.setSaved(saveBoardsId.contains(board.getBoardId()));
             dtos.add(dto);
         }
-
+        Long totalCount=boardRepository.getUsersBoardCount(userId);
         Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
-        return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
+        return new SearchResult<>(dtos, nextCursorId, hasNext,totalCount);
     }
 
     @Override
-    public CursorResult<BoardResponseDto> getCategoryBoards(Long nowId,String category, Long cursorId, int size) {
-
-        long totalCount = boardRepository.countByCategory(category);
-
+    public SearchResult<BoardResponseDto> getCategoryBoards(Long nowId,String category, Long cursorId, int size) {
         List<Boards> boards;
         if (cursorId == null) {
             boards = boardRepository.findByCategoryTopN(category, size + 1);
@@ -226,16 +221,13 @@ public class BoardServiceImpl implements BoardService {
             dto.setSaved(saveBoardsId.contains(board.getBoardId()));
             dtos.add(dto);
         }
-
+        Long totalCount= boardRepository.getCategoryBoardCount(category);
         Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
-        return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
+        return new SearchResult<>(dtos, nextCursorId, hasNext,totalCount);
     }
 
     @Override
-    public CursorResult<BoardResponseDto> getKeywordBoards(Long nowId, String keyword, Long cursorId, int size) {
-
-        long totalCount = boardRepository.countByKeyword(keyword);
-
+    public SearchResult<BoardResponseDto> getKeywordBoards(Long nowId, String keyword, Long cursorId, int size) {
         List<Boards> boards;
         if (cursorId == null) {
             boards = boardRepository.findByTitleAndContentTopN(keyword, size + 1);
@@ -269,16 +261,13 @@ public class BoardServiceImpl implements BoardService {
             dto.setSaved(saveBoardsId.contains(board.getBoardId()));
             dtos.add(dto);
         }
-
+        Long totalCount = boardRepository.getKeywordBoardCount(keyword);
         Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
-        return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
+        return new SearchResult<>(dtos, nextCursorId, hasNext,totalCount);
     }
 
     @Override
-    public CursorResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size) {
-
-        long totalCount = boardRepository.countSavedByUserId(nowId);
-
+    public SearchResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size) {
         List<Boards> boards;
         if (cursorId == null) {
             boards = boardRepository.findSavedBoardsByUserIdTopN(nowId, size + 1);
@@ -314,7 +303,8 @@ public class BoardServiceImpl implements BoardService {
         }
 
         Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
-        return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
+        Long totalCount = boardRepository.getSavedBoardCount(nowId);
+        return new SearchResult<>(dtos, nextCursorId, hasNext,totalCount);
     }
 
 

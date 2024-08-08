@@ -36,6 +36,13 @@ public interface BoardRepositoryCustom {
 	List<Boards> findSavedBoardsByUserIdTopN(Long nowId, int limit);
 	List<Boards> findSavedBoardsByUserIdNextN(Long nowId, Long cursorId, int limit);
 
+	Long getUsersBoardCount(Long userId);
+	Long getCategoryBoardCount(String category) ;
+
+	Long getKeywordBoardCount(String keyword);
+
+	Long getSavedBoardCount(Long nowId);
+
 	long countAll();
 	long countByUserId(Long userId);
 	long countByCategory(String category);

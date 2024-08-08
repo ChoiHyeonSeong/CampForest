@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ResponseSearchDTO {
-	private int size;
+	private long totalCount;
 	private List<ResponseInfoDTO> users;
+	private Long nextCursor;
+	private boolean hasNext;
 }

@@ -10,6 +10,7 @@ import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.mail.dto.EmailRequestDTO;
 import com.campforest.backend.mail.dto.ValidationRequestDTO;
 import com.campforest.backend.mail.service.MailService;
+import com.campforest.backend.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,9 +20,13 @@ import lombok.RequiredArgsConstructor;
 public class MailController {
 
 	private final MailService mailService;
+	private final UserService userService;
 
 	@PostMapping("/request")
 	public ApiResponse<?> mailSend(@RequestBody EmailRequestDTO requestDTO) {
+		if (userService.isEmailExist(requestDTO.getEmail())) {
+			return ApiResponse.createError(ErrorCode.EMAIL_ALREADY_EXIST);
+		}
 		mailService.joinEmail(requestDTO.getEmail());
 		return ApiResponse.createSuccess(null, "이메일을 정상적으로 발송하였습니다.");
 	}
