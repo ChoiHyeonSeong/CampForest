@@ -27,6 +27,7 @@ import { store } from '@store/store';
 import { setCommunityChatUserList, setTotalUnreadCount } from '@store/chatSlice';
 import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
+import useSSE from '@hooks/useSSE';
 
 function App() {
   const userState = useSelector((state: RootState) => state.userStore);
@@ -35,6 +36,7 @@ function App() {
   const currentLoc = useLocation();
 
   useThemeEffect();
+  useSSE();
 
   // 일반 채팅방 목록 가져오기
   const fetchCommunityChatList = async () => {

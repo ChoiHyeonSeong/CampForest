@@ -1,4 +1,3 @@
-import axios from 'axios';
 import axiosInstance from './authService';
 
 export const commentList = async (boardId: number) => {

@@ -30,15 +30,15 @@ const ChatUserList = (props: Props) => {
       createdAt: communityChatUser.lastMessageTime,
       inProgress: true,
     }))
-    dispatch(setChatInProgress(await communityChatDetail(communityChatUser.roomId)));
     dispatch(setIsChatOpen(true));
   }
 
   return (
     <div 
-      className='h-full 
+      className='max-h-[calc(100%-7.5rem)]
       bg-light-white
       dark:bg-dark-white
+      overflow-auto
       '
     >
       {/* 일반 채팅 */}

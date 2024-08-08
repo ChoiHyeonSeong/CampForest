@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Client, Message } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { RootState, store } from '@store/store';
-import { setChatInProgress, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
+import { addMessageToChatInProgress, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
 
 type UseWebSocketProps = {
   jwt: string | null;
@@ -32,7 +32,6 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
             store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId }));
           }  
         });
-
         // 메시지를 받았을 때
         client.subscribe(`/sub/community/${chatRoom.roomId}`, (message) => {
           const response = JSON.parse(message.body);
@@ -42,13 +41,8 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
           // 현재 열려 있는 채팅방 내용 갱신
           if (state.chatStore.roomId === response.roomId) {
             store.dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-            if (clientRef.current && clientRef.current.active) {
-              clientRef.current.publish({
-                destination: `/pub/room/${response.roomId}/markAsRead`,
-                body: JSON.stringify(state.userStore.userId),
-              });
-            }
-            store.dispatch(setChatInProgress([...state.chatStore.chatInProgress, response]));
+            sendMessage(`/pub/room/${response.roomId}/markAsRead`, response.roomId);
+            store.dispatch(addMessageToChatInProgress(response));
           } else {
             // 채팅방 목록 업데이트
             store.dispatch(updateCommunityChatUserList({...response, inProgress: false}));
