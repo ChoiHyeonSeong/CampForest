@@ -1,6 +1,7 @@
 package com.campforest.backend.notification.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.notification.dto.NotificationDTO;
 import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.notification.service.SseEmitters;
 import com.campforest.backend.user.model.Users;
@@ -51,5 +53,22 @@ public class NotificationController {
 	@PostMapping("/read/{id}")
 	public void markAsRead(@AuthenticationPrincipal UserDetails userDetails, Long id) {
 		notificationService.markAsRead(id);
+	}
+
+	@GetMapping("/all")
+	public ApiResponse<?> getAll(@AuthenticationPrincipal UserDetails userDetails) {
+		try {
+			Users users = userService.findByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+			List<NotificationDTO> response = notificationService.getAll(users).stream()
+				.map(NotificationDTO::fromEntity)
+				.toList();
+
+			return ApiResponse.createSuccess(response, "알림 목록 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.NOTIFICATION_NOT_FOUND);
+		}
+
 	}
 }

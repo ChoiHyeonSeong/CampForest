@@ -1,5 +1,7 @@
 package com.campforest.backend.notification.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +46,11 @@ public class NotificationServiceImpl implements NotificationService {
 
 		notification.setRead(true);
 		notificationRepository.save(notification);
+	}
+
+	@Override
+	public List<Notification> getAll(Users user) {
+		return notificationRepository.findAllByReceiverOrderByCreatedAtDesc(user);
 	}
 
 	@Override
