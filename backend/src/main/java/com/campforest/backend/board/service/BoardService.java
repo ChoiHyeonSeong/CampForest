@@ -10,6 +10,7 @@ import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
 import com.campforest.backend.board.dto.CursorResult;
+import com.campforest.backend.board.dto.SearchResult;
 import com.campforest.backend.board.entity.Comment;
 
 public interface BoardService {
@@ -19,13 +20,13 @@ public interface BoardService {
 
 	CursorResult<BoardResponseDto> getAllBoards(Long nowId, Long cursorId, int size);
 
-	CursorResult<BoardResponseDto> getUserBoards(Long nowId,Long userId, Long cursorId, int size);
+	SearchResult<BoardResponseDto> getUserBoards(Long nowId,Long userId, Long cursorId, int size);
 
-	CursorResult<BoardResponseDto> getKeywordBoards(Long nowId,String title, Long cursorId, int size);
+	SearchResult<BoardResponseDto> getKeywordBoards(Long nowId,String title, Long cursorId, int size);
 
-	CursorResult<BoardResponseDto> getCategoryBoards(Long nowId,String category, Long cursorId, int size);
+	SearchResult<BoardResponseDto> getCategoryBoards(Long nowId,String category, Long cursorId, int size);
 
-	CursorResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size);
+	SearchResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size);
 
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);

@@ -195,4 +195,43 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 			.limit(limit)
 			.fetch();
 	}
+
+	@Override
+	public Long getUsersBoardCount(Long userId) {
+		return queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.userId.eq(userId))
+			.fetchOne();
+
+	}
+	public Long getCategoryBoardCount(String category) {
+		return queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.category.eq(category))
+			.fetchOne();
+
+	}
+
+
+	public Long getKeywordBoardCount(String keyword) {
+		return queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.title.like("%" + keyword + "%")
+			.or(boards.content.like("%"+keyword+"%")))
+			.fetchOne();
+
+	}
+
+	@Override
+	public Long getSavedBoardCount(Long nowId) {
+		QSave save = QSave.save;
+		return queryFactory
+			.select(save.count())
+			.from(save)
+			.where(save.userId.eq(nowId))
+			.fetchOne();
+	}
 }
