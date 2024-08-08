@@ -91,6 +91,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public boolean isEmailExist(String email) {
+		return userRepository.findByEmail(email).isPresent();
+	}
+
+	@Override
 	@Transactional
 	public void deleteByEmail(String email) {
 		Users users = userRepository.findByEmail(email)

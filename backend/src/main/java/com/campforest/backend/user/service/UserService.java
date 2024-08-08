@@ -21,6 +21,8 @@ public interface UserService {
 
 	Optional<Users> findByUserId(Long userId);
 
+	boolean isEmailExist(String email);
+
 	void deleteByEmail(String email);
 
 	void updateUserProfile(String email, RequestUpdateDTO requestDTO, MultipartFile profileImageFile) throws
