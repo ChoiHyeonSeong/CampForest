@@ -135,8 +135,6 @@ const Chat = () => {
         className='h-full ps-[0.75rem] overflow-scroll'
         ref={scrollRef}
       >
-        {/* 거래채팅 시 상단 상품정보 -> 거래채팅이 아니면 hidden 처리 */}
-        <ProductInfoChat />
 
         {/* 실제 메세지 조작부분 */}
         {messages.map((message) => (

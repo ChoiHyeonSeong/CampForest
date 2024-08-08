@@ -74,7 +74,6 @@ const UBoard = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log(123)
     if (myBoard) {
       pageReload(false)
     } else {

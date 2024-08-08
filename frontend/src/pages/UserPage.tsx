@@ -21,13 +21,10 @@ const UserPage = () => {
   useEffect(() => {
     if (currentLoc.pathname.endsWith('/product')) {
       setSelectedMenu('판매/대여')
-      console.log(1)
     } else if (currentLoc.pathname.endsWith('/review')) {
       setSelectedMenu('거래후기')
-      console.log(2)
     } else {
       setSelectedMenu('게시물')
-      console.log(3)
     }
   }, [currentLoc.pathname])
 

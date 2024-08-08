@@ -28,6 +28,7 @@ import { setCommunityChatUserList, setTotalUnreadCount } from '@store/chatSlice'
 import { ChatUserType } from '@components/Chat/ChatUser';
 
 function App() {
+  const userState = useSelector((state: RootState) => state.userStore);
   const modals = useSelector((state: RootState) => state.modalStore);
   const dispatch = useDispatch()
   const currentLoc = useLocation();
@@ -49,8 +50,10 @@ function App() {
   }
   
   useEffect(() => {
-    fetchCommunityChatList();
-  }, []);
+    if(userState.isLoggedIn) {
+      fetchCommunityChatList();
+    }
+  }, [userState.isLoggedIn]);
 
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;
