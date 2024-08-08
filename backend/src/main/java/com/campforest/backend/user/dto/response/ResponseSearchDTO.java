@@ -10,4 +10,6 @@ import lombok.Getter;
 public class ResponseSearchDTO {
 	private long totalCount;
 	private List<ResponseInfoDTO> users;
+	private Long nextCursor;
+	private boolean hasNext;
 }

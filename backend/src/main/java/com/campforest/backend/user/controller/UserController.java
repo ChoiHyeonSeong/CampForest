@@ -166,10 +166,14 @@ public class UserController {
 			List<ResponseInfoDTO> responseDTOList = usersList.stream()
 				.map(ResponseInfoDTO::fromEntity)
 				.collect(Collectors.toList());
+			long lastId = responseDTOList.get(responseDTOList.size() - 1).getUserId();
+			boolean hasNext = usersList.size() == limit;
 
 			ResponseSearchDTO response = ResponseSearchDTO.builder()
 				.totalCount(totalCount)
 				.users(responseDTOList)
+				.nextCursor(lastId)
+				.hasNext(hasNext)
 				.build();
 
 			return ApiResponse.createSuccess(response, "유저 검색 성공");
