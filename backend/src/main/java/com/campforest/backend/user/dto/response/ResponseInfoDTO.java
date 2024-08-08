@@ -15,6 +15,7 @@ public class ResponseInfoDTO {
 	private int followerCount;
 	private String introduction;
 	private String profileImage;
+	private Long temperature;
 	private boolean isOpen;
 
 	public static ResponseInfoDTO fromEntity(Users users) {
@@ -28,6 +29,7 @@ public class ResponseInfoDTO {
 				.followingCount(users.getFollowing().size())
 				.followerCount(users.getFollowers().size())
 				.introduction(users.getIntroduction())
+				.temperature(users.getTemperature())
 				.profileImage(imageUrl)
 				.isOpen(users.isOpen())
 				.build();

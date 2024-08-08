@@ -135,6 +135,10 @@ public class Users {
 	@JsonManagedReference
 	private List<Notification> notifications;
 
+	@Setter
+	@Column(name = "temperature")
+	private Long temperature;
+
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
