@@ -42,3 +42,54 @@ export const userUnfollow = async (userId: number) => {
 
   return response;
 }
+
+export const userGetProfile = async () => {
+  const response = await axiosInstance.get(`/user/profile`);
+
+  return response;
+}
+
+type UpdateForm = {
+  userBirthdate: string | null | undefined,
+  userGender: string,
+  nickname: string,
+  introduction: string,
+  interests: string[] | null
+  profileImage: string | null,
+}
+
+export const userUpdateProfile = async (updateForm: UpdateForm, userId: number) => {
+  const formData = new FormData();
+
+  const value = {
+    userId: userId,
+		birthdate: updateForm.userBirthdate,
+		gender : updateForm.userGender, // M or F
+		nickname : updateForm.nickname,
+		introduction : updateForm.introduction,
+    isOpen : true,
+		interests : updateForm.interests
+  }
+
+  const blob = new Blob([JSON.stringify(value)], {type: "application/json"})
+  formData.append('updateUserDto', blob);
+
+  if (updateForm.profileImage !== null) {
+    const binaryString = window.atob(updateForm.profileImage.split(',')[1]);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const imageBlob = new Blob([bytes], { type: "image/png" })
+    formData.append(`profileImage`, imageBlob, `userProfileImage.png`);
+  }
+
+  const response = await axiosInstance.put(`/user/update`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response;
+}
