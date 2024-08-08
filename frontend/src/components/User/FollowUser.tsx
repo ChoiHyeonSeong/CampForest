@@ -1,9 +1,11 @@
 import React from 'react';
+import FollowBtn from './FollowBtn';
 
 type Props = {
   userId: number;
   nickname: string;
   profileImage: string;
+  fetchUserInfo: () => void;
 }
 
 const FollowUser = (props: Props) => {
@@ -49,20 +51,7 @@ const FollowUser = (props: Props) => {
         </div>
       </div>
       <div className={`flex items-center ms-auto`}>
-        
-        {/* 팔로잉 버튼 클릭 시 버튼 색상 전환되야함
-          bg-light-anchor text-light-text-white  // 클릭시 토글전환색상
-          dark:bg-dark-anchor dark:text-dark-text-white   // 클릭시 토글전환색상
-        */}
-        <button 
-          className={`
-            py-[0.25rem] px-[0.75rem]
-            bg-light-border-1 text-light-text
-            rounded-md
-          `}
-        >
-          팔로잉
-        </button>
+        <FollowBtn targetUserId={props.userId} callbackFunction={props.fetchUserInfo}/>
       </div>
     </div>
   )

@@ -15,8 +15,6 @@ const UserInformation = () => {
   const dispatch = useDispatch();
   const registFormData = useSelector((state: RootState) => state.registStore);
 
-  const [uploadedImage, setuploadedImage] = useState<string>(ProfileImg);
-
   const birthdate = registFormData.optional.userBirthdate ? new Date(registFormData.optional.userBirthdate) : null;
   
   const handleDateChange = (date: Date | null) => {
@@ -34,7 +32,6 @@ const UserInformation = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        setuploadedImage(base64String);
         dispatch(
           registOptional({
             ...registFormData.optional,
@@ -60,15 +57,6 @@ const UserInformation = () => {
     );
   };
 
-  const handleInterestsUpload = (interests: string[]) => {
-    dispatch(
-      registOptional({
-        ...registFormData.optional,
-        interests: interests,
-      })
-    );
-  };
-
   const clearNickname = () => {
     dispatch(
       registOptional({
@@ -89,8 +77,6 @@ const UserInformation = () => {
 
   // 이미지 이상한거 올라가면 Default 이미지로 변경
   const handleImageError = () => {
-    setuploadedImage(ProfileImg);
-
     dispatch(
       registOptional({
         ...registFormData.optional,
@@ -114,7 +100,7 @@ const UserInformation = () => {
             onClick={() => {fileInputRef.current?.click()}}
           >
             <img 
-              src={uploadedImage}
+              src={registFormData.optional.profileImage === null ? ProfileImg : registFormData.optional.profileImage}
               onError={handleImageError} 
               alt="프로필 사진" 
               className={`
@@ -347,7 +333,7 @@ const UserInformation = () => {
         </div>
 
         {/* 관심사 설정 */}
-        <InterestSetting saveFunction={handleInterestsUpload}/>
+        <InterestSetting/>
       </div>
     </form>
   )
