@@ -38,6 +38,7 @@ out/
 
 src/main/resources/application.yml
 src/main/generated/
+logs/
 
 ### macOS ###
 # General
