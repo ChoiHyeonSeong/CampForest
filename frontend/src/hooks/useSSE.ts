@@ -51,7 +51,7 @@ const useSSE = () => {
 
     eventSourceRef.current = eventSource;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, retryCount]);
+  }, [retryCount]);
 
   useEffect(() => {
     let retryTimeout: NodeJS.Timeout;
@@ -71,6 +71,10 @@ const useSSE = () => {
         createEventSource();
       } else {
         retryWithBackoff();
+      }
+    } else {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
       }
     }
 
