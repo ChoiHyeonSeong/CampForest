@@ -278,7 +278,7 @@ public class UserController {
 			Users toUser = userService.findByUserId(followeeId)
 				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
 
-			notificationService.createNotification(toUser, NotificationType.FOLLOW, fromUser.getNickname() + "님이 팔로우를 시작했습니다.");
+			notificationService.createNotification(toUser, fromUser, NotificationType.FOLLOW, "님이 팔로우를 시작했습니다.");
 			return ApiResponse.createSuccess(null, "팔로우 성공");
 		} catch (IllegalArgumentException e) {
 			return ApiResponse.createError(ErrorCode.FOLLOW_FAILED);

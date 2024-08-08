@@ -48,7 +48,7 @@ public class SaleController {
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			notificationService.createNotification(receiver, NotificationType.SALE, requester.getNickname() + "님이 판매예약을 요청하였습니다.");
+			notificationService.createNotification(receiver, requester, NotificationType.SALE, "님이 판매예약을 요청하였습니다.");
 
 			return ApiResponse.createSuccessWithNoContent("판매 요청이 보내졌습니다");
 		} catch (Exception e) {
@@ -70,7 +70,7 @@ public class SaleController {
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			notificationService.createNotification(receiver, NotificationType.SALE, requester.getNickname() + "님이 판매예약 요청을 수락하였습니다.");
+			notificationService.createNotification(receiver, requester, NotificationType.SALE, "님이 판매예약 요청을 수락하였습니다.");
 
 			return ApiResponse.createSuccessWithNoContent("구매 요청에 승낙하였습니다.");
 		} catch (Exception e) {

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.notification.dto.NotificationDTO;
 import com.campforest.backend.notification.model.Notification;
 import com.campforest.backend.notification.model.NotificationType;
 import com.campforest.backend.notification.repository.NotificationRepository;
@@ -20,18 +21,19 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	@Transactional
-	public void createNotification(Users receiver, NotificationType type, String message) {
+	public void createNotification(Users receiver, Users sender, NotificationType type, String message) {
 		Notification notification = Notification.builder()
 			.receiver(receiver)
+			.sender(sender)
 			.notificationType(type)
 			.isRead(false)
 			.message(message)
 			.build();
 
-		notificationRepository.save(notification);
+	  	Notification saved = notificationRepository.save(notification);
 
 		// SSE를 통해 클라이언트로 알림 전송
-		sseEmitters.send(receiver.getUserId(), notification);
+		sseEmitters.send(receiver.getUserId(), NotificationDTO.fromEntity(saved));
 	}
 
 	@Override

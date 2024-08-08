@@ -25,6 +25,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "notifications")
@@ -33,6 +34,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@ToString
 public class Notification {
 
 	@Id
@@ -44,6 +46,11 @@ public class Notification {
 	@JoinColumn(name = "receiver")
 	@JsonBackReference
 	private Users receiver;
+
+	@ManyToOne
+	@JoinColumn(name = "sender")
+	@JsonBackReference
+	private Users sender;
 
 	@Column(name = "notification_type")
 	@Enumerated(EnumType.STRING)

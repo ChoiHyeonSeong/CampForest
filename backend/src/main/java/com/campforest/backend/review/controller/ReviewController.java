@@ -67,7 +67,7 @@ public class ReviewController {
 			reviewRequestDto.setReviewImageUrl(imageUrls);
 			Review review = reviewService.writeReview(reviewRequestDto);
 
-			notificationService.createNotification(review.getReviewed(), NotificationType.REVIEW, review.getReviewer().getNickname() + "님이 리뷰를 남기셨습니다.");
+			notificationService.createNotification(review.getReviewed(), review.getReviewer(), NotificationType.REVIEW, "님이 리뷰를 남기셨습니다.");
 
 			return ApiResponse.createSuccess(review, "리뷰 작성이 완료되었습니다.");
 		} catch (Exception e) {
