@@ -41,6 +41,7 @@ type Props = {
   board: BoardType;
   deleteFunction: () => void;
   isDetail: boolean;
+  detailOpen? : (param: number) => void;
 }
 
 const Board = (props: Props) => {
@@ -63,8 +64,10 @@ const Board = (props: Props) => {
     };
   };
 
-  const goBoardDetail = () => {
-    navigate(`/board/detail/${props.board.boardId}`)
+  const handleDetailClick = () => {
+    if (props.detailOpen) {
+      props.detailOpen(props.board.boardId)
+    }
   }
   
   const like = async () => {
@@ -155,7 +158,7 @@ const Board = (props: Props) => {
   return (
     <div 
       className={`
-        flex flex-col justify-between w-full min-w-[22rem] lg:h-fit lg:px-[1rem]
+        flex flex-col w-full min-w-[22rem] lg:h-full lg:px-[1rem]
       bg-light-white border-light-border
       dark:bg-dark-white dark:border-dark-border
         border-b
@@ -203,7 +206,7 @@ const Board = (props: Props) => {
               flex flex-all-center relative w-full max-w-full
               cursor-pointer overflow-hidden aspect-1
             `} 
-            onClick={goBoardDetail}
+            onClick={handleDetailClick}
           >
             {props.board.imageUrls.length > 0 && (
               <Swiper
@@ -281,7 +284,7 @@ const Board = (props: Props) => {
                 mb-[0.5rem]
                 text-lg md:text-xl cursor-pointer break-all
               `}
-              onClick={goBoardDetail}
+              onClick={handleDetailClick}
             >
               {props.board.title}
             </div>
@@ -292,7 +295,7 @@ const Board = (props: Props) => {
                 text-xl md:text-base
                 cursor-pointer break-all
               `} 
-              onClick={goBoardDetail}
+              onClick={handleDetailClick}
             >
               {props.board.content}
             </div>
@@ -348,8 +351,8 @@ const Board = (props: Props) => {
             {likeCount}
           </div>
         </div>
-        <Link
-          to={`/board/detail/${props.board.boardId}`}
+        <div
+          onClick={handleDetailClick}
           className={`relative w-1/3`}
         >
           <CommentIcon 
@@ -366,7 +369,7 @@ const Board = (props: Props) => {
           >
               {props.board.commentCount}
           </div>
-        </Link>
+        </div>
         <div className={`w-1/3`}>
           {saved ? 
             (<BookmarkIcon

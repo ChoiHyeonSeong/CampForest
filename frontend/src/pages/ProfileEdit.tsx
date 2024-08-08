@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { registClear, registOptional } from '@store/registSlice';
 import { userGetProfile, userUpdateProfile } from '@services/userService';
+import { setUser } from '@store/userSlice';
 
 type Props = {}
 
@@ -81,7 +82,23 @@ const ProfileEdit = (props: Props) => {
         const response = await userUpdateProfile(optionalData, user.userId, true)
         console.log(response)
       }
-
+      
+      const changeInformation = () => {
+        sessionStorage.setItem('nickname', optionalData.nickname);
+        if (optionalData.profileImage === null) {
+          sessionStorage.setItem('profileImage', '');
+        } else {
+          sessionStorage.setItem('profileImage', optionalData.profileImage);
+        }
+        dispatch(
+          setUser({
+            ...user,
+            nickname: optionalData.nickname,
+            profileImage: optionalData.profileImage ? optionalData.profileImage : '',
+          })
+        )
+      }
+      changeInformation()
       navigate(`/user/${user.userId}`)
     } catch (error) {
       console.log(error)

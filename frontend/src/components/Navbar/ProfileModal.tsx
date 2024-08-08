@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { logout } from '@services/authService';
-import DefaultProfileImg from '@assets/images/profileimgs.png'
+import DefaultProfileImg from '@assets/images/basic_profile.png'
 
 type Props = {
   isOpen: boolean;
@@ -45,7 +45,7 @@ const ProfileModal = (props: Props) => {
               <>
                 <div className={`w-[5rem] h-[5rem] mb-[1rem] bg-light-gray dark:bg-dark-gray rounded-full overflow-hidden`}>
                   <img 
-                    src={`${user.profileImage}`} 
+                    src={`${user.profileImage ? user.profileImage : DefaultProfileImg}`} 
                     alt="" 
                     onError={handleImageError}
                   />

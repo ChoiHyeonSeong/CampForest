@@ -61,6 +61,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   try {
     const response = await axiosInstance.post('/user/public/login', { email, password });
     const data = response.data.data;
+    console.log(data)
     const Authorization = response.headers.authorization;
     const user = { userId: data.userId, 
                    nickname: data.nickname, 
@@ -70,7 +71,12 @@ export const login = async (email: string, password: string): Promise<LoginRespo
       sessionStorage.setItem('accessToken', Authorization);
       sessionStorage.setItem('userId', data.userId);
       sessionStorage.setItem('nickname', data.nickname);
-      sessionStorage.setItem('profileImage', data.profileImage);
+      console.log(data.profileImage)
+      if (data.profileImage === null) {
+        sessionStorage.setItem('profileImage', '');
+      } else {
+        sessionStorage.setItem('profileImage', data.profileImage);
+      }
       sessionStorage.setItem('similarUsers', JSON.stringify(data.similarUsers));
       sessionStorage.setItem('isLoggedIn', 'true');
       axiosInstance.defaults.headers['Authorization'] = Authorization;
