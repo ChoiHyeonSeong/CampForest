@@ -50,18 +50,25 @@ def calculate_common_follows(user_id_1, user_id_2):
     return common_follows_count
 
 # 유사한 사용자 추천 함수
-def find_most_similar_users(user_id, interest_similarity_df, follow_similarity_df, follow_weight=0.9, interest_weight=0.1, top_n=6):
+def find_most_similar_users(user_id, interest_similarity_df, follow_similarity_df, follow_df, follow_weight=0.9, interest_weight=0.1, top_n=10):
     if user_id not in interest_similarity_df.index or user_id not in follow_similarity_df.index:
         raise ValueError(f"User ID {user_id} not found in the data.")
 
+    # 사용자가 이미 팔로우한 사용자 목록 추출
+    followed_users = follow_df[follow_df['follower_id'] == user_id]['followee_id'].tolist()
+
     combined_similarity = follow_weight * follow_similarity_df[user_id] + interest_weight * interest_similarity_df[user_id]
-    similar_users = combined_similarity.sort_values(ascending=False).index[1:top_n+1]  # 자기 자신 제외
-    similar_scores = combined_similarity.sort_values(ascending=False).values[1:top_n+1]
+    similar_users = combined_similarity.sort_values(ascending=False).index[1:]  # 자기 자신 제외
 
     similar_users_with_common_follows = []
-    for similar_user, score in zip(similar_users, similar_scores):
+    for similar_user in similar_users:
+        if similar_user in followed_users:
+            continue
         common_follows_count = calculate_common_follows(user_id, similar_user)
-        similar_users_with_common_follows.append({"user_id": similar_user, "similarity_score": score, "common_follows_count": common_follows_count})
+        similarity_score = combined_similarity[similar_user]
+        similar_users_with_common_follows.append({"user_id": similar_user, "similarity_score": similarity_score, "common_follows_count": common_follows_count})
+        if len(similar_users_with_common_follows) >= top_n:
+            break
 
     return similar_users_with_common_follows
 
@@ -75,14 +82,13 @@ async def similar_users(user_id: int):
     try:
         user_interest_similarity_df = calculate_category_similarity(engine)
         follow_similarity_df, follow_df = calculate_follow_similarity(engine)
-        most_similar_users = find_most_similar_users(user_id, user_interest_similarity_df, follow_similarity_df)
+        most_similar_users = find_most_similar_users(user_id, user_interest_similarity_df, follow_similarity_df, follow_df)
         return most_similar_users
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
-# FastAPI 애플리케이션 실행 (uvicorn 사용)
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
