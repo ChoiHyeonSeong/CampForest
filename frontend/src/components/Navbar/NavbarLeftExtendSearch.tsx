@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 
 type Props = {
   isExtendMenuOpen: boolean;
@@ -11,16 +12,35 @@ type Props = {
 
 const NavbarLeftExtendSearch = (props: Props) => {
   const [searchText, setSearchText] = useState('');
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    setRecentSearches(storedSearches);
+  }, []);
+
+  const addRecentSearch = (search: string) => {
+    const updatedSearches = [search, ...recentSearches.filter(s => s !== search)].slice(0, 10);
+    setRecentSearches(updatedSearches);
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+  };
+
+  const removeRecentSearch = (search: string) => {
+    const updatedSearches = recentSearches.filter(s => s !== search);
+    setRecentSearches(updatedSearches);
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
 
-  const handleSearch = () => {
-    if (searchText.length >= 2) {
-      navigate(`/search?query=${encodeURIComponent(searchText)}`);
-      props.closeMenu()
+  const handleSearch = (text: string = searchText) => {
+    if (text.length >= 2) {
+      addRecentSearch(text);
+      navigate(`/search?query=${encodeURIComponent(text)}`);
+      props.closeMenu();
     } else {
       alert('검색어는 두 글자 이상 입력해야 합니다.');
     }
@@ -58,7 +78,7 @@ const NavbarLeftExtendSearch = (props: Props) => {
       {/* 검색창  */}
       <div
         className='
-          flex justify-between items-center w-full h-[2.8rem] md:h-[3.1rem] mb-[0.5rem] px-[0.5rem]
+          flex justify-between items-center w-full h-[2.8rem] md:h-[3.1rem] mb-[1.75rem] px-[0.5rem]
           text-light-text bg-light-gray
           dark:text-dark-text dark:bg-dark-gray
           font-medium text-lg rounded
@@ -87,9 +107,32 @@ const NavbarLeftExtendSearch = (props: Props) => {
             dark:text-dark-text-secondary
             cursor-pointer font-semibold text-[0.92rem]
           '
-          onClick={handleSearch}
+          onClick={() => handleSearch()}
         >
           검색
+        </div>
+      </div>
+
+      {/* 최근검색어 띄우기 */}
+      <div className='w-full px-[0.25rem]'>
+        <p className='font-medium'>최근 검색어</p>
+        <div className='recentsearch-tag mt-[0.5rem] flex flex-wrap gap-2'>
+          {recentSearches.map((search, index) => (
+            <button 
+              key={index} 
+              className='flex items-center bg-light-gray dark:bg-dark-gray rounded-full px-[0.75rem] py-[0.2rem]'
+              onClick={() => handleSearch(search)}
+            >
+              <p>{search}</p>
+              <CloseIcon 
+                className='size-[1rem] ms-[0.25rem] fill-light-border-icon dark:fill-dark-border-icon cursor-pointer' 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeRecentSearch(search);
+                }}
+              />
+            </button>
+          ))}
         </div>
       </div>
     </div>

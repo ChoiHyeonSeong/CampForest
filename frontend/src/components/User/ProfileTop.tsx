@@ -11,7 +11,6 @@ import { RootState, store } from '@store/store';
 import { addMessageToChatInProgress, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
 import { communityChatList, initCommunityChat } from '@services/communityChatService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { Message } from '@components/Chat/Chat';
 import { ChatUserType } from '@components/Chat/ChatUser';
 
 type UserInfo = {
@@ -26,27 +25,19 @@ type UserInfo = {
 type Props = {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsFollowing: React.Dispatch<React.SetStateAction<boolean>>;
+  userinfo: UserInfo | undefined;
+  fetchUserInfo: () => void;
 }
 
-export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
+export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, fetchUserInfo }: Props) {
   const dispatch = useDispatch();
   const chatState = useSelector((state: RootState) => state.chatStore);
   const userId = Number(useParams().userId);
-  const [userinfo, setUserInfo] = useState<UserInfo>();
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
   const { subscribe, sendMessage } = useWebSocket();
 
   const [fireTemperature, setFireTemperature] = useState(400);
-
-  const fetchUserInfo = async () => {
-    try {
-      const userData = await userPage(userId);
-      setUserInfo(userData);
-    } catch (error) {
-      console.error("Failed to fetch user info: ", error);
-    }
-  }
 
   useEffect(() => {
     if (userId === loginUserId) {
@@ -137,19 +128,6 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing }: Props) {
               absolute rounded-full w-full
             `}
           />
-          <div 
-            className={`
-              ${myPage ? '' : 'hidden'}
-              absolute w-full h-full rounded-full mx-auto 
-              bg-light-black text-light-white
-              dark:bg-dark-black dark:text-dark-white
-              cursor-pointer opacity-0 hover:opacity-100 duration-200 
-            `}
-          >
-            <p className={`flex justify-center items-center h-full`}>
-              변경
-            </p>
-          </div>
         </div>
 
         {/* 닉네임, 팔로우, 프로필 수정 */}

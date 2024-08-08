@@ -18,7 +18,7 @@ type RegistOptionalPayload = {
   userBirthdate: string | null | undefined,
   userGender: string,
   introduction: string,
-  interests: string[] | null
+  interests: string[]
 }
 
 const Regist: RegistState = {

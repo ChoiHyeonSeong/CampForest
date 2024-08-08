@@ -2,17 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus.svg'
 import { ReactComponent as CheckIcon } from '@assets/icons/check.svg'
 
-type Props = {
-  saveFunction: (params: string[]) => void;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+import { registOptional } from '@store/registSlice';
 
 // 관심 태그 설정
-type InterestTag = '선호 캠핑 분위기' | '산' | '해변' | '숲' | '도심' | '근교' | '계곡' | '섬' |
-                   '선호 캠핑 지역' | '수도권' | '강원도' | '충청도' | '전라도' | '경상도' | '제주도' |
-                   '선호 캠핑 동반자' | '가족' | '연인' | '혼자' | '친구' | '반려동물' |
-                   '선호 캠핑 종류' | '오토캠핑' | '백패킹' | '모토캠핑' | '미니멀캠핑' | '차박캠핑' | '글램핑' | '카라반' | '노지캠핑' | '캠프닉' | '비박' |
-                   '선호 캠핑 컨셉' | '요리' | '자연' | '사진' | '술' | '휴식' | '별' | '불멍' | '수상 스포츠' | '암벽 등반' | '음악';
-
 const interestTagList: Record<string, string[]> = {
   '선호 캠핑 분위기': ['산', '해변', '숲', '도심', '근교', '계곡', '섬'],
   '선호 캠핑 지역': ['수도권', '강원도', '충청도', '전라도', '경상도', '제주도'],
@@ -21,39 +15,43 @@ const interestTagList: Record<string, string[]> = {
   '선호 캠핑 컨셉': ['요리', '자연', '사진', '술', '휴식', '별', '불멍', '수상 스포츠', '암벽 등반', '음악']
 };
 
-const InterestSetting = (props: Props) => {
+const InterestSetting = () => {
+  const dispatch = useDispatch();
+  const registFormData = useSelector((state: RootState) => state.registStore);
+  const interests = registFormData.optional.interests;
 
-  const [interestChecking, setInterestChecking] = useState<string[]>([]);
   const [selectedCount, setSelectedCount] = useState(0);
   const [showWarning, setShowWarning] = useState(false);
 
   const handleTagClick = (tag: string) => {
-    if (interestChecking.length >= 6) {
-      setShowWarning(true);
-      return;
+    let newInterests;
+
+    if (interests.length === 6) {
+      if (interests.includes(tag)) {
+        newInterests = interests.filter(item => item !== tag);
+      } else {
+        setShowWarning(true);
+        return;
+      }
+    } else {
+      if (interests.includes(tag)) {
+        newInterests = interests.filter(item => item !== tag);
+      } else {
+        newInterests = [...interests, tag];
+      }
     }
 
-    setInterestChecking(prev => {
-      // tag가 InterestTag 타입임을 보장
-      if (prev.includes(tag)) {
-        // tag가 이미 존재하면 제거
-        return prev.filter(item => item !== tag);
-      } else {
-        // tag가 존재하지 않으면 추가
-        return [...prev, tag];
-      }
-    });
+    dispatch(registOptional({ ...registFormData.optional, interests: newInterests }));
   };
 
   useEffect(() => {
-    const count = Object.values(interestChecking).filter(Boolean).length;
+    const count = Object.values(interests).filter(Boolean).length;
     setSelectedCount(count);
-    props.saveFunction(interestChecking);
     if (count <= 6) {
       setShowWarning(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interestChecking]);
+  }, [interests]);
 
   useEffect(() => {
     if (showWarning) {
@@ -175,7 +173,7 @@ const InterestSetting = (props: Props) => {
                     flex items-center ps-[0.75rem] py-[0.25rem] pr-[1rem]
                     duration-200 border-[1.5px] rounded-full cursor-pointer
 
-                    ${interestChecking.includes(tag) ?
+                    ${interests.includes(tag) ?
                       `border-light-signature text-light-signature
                         dark:border-dark-signature dark:text-dark-signature` :
                       `border-light-border-1 text-light-text-secondary hover:border-light-signature
@@ -184,7 +182,7 @@ const InterestSetting = (props: Props) => {
                   `}
                   onClick={() => handleTagClick(tag)}
                 >
-                  {interestChecking.includes(tag) ?
+                  {interests.includes(tag) ?
                     <CheckIcon
                       className={`
                         size-[1rem] lg:size-[1.25rem] mr-[0.25rem]

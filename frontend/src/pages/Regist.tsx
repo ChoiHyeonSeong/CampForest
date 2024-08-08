@@ -103,8 +103,18 @@ const Regist: React.FC = () => {
   };
 
   const isOptionalFilled = (optional: RegistOptional): boolean => {
-    const { profileImage, introduction, ...rest } = optional;
-    return Object.values(rest).every(value => value !== '' && value !== null && value?.length !== 0);
+    const { profileImage, introduction, interests, ...rest } = optional;
+
+    const isInterestsValid = interests !== null && interests.length === 6;
+
+    const areOtherFieldsValid = Object.entries(rest).every(([key, value]) => {
+      if (key === 'userBirthdate') {
+        return value !== undefined && value !== '' && value !== null;
+      }
+      return typeof value === 'string' && value.trim() !== '';
+    });
+  
+    return isInterestsValid && areOtherFieldsValid;
   };
 
   return (
