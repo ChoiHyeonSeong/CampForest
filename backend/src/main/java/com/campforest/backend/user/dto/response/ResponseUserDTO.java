@@ -7,11 +7,13 @@ import com.campforest.backend.user.model.Gender;
 import com.campforest.backend.user.model.Interest;
 import com.campforest.backend.user.model.Users;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class ResponseUserDTO {
 	private Long userId;
 	private String profileImage;
@@ -23,9 +25,13 @@ public class ResponseUserDTO {
 	private Set<Interest> interests;
 
 	public static ResponseUserDTO fromEntity(Users user) {
+		String imageUrl = null;
+		if(user.getUserImage() != null) {
+			imageUrl = user.getUserImage().getImageUrl();
+		}
 		return ResponseUserDTO.builder()
 			.userId(user.getUserId())
-			.profileImage(user.getUserImage().getImageUrl())
+			.profileImage(imageUrl)
 			.birthdate(user.getBirthdate())
 			.gender(user.getGender())
 			.nickname(user.getNickname())
