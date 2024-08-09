@@ -177,7 +177,7 @@ const ProductList = () => {
         </div>
 
 
-        <div className={`flex flex-wrap gap-[0.5rem] items-center relative z-[15] mb-[0.75rem] ps-[0.75rem]`}>
+        <div className={`flex flex-wrap gap-[0.5rem] items-center relative z-[15] mb-[0.75rem]`}>
           <Dropdown
             label="카테고리"
             options={categories}
@@ -210,7 +210,7 @@ const ProductList = () => {
               text-sm font-medium duration-200 cursor-pointer rounded-md border shadow-sm focus:outline-none ${
               isAccBtnActive
                 ? 'bg-light-signature dark:bg-dark-signature text-light-white border-light-signature dark:border-dark-signature'
-                : 'border-light-border-1 dark:border-dark-border-1'
+                : 'bg-light-gray dark:bg-dark-gray border-light-border-1 dark:border-dark-border-1'
               }
             `}
             onClick={handleAccBtnClick}

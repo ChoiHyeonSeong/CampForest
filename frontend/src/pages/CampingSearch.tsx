@@ -175,18 +175,25 @@ function CampingSearch() {
   }, [isModalOpen])
 
   return (
-    <div className={`lg:h-[calc(100vh-3.2rem)] z-[30]`}>
+    <div className={`z-[30]`}>
       {/* 메인 화면 */}
-      <div className={`flex justify-center items-center h-[calc(100%-3.2rem)]`}>
-        <div className={`flex flex-all-center flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[40rem] ms-[0.5rem] me-[0.5rem]`}>
-          
-          <div className='relative w-[100%] lg:size-[40rem] aspect-[4/3]'>
+      <div className={`flex justify-center items-center min-h-screen`}>
+        <div 
+          className={`
+            flex flex-col lg:flex-row  w-[100%] md:max-w-[48rem] lg:max-w-[80rem] xl:max-w-[90rem] lg:h-[40rem] p-[0.75rem] mx-[0.5rem]
+            bg-light-white bg-opacity-80
+            dark:bg-dark-white dark:bg-opacity-80
+
+          `}
+        >
+              
+          {/* 캠핑지도 */}
+          <div className='relative w-full lg:min-w-[400px] lg:max-w-[50rem] lg:h-[38.5rem] aspect-[4/3] lg:aspect-auto'>
             <div 
               className={`
-                z-[0] w-[100%] lg:size-[40rem]
-                bg-light-black 
-                dark:bg-dark-black 
-                aspect-[4/3]
+               z-[0] w-[100%] h-[100%]
+              bg-light-black 
+              dark:bg-dark-black 
               `}
               id='map'
             />
@@ -199,9 +206,12 @@ function CampingSearch() {
             </div>
           </div>
           
-          <div className={`w-[100%] lg:w-[calc(100%-40rem-1rem)] lg:min-w-[30rem] lg:h-[100%] lg:ms-[1rem] my-[0.75rem] lg:my-0`}>
+          {/* 캠핑장리스트 */}
+          <div className={`w-full lg:min-w-[470px] lg:h-[38.5rem] 
+      lg:ms-[1rem] mt-[0.75rem] lg:mt-0 
+      flex flex-col`}>
             
-            <div className={`h-[3rem]`}>
+            <div className={`h-[3rem] mb-[0.75rem]`}>
               <div className={`relative w-[100%]`}>
                 <div className={`absolute left-[0.75rem] top-[0.9rem]`}>
                   <SearchIcon
@@ -260,11 +270,11 @@ function CampingSearch() {
               selectedLocation={selectedLocation}
             />
             
-            <div className={`${filterCondition.length > 1 ? 'h-[2rem]' : 'h-0'}`}>
+            <div className={`${filterCondition.length > 1 ? 'h-[2rem]' : 'h-0'} mb-[0.75rem]`}>
               
             </div>
 
-            <div className={`${filterCondition.length > 1 ? 'lg:h-[33.5rem]' : 'lg:h-[35.5rem]'} overflow-y-auto scrollbar-hide mt-[1rem] px-[0.75rem]`}>
+            <div className={`flex-grow overflow-y-auto scrollbar-hide px-[0.75rem]`}>
               <CampingList modalOpen={modalOpen} />
             </div>
           </div>

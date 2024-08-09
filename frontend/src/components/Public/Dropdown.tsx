@@ -39,9 +39,7 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
   return (
     <div 
       className={`
-        inline-block relative 
-        bg-light-white
-        dark:bg-dark-white
+        inline-block relative
         text-left
       `}
     >
@@ -51,8 +49,8 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
           className={`
             ${shouldChangeIcon ? 'border-light-signature dark:border-dark-signature' : 'border-light-border-1 dark:border-dark-border-1'} 
             inline-flex justify-between items-center w-full min-w-[7rem] px-[1rem] py-[0.5rem]
-            border-light-border
-            dark:border-dark-border
+            border-light-border bg-light-gray
+            dark:border-dark-border dark:bg-dark-gray
             text-sm font-medium rounded-md border shadow-sm focus:outline-none`}
           onClick={onToggle}
         >

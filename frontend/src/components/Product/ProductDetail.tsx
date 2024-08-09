@@ -87,8 +87,8 @@ function Detail() {
         <div 
           className={`
             flex lg:flex-row flex-col relative w-full mb-[2rem] 
-            bg-light-white
-            dark:bg-dark-white
+            bg-light-white bg-opacity-80
+            dark:bg-dark-white dark:bg-opacity-80
             overflow-hidden
           `}
         >
