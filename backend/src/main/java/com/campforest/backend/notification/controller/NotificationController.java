@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +22,7 @@ import com.campforest.backend.notification.service.SseEmitters;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,11 +35,13 @@ public class NotificationController {
 	private final SseEmitters sseEmitters;
 
 	@GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public SseEmitter subscribe(@AuthenticationPrincipal UserDetails userDetails) {
+	public SseEmitter subscribe(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse response) {
 		Users users = userService.findByEmail(userDetails.getUsername())
 			.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
 
 		SseEmitter emitter = sseEmitters.createEmitter(users.getUserId());
+		response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("Connection", "keep-alive");
 
 		try {
 			emitter.send(SseEmitter.event()

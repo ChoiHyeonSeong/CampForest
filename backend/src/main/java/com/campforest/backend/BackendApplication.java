@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @SpringBootApplication
 @EnableWebSecurity
 @EnableScheduling
-@EnableAsync
 public class BackendApplication {
 
 	public static void main(String[] args) {
