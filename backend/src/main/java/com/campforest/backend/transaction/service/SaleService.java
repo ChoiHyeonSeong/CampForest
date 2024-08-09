@@ -45,7 +45,7 @@ public class SaleService {
 		sale.requestSale();
 		saleRepository.save(sale);
 
-		Sale reverseSale = buildSale(saleRequestDto, product, receiverId,
+		Sale reverseSale = reverseBuildSale(saleRequestDto, product, receiverId,
 			requesterId, TransactionStatus.RECEIVED);
 		reverseSale.receiveSale();
 		saleRepository.save(reverseSale);
@@ -166,6 +166,22 @@ public class SaleService {
 			.product(product)
 			.requesterId(requesterId)
 			.receiverId(receiverId)
+			.sellerId(saleRequestDto.getSellerId())
+			.buyerId(saleRequestDto.getBuyerId())
+			.saleStatus(status)
+			.meetingTime(saleRequestDto.getMeetingTime())
+			.meetingPlace(saleRequestDto.getMeetingPlace())
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
+
+	private Sale reverseBuildSale(SaleRequestDto saleRequestDto, Product product, Long requesterId, Long receiverId,
+		TransactionStatus status) {
+		return Sale.builder()
+			.product(product)
+			.requesterId(receiverId)
+			.receiverId(requesterId)
 			.sellerId(saleRequestDto.getSellerId())
 			.buyerId(saleRequestDto.getBuyerId())
 			.saleStatus(status)

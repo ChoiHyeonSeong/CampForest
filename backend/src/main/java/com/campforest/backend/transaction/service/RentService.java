@@ -50,7 +50,7 @@ public class RentService {
 		rent.requestRent();
 		rentRepository.save(rent);
 
-		Rent reverseRent = buildRent(rentRequestDto, product, receiverId, requesterId, TransactionStatus.RECEIVED);
+		Rent reverseRent = reverseBuildRent(rentRequestDto, product, receiverId, requesterId, TransactionStatus.RECEIVED);
 		reverseRent.receiveRent();
 		rentRepository.save(reverseRent);
 
@@ -184,6 +184,25 @@ public class RentService {
 			.renterId(rentRequestDto.getRenterId())
 			.requesterId(requesterId)
 			.receiverId(receiverId)
+			.ownerId(rentRequestDto.getOwnerId())
+			.rentStatus(status)
+			.rentStartDate(rentRequestDto.getRentStartDate())
+			.rentEndDate(rentRequestDto.getRentEndDate())
+			.deposit(rentRequestDto.getDeposit())
+			.meetingTime(rentRequestDto.getMeetingTime())
+			.meetingPlace(rentRequestDto.getMeetingPlace())
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.build();
+	}
+
+	private Rent reverseBuildRent(RentRequestDto rentRequestDto, Product product, Long requesterId, Long receiverId,
+		TransactionStatus status) {
+		return Rent.builder()
+			.product(product)
+			.renterId(rentRequestDto.getRenterId())
+			.requesterId(receiverId)
+			.receiverId(requesterId)
 			.ownerId(rentRequestDto.getOwnerId())
 			.rentStatus(status)
 			.rentStartDate(rentRequestDto.getRentStartDate())
