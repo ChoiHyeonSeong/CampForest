@@ -4,6 +4,7 @@ import registReducer from './registSlice';
 import modalReducer from './modalSlice';
 import themeReducer from './themeSlice';
 import chatReducer from './chatSlice';
+import notificationReducer from './notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     modalStore: modalReducer,
     themeStore: themeReducer,
     chatStore: chatReducer,
+    notificationStore: notificationReducer,
   },
 });
 

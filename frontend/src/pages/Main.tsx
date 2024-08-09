@@ -8,7 +8,7 @@ import { setIsLoading } from '@store/modalSlice';
 import { setUser } from '@store/userSlice';
 
 import { getOAuthAccessToken } from '@services/authService';
-import { alarmList } from '@services/alarmService';
+import { notificationList } from '@services/notificationService';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -85,7 +85,7 @@ function Main() {
     <div>
       <div className={`flex justify-center`}>
         <div onClick={() => {
-          alarmList();
+          notificationList();
         }}>테스트용</div>
         <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
