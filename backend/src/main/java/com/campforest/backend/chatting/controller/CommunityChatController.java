@@ -52,7 +52,8 @@ public class CommunityChatController {
             Users receiver = userService.findByUserId(user2)
                     .orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
 
-            notificationService.createNotification(receiver, user, NotificationType.CHAT, "님과 채팅이 시작되었습니다.");
+            notificationService.createChatNotification(receiver, user, NotificationType.CHAT, "님과 채팅이 시작되었습니다.",
+                room.getRoomId());
 
         return ApiResponse.createSuccess(room,"채팅방 로드 성공하였습니다");
         } catch (Exception e) {
