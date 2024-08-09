@@ -98,7 +98,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     // 메세지를 받았을 때
     subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
       const response = JSON.parse(message.body);
-      if (roomId === response.roomId) {
+      if (chatState.roomId === response.roomId) {
         dispatch(updateCommunityChatUserList({...response, inProgress: true}));
         sendMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
         dispatch(addMessageToChatInProgress(response));

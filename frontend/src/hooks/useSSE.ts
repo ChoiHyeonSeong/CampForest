@@ -63,7 +63,7 @@ const useSSE = () => {
       console.log('새 알림', eventData);
       switch (eventData.notificationType) {
         case 'CHAT':
-          // 채팅 알림 처리
+          
           break;
         default:
           dispatch(addNewNotification(eventData));
