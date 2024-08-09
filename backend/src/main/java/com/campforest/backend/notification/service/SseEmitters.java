@@ -34,38 +34,15 @@ public class SseEmitters {
 		emitters.put(userId, emitter);
 		emitter.onCompletion(() -> {
 			emitters.remove(userId);
-			log.info("SSE connection completed for user: {}", userId);
 		});
 		emitter.onTimeout(() -> {
 			emitters.remove(userId);
-			log.warn("SSE connection timed out for user: {}", userId);
 		});
 		emitter.onError((e) -> {
 			emitters.remove(userId);
-			log.error("SSE connection error for user: {}", userId, e);
 		});
 		return emitter;
 	}
-
-	// public void send(Long userId, NotificationDTO notification) {
-	// 	SseEmitter emitter = emitters.get(userId);
-	// 	if (emitter != null) {
-	// 		try {
-	// 			semaphore.acquire();
-	// 			emitter.send(SseEmitter.event()
-	// 				.name("notification")
-	// 				.data(notification));
-	// 		} catch (IOException e) {
-	// 			emitters.remove(userId);
-	// 			log.error("Failed to send notification to user: {}", userId, e);
-	// 		} catch (InterruptedException e) {
-	// 			Thread.currentThread().interrupt();
-	// 			log.error("Interrupted while sending notification to user: {}", userId, e);
-	// 		} finally {
-	// 			semaphore.release();
-	// 		}
-	// 	}
-	// }
 
 	@Async
 	public CompletableFuture<Void> send(Long userId, NotificationDTO notification) {
