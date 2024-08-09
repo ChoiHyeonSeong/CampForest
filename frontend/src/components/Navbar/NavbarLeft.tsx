@@ -46,6 +46,7 @@ const NavbarLeft = (props: Props) => {
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const totalUnreadCount = useSelector((state: RootState) => state.chatStore.totalUnreadCount);
+  const notificationState = useSelector((state: RootState) => state.notificationStore)
 
   return (
     <div 
@@ -235,6 +236,16 @@ const NavbarLeft = (props: Props) => {
                   dark:stroke-dark-border-icon
                 `} 
               />
+              {notificationState.newNotificationList.length > 0 && 
+                  <div 
+                    className='flex items-center justify-center absolute right-[0.75rem] top-0 min-w-[1rem] 
+                    bg-light-warning text-light-white
+                    dark:bg-dark-warning dark:text-dark-white
+                    text-sm rounded-full'
+                  >
+                    {notificationState.newNotificationList.length}
+                </div>
+                }
             </div>
             <div 
               className={`

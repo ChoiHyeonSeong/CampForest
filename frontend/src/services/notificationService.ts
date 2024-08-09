@@ -6,3 +6,9 @@ export const getNotificationList = async () => {
   console.log(response);
   return response.data.data;
 }
+
+export const readNotification = async () => {
+  const response = await axiosInstance.post(`/notification/readAll`);
+
+  console.log(response);
+}

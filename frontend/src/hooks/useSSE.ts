@@ -32,7 +32,7 @@ const useSSE = () => {
           Authorization: `${accessToken}`,
         },
         withCredentials: true,
-        heartbeatTimeout: 300000, // 5분
+        heartbeatTimeout: 330000, // 5분 30초
       }
     );
 
@@ -47,6 +47,15 @@ const useSSE = () => {
     eventSource.addEventListener('notification', (event: any) => {
       const eventData = JSON.parse(event.data);
       console.log('새 알림', eventData);
+      switch (eventData.notificationType) {
+        case 'CHAT': {
+          
+          break;
+        }
+        default: {
+          dispatch(addNewNotification(eventData));
+        }
+      }
       dispatch(addNewNotification(eventData));
     })
 

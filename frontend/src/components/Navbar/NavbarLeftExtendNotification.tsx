@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import NotificationList from '@components/Notification/NotificationList';
+import { useDispatch, useSelector } from 'react-redux';
+import { readNotification } from '@services/notificationService';
+import { updateNotificationList } from '@store/notificationSlice';
+import { RootState } from '@store/store';
 
 type Props = {
   isExtendMenuOpen: boolean;
@@ -8,6 +12,23 @@ type Props = {
 }
 
 const NavbarLeftExtendCommunity = (props: Props) => {
+  const dispatch = useDispatch();
+  const notificationState = useSelector((state: RootState) => state.notificationStore);
+
+  async function readAllNotifications () {
+    try {
+      await readNotification()
+      dispatch(updateNotificationList());
+    } catch (error) {
+      console.error('읽음 처리 실패: ', error);
+    }
+  }
+
+  useEffect(() => {
+    if (!props.isExtendMenuOpen && notificationState.newNotificationList.length > 0) {
+      readAllNotifications();
+    }
+  }, [props.isExtendMenuOpen, dispatch]);
 
   return (
     <div
