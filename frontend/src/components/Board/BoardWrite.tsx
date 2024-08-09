@@ -20,7 +20,6 @@ type BoardOpenType = {
 }
 
 const BoardWrite = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const user = useSelector((state: RootState) => state.userStore);
   const isBoardWriteModal = useSelector((state: RootState) => state.modalStore.isBoardWriteModal)
   const [title, setTitle] = useState<string>('');
@@ -38,6 +37,7 @@ const BoardWrite = () => {
     try {
       const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
       dispatch(setIsBoardWriteModal(false));
+      window.location.reload();
     } catch (error) {
       console.log(error)
     }

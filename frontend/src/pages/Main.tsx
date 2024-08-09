@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from "react-router-dom";
 import Board, { BoardType } from '@components/Board/Board';
-import { boardList } from '@services/boardService';
+import { boardDetail, boardList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
@@ -95,18 +95,35 @@ function Main() {
   useEffect(() => {
     const contentBox = document.querySelector('#contentBox') as HTMLElement;
     if (isDetailOpen) {
-      contentBox.classList.add('scrollbar-hide')
+      contentBox.classList.add('md:scrollbar-hide')
     } else {
-      contentBox.classList.remove('scrollbar-hide')
+      contentBox.classList.remove('md:scrollbar-hide')
     }
   }, [isDetailOpen])
 
+  const updateBoard = async (boardId: number) => {
+    const result = await boardDetail(boardId)
+
+    console.log(result)
+
+    // setBoards(prevBoards =>
+    //   prevBoards.map(board =>
+    //     board.boardId === boardId
+    //       ? { ...board, likeCount: board.likeCount + 1 } // 좋아요 수를 1 증가시킴
+    //       : board
+    //   )
+    // );
+  };
+
+  
+
   return (
     <div>
+      <div onClick={() => updateBoard(1)}>123123123</div>
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
-          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose}/>
+          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose} elementReload={pageReload}/>
         ) : (
           <></>
         )
@@ -116,7 +133,7 @@ function Main() {
       <div className={`flex justify-center`}>
         <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
-            <div className={`my-[1.25rem]`} key={index}>
+            <div className={`my-[1.25rem]`} key={board.boardId}>
               <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen}/>
             </div>
           ))}

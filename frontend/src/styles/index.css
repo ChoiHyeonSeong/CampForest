@@ -11,6 +11,7 @@
 
 @layer utilities {
   .scrollbar-hide {
+    padding-right: 14px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -94,10 +95,17 @@ code {
     monospace;
 }
 
-::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
-  scrollbar-gutter: stable both-edges;
+@media screen and (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 ::-webkit-scrollbar-thumb {

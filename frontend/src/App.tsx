@@ -83,12 +83,10 @@ function App() {
   return (
     <WebSocketProvider>
       <div className="App h-screen overflow-hidden">
-
-
         <Navbar />
         <div className='flex h-full'>
           {/* padding은 Navigation bar용 공간 */}
-          <div className='flex-grow h-[100vh-6.4rem] md:h-[100vh-3.2rem] lg:h-screen mt-[3.2rem] lg:mt-0 mb-[3.2rem] md:mb-0 lg:ms-[5rem] overflow-y-auto' id='contentBox'>
+          <div className='flex-grow w-screen md:w-[calc(100vh-28px)] lg:w-[calc(100vh-5rem-28px)] h-[100vh-6.4rem] md:h-[100vh-3.2rem] lg:h-screen mt-[3.2rem] lg:mt-0 mb-[3.2rem] md:mb-0 lg:ms-[5rem] overflow-y-auto' id='contentBox'>
             {/* 여기서 부터 */}
             <Routes>
               <Route path='/' element={<Main />} />
@@ -96,7 +94,7 @@ function App() {
               <Route path="/user/regist/*" element={<Regist />} />
               <Route path="/user/:userId/*" element={<UserPage />} />
               <Route path="/user/profile/edit" element={<ProfileEdit />} />
-              <Route path='/product/*' element={<Product />} />
+              <Route path='/product/*' element={<Product />} /> 
               <Route path='/camping' element={<CampingSearch />} />
               <Route path='/user/password/*' element={<FindPassword />} />
               <Route path="/community/:category" element={<Community />} />

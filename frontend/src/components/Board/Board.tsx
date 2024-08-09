@@ -70,24 +70,25 @@ const Board = (props: Props) => {
     }
   }
   
-  const like = async () => {
+  const toggleLike = async () => {
     try {
-      const result = await boardLike(props.board.boardId, user.userId)
-      setLiked(true)
-      setLikeCount(result);
+      if (user.isLoggedIn) {
+        if (liked) {
+          // dislike
+          const result = await boardDislike(props.board.boardId, user.userId)
+          setLiked(false)
+          setLikeCount(result);
+        } else {
+          const result = await boardLike(props.board.boardId, user.userId)
+          setLiked(true)
+          setLikeCount(result);
+        }
+      } else {
+        alert("로그인 해주세요.")
+      }
     } catch (error) {
       console.log(error)
-    };
-  }
-
-  const dislike = async () => {
-    try {
-      const result = await boardDislike(props.board.boardId, user.userId)
-      setLiked(false)
-      setLikeCount(result);
-    } catch (error) {
-      console.log(error)
-    };
+    }
   }
 
   useEffect(() => {
@@ -110,21 +111,21 @@ const Board = (props: Props) => {
     };
   }, []);
 
-  function handleBookmark () {
-    if (saved) {
-      try {
-        deleteSave(props.board.boardId);
-        setSaved(false);
-      } catch (error) {
-        console.error('북마크 취소 실패: ', error);
+  const handleBookmark = async () => {
+    try {
+      if (user.isLoggedIn) {
+        if (saved) {
+          await deleteSave(props.board.boardId);
+          setSaved(false);
+        } else {
+          await boardSave(props.board.boardId);
+          setSaved(true);
+        }
+      } else {
+        alert("로그인 해주세요.")
       }
-    } else {
-      try {
-        boardSave(props.board.boardId);
-        setSaved(true);
-      } catch (error) {
-        console.error('북마크 실패: ', error);
-      }
+    } catch (error) {
+      console.error('북마크 취소 실패: ', error);
     }
   }
 
@@ -132,8 +133,8 @@ const Board = (props: Props) => {
     <div 
       className={`
         flex flex-col w-full min-w-[22rem] lg:h-full lg:px-[1rem]
-      bg-light-white border-light-border
-      dark:bg-dark-white dark:border-dark-border
+        bg-light-white border-light-border
+        dark:bg-dark-white dark:border-dark-border
         border-b
       `}
     >
@@ -294,39 +295,37 @@ const Board = (props: Props) => {
         `}
       >
         <div>
-          {user.isLoggedIn && (
-            <div className={`flex items-center`}>
-              {liked ? (
-                <HeartIcon 
-                  onClick={dislike}
-                  className={`
-                    size-[1.5rem]
-                    fill-light-heart stroke-light-heart
-                    dark:fill-dark-heart dark:stroke-dark-heart
-                    cursor-pointer
-                  `}
-                />
-              ) : (
-                <HeartIcon 
-                  onClick={like}
-                  className={`
-                    size-[1.5rem]
-                    fill-none stroke-light-border-icon
-                    dark:stroke-dark-border-icon
-                    cursor-pointer  
-                  `}
-                />
-              )}
-              <div 
+          <div className={`flex items-center`}>
+            {liked ? (
+              <HeartIcon 
+                onClick={toggleLike}
                 className={`
-                  mx-[0.5rem]
-                  text-start md:text-sm
+                  size-[1.5rem]
+                  fill-light-heart stroke-light-heart
+                  dark:fill-dark-heart dark:stroke-dark-heart
+                  cursor-pointer
                 `}
-              >
-                {likeCount}
-              </div>
+              />
+            ) : (
+              <HeartIcon 
+                onClick={toggleLike}
+                className={`
+                  size-[1.5rem]
+                  fill-none stroke-light-border-icon
+                  dark:stroke-dark-border-icon
+                  cursor-pointer  
+                `}
+              />
+            )}
+            <div 
+              className={`
+                mx-[0.5rem]
+                text-start md:text-sm
+              `}
+            >
+              {likeCount}
             </div>
-          )}
+          </div>
         </div>
 
         <div
