@@ -38,6 +38,25 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
+	public void createChatNotification(Users receiver, Users sender, NotificationType type, String message,
+		Long roomId) {
+		Notification notification = Notification.builder()
+			.receiver(receiver)
+			.sender(sender)
+			.notificationType(type)
+			.isRead(false)
+			.message(message)
+			.build();
+
+		Notification saved = notificationRepository.save(notification);
+
+		NotificationDTO dto = NotificationDTO.fromEntity(saved);
+		dto.setRoomId(roomId);
+		// SSE를 통해 클라이언트로 알림 전송
+		sseEmitters.send(receiver.getUserId(), dto);
+	}
+
+	@Override
 	@Transactional
 	public int markAsRead(Users user) {
 		return notificationRepository.updateAllByReceiver(user);

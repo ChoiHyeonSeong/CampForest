@@ -21,6 +21,8 @@ public class NotificationDTO {
 	private boolean isRead;
 	private String message;
 	private Date createdAt;
+	@Setter
+	private Long roomId;
 
 	public static NotificationDTO fromEntity(Notification notification) {
 		String imageUrl =
