@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SseEmitters {
 	private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>(256, 0.75f, 64);
-	private final Semaphore semaphore = new Semaphore(100);
 
 	public SseEmitter createEmitter(Long userId) {
 		SseEmitter oldEmitter = emitters.remove(userId);
@@ -48,18 +47,12 @@ public class SseEmitters {
 		SseEmitter emitter = emitters.get(userId);
 		if (emitter != null) {
 			try {
-				semaphore.acquire();
 				emitter.send(SseEmitter.event()
 					.name("notification")
 					.data(notification));
 			} catch (IOException e) {
 				emitters.remove(userId);
 				log.error("Failed to send notification to user: {}", userId, e);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				log.error("Interrupted while sending notification to user: {}", userId, e);
-			} finally {
-				semaphore.release();
 			}
 		}
 	}
