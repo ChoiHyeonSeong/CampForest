@@ -51,6 +51,9 @@ const chatSlice = createSlice({
     setChatInProgress: (state, action: PayloadAction<Message[]>) => {
       state.chatInProgress = action.payload;
     },
+    addMessageToChatInProgress: (state, action: PayloadAction<Message>) => {
+      state.chatInProgress.push(action.payload);
+    },
     setOtherId: (state, action: PayloadAction<number>) => {
       state.otherId = action.payload;
     },
@@ -103,6 +106,7 @@ export const {
   setRoomId, 
   setRoomIds, 
   setChatInProgress,
+  addMessageToChatInProgress,
   setOtherId,
   setCommunityChatUserList,
   updateCommunityChatUserList,

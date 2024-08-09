@@ -316,16 +316,16 @@ const Board = (props: Props) => {
       {/* 좋아요, 댓글, 북마크 아이콘 */}
       <div 
         className={`
-          flex justify-between mb-[1rem]
+          flex mb-[1rem] px-[1rem]
           text-center
         `}
       >
-        <div className={`relative w-1/3`}>
+        <div className={`flex items-center`}>
         {liked ? (
           <HeartIcon 
             onClick={dislike}
             className={`
-              absolute left-1/2 size-[1.75rem]
+              size-[1.5rem]
               fill-light-heart stroke-light-heart
               dark:fill-dark-heart dark:stroke-dark-heart
               cursor-pointer
@@ -335,7 +335,7 @@ const Board = (props: Props) => {
           <HeartIcon 
             onClick={like}
             className={`
-              absolute left-1/2 size-[1.75rem]
+              size-[1.5rem]
               fill-none stroke-light-border-icon
               dark:stroke-dark-border-icon
               cursor-pointer  
@@ -344,7 +344,7 @@ const Board = (props: Props) => {
         )}
           <div 
             className={`
-              absolute left-[calc(50%+1.75rem)] top-[0.25rem] w-[3rem] mx-[0.5rem]
+              w-[3rem] mx-[0.5rem]
               text-start md:text-sm
             `}
           >
@@ -375,7 +375,7 @@ const Board = (props: Props) => {
             (<BookmarkIcon
               onClick={() => handleBookmark()}
               className={`
-                inline size-[1.75rem]
+                inline size-[1.5rem]
                 stroke-light-border-icon
                 dark:stroke-dark-border-icon
                 cursor-pointer
@@ -383,7 +383,7 @@ const Board = (props: Props) => {
             />) : (<BookmarkIcon
               onClick={() => handleBookmark()}
               className={`
-                inline size-[1.75rem]
+                inline size-[1.5rem]
                 fill-none stroke-light-border-icon
                 dark:stroke-dark-border-icon
                 cursor-pointer

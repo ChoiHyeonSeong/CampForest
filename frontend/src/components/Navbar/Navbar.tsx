@@ -10,13 +10,13 @@ import NavbarLeftExtendCommunity from './NavbarLeftExtendCommunity';
 import NavbarLeftExtendChatList from './NavbarLeftExtendChat';
 import NavbarLeftExtendNotification from './NavbarLeftExtendNotification'
 import NavbarLeftExtendSearch from './NavbarLeftExtendSearch'
-import Chat from '@components/Chat/Chat';
 import NavbarBottom from './NavbarBottom';
 import Aside from './Aside';
 import { setIsChatOpen } from '@store/chatSlice';
 
 const Navbar = () => {
   const user = useSelector((state: RootState) => state.userStore);
+  const chatState = useSelector((state: RootState) => state.chatStore);
   const dispatch = useDispatch();
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
@@ -62,6 +62,7 @@ const Navbar = () => {
         setIsExtendNotificationOpen(false)
         setIsExtendSearchOpen(false)
         setIsExtendRentalOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     } else if (selectedCategory === 'community') {
       if (isExtendCommunityOpen) {
@@ -72,10 +73,12 @@ const Navbar = () => {
         setIsExtendNotificationOpen(false)
         setIsExtendSearchOpen(false)
         setisExtendCommunityOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     } else if (selectedCategory === 'chat') {
       if (isExtendChatListOpen) {
         setIsExtendChatListOpen(false)
+        dispatch(setIsChatOpen(false));
       } else {
         setIsExtendRentalOpen(false)
         setisExtendCommunityOpen(false)
@@ -92,6 +95,7 @@ const Navbar = () => {
         setIsExtendChatListOpen(false)
         setIsExtendSearchOpen(false)
         setIsExtendNotificationOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     } else if (selectedCategory === 'search') {
       if (isExtendSearchOpen) {
@@ -102,13 +106,21 @@ const Navbar = () => {
         setIsExtendChatListOpen(false)
         setIsExtendNotificationOpen(false)
         setIsExtendSearchOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     };
   };
 
   useEffect(() => {
+    if(chatState.isChatOpen && !isExtendChatListOpen) {
+      toggleExtendMenu('chat');
+    }
+  }, [chatState.isChatOpen])
+
+  useEffect(() => {
     // 화면 줄어들면 Menu 강제로 닫기
     const handleAllMenu = () => {
+      dispatch(setIsChatOpen(false));
       setIsMenuOpen(false);
       setIsExtendRentalOpen(false);
       setisExtendCommunityOpen(false);

@@ -29,8 +29,11 @@ const ChatUser = (props: Props) => {
 
   useEffect(() => {
     fetchOtherUser();
-    setLastMessageTime(calculateTimeDifference(chatUser.lastMessageTime));
   }, [])
+  
+  useEffect(() => {
+    setLastMessageTime(calculateTimeDifference(chatUser.lastMessageTime));
+  }, [chatUser.lastMessageTime])
 
   const calculateTimeDifference = (modifiedAt: string) => {
     const modifiedDate = new Date(modifiedAt);
@@ -62,20 +65,20 @@ const ChatUser = (props: Props) => {
   return (
     <div 
       className={`
-        flex items-center px-[0.8rem] py-[1rem] 
+        flex items-center px-[0.8rem] py-[1.25rem] 
         border-light-border
         dark:border-dark-border
         border-b
       `}
     >
-      <div className='flex w-5/6'>
+      <div className='flex w-2/3'>
         {/* 프로필 */}
         <div 
           className={`
             shrink-0 size-[2.6rem] me-[0.75rem]
             border-light-border
             dark:border-dark-border
-            rounded-full border
+            rounded-full border overflow-hidden
           `}
         >
           <img 
@@ -110,7 +113,7 @@ const ChatUser = (props: Props) => {
         </div>
       </div>
 
-      <div>
+      <div className='w-1/3 text-end'>
         {/* 보낸 시간 */}
         <div 
           className={`
@@ -124,16 +127,15 @@ const ChatUser = (props: Props) => {
         </div>
 
         {/* 알림 개수 */}
-        <div 
+        <span 
           className={`
-            ${chatUser.unreadCount === 0 ? 'hidden' : ''}
-            bg-light-signature text-light-white 
-            dark:bg-dark-signature dark:text-light-white
+            ${chatUser.unreadCount === 0 ? '' : 'bg-light-signature dark:bg-dark-signature text-light-white dark:text-dark-white'}
+            px-[0.5rem] me-[0.5rem]
             text-sm rounded-lg text-center
           `}
         >
-          {chatUser.unreadCount}
-        </div>
+          {chatUser.unreadCount === 0 ? '' : chatUser.unreadCount}
+        </span>
 
       </div>
 

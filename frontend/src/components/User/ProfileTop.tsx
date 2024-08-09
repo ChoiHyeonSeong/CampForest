@@ -7,10 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
-import { RootState } from '@store/store';
-import { setChatInProgress, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
-import { initCommunityChat } from '@services/communityChatService';
+import { RootState, store } from '@store/store';
+import { addMessageToChatInProgress, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
+import { communityChatList, initCommunityChat } from '@services/communityChatService';
 import { useWebSocket } from 'Context/WebSocketContext';
+import { ChatUserType } from '@components/Chat/ChatUser';
 
 type UserInfo = {
   nickname: string;
@@ -46,47 +47,66 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     }
     fetchUserInfo();
   }, [userId])
-
-  const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
-
-  const handleChatButton = async () => {
-    const matchedUser = chatState.communityChatUserList.find((chatUser) => chatUser.otherUserId === userId);
   
+  const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
+  
+  async function handleChatButton() {
+    const matchedUser = chatState.communityChatUserList.find((chatUser) => chatUser.otherUserId === userId);
     if (matchedUser) {
-      dispatch(setOtherId(matchedUser.otherUserId));
-      dispatch(setRoomId(matchedUser.roomId));
-      dispatch(setIsChatOpen(true));
+      await dispatch(setOtherId(matchedUser.otherUserId));
+      await dispatch(setRoomId(matchedUser.roomId));
+      await dispatch(setIsChatOpen(true));
     } else {
       try {
         const roomId = await initCommunityChat(userId);
-        console.log('방번호', roomId);
-        // 읽음 처리를 받았을 때
-        subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
-          const readerId = JSON.parse(message.body); // 읽은 사람 Id
-
-          if (loginUserId !== readerId) {
-            dispatch(updateMessageReadStatus({ roomId: roomId, readerId }));
-          }  
-        });
-        // 메세지를 받았을 때
-        subscribe(`/sub/community/${roomId}`, (message) => {
-          const response = JSON.parse(message.body);
-
-          if (chatState.roomId === response.roomId) {
-            dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-            sendMessage(`/pub/room/${response.roomId}/markAsRead`, userId);
-            dispatch(setChatInProgress([...chatState.chatInProgress, response]));
-          } else {
-            dispatch(updateCommunityChatUserList({...response, inProgress: false}));
-          }
-        })
-        dispatch(setOtherId(userId));
-        dispatch(setRoomId(roomId));
-        dispatch(setIsChatOpen(true));
+        await fetchCommunityChatList()
+        await dispatch(setOtherId(userId));
+        await dispatch(setIsChatOpen(true));
+        await dispatch(setRoomId(roomId));
+  
+        // roomId가 확실히 업데이트된 후에 subscribe 함수 호출
+        subscribeToChat(roomId);
       } catch (error) {
-
+        console.error("Error in handleChatButton:", error);
       }
     }
+  }
+
+  // 일반 채팅방 목록 가져오기
+  const fetchCommunityChatList = async () => {
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+      const response = await communityChatList(Number(userId));
+      let count = 0;
+      response.map((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setTotalUnreadCount(count));
+      store.dispatch(setCommunityChatUserList(response));
+    }
+  }
+
+  function subscribeToChat(roomId: number) {
+    // 읽음 처리를 받았을 때
+    subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
+      const readerId = JSON.parse(message.body); // 읽은 사람 Id
+  
+      if (loginUserId !== readerId) {
+        dispatch(updateMessageReadStatus({ roomId: roomId, readerId }));
+      }  
+    });
+  
+    // 메세지를 받았을 때
+    subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
+      const response = JSON.parse(message.body);
+      if (roomId === response.roomId) {
+        dispatch(updateCommunityChatUserList({...response, inProgress: true}));
+        sendMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
+        dispatch(addMessageToChatInProgress(response));
+      } else {
+        dispatch(updateCommunityChatUserList({...response, inProgress: false}));
+      }
+    });
   }
 
   return (

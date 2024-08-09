@@ -13,7 +13,6 @@ type Props = {
 
 const NavbarLeftExtendChat = (props: Props) => {
   const dispatch = useDispatch();
-  const chatState = useSelector((state: RootState) => state.chatStore);
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const isLogin = useSelector((state: RootState) => state.userStore.isLoggedIn);
   const selectedCategory = useSelector((state: RootState) => state.chatStore.selectedCategory);
@@ -21,7 +20,7 @@ const NavbarLeftExtendChat = (props: Props) => {
   return (
     <div
       className={`
-        ${props.isExtendMenuOpen || chatState.isChatOpen ? 'translate-x-[5rem]' : '-translate-x-full'}
+        ${props.isExtendMenuOpen  ? 'translate-x-[5rem]' : '-translate-x-full'}
         fixed z-[35] w-[20rem] h-[100%] pt-[3.2rem] lg:pt-[0]
         bg-light-white border-light-border-1
         dark:bg-dark-white dark:border-dark-border-1
@@ -52,6 +51,7 @@ const NavbarLeftExtendChat = (props: Props) => {
         className={`
           flex w-full h-[2.5rem]
           bg-light-white
+          dark:bg-dark-white
         `}
       >
         <div

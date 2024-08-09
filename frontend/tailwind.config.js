@@ -47,6 +47,7 @@ module.exports = {
           warning: '#FF0000',
           star: '#FFD233',
           reviewcard: '#FFF7ED',
+          bgbasic : '#f3f4f6',
           anchor: {
             DEFAULT: '#3982FF',
             hover: '#355388'
@@ -82,6 +83,7 @@ module.exports = {
           warning: '#FF5555',
           star: '#FFC107',
           reviewcard: '#615E5B',
+          bgbasic : '#121212',
           anchor: {
             DEFAULT: '#6BA4FF',
             hover: '#9CC3FF'

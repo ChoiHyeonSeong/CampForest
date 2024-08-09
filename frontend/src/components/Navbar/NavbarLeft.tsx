@@ -17,9 +17,7 @@ import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { logout } from '@services/authService';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearUser } from '@store/userSlice';
+import { useSelector } from 'react-redux';
 
 import ShortLogo from '@assets/logo/mini-logo.png'
 import { ReactComponent as LongLogo } from '@assets/logo/logo.svg'
@@ -47,17 +45,7 @@ const NavbarLeft = (props: Props) => {
                                  props.isExtendSearchOpen);
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const dispatch = useDispatch();
   const totalUnreadCount = useSelector((state: RootState) => state.chatStore.totalUnreadCount);
-  const handleLogout = async () => {
-    try {
-      await logout();
-      dispatch(clearUser());
-      console.log('Logout successful');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  }
 
   return (
     <div 

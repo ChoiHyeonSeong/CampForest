@@ -61,6 +61,19 @@ const SearchPage = () => {
     setInputText(e.target.value);
   };
 
+   // 최근 검색어 목록 관리
+   const addRecentSearch = (search: string) => {
+    const storedSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    const updatedSearches = [search, ...storedSearches.filter((s: string) => s !== search)].slice(0, 10);
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+  };
+
+  // 검색어 변경 시 최근 검색어 목록 업데이트
+  useEffect(() => {
+    if (inputText.length >= 2) {
+      addRecentSearch(inputText);
+    }
+  }, [inputText]);
 
   // 현재 경로와 비교하여 탭 클래스 이름 설정
   const getTabClassName = (path: string) => {
