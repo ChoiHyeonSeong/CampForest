@@ -71,7 +71,6 @@ export const login = async (email: string, password: string): Promise<LoginRespo
       sessionStorage.setItem('accessToken', Authorization);
       sessionStorage.setItem('userId', data.userId);
       sessionStorage.setItem('nickname', data.nickname);
-      console.log(data.profileImage)
       if (data.profileImage === null) {
         sessionStorage.setItem('profileImage', '');
       } else {

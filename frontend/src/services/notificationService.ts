@@ -1,7 +1,8 @@
 import axiosInstance from "./authService";
 
-export const notificationList = async () => {
+export const getNotificationList = async () => {
   const response = await axiosInstance.get(`/notification/all`);
 
   console.log(response);
+  return response.data.data;
 }

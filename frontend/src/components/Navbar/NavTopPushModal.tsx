@@ -55,11 +55,6 @@ const NavTopPushModal = (props: Props) => {
       </div>
 
       <div className='rounded overflow-hidden'>
-        <Notification />
-        <Notification />
-        <Notification />
-        <Notification />
-        <Notification />
       </div>
       
 

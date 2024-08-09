@@ -8,7 +8,6 @@ import { setIsLoading } from '@store/modalSlice';
 import { setUser } from '@store/userSlice';
 
 import { getOAuthAccessToken } from '@services/authService';
-import { notificationList } from '@services/notificationService';
 
 import BoardDetail from '@components/Board/BoardDetail';
 
@@ -115,9 +114,6 @@ function Main() {
     
       {/* 본문 */}
       <div className={`flex justify-center`}>
-        <div onClick={() => {
-          notificationList();
-        }}>테스트용</div>
         <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
             <div className={`my-[1.25rem]`} key={index}>

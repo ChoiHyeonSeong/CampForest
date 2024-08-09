@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import noImg from '@assets/images/basic_profile.png'
 import { userPage } from '@services/userService';
 import { store } from '@store/store';
+import { formatTime } from '@utils/formatTime';
 
 export type ChatUserType = {
   roomId: number;
@@ -23,8 +24,13 @@ const ChatUser = (props: Props) => {
   const [lastMessageTime, setLastMessageTime] = useState('');
   const fetchOtherUser = async () => {
     const result = await userPage(chatUser.otherUserId);
-    setNickname(result.nickname);
-    setProfileImage(result.profileImage);
+    if(result) {
+      setNickname(result.nickname);
+      setProfileImage(result.profileImage);
+    } else {
+      setNickname('찾을 수 없는 사용자')
+      setProfileImage('');
+    }
   }
 
   useEffect(() => {
@@ -32,35 +38,8 @@ const ChatUser = (props: Props) => {
   }, [])
   
   useEffect(() => {
-    setLastMessageTime(calculateTimeDifference(chatUser.lastMessageTime));
+    setLastMessageTime(formatTime(chatUser.lastMessageTime));
   }, [chatUser.lastMessageTime])
-
-  const calculateTimeDifference = (modifiedAt: string) => {
-    const modifiedDate = new Date(modifiedAt);
-    const currentDate = new Date();
-    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
-    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
-    const differenceInHours = Math.floor(differenceInMinutes / 60);
-    const year = modifiedDate.getFullYear();
-    const month = String(modifiedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(modifiedDate.getDate()).padStart(2, '0');
-  
-    // 같은 해가 아니면 년, 월, 일로 표기
-    if (modifiedDate.getFullYear !== currentDate.getFullYear) {
-      return `${year}-${month}-${day}`;
-    } 
-    
-    // 같은 해, 하루 이상 차이 난다면 월, 일로 표기
-    if (differenceInMinutes >= 1440) {
-      return `${month}-${day}`;
-    }
-  
-    if (differenceInMinutes >= 60) {
-      return `${differenceInHours}시간 전`;
-    }
-  
-    return `${differenceInMinutes}분 전`;
-  };
 
   return (
     <div 

@@ -1,3 +1,5 @@
+import { getNotificationList } from "@services/notificationService";
+import { addNewNotification, setNotificationList } from "@store/notificationSlice";
 import { RootState } from "@store/store";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -30,17 +32,22 @@ const useSSE = () => {
           Authorization: `${accessToken}`,
         },
         withCredentials: true,
+        heartbeatTimeout: 300000, // 5분
       }
     );
 
-    eventSource.onopen = (event) => {
+    eventSource.onopen = async (event) => {
       console.log("SSE 연결 성공", event);
+      const notificationList = await getNotificationList();
+      dispatch(setNotificationList(notificationList));
       setRetryCount(0);
     };
 
+    // 새로운 알림 도착
     eventSource.addEventListener('notification', (event: any) => {
       const eventData = JSON.parse(event.data);
-      console.log("Received Data", eventData)
+      console.log('새 알림', eventData);
+      dispatch(addNewNotification(eventData));
     })
 
     eventSource.onerror = (error) => {

@@ -7,7 +7,7 @@ import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg'
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import defaultProfileImage from '@assets/images/basic_profile.png'
 
 import { boardDelete, boardLike, boardDislike, boardSave, deleteSave } from '@services/boardService';
@@ -18,6 +18,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { formatTime } from '@utils/formatTime';
 
 export type BoardType = {
   boardId: number;
@@ -50,7 +51,6 @@ const Board = (props: Props) => {
   const [saved, setSaved] = useState(props.board.saved);
   const [likeCount, setLikeCount] = useState(props.board.likeCount);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const navigate = useNavigate();
 
   const [timeDifference, setTimeDifference] = useState('');
 
@@ -89,37 +89,10 @@ const Board = (props: Props) => {
       console.log(error)
     };
   }
-  
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-  
-    return `${year}-${month}-${day}`;
-  };
-
-  const calculateTimeDifference = (modifiedAt: string) => {
-    const modifiedDate = new Date(modifiedAt);
-    const currentDate = new Date();
-    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
-  
-    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
-    const differenceInHours = Math.floor(differenceInMinutes / 60);
-  
-    if (differenceInMinutes >= 1440) {
-      return formatDate(modifiedDate);
-    }
-  
-    if (differenceInMinutes >= 60) {
-      return `${differenceInHours}시간 전`;
-    }
-  
-    return `${differenceInMinutes}분 전`;
-  };
 
   useEffect(() => {
     const modifiedAt = props.board.createdAt; // 예: "2024-07-30T11:19:40" 형식의 시간 문자열
-    const difference = calculateTimeDifference(modifiedAt);
+    const difference = formatTime(modifiedAt);
     setTimeDifference(difference); // 계산된 값을 상태에 설정
   }, [props.board.createdAt]); // modifiedAt이 변경될 때마다 실행
 

@@ -3,6 +3,7 @@ import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 import { Link } from 'react-router-dom';
 import { commentDislike, commentLike } from '@services/commentService';
 import defaultProfileImage from '@assets/images/basic_profile.png'
+import { formatTime } from '@utils/formatTime';
 
 export type CommentType = {
   commentId: number;
@@ -24,26 +25,6 @@ const BoardComment = (props: Props) => {
   const [timeDifference, setTimeDifference] = useState('');
   const [liked, setLiked] = useState(props.comment.liked);
   const [likeCount, setLikeCount] = useState(props.comment.likeCount);
-
-  const calculateTimeDifference = (createdAt: string) => {
-    const modifiedDate = new Date(createdAt);
-    const currentDate = new Date();
-    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
-  
-    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
-    const differenceInHours = Math.floor(differenceInMinutes / 60);
-    const differenceInDays = Math.floor(differenceInHours / 24);
-  
-    if (differenceInMinutes >= 1440) {
-      return `${differenceInDays}일 전`;
-    }
-  
-    if (differenceInMinutes >= 60) {
-      return `${differenceInHours}시간 전`;
-    }
-  
-    return `${differenceInMinutes}분 전`;
-  };
 
   const like = async () => {
     try {
@@ -67,7 +48,7 @@ const BoardComment = (props: Props) => {
 
   useEffect(() => {
     console.log(props.comment)
-    setTimeDifference(calculateTimeDifference(props.comment.createdAt));
+    setTimeDifference(formatTime(props.comment.createdAt));
   }, [])
 
   return (

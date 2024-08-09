@@ -97,6 +97,7 @@ code {
 ::-webkit-scrollbar {
   width: 14px;
   height: 14px;
+  scrollbar-gutter: stable both-edges;
 }
 
 ::-webkit-scrollbar-thumb {

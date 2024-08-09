@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
-import userImage from '@assets/images/basic_profile.png'
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { communityChatDetail } from '@services/communityChatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';
-import ProductInfoChat from'@components/Chat/ProductInfoChat'
+import { formatTime } from '@utils/formatTime';
 
 export type Message = {
   messageId: number;
@@ -17,9 +16,6 @@ export type Message = {
   roomId: number;
   createdAt: string;
   read: boolean;
-}
-
-type Props = {
 }
 
 const Chat = () => {
@@ -32,30 +28,6 @@ const Chat = () => {
   const [opponentProfileImage, setOpponentProfileImage] = useState('');
   const messages = useSelector((state: RootState) => state.chatStore.chatInProgress);
   const [userInput, setUserInput] = useState('');
-  
-  const calculateTimeDifference = (modifiedAt: string) => {
-    const modifiedDate = new Date(modifiedAt);
-    const currentDate = new Date();
-    const differenceInMilliseconds = currentDate.getTime() - modifiedDate.getTime();
-    const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60);
-    const year = modifiedDate.getFullYear();
-    const month = String(modifiedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(modifiedDate.getDate()).padStart(2, '0');
-    const hour = String(modifiedDate.getHours()).padStart(2, '0');
-    const minute = String(modifiedDate.getMinutes()).padStart(2, '0');
-  
-    // 같은 해가 아니면 년, 월, 일로 표기
-    if (modifiedDate.getFullYear !== currentDate.getFullYear) {
-      return `${year}-${month}-${day}`;
-    } 
-    
-    // 같은 해, 하루 이상 차이 난다면 월, 일로 표기
-    if (differenceInMinutes >= 1440) {
-      return `${month}-${day}`;
-    }
-    
-    return `${hour}:${minute}`;
-  };
 
   const fetchMessages = async () => {
     dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
@@ -207,7 +179,7 @@ const Chat = () => {
                   {message.read ? '' : '1'}
                 </div>
                 <div>
-                  {calculateTimeDifference(message.createdAt)}
+                  {formatTime(message.createdAt)}
                 </div>
               </div>
               <div
