@@ -19,15 +19,11 @@ public class ResponseInfoDTO {
 	private boolean isOpen;
 
 	public static ResponseInfoDTO fromEntity(Users users) {
-		String imageUrl = null;
-		if (users.getUserImage() != null) {
-			imageUrl = users.getUserImage().getImageUrl();
-		}
+		String imageUrl = users.getUserImage() == null ? null : users.getUserImage().getImageUrl();
+
 		return ResponseInfoDTO.builder()
 				.userId(users.getUserId())
 				.nickname(users.getNickname())
-				.followingCount(users.getFollowing().size())
-				.followerCount(users.getFollowers().size())
 				.introduction(users.getIntroduction())
 				.temperature(users.getTemperature())
 				.profileImage(imageUrl)
