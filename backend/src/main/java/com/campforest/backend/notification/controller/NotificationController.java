@@ -34,7 +34,6 @@ public class NotificationController {
 	private final UserService userService;
 	private final SseEmitters sseEmitters;
 
-	@Async
 	@GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public SseEmitter subscribe(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse response) {
 		Users users = userService.findByEmail(userDetails.getUsername())
