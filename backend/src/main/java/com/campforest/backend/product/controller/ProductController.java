@@ -202,6 +202,7 @@ public class ProductController {
 			responseMap.put("products", result.getContent());
 			responseMap.put("nextCursorId", result.getNextCursor());
 			responseMap.put("hasNext", result.isHasNext());
+			responseMap.put("totalCount", result.getTotalCount());
 
 			return ApiResponse.createSuccess(responseMap, "성공적으로 조회하였습니다.");
 		} catch (Exception e) {
