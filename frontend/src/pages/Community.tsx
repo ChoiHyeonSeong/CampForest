@@ -9,18 +9,15 @@ import BoardDetail from '@components/Board/BoardDetail';
 
 const Community = () => {
   const dispatch = useDispatch();
-
   const params = useParams();
   const category = params.category ?? 'all'
-
   const [ref, inView] = useInView();
-
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
-
   const boardCursorIdRef = useRef<number | null>(null);
+  const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
 
   const fetchBoards = async () => {
     try {
@@ -118,6 +115,14 @@ const Community = () => {
     );
   }
 
+  useEffect(() => {
+    boards.forEach((board, index) => {
+      setTimeout(() => {
+        setVisibleBoards(prev => [...prev, board.boardId]);
+      }, index * 100); // 각 게시물마다 100ms 지연
+    });
+  }, [boards])
+
   return (
     <div>
       {/* 디테일 모달 */}
@@ -132,11 +137,34 @@ const Community = () => {
       {/* 본문 */}
       <div className={`flex justify-center`}>
         <div className={`w-[100%] md:w-[40rem]`}>
-          {boards?.map((board, index) => (
-            <div className={`my-[1.25rem]`} key={index}>
-              <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen} updateLike={updateLike} updateSaved={updateSaved}/>
-            </div>
-          ))}
+          <div
+            className='
+              h-[2rem] mt-[1rem]
+              text-2xl
+            '
+          >
+            {category === 'place' ? '캠핑장 후기' :
+              category === 'equipment' ? '장비 후기' :
+              category === 'recipe' ? '레시피 추천' :
+              category === 'assign' ? '캠핑장 양도' :
+              category === 'free' ? '자유 게시판' :
+              category === 'question' ? '질문 게시판' : ''}
+          </div>
+          {boards?.map((board) => (
+              <div 
+                className={`my-[1.25rem] ${visibleBoards.includes(board.boardId) ? 'fade-in-down' : 'opacity-0'}`} 
+                key={board.boardId}
+              >
+                <Board 
+                  board={board} 
+                  deleteFunction={pageReload} 
+                  isDetail={false} 
+                  detailOpen={detailOpen} 
+                  updateLike={updateLike} 
+                  updateSaved={updateSaved}
+                />
+              </div>
+            ))}
         </div>
       </div>
 

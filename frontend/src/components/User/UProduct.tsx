@@ -7,13 +7,11 @@ import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 import ProductCard, { ProductType } from '@components/Product/ProductCard';
 
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useInView } from 'react-intersection-observer';
 
 import { likedList, productList } from '@services/productService';
-import { setIsLoading } from '@store/modalSlice';
 import { RootState } from '@store/store';
-import { savedList } from '@services/boardService';
 
 
 type Props = {}
@@ -22,7 +20,6 @@ const UProduct = (props: Props) => {
   const [myBoard, setMyBoard] = useState(true);
   const userId = Number(useParams().userId);
   const userState = useSelector((state: RootState) => state.userStore);
-  const dispatch = useDispatch();
   const [ref, inView] = useInView();
   const [likedRef, likedInView] = useInView();
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -36,10 +33,8 @@ const UProduct = (props: Props) => {
 
   const fetchProducts = async () => {
     try {
-      dispatch(setIsLoading(true));
       const response = await productList({findUserId: userId, productType: ''});
       console.log('product', response)
-      dispatch(setIsLoading(false));
 
       productPageRef.current += 1;
       if (response.products.last) {
@@ -47,16 +42,13 @@ const UProduct = (props: Props) => {
       }
       setProducts((prevProducts) => [...prevProducts, ...response.products]);
     } catch (error) {
-      dispatch(setIsLoading(false));
       console.error("Failed to fetch products: ", error);
     }
   }
 
   const fetchLikedProducts = async () => {
     try {
-      dispatch(setIsLoading(true));
       const response = await likedList();
-      dispatch(setIsLoading(false));
 
       likedProductPageRef.current += 1;
       if (response.last) {
@@ -162,7 +154,7 @@ const UProduct = (props: Props) => {
           </div>
           {/* 필터 */}
           <div className="flex justify-end absolute right-0">
-            <div className="flex items-center ms-auto px-[0.5rem] text-sm">
+            <div className="flex items-center ms-auto me-[4rem] px-[0.5rem] text-sm">
               <div
                 className={`
                 ms-[0.5rem]

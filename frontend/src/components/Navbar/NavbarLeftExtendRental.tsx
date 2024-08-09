@@ -135,10 +135,16 @@ const NavbarLeftExtendRental = (props: Props) => {
         <p className={`text-2xl`}>판매 / 대여</p>
       </div>
 
-      <div className={`h-[calc(100vh-5rem)] mx-[2.5rem] p-[0.5rem] overflow-y-auto scrollbar-hide`}>
+      <div className={`h-[calc(100vh-5rem)] mx-[2.5rem] mt-[2rem] p-[0.5rem] overflow-y-auto scrollbar-hide`}>
         <div className={`grid grid-cols-2 gap-[1rem]`}>
           {rentalCategory.map((eachObj, index) => (
-            <div key={index} className={`cursor-pointer`} onClick={() => handleCategoryClick(eachObj.linkUrl)} >
+            <div
+              key={index}
+              className={`
+                hover:scale-105
+                cursor-pointer transition-transform duration-300
+              `}
+              onClick={() => handleCategoryClick(eachObj.linkUrl)} >
               <EachCategory
                 title={eachObj.title} 
                 imgsrc={eachObj.imgsrc} 

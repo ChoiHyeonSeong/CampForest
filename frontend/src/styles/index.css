@@ -195,3 +195,21 @@ code {
   width: 3px;
   height: 3px;
 }
+
+/* 게시물 위에서 나타나는 효과 시작 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-down {
+  animation: fadeInDown 0.5s ease-out forwards;
+  opacity: 0;
+}
+/* 게시물 위에서 나타나는 효과 끝 */

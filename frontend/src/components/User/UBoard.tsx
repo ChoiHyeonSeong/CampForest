@@ -7,10 +7,9 @@ import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 import { useParams, useLocation } from 'react-router-dom';
 import Board, { BoardType } from '@components/Board/Board';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { boardUserList, savedList } from '@services/boardService';
-import { setIsLoading } from '@store/modalSlice';
 import { useInView } from 'react-intersection-observer';
 import { RootState } from '@store/store';
 import BoardDetail from '@components/Board/BoardDetail';
@@ -21,26 +20,20 @@ const UBoard = (props: Props) => {
   const [myBoard, setMyBoard] = useState(true);
   const userState = useSelector((state: RootState) => state.userStore);
   const userId = Number(useParams().userId);
-
   const currentLoc = useLocation(); 
-  const dispatch = useDispatch();
-
   const [ref, inView] = useInView();
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
   const boardCursorIdRef = useRef<number | null>(null);
-
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
-
   const [totalBoardCnt, setTotalBoardCnt] = useState(0);
   const [totalSavedBoardCnt, setTotalSavedBoardCnt] = useState(0);
+  const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
 
   const fetchBoards = async () => {
     try {
-      dispatch(setIsLoading(true));
       const response = await boardUserList(userId, boardCursorIdRef.current, 10);
-      dispatch(setIsLoading(false));
 
       console.log(response)
       boardCursorIdRef.current = response.data.data.nextCursor
@@ -49,23 +42,19 @@ const UBoard = (props: Props) => {
       }
       setBoards((prevBoards) => [...prevBoards, ...response.data.data.content]);
     } catch (error) {
-      dispatch(setIsLoading(false));
       console.error('게시글 불러오기 실패: ', error);
     }
   };
 
   const fetchSavedBoard = async () => {
     try {
-      dispatch(setIsLoading(true));
       const response = await savedList(boardCursorIdRef.current, 10);
-      dispatch(setIsLoading(false));
       boardCursorIdRef.current = response.data.data.nextCursor
       if (!response.data.data.hasNext) {
         setNextPageExist(false);
       }
       setBoards((prevBoards) => [...prevBoards, ...response.data.data.content]);
     } catch (error) {
-      dispatch(setIsLoading(false));
       console.error('저장된 게시글 불러오기 실패: ', error);
     }
   }
@@ -171,6 +160,14 @@ const UBoard = (props: Props) => {
     );
   }
 
+  useEffect(() => {
+    boards.forEach((board, index) => {
+      setTimeout(() => {
+        setVisibleBoards(prev => [...prev, board.boardId]);
+      }, index * 100); // 각 게시물마다 100ms 지연
+    });
+  }, [boards])
+
   return (
     <div className={`px-[4rem]`}>
       {/* 디테일 모달 */}
@@ -265,12 +262,20 @@ const UBoard = (props: Props) => {
 
       <div>
         {boards?.map((board, index) => (
-          <div className={`my-[1.25rem]`} key={index}>
-            <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen} updateLike={updateLike} updateSaved={updateSaved}/>
+          <div 
+            className={`my-[1.25rem] ${visibleBoards.includes(board.boardId) ? 'fade-in-down' : 'opacity-0'}`} 
+            key={board.boardId}
+          >
+            <Board
+              board={board}
+              deleteFunction={pageReload}
+              isDetail={false}
+              detailOpen={detailOpen}
+              updateLike={updateLike}
+              updateSaved={updateSaved}
+            />
           </div>
         ))}
-      
-
         <div ref={ref} className={`${boards.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
       </div>
     </div>

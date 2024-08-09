@@ -116,7 +116,12 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
   }
 
   return (
-    <div className={`px-[1rem] py-[1.5rem`}>
+    <div
+      className={`
+        px-[1rem] py-[1.5rem]
+        dark:bg-dark-white dark:bg-opacity-80
+      `}
+    >
       <div className={`flex`}>
         {/* 프로필사진 */}
         <div 
@@ -228,7 +233,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
         {userinfo?.introduction}
       </div>
       {/* 거래불꽃온도 */}
-      <div className={`w-full mt-[1.5rem] mb-[0.75rem] ms-[0.5rem]`}>
+      <div className={`w-full mt-[1.5rem] mb-[0.75rem] ms-[0.5rem] px-[1rem]`}>
         <div className={`flex`}>
           <div 
             className={`

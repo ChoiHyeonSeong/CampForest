@@ -77,8 +77,20 @@ const UserPage = () => {
 
       {/* 유저 메인 페이지 */}
       <div className={`flex justify-center min-h-[100vh]`}>
-        <div className={`w-[100%] lg:w-[54rem] bg-light-white dark:bg-dark-white p-[1.5rem] lg:p-0`}>
-          <h3 className={`hidden lg:block pb-[0.75rem] text-lg md:text-[1.5rem]`}>유저 프로필</h3>
+        <div
+          className={`
+            w-[100%] lg:w-[50rem] mt-[1.5rem] p-[1.5rem] lg:p-0
+          `}
+        >
+          <h3
+            className={`
+              hidden lg:block pb-[0.75rem] text-lg md:text-[1.5rem] ps-[1rem] pt-[1rem]
+              dark:bg-dark-white dark:bg-opacity-80
+              rounded-t-lg
+            `}
+          >
+            유저 프로필
+          </h3>
           <ProfileTop
             setIsModalOpen={setIsModalOpen} 
             setIsFollowing={setIsFollowing}
