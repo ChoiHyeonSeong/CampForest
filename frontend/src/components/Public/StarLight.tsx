@@ -1,3 +1,4 @@
+import useSSE from '@hooks/useSSE';
 import React, { useEffect } from 'react'
 
 type Props = {}
@@ -11,6 +12,8 @@ const StarLight = (props: Props) => {
     return value;
   };
   
+  useSSE();
+
   useEffect(() => {
     const stars1 = document.querySelector('.stars') as HTMLElement;
     const stars2 = document.querySelector('.stars2') as HTMLElement;

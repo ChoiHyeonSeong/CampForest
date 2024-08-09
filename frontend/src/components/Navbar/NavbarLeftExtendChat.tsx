@@ -16,6 +16,7 @@ const NavbarLeftExtendChat = (props: Props) => {
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const isLogin = useSelector((state: RootState) => state.userStore.isLoggedIn);
   const selectedCategory = useSelector((state: RootState) => state.chatStore.selectedCategory);
+  const chatState = useSelector((state: RootState) => state.chatStore);
 
   return (
     <div
@@ -43,7 +44,7 @@ const NavbarLeftExtendChat = (props: Props) => {
             cursor-pointer
           `}
         />
-        <p className={`text-2xl font-medium`}>채팅</p>
+        <p className={`text-2xl font-medium`}>채팅 {chatState.roomId}</p>
       </div>
 
       {/* 채팅방 카테고리 */}

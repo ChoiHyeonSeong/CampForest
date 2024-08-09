@@ -3,19 +3,36 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatDetail } from '@services/chatService';
+import { communityChatDetail, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 
-export type Message = {
-  messageId: number;
+export type TransactionMessageType = {
   content: string;
-  senderId: number;
-  roomId: number;
   createdAt: string;
+  messageId: number;
+  messageType: string;
   read: boolean;
+  roomId: number;
+  senderId: number;
+  transactionId?: number;
+}
+
+export type TransactionEntityType = {
+
+}
+
+export type Message = {
+  content?: string;
+  createdAt?: string;
+  messageId?: number;
+  read?: boolean;
+  roomId?: number;
+  senderId?: number;
+  message: TransactionMessageType;
+  transactionEntity?: TransactionEntityType;
 }
 
 const Chat = () => {
@@ -30,7 +47,12 @@ const Chat = () => {
   const [userInput, setUserInput] = useState('');
 
   const fetchMessages = async () => {
-    dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
+    if(chatState.selectedCategory === '일반') {
+      dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
+    } else if(chatState.selectedCategory === '거래') {
+      console.log('거래 메세지 fetch')
+      dispatch(setChatInProgress(await transactionChatDetail(chatState.roomId)));
+    }
   };
 
   const opponentInfo = async () => {
@@ -49,6 +71,7 @@ const Chat = () => {
     if (chatState.roomId !== 0) {
       opponentInfo();
       fetchMessages();
+      console.log(chatState.chatInProgress)
     }
   }, [chatState.roomId]);
 
@@ -58,7 +81,12 @@ const Chat = () => {
 
   const handleSendButton = () => {
     if (userInput.trim() !== '') {
-      sendMessage(`/pub/${chatState.roomId}/send`, { senderId: userId, content: userInput });
+      if (chatState.chatInProgressType === '일반') {
+        sendMessage(`/pub/${chatState.roomId}/send`, { senderId: userId, content: userInput });
+      } else {
+        sendMessage(`/pub/transaction/${chatState.roomId}/send`, 
+          { senderId: userId, content: userInput, message_type: "MESSAGE"});
+      }
       setUserInput('');
     }
   };
@@ -133,7 +161,8 @@ const Chat = () => {
       >
 
         {/* 실제 메세지 조작부분 */}
-        {messages.map((message) => (
+        {chatState.chatInProgressType === '일반' ? (
+          messages.map((message) => (
           message.senderId === chatState.otherId ? (
             <div
               className={`
@@ -179,7 +208,7 @@ const Chat = () => {
                   {message.read ? '' : '1'}
                 </div>
                 <div>
-                  {formatTime(message.createdAt)}
+                  {message.createdAt ? formatTime(message.createdAt) : ''}
                 </div>
               </div>
               <div
@@ -195,7 +224,74 @@ const Chat = () => {
               </div>
             </div>
           )
-        ))}
+        ))
+      ) : 
+      (
+        messages.map((message) => (
+          message.message.senderId === chatState.otherId ? (
+            <div
+              className={`
+                flex justify-start items-center my-[0.75rem] pe-[20%]
+              `}
+              key={message.message.messageId}
+            >
+              <div 
+                className='
+                  border-light-border size-[2.5rem] me-[0.5rem]
+                  border rounded-full shadow-md
+                '
+              >
+                <img 
+                  src={opponentProfileImage}
+                  alt='NoImg'  
+                />
+              </div>
+              <div 
+                className='
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
+                  bg-light-gray text-light-text
+                  dark:bg-dark-gray dark:text-dark-text
+                  rounded-md break-words
+                '
+              >
+                {message.message.content}
+              </div>
+              <div>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`
+                flex justify-end items-center my-[1rem] ps-[20%]
+              `}
+            >
+              <div 
+                className='
+                shrink-0 me-[0.5rem] 
+                text-xs text-end'>
+                <div>
+                  {message.message.read ? '' : '1'}
+                </div>
+                <div>
+                  {message.message.createdAt ? formatTime(message.message.createdAt) : ''}
+                </div>
+              </div>
+              <div
+                className='
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
+                  bg-light-signature text-light-text
+                  dark:bg-dark-signature dark:text-dark-text
+                  rounded-md break-words
+                '
+              >
+                {message.message.content}
+                {/* <ChatTradePropser /> */}
+              </div>
+            </div>
+          )
+        ))
+      )
+      }
       </div>
 
       {/* 전송 버튼 */}

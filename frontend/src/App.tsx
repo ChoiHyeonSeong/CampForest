@@ -28,7 +28,6 @@ import { store } from '@store/store';
 import { setCommunityChatUserList, setTotalUnreadCount, setTransactionChatUesrList } from '@store/chatSlice';
 import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
-import useSSE from '@hooks/useSSE';
 import { transactionChatList } from '@services/chatService';
 import ForestBg from '@components/Public/ForestBg';
 
@@ -40,7 +39,6 @@ function App() {
   const isDark = useSelector((state: RootState) => state.themeStore.isDark);
 
   useThemeEffect();
-  useSSE();
 
   // 채팅방 목록 가져오기
   const fetchChatList = async () => {

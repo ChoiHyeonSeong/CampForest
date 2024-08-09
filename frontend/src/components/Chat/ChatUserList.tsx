@@ -3,7 +3,7 @@ import TransactionChatUser from './TransactionChatUser';
 import Chat from './Chat';
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { setChatInProgress, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
+import { setChatInProgress, setChatInProgressType, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
 import { useWebSocket } from 'Context/WebSocketContext';
 
 type Props = {
@@ -21,6 +21,7 @@ const ChatUserList = (props: Props) => {
     if(communityChatUser.roomId !== chatState.roomId) {
       dispatch(setChatInProgress([]));
       dispatch(setRoomId(communityChatUser.roomId));
+      dispatch(setChatInProgressType('일반'));
     }
     dispatch(setOtherId(communityChatUser.otherUserId));
     markRead(`/pub/room/${communityChatUser.roomId}/markAsRead`, userState.userId );
@@ -32,6 +33,19 @@ const ChatUserList = (props: Props) => {
     }))
     dispatch(setIsChatOpen(true));
   }
+
+  const handleTransactionChatUser = async (transactionChatUser: ChatUserType) => {
+    if(transactionChatUser.roomId !== chatState.roomId) {
+      dispatch(setChatInProgress([]));
+      dispatch(setRoomId(transactionChatUser.roomId));
+      dispatch(setChatInProgressType('거래'));
+    }
+    dispatch(setOtherId(transactionChatUser.otherUserId));
+    // 읽음 처리
+    // 채팅 유저 목록 업데이트
+    dispatch(setIsChatOpen(true));
+  }
+
 
   return (
     <div 
@@ -61,7 +75,7 @@ const ChatUserList = (props: Props) => {
         ))}
       </div>
       {/* 거래 채팅 */}
-      <div>
+      <div className={`${chatState.selectedCategory === '거래' ? '' : 'hidden'}`}>
       {chatState.transactionChatUserList.map((transactionChatUser, index) => (
           <div
             className='
@@ -69,7 +83,7 @@ const ChatUserList = (props: Props) => {
               dark:bg-dark-white
             ' 
             onClick={
-              () => handleChatUser(
+              () => handleTransactionChatUser(
                 transactionChatUser
               )
             }

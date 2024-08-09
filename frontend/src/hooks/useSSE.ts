@@ -1,6 +1,8 @@
 import { getNotificationList } from "@services/notificationService";
+import { addMessageToChatInProgress, updateCommunityChatUserList, updateMessageReadStatus } from "@store/chatSlice";
 import { addNewNotification, setNotificationList } from "@store/notificationSlice";
 import { RootState } from "@store/store";
+import { useWebSocket } from "Context/WebSocketContext";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,11 +10,38 @@ import { useDispatch, useSelector } from "react-redux";
 const useSSE = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state: RootState) => state.userStore);
+  const chatState = useSelector((state: RootState) => state.chatStore);
+  const roomIdRef = useRef(chatState.roomId);
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const lastConnectionTimeRef = useRef(0);
   const [retryCount, setRetryCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
+  const { subscribe, sendMessage } = useWebSocket();
   const maxRetries = 5;
+
+  function subscribeToChat(roomId: number) {
+    // 읽음 처리를 받았을 때
+    subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
+      const readerId = JSON.parse(message.body); // 읽은 사람 Id
+  
+      if (userState.userId !== readerId) {
+        dispatch(updateMessageReadStatus({ roomId: roomId, readerId }));
+      }  
+    });
+  
+    // 메세지를 받았을 때
+    subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
+      const response = JSON.parse(message.body);
+      const currentRoomId = roomIdRef.current;
+      if (currentRoomId === response.roomId) {
+        dispatch(updateCommunityChatUserList({...response, inProgress: true}));
+        sendMessage(`/pub/room/${response.roomId}/markAsRead`, userState.userId);
+        dispatch(addMessageToChatInProgress(response));
+      } else {
+        dispatch(updateCommunityChatUserList({...response, inProgress: false}));
+      }
+    });
+  }
 
   const createEventSource = useCallback(() => {
     const now = Date.now();
@@ -63,7 +92,7 @@ const useSSE = () => {
       console.log('새 알림', eventData);
       switch (eventData.notificationType) {
         case 'CHAT':
-          // 채팅 알림 처리
+          // subscribeToChat(eventData.)
           break;
         default:
           dispatch(addNewNotification(eventData));

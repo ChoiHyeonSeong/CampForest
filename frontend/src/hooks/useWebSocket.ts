@@ -3,6 +3,7 @@ import { Client, Message } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { RootState, store } from '@store/store';
 import { addMessageToChatInProgress, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
+import { useSelector } from 'react-redux';
 
 type UseWebSocketProps = {
   jwt: string | null;
@@ -17,7 +18,13 @@ export type UseWebSocketReturn = {
 
 export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => {
   const [connected, setConnected] = useState(false);
+  const chatState = useSelector((state: RootState) => state.chatStore);
   const clientRef = useRef<Client | null>(null);
+  const transactionChatUserListRef = useRef(chatState.transactionChatUserList);
+
+  useEffect(() => {
+    transactionChatUserListRef.current = chatState.transactionChatUserList;
+  }, [chatState.transactionChatUserList])
 
   const subscribeInitial = useCallback((client: Client) => {
     // 사용자가 진행 중이었던 채팅방 목록 불러오고 구독
@@ -50,6 +57,25 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         });
       });
     }
+    if (transactionChatUserListRef.current) {
+      transactionChatUserListRef.current.forEach((chatRoom: any) => {
+        // 메시지를 받았을 때
+        client.subscribe(`/sub/transaction/${chatRoom.roomId}`, (message) => {
+          const response = JSON.parse(message.body);
+          console.log('Received chat message: ', response);
+          const state: RootState = store.getState();
+
+          // 현재 열려 있는 채팅방 내용 갱신
+          if (state.chatStore.roomId === response.roomId) {
+            store.dispatch(updateCommunityChatUserList({...response, inProgress: true}));
+            sendMessage(`/pub/transaction/${response.roomId}/markAsRead`, response.roomId);
+            store.dispatch(addMessageToChatInProgress(response));
+          } else {
+            store.dispatch(updateCommunityChatUserList({...response, inProgress: false}));
+          }
+        })
+      })
+    }
   }, []);
 
   useEffect(() => {
@@ -62,7 +88,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         Authorization: `${jwt}`,
       },
       debug: (str) => {
-        // console.log(str);
+        console.log(str);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
