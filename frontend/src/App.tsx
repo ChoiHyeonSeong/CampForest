@@ -30,6 +30,7 @@ import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
 import { transactionChatList } from '@services/chatService';
 import ForestBg from '@components/Public/ForestBg';
+import useSSE from "@hooks/useSSE";
 
 function App() {
   const userState = useSelector((state: RootState) => state.userStore);
