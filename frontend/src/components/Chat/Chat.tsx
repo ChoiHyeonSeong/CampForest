@@ -222,7 +222,69 @@ const Chat = () => {
         ))
       ) : 
       (
-        <div>123</div>
+        messages.map((message) => (
+          message.message.senderId === chatState.otherId ? (
+            <div
+              className={`
+                flex justify-start items-center my-[0.75rem] pe-[20%]
+              `}
+              key={message.message.messageId}
+            >
+              <div 
+                className='
+                  border-light-border size-[2.5rem] me-[0.5rem]
+                  border rounded-full shadow-md
+                '
+              >
+                <img 
+                  src={opponentProfileImage}
+                  alt='NoImg'  
+                />
+              </div>
+              <div 
+                className='
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
+                  bg-light-gray text-light-text
+                  dark:bg-dark-gray dark:text-dark-text
+                  rounded-md break-words
+                '
+              >
+                {message.message.content}
+              </div>
+              <div>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`
+                flex justify-end items-center my-[1rem] ps-[20%]
+              `}
+            >
+              <div 
+                className='
+                shrink-0 me-[0.5rem] 
+                text-xs text-end'>
+                <div>
+                  {message.message.read ? '' : '1'}
+                </div>
+                <div>
+                  {message.message.createdAt ? formatTime(message.message.createdAt) : ''}
+                </div>
+              </div>
+              <div
+                className='
+                  max-w-[10rem] px-[0.8rem] py-[0.3rem]
+                  bg-light-signature text-light-text
+                  dark:bg-dark-signature dark:text-dark-text
+                  rounded-md break-words
+                '
+              >
+                {message.message.content}
+                {/* <ChatTradePropser /> */}
+              </div>
+            </div>
+          )
+        ))
       )
       }
       </div>
