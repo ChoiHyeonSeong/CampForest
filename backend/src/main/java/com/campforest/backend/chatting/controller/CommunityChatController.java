@@ -19,6 +19,8 @@ import com.campforest.backend.chatting.dto.CommunityChatDto;
 import com.campforest.backend.chatting.service.CommunityChatService;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.repository.jpa.UserRepository;
 import com.campforest.backend.user.service.UserService;
@@ -32,6 +34,7 @@ public class CommunityChatController {
     private final CommunityChatService communityChatService;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @PostMapping("/room")
     public ApiResponse<?> createChatRoom(
@@ -45,6 +48,12 @@ public class CommunityChatController {
                 .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
             Long nowId = user.getUserId();
             CommunityChatDto room = communityChatService.createOrGetChatRoom(nowId, user2);
+
+            Users receiver = userService.findByUserId(user2)
+                    .orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
+
+            notificationService.createNotification(receiver, user, NotificationType.CHAT, "님과 채팅이 시작되었습니다.");
+
         return ApiResponse.createSuccess(room,"채팅방 로드 성공하였습니다");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
@@ -84,6 +93,7 @@ public class CommunityChatController {
             messagingTemplate.convertAndSend("/sub/community/" + roomId + "/error", "메시지 읽음 처리 실패");
         }
     }
+
     //필요없을듯?
     @GetMapping("/room/{roomId}/unreadCount")
     public ApiResponse<?> getUnreadMessageCount(@PathVariable Long roomId, @RequestParam Long userId) {

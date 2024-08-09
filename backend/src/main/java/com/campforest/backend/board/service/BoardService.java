@@ -10,6 +10,7 @@ import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.CountResponseDto;
 import com.campforest.backend.board.dto.SearchResult;
+import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
 import com.campforest.backend.common.CursorResult;
 
@@ -28,6 +29,7 @@ public interface BoardService {
 
 	SearchResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size);
 
+	Boards findByBoardId(Long boardId);
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 

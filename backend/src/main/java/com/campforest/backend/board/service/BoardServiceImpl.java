@@ -307,6 +307,10 @@ public class BoardServiceImpl implements BoardService {
         return new SearchResult<>(dtos, nextCursorId, hasNext,totalCount);
     }
 
+    @Override
+    public Boards findByBoardId(Long boardId) {
+        return boardRepository.findById(boardId).orElse(null);
+    }
 
     @Transactional
     @Override
