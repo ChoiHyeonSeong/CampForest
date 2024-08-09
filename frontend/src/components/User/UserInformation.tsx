@@ -105,14 +105,13 @@ const UserInformation = () => {
               alt="프로필 사진" 
               className={`
                 absolute size-full 
-                rounded-full
+                rounded-full overflow-hidden
               `}
             />
             <div 
               className={`
                 absolute w-full h-full mx-auto
-                bg-light-black text-light-white
-                dark:bg-dark-black dark:text-dark-white
+                bg-black text-white
                 cursor-pointer opacity-0 hover:opacity-80 duration-200 rounded-full
               `}
             >
@@ -129,6 +128,7 @@ const UserInformation = () => {
             />
           </div>
         </div>
+
         {/* 닉네임 */}
         <div className={`relative mb-[1.5rem]`}>
           <label 
@@ -140,6 +140,7 @@ const UserInformation = () => {
             닉네임
             <span 
               className={`
+                ms-[0.25rem]
                 text-light-warning
                 dark:text-dark-warning
                 text-md
@@ -159,10 +160,10 @@ const UserInformation = () => {
             <input 
               type="text" 
               className={`
-                w-full px-[1rem] py-[0.5rem]
-                bg-light-white placeholder-light-text-secondary
-                dark:bg-dark-white dark:placeholder-dark-text-secondary
-                focus:outline-none focus:ring-0
+                w-full p-[0.75rem]
+                bg-transparent placeholder:text-light-gray-2
+                placeholder:dark:text-dark-gray-2
+                focus:outline-none
               `}
               maxLength={10}
               placeholder='닉네임은 최대 10자 이하여야 합니다.'
@@ -178,7 +179,7 @@ const UserInformation = () => {
                 size-[1.25rem] me-[0.5rem]
                 text-light-text-secondary
                 dark:text-dark-text-secondary
-                 ursor-pointer
+                 cursor-pointer
               `}
               onClick={clearNickname} 
             />
@@ -203,6 +204,7 @@ const UserInformation = () => {
 
             <span 
               className={`
+                ms-[0.25rem]
                 text-light-warning
                 dark:text-dark-warning
                 text-md
@@ -215,10 +217,10 @@ const UserInformation = () => {
             <DatePicker
               placeholderText="날짜를 선택해주세요."
               className={`
-                w-full px-[1rem] py-[0.75rem]
-                bg-light-white placeholder-light-text-secondary max-md:border-light-border-1
-                dark:bg-dark-white dark:placeholder-dark-text-secondary max-md:dark:border-dark-border-1
-                focus:outline-none focus:ring-0 max-md:border-b
+                w-full p-[0.75rem]
+                bg-transparent placeholder:text-light-gray-2 max-md:border-light-border-1
+                placeholder:dark:text-dark-gray-2 max-md:dark:border-dark-border-1
+                focus:outline-none max-md:border-b
               `}
               dateFormat="yyyy.MM.dd"
               formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
@@ -249,11 +251,11 @@ const UserInformation = () => {
                 *
               </span>
             </div>
-            <div className={`flex items-center space-x-[2rem] md:ms-auto me-[1rem] mb-[0.75rem] md:mb-0`}>
+            <div className={`flex items-center space-x-[1rem] md:ms-auto me-[0.5rem] mb-[0.75rem] md:mb-0`}>
               <div className={`flex items-center`}>
                 <input
                   className={`
-                    size-[1rem] mx-[0.75rem]
+                    size-[1rem] mx-[0.5rem]
                     accent-light-black
                     dark:accent-dark-black
                   `}
@@ -269,7 +271,7 @@ const UserInformation = () => {
               </div>
               <div className={`flex items-center`}>
                 <input
-                  className={`size-[1rem] mx-[0.75rem]
+                  className={`size-[1rem] mx-[0.5rem]
                     accent-light-black
                     dark:accent-dark-black
                   `}
@@ -301,17 +303,17 @@ const UserInformation = () => {
             className={`
               flex items-center 
               border-light-border-1
-                dark:border-dark-border-1
+              dark:border-dark-border-1
               border-b
             `}
           >
             <input 
               type="text" 
               className={`
-                w-full px-[1rem] py-[0.5rem]
-                bg-light-white placeholder-light-text-secondary
-                dark:bg-dark-white dark:placeholder-dark-text-secondary 
-                focus:outline-none focus:ring-0
+                w-full  p-[0.75rem]
+                bg-transparent placeholder:text-light-gray-2
+                placeholder:dark:text-dark-gray-2
+                focus:outline-none
               `}
               maxLength={50}
               placeholder='자기소개를 입력해주세요.'
