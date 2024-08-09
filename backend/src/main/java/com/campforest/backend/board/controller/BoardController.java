@@ -25,11 +25,17 @@ import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.SearchResult;
+import com.campforest.backend.board.entity.Boards;
+import com.campforest.backend.board.entity.Comment;
+import com.campforest.backend.board.repository.comment.CommentRepository;
 import com.campforest.backend.board.service.BoardService;
+import com.campforest.backend.board.service.CommentService;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.UserService;
 
@@ -45,6 +51,8 @@ public class BoardController {
     private final BoardService boardService;
     private final S3Service s3Service;
     private final UserService userService;
+    private final NotificationService notificationService;
+    private final CommentService commentService;
 
     //게시글 작성
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -293,7 +301,15 @@ public class BoardController {
                 return ApiResponse.createError(ErrorCode.LIKE_ALREADY_EXISTS);
             }
             boardService.likeBoard(boardId, userId);
-            return ApiResponse.createSuccess(boardService.getBoard(userId,boardId).getLikeCount(), "게시글 좋아요 성공하였습니다");
+
+            BoardResponseDto board = boardService.getBoard(userId, boardId);
+
+            Users receiver = userService.findByUserId(board.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
+
+            notificationService.createNotification(receiver, user, NotificationType.LIKE, "님이 게시물에 좋아요를 눌렀습니다.");
+
+            return ApiResponse.createSuccess(board.getLikeCount(), "게시글 좋아요 성공하였습니다");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -372,6 +388,13 @@ public class BoardController {
 
             commentRequestDto.setCommentWriterId(users.getUserId());
             boardService.writeComment(commentRequestDto.getBoardId(), commentRequestDto);
+
+            Boards board = boardService.findByBoardId(commentRequestDto.getBoardId());
+            Users receiver = userService.findByUserId(board.getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException("유저 정보 조회 실패"));
+
+            notificationService.createNotification(receiver, users, NotificationType.COMMENT, "님이 댓글을 남겼습니다.");
+
             return ApiResponse.createSuccessWithNoContent("댓글 작성 성공");
         } catch (Exception e) {
             return ApiResponse.createError(ErrorCode.COMMENT_CREATION_FAILED);
@@ -456,6 +479,14 @@ public class BoardController {
                 return ApiResponse.createError(ErrorCode.COMMENT_LIKE_ALREADY_EXISTS);
             } else {
                 boardService.likeComment(commentId, userId);
+
+                Comment comment = commentService.findById(commentId);
+
+                Users receiver = userService.findByUserId(comment.getCommentWriterId())
+                        .orElseThrow(()-> new IllegalArgumentException("사용자 조회 실패"));
+
+                notificationService.createNotification(receiver, user, NotificationType.COMMENT, "님이 댓글에 좋아요를 눌렀습니다.");
+
                 return ApiResponse.createSuccess(boardService.countCommentLike(commentId), "댓글 좋아요 성공하였습니다");
             }
         } catch (Exception e) {

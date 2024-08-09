@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
+import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.model.Users;
 
 public interface UserService {
@@ -20,6 +21,8 @@ public interface UserService {
 	Optional<Users> findByEmail(String email);
 
 	Optional<Users> findByUserId(Long userId);
+
+	ResponseInfoDTO getUserInfo(Long userId);
 
 	boolean isEmailExist(String email);
 
@@ -40,7 +43,7 @@ public interface UserService {
 
 	Map<String, Object> getPythonRecommendUsers(Long userId);
 
-	List<Users> findByNicknameContaining(String nickname, Long cursor, int limit);
+	List<ResponseInfoDTO> findByNicknameContaining(String nickname, Long cursor, int limit);
 
 	long countByNicknameContaining(String nickname);
 }
