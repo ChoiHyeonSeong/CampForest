@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const useSSE = () => {
   const dispatch = useDispatch();
-  const userState = useSelector((state: RootState) => (state.userStore));
+  const userState = useSelector((state: RootState) => state.userStore);
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const lastConnectionTimeRef = useRef(0);
   const [retryCount, setRetryCount] = useState(0);
@@ -16,8 +16,9 @@ const useSSE = () => {
 
   const createEventSource = useCallback(() => {
     const now = Date.now();
-    if (now - lastConnectionTimeRef.current < 5000) { // 5초 내 재연결 방지
-      console.log("연결 시도가 너무 빠릅니다. 잠시 후 다시 시도하세요.");
+    const backoffTime = Math.min(1000 * Math.pow(2, retryCount), 30000); // 최대 30초
+    if (now - lastConnectionTimeRef.current < backoffTime) {
+      console.log(`${backoffTime / 1000}초 후 재연결을 시도합니다.`);
       return;
     }
     lastConnectionTimeRef.current = now;
@@ -57,18 +58,21 @@ const useSSE = () => {
       setRetryCount(0);
     };
 
-    // 새로운 알림 도착
     eventSource.addEventListener('notification', (event: any) => {
       const eventData = JSON.parse(event.data);
       console.log('새 알림', eventData);
       switch (eventData.notificationType) {
-        case 'CHAT': {
+        case 'CHAT':
+          // 채팅 알림 처리
           break;
-        }
-        default: {
+        default:
           dispatch(addNewNotification(eventData));
-        }
       }
+    });
+
+    eventSource.addEventListener('heartbeat', () => {
+      console.log('하트비트 수신');
+      // 필요한 경우 추가 로직
     });
 
     eventSource.onerror = (error) => {
@@ -76,16 +80,17 @@ const useSSE = () => {
       setIsConnected(false);
       eventSource.close();
       setRetryCount(prevCount => prevCount + 1);
+      // 재연결 로직은 useEffect에서 처리
     };
 
     eventSourceRef.current = eventSource;
   }, [retryCount, dispatch]);
 
   useEffect(() => {
-    let retryTimeout: NodeJS.Timeout;
+    let reconnectTimeout: NodeJS.Timeout;
 
     if (userState.isLoggedIn && !isConnected) {
-      createEventSource();
+      reconnectTimeout = setTimeout(createEventSource, 1000 * Math.pow(2, retryCount));
     } else if (!userState.isLoggedIn) {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
@@ -97,11 +102,11 @@ const useSSE = () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }
-      if (retryTimeout) {
-        clearTimeout(retryTimeout);
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
       }
     };
-  }, [userState.isLoggedIn, createEventSource, isConnected]);
+  }, [userState.isLoggedIn, createEventSource, isConnected, retryCount]);
 
   return isConnected;
 };
