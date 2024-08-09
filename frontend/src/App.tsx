@@ -40,7 +40,11 @@ function App() {
   const isDark = useSelector((state: RootState) => state.themeStore.isDark);
 
   useThemeEffect();
-  useSSE();
+  
+  function SSEHandler() {
+    useSSE();
+    return null;
+  }
 
   // 채팅방 목록 가져오기
   const fetchChatList = async () => {
@@ -85,6 +89,7 @@ function App() {
     
   return (
     <WebSocketProvider>
+      <SSEHandler />
       <div className="App h-screen overflow-hidden">
         <Navbar />
         <div className='flex h-full'>
