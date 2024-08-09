@@ -29,11 +29,16 @@ const UBoard = (props: Props) => {
   const [nextPageExist, setNextPageExist] = useState(true);
   const boardCursorIdRef = useRef<number | null>(null);
 
+  const [totalBoardCnt, setTotalBoardCnt] = useState(0);
+  const [totalSavedBoardCnt, setTotalSavedBoardCnt] = useState(0);
+
   const fetchBoards = async () => {
     try {
       dispatch(setIsLoading(true));
       const response = await boardUserList(userId, boardCursorIdRef.current, 10);
       dispatch(setIsLoading(false));
+
+      console.log(response)
       boardCursorIdRef.current = response.data.data.nextCursor
       if (!response.data.data.hasNext) {
         setNextPageExist(false);
@@ -94,6 +99,19 @@ const UBoard = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
+  const getCnt = async () => {
+    const response1 = await boardUserList(userId, null, 1);
+    if (userState.userId === userId) {
+      const response2 = await savedList(null, 1); 
+      setTotalSavedBoardCnt(response2.data.data.totalCount)
+    }
+    setTotalBoardCnt(response1.data.data.totalCount)
+  }
+
+  useEffect(() => {
+    getCnt()
+  }, [])
+
   return (
     <div className={`px-[4rem]`}>
       <div>
@@ -123,7 +141,7 @@ const UBoard = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              작성글
+              작성글 {totalBoardCnt}
             </span>
           </div>
 
@@ -148,7 +166,7 @@ const UBoard = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              저장됨
+              저장됨 {totalSavedBoardCnt}
             </span>
           </div>
 

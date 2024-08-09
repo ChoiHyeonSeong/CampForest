@@ -32,6 +32,7 @@ const UserPage = () => {
   const fetchUserInfo = async () => {
     try {
       const userData = await userPage(userId);
+      console.log(userData)
       setUserInfo(userData);
     } catch (error) {
       console.error("Failed to fetch user info: ", error);
