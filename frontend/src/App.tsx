@@ -2,6 +2,7 @@ import '@styles/App.css';
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation } from "react-router-dom";
 
+
 import Navbar from '@components/Navbar/Navbar';
 import Login from '@pages/Login';
 import Regist from '@pages/Regist';
@@ -28,12 +29,14 @@ import { setCommunityChatUserList, setTotalUnreadCount, setTransactionChatUesrLi
 import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
 import { transactionChatList } from '@services/chatService';
+import ForestBg from '@components/Public/ForestBg';
 
 function App() {
   const userState = useSelector((state: RootState) => state.userStore);
   const modals = useSelector((state: RootState) => state.modalStore);
   const dispatch = useDispatch()
   const currentLoc = useLocation();
+  const isDark = useSelector((state: RootState) => state.themeStore.isDark);
 
   useThemeEffect();
 
@@ -106,8 +109,10 @@ function App() {
         {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
         {modals.isLoading ? <LoadingModal /> : <></>}
 
-        {/* 배경 스타라이트 */}
-        <StarLight />
+        {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
+        {isDark && <StarLight />}
+        {/* forest */}
+        {/* <ForestBg /> */}
       </div>
     </WebSocketProvider>
   );

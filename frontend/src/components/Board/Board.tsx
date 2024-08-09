@@ -133,9 +133,9 @@ const Board = (props: Props) => {
     <div 
       className={`
         flex flex-col w-full min-w-[22rem] lg:h-full lg:px-[1rem]
-        bg-light-white border-light-border
-        dark:bg-dark-white dark:border-dark-border
-        border-b
+        bg-light-bgbasic border-light-border bg-opacity-80
+        dark:bg-dark-white dark:border-dark-border dark:bg-opacity-80
+        border-b rounded-md
       `}
     >
       <div>
@@ -251,7 +251,7 @@ const Board = (props: Props) => {
             )}
           </div>
           {/* 내용 및 포스팅 시간 */}
-          <div className={`px-[0.5rem] py-[1rem]`}>
+          <div className={`px-[1rem] py-[1rem]`}>
             {/* 제목 */}
             <div 
               className={`

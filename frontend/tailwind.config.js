@@ -9,12 +9,20 @@ module.exports = {
       },
       animation: {
         'shake': 'shake 0.5s 3', // 애니메이션 이름과 지속 시간 설정
+        'clouds1': 'clouds1 110s linear infinite',
+        'clouds2': 'clouds2 100s linear infinite',
       },
       keyframes: {
         shake: {
           '0%, 100%': { transform: 'translateX(0)' },
           '25%': { transform: 'translateX(-2px)' },
           '75%': { transform: 'translateX(2px)' },
+        },
+        clouds1: {
+          'to': { backgroundPosition: '200%' },
+        },
+        clouds2: {
+          'to': { backgroundPosition: '-200%' },
         },
       },
       colors: {

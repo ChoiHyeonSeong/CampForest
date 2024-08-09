@@ -39,9 +39,9 @@ const ProductCard = (props: Props) => {
     <div 
       className={`
         pt-[0.75rem] pb-[1.5rem] px-[0.75rem] 
-        bg-light-white
-        dark:bg-dark-white
-        cursor-pointer rounded-md hover:shadow-md transition-all duration-30
+        bg-light-white opacity-80
+        dark:bg-dark-white dark:opacity-80
+        cursor-pointer hover:shadow-md transition-all duration-30
       `}
     >
       <Link to={`/product/detail/${props.product.productId}`}>
@@ -160,7 +160,13 @@ const ProductCard = (props: Props) => {
         </p>
         <div className={`flex`}>
           <div className={`flex items-center me-[0.75rem]`}>
-            <EyeIcon className={`size-[0.75rem] md:size-[1rem] me-[0.25rem]`}/>
+            <EyeIcon
+              className={`
+                size-[0.75rem] md:size-[1rem] me-[0.25rem]
+                stroke-light-border-icon
+                dark:stroke-dark-black    
+              `}
+            />
             <span className={`text-sm`}>
               {props.product.hit}
             </span>

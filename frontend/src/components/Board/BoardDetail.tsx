@@ -84,19 +84,20 @@ const BoardDetail = (props: Props) => {
       className={`
         flex justify-center fixed inset-0 z-[20] lg:z-[100] max-md:h-[calc(100vh-6.4rem)] max-lg:mt-[3.2rem]
         bg-light-black bg-opacity-80 max-lg:bg-light-white max-lg:bg-opacity-100
+        dark:bg-opacity-80
         overflow-y-auto
       `}
     >
       <div 
         onClick={(event) => event.stopPropagation()}
         className={`
-          flex flex-col z-[110] w-full lg:w-[40rem] h-fit lg:mb-[3rem] lg:pt-[1rem]
+          flex flex-col z-[110] w-full lg:w-[40rem] h-fit lg:mb-[3rem] lg:mt-[1rem]
+          bg-light-white dark:bg-dark-white overflow-hidden rounded-md
         `}
       >
         <div 
           className={`
-            w-full 
-            rounded-md
+            w-full
           `}
         >
           <Board 
@@ -109,8 +110,6 @@ const BoardDetail = (props: Props) => {
         <div 
           className={`
             relative w-full
-            bg-light-white
-            dark:bg-dark-white
             shadow-lg overflow-hidden
           `}
         >

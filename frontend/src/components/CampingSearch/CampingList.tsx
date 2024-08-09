@@ -7,7 +7,7 @@ type Props = {
 
 const CampingList = (props: Props) => {
   return (
-    <div>
+    <div className='bg-light-white dark:bg-dark-white'>
       <Camping modalOpen={props.modalOpen} />
       <Camping modalOpen={props.modalOpen} />
       <Camping modalOpen={props.modalOpen} />
