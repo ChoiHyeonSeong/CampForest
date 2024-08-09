@@ -20,10 +20,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -48,7 +50,7 @@ public class TransactionChatMessage {
 
 	@Enumerated(EnumType.STRING)
 	private MessageType messageType;
-
+	@Column(name = "transaction_id")
 	private Long transactionId;
 
 	@Column(name = "created_at")
