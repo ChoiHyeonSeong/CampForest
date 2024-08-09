@@ -118,8 +118,8 @@ const CampingFilter = (props: Props) => {
           </div>
           
         </div>
-        <div className='flex justify-between'>
-          <button
+        <div className='flex justify-center mt-[0.5rem]'>
+          {/* <button
             onClick={closeFilter}
             className="
               mt-[1rem] px-[1rem] py-[0.5rem] 
@@ -129,7 +129,7 @@ const CampingFilter = (props: Props) => {
             "
           >
             닫기
-          </button>
+          </button> */}
           
           <button
             onClick={() => {
@@ -137,13 +137,13 @@ const CampingFilter = (props: Props) => {
               props.onClose();
             }}
             className={`
-              mt-[1rem] px-[1rem] py-[0.5rem] 
+              w-1/2 mt-[1rem] px-[1rem] py-[0.5rem] 
               bg-light-signature text-light-white hover:bg-light-signature-hover 
               dark:bg-dark-signature dark:text-dark-white dark:hover:bg-dark-signature-hover
               rounded
             `}
           >
-            확인
+            선택 완료
           </button>
         </div> 
       </div>

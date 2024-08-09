@@ -13,6 +13,7 @@ import FindPassword from '@pages/FindPassword';
 import Community from '@pages/Community';
 import BoardWrite from '@components/Board/BoardWrite';
 import LoadingModal from '@components/Public/LoadingModal';
+import StarLight from '@components/Public/StarLight';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
@@ -78,14 +79,16 @@ function App() {
     });
     dispatch(setIsBoardWriteModal(false));
   }, [currentLoc]);
-
+    
   return (
     <WebSocketProvider>
       <div className="App h-screen overflow-hidden">
+
+
         <Navbar />
         <div className='flex h-full'>
           {/* padding은 Navigation bar용 공간 */}
-          <div className='flex-grow h-[100vh-5.95rem] md:h-[100vh-3.2rem] lg:h-screen mt-[3.2rem] lg:mt-0 mb-[2.75rem] md:mb-0 lg:ps-[5rem] overflow-y-auto' id='contentBox'>
+          <div className='flex-grow h-[100vh-6.4rem] md:h-[100vh-3.2rem] lg:h-screen mt-[3.2rem] lg:mt-0 mb-[3.2rem] md:mb-0 lg:ms-[5rem] overflow-y-auto' id='contentBox'>
             {/* 여기서 부터 */}
             <Routes>
               <Route path='/' element={<Main />} />
@@ -97,7 +100,6 @@ function App() {
               <Route path='/camping' element={<CampingSearch />} />
               <Route path='/user/password/*' element={<FindPassword />} />
               <Route path="/community/:category" element={<Community />} />
-              {/* <Route path="/board/detail/:boardId" element={<BoardDetail />} /> */}
               <Route path="/search/*" element={<SearchPage />} />
               <Route path="/landing" element={<LandingPage />} />
             </Routes>
@@ -107,6 +109,9 @@ function App() {
         {/* 모달은 이 아래부터 */}
         {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
         {modals.isLoading ? <LoadingModal /> : <></>}
+
+        {/* 배경 스타라이트 */}
+        <StarLight/>
       </div>
     </WebSocketProvider>
   );

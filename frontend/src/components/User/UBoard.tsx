@@ -13,6 +13,7 @@ import { boardUserList, savedList } from '@services/boardService';
 import { setIsLoading } from '@store/modalSlice';
 import { useInView } from 'react-intersection-observer';
 import { RootState } from '@store/store';
+import BoardDetail from '@components/Board/BoardDetail';
 
 type Props = {};
 
@@ -28,6 +29,9 @@ const UBoard = (props: Props) => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
   const boardCursorIdRef = useRef<number | null>(null);
+
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState<number | null>(null);
 
   const [totalBoardCnt, setTotalBoardCnt] = useState(0);
   const [totalSavedBoardCnt, setTotalSavedBoardCnt] = useState(0);
@@ -112,8 +116,27 @@ const UBoard = (props: Props) => {
     getCnt()
   }, [])
 
+  const detailClose = () => {
+    setIsDetailOpen(false)
+  }
+
+  const detailOpen = (selectedId: number) => {
+    setSelectedDetail(selectedId)
+    setIsDetailOpen(true)
+  }
+
   return (
     <div className={`px-[4rem]`}>
+      {/* 디테일 모달 */}
+      {
+        isDetailOpen && selectedDetail !== null ? (
+          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose}/>
+        ) : (
+          <></>
+        )
+      }
+      
+      {/* 본문 */}
       <div>
         {/* 작성글, 저장됨, 필터 */}
         <div
@@ -197,7 +220,7 @@ const UBoard = (props: Props) => {
       <div>
         {boards?.map((board, index) => (
           <div className={`my-[1.25rem]`} key={index}>
-            <Board board={board} deleteFunction={pageReload} isDetail={false} />
+            <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen}/>
           </div>
         ))}
       
