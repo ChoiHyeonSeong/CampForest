@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import defaultImage from '@assets/images/basic_profile.png';
 import FireGif from '@assets/images/fire.gif';
 import { Link, useParams } from 'react-router-dom';
@@ -31,6 +31,7 @@ type Props = {
 export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, fetchUserInfo }: Props) {
   const dispatch = useDispatch();
   const chatState = useSelector((state: RootState) => state.chatStore);
+  const roomIdRef = useRef(chatState.roomId);
   const userId = Number(useParams().userId);
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
@@ -46,6 +47,10 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     }
     fetchUserInfo();
   }, [userId])
+
+  useEffect(() => {
+    roomIdRef.current = chatState.roomId;
+  }, [chatState.roomId])
   
   const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
   
@@ -98,7 +103,8 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     // 메세지를 받았을 때
     subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
       const response = JSON.parse(message.body);
-      if (chatState.roomId === response.roomId) {
+      const currentRoomId = roomIdRef.current;
+      if (currentRoomId === response.roomId) {
         dispatch(updateCommunityChatUserList({...response, inProgress: true}));
         sendMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
         dispatch(addMessageToChatInProgress(response));
