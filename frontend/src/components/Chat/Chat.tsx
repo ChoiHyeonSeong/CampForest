@@ -50,7 +50,6 @@ const Chat = () => {
     if(chatState.selectedCategory === '일반') {
       dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
     } else if(chatState.selectedCategory === '거래') {
-      console.log('거래 메세지 fetch')
       dispatch(setChatInProgress(await transactionChatDetail(chatState.roomId)));
     }
   };
@@ -71,7 +70,6 @@ const Chat = () => {
     if (chatState.roomId !== 0) {
       opponentInfo();
       fetchMessages();
-      console.log(chatState.chatInProgress)
     }
   }, [chatState.roomId]);
 
