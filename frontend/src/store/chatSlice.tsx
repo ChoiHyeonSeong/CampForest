@@ -7,6 +7,7 @@ type ChatState = {
   selectedCategory: string;
   roomId: number;
   roomIds: number[];
+  chatInProgressType: string;
   chatInProgress: Message[];
   otherId: number;
   communityChatUserList: ChatUserType[];
@@ -19,6 +20,7 @@ const initialState: ChatState = {
   selectedCategory: '일반',
   roomId: 0,
   roomIds: [],
+  chatInProgressType: '일반',
   chatInProgress: [],
   otherId: 0,
   communityChatUserList: [],
@@ -50,6 +52,9 @@ const chatSlice = createSlice({
     },
     setChatInProgress: (state, action: PayloadAction<Message[]>) => {
       state.chatInProgress = action.payload;
+    },
+    setChatInProgressType: (state, action: PayloadAction<string>) => {
+      state.chatInProgressType = action.payload;
     },
     addMessageToChatInProgress: (state, action: PayloadAction<Message>) => {
       state.chatInProgress.push(action.payload);
@@ -109,6 +114,7 @@ export const {
   setRoomId, 
   setRoomIds, 
   setChatInProgress,
+  setChatInProgressType,
   addMessageToChatInProgress,
   setOtherId,
   setCommunityChatUserList,

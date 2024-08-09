@@ -3,19 +3,36 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatDetail } from '@services/chatService';
+import { communityChatDetail, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 
-export type Message = {
-  messageId: number;
+export type TransactionMessageType = {
   content: string;
-  senderId: number;
-  roomId: number;
   createdAt: string;
+  messageId: number;
+  messageType: string;
   read: boolean;
+  roomId: number;
+  senderId: number;
+  transactionId?: number;
+}
+
+export type TransactionEntityType = {
+
+}
+
+export type Message = {
+  content?: string;
+  createdAt?: string;
+  messageId?: number;
+  read?: boolean;
+  roomId?: number;
+  senderId?: number;
+  message: TransactionMessageType;
+  transactionEntity?: TransactionEntityType;
 }
 
 const Chat = () => {
@@ -30,7 +47,12 @@ const Chat = () => {
   const [userInput, setUserInput] = useState('');
 
   const fetchMessages = async () => {
-    dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
+    if(chatState.selectedCategory === '일반') {
+      dispatch(setChatInProgress(await communityChatDetail(chatState.roomId)));
+    } else if(chatState.selectedCategory === '거래') {
+      console.log('거래 메세지 fetch')
+      dispatch(setChatInProgress(await transactionChatDetail(chatState.roomId)));
+    }
   };
 
   const opponentInfo = async () => {
@@ -49,6 +71,7 @@ const Chat = () => {
     if (chatState.roomId !== 0) {
       opponentInfo();
       fetchMessages();
+      console.log(chatState.chatInProgress)
     }
   }, [chatState.roomId]);
 
@@ -133,7 +156,8 @@ const Chat = () => {
       >
 
         {/* 실제 메세지 조작부분 */}
-        {messages.map((message) => (
+        {chatState.chatInProgressType === '일반' ? (
+          messages.map((message) => (
           message.senderId === chatState.otherId ? (
             <div
               className={`
@@ -179,7 +203,7 @@ const Chat = () => {
                   {message.read ? '' : '1'}
                 </div>
                 <div>
-                  {formatTime(message.createdAt)}
+                  {message.createdAt ? formatTime(message.createdAt) : ''}
                 </div>
               </div>
               <div
@@ -195,7 +219,12 @@ const Chat = () => {
               </div>
             </div>
           )
-        ))}
+        ))
+      ) : 
+      (
+        <div>123</div>
+      )
+      }
       </div>
 
       {/* 전송 버튼 */}
