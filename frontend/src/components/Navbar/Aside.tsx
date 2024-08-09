@@ -33,7 +33,7 @@ const Aside = (props: Props) => {
   };
 
   return (
-    <aside className={`fixed bottom-[3.5rem] md:bottom-[2rem] right-[1.25rem] md:right-[1.25rem] z-[10]`}>
+    <aside className={`fixed bottom-[4rem] md:bottom-[2rem] right-[1.25rem] md:right-[1.25rem] z-[10]`}>
 
       {/* Aside 글쓰기 (로그인 해야 보임) */}
       <div className={`${props.user.isLoggedIn ? 'flex' : 'hidden'} items-center relative mb-[0.5rem]`}>
