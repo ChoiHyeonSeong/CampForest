@@ -18,16 +18,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
-import BoardDetail from '@components/Board/BoardDetail';
 import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
 import { WebSocketProvider } from 'Context/WebSocketContext'
-import { communityChatList } from '@services/communityChatService';
+import { communityChatList } from '@services/chatService';
 import { store } from '@store/store';
-import { setCommunityChatUserList, setTotalUnreadCount } from '@store/chatSlice';
+import { setCommunityChatUserList, setTotalUnreadCount, setTransactionChatUesrList } from '@store/chatSlice';
 import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
 import useSSE from '@hooks/useSSE';
+import { transactionChatList } from '@services/chatService';
 
 function App() {
   const userState = useSelector((state: RootState) => state.userStore);
@@ -38,23 +38,28 @@ function App() {
   useThemeEffect();
   useSSE();
 
-  // 일반 채팅방 목록 가져오기
-  const fetchCommunityChatList = async () => {
+  // 채팅방 목록 가져오기
+  const fetchChatList = async () => {
     const userId = sessionStorage.getItem('userId');
     if (userId) {
-      const response = await communityChatList(Number(userId));
+      const communityChatUserList = await communityChatList();
       let count = 0;
-      response.map((chatUser: ChatUserType) => {
+      communityChatUserList.map((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setCommunityChatUserList(communityChatUserList));
+      const transactionChatUserList = await transactionChatList();
+      transactionChatUserList.map((chatUser: ChatUserType) => {
         count += chatUser.unreadCount;
       })
       store.dispatch(setTotalUnreadCount(count));
-      store.dispatch(setCommunityChatUserList(response));
+      store.dispatch(setTransactionChatUesrList(transactionChatUserList));
     }
   }
   
   useEffect(() => {
     if(userState.isLoggedIn) {
-      fetchCommunityChatList();
+      fetchChatList();
     }
   }, [userState.isLoggedIn]);
 

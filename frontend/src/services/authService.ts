@@ -1,5 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
-import { communityChatList } from "./communityChatService";
+import { communityChatList } from "./chatService";
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -171,7 +171,7 @@ export const getOAuthAccessToken = async (code: string): Promise<LoginResponse> 
       sessionStorage.setItem('isLoggedIn', 'true');
       axiosInstance.defaults.headers['Authorization'] = Authorization;
       
-      const response = await communityChatList(user.userId);
+      const response = await communityChatList();
       sessionStorage.setItem('chatRoomList', JSON.stringify(response));
     } else {
       console.error('No access token received from server');

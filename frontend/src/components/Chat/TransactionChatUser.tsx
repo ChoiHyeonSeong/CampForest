@@ -18,7 +18,7 @@ type Props = {
 }
 
 const ChatUser = (props: Props) => {
-  const chatUser = store.getState().chatStore.communityChatUserList[props.index];
+  const chatUser = store.getState().chatStore.transactionChatUserList[props.index];
   const [nickname, setNickname] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const [lastMessageTime, setLastMessageTime] = useState('');

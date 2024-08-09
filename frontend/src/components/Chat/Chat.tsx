@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatDetail } from '@services/communityChatService';
+import { communityChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';

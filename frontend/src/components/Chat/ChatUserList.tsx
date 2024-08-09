@@ -1,10 +1,10 @@
 import ChatUser, { ChatUserType } from './ChatUser';
+import TransactionChatUser from './TransactionChatUser';
 import Chat from './Chat';
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setChatInProgress, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { communityChatDetail } from '@services/communityChatService';
 
 type Props = {
   isLogin: boolean;
@@ -74,7 +74,7 @@ const ChatUserList = (props: Props) => {
               )
             }
           >
-            <ChatUser index={index}/>
+            <TransactionChatUser index={index}/>
           </div>
         ))}
       </div>

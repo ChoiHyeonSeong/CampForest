@@ -1,12 +1,10 @@
 import axiosInstance from '@services/authService'
 
-export const communityChatList = async (userId: number) => {
-  
+export const communityChatList = async () => {
   try {
-    const params = { userId: userId };
-    const response = await axiosInstance.get(`/communitychat/rooms`, { params: params });
+    const response = await axiosInstance.get(`/communitychat/rooms`);
 
-    console.log(response);
+    // console.log(response);
     return response.data.data;
   } catch (error) {
     throw error;
@@ -33,4 +31,11 @@ export const initCommunityChat = async (userId: number): Promise<number> => {
   });
   
   return response.data.data.roomId;
+}
+
+export const transactionChatList = async () => {
+    const response = await axiosInstance.get(`/transactionchat/rooms`);
+
+    console.log(response);
+    return response.data.data;
 }

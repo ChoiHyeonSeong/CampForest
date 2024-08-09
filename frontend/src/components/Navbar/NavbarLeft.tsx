@@ -228,7 +228,7 @@ const NavbarLeft = (props: Props) => {
             onClick={() => props.toggleExtendMenu('notification')}
             className={`hidden lg:flex h-[3.5rem] cursor-pointer`}
           >
-            <div className={`flex flex-all-center w-[5rem]`}>
+            <div className={`flex flex-all-center relative w-[5rem]`}>
               <PushIcon 
                 className={`
                   w-[2rem]

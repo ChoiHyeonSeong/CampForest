@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import defaultImage from '@assets/images/basic_profile.png';
 import FireGif from '@assets/images/fire.gif';
 import { Link, useParams } from 'react-router-dom';
-import { userPage } from '@services/userService';
 import { useDispatch, useSelector } from 'react-redux';
 
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
 import { RootState, store } from '@store/store';
 import { addMessageToChatInProgress, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
-import { communityChatList, initCommunityChat } from '@services/communityChatService';
+import { communityChatList, initCommunityChat } from '@services/chatService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { ChatUserType } from '@components/Chat/ChatUser';
 
@@ -76,7 +75,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
   const fetchCommunityChatList = async () => {
     const userId = sessionStorage.getItem('userId');
     if (userId) {
-      const response = await communityChatList(Number(userId));
+      const response = await communityChatList();
       let count = 0;
       response.map((chatUser: ChatUserType) => {
         count += chatUser.unreadCount;

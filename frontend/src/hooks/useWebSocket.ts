@@ -53,6 +53,9 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
   }, []);
 
   useEffect(() => {
+    if (!jwt) {
+      return; // JWT가 없으면 웹소켓 연결을 시도하지 않음.
+    }
     const newClient = new Client({
       webSocketFactory: () => new SockJS('https://i11d208.p.ssafy.io/ws'),
       connectHeaders: {

@@ -1,5 +1,4 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { Client, Message } from '@stomp/stompjs';
 import { useWebSocket as useWebSocketHook, UseWebSocketReturn } from '@hooks/useWebSocket';
 
 type WebSocketContextType = UseWebSocketReturn;

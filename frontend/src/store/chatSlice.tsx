@@ -60,6 +60,9 @@ const chatSlice = createSlice({
     setCommunityChatUserList: (state, action: PayloadAction<ChatUserType[]>) => {
       state.communityChatUserList = action.payload;
     },
+    setTransactionChatUesrList: (state, action: PayloadAction<ChatUserType[]>) => {
+      state.transactionChatUserList = action.payload;
+    },
     updateCommunityChatUserList: (state, action: PayloadAction<{roomId: number; content: string; createdAt: string; inProgress: boolean}>) => {
       let totalUnreadCountDiff = 0;
     
@@ -109,6 +112,7 @@ export const {
   addMessageToChatInProgress,
   setOtherId,
   setCommunityChatUserList,
+  setTransactionChatUesrList,
   updateCommunityChatUserList,
   updateMessageReadStatus,
   setTotalUnreadCount

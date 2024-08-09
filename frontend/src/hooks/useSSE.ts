@@ -9,13 +9,26 @@ const useSSE = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state: RootState) => (state.userStore));
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
+  const lastConnectionTimeRef = useRef(0);
   const [retryCount, setRetryCount] = useState(0);
+  const [isConnected, setIsConnected] = useState(false);
   const maxRetries = 5;
 
   const createEventSource = useCallback(() => {
+    const now = Date.now();
+    if (now - lastConnectionTimeRef.current < 5000) { // 5초 내 재연결 방지
+      console.log("연결 시도가 너무 빠릅니다. 잠시 후 다시 시도하세요.");
+      return;
+    }
+    lastConnectionTimeRef.current = now;
+
     if (retryCount >= maxRetries) {
       console.error("최대 재시도 횟수 초과");
       return;
+    }
+
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
     }
 
     const accessToken = sessionStorage.getItem('accessToken');
@@ -38,6 +51,7 @@ const useSSE = () => {
 
     eventSource.onopen = async (event) => {
       console.log("SSE 연결 성공", event);
+      setIsConnected(true);
       const notificationList = await getNotificationList();
       dispatch(setNotificationList(notificationList));
       setRetryCount(0);
@@ -49,48 +63,33 @@ const useSSE = () => {
       console.log('새 알림', eventData);
       switch (eventData.notificationType) {
         case 'CHAT': {
-          
           break;
         }
         default: {
           dispatch(addNewNotification(eventData));
         }
       }
-      dispatch(addNewNotification(eventData));
-    })
+    });
 
     eventSource.onerror = (error) => {
       console.error("SSE 오류:", error);
+      setIsConnected(false);
       eventSource.close();
       setRetryCount(prevCount => prevCount + 1);
     };
 
     eventSourceRef.current = eventSource;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [retryCount]);
+  }, [retryCount, dispatch]);
 
   useEffect(() => {
     let retryTimeout: NodeJS.Timeout;
 
-    const retryWithBackoff = () => {
-      if (retryCount < maxRetries) {
-        const backoffTime = Math.min(1000 * (2 ** retryCount), 30000);
-        console.log(`${backoffTime / 1000}초 후 재연결 시도`);
-        retryTimeout = setTimeout(() => {
-          createEventSource();
-        }, backoffTime);
-      }
-    };
-
-    if (userState.isLoggedIn) {
-      if (retryCount === 0) {
-        createEventSource();
-      } else {
-        retryWithBackoff();
-      }
-    } else {
+    if (userState.isLoggedIn && !isConnected) {
+      createEventSource();
+    } else if (!userState.isLoggedIn) {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
+        setIsConnected(false);
       }
     }
 
@@ -102,7 +101,9 @@ const useSSE = () => {
         clearTimeout(retryTimeout);
       }
     };
-  }, [userState.isLoggedIn, createEventSource, retryCount]);
-}
+  }, [userState.isLoggedIn, createEventSource, isConnected]);
+
+  return isConnected;
+};
 
 export default useSSE;
