@@ -10,6 +10,7 @@ import { commentList, commentWrite } from '@services/commentService';
 type Props = {
   selectedBoardId: number;
   detailClose: () => void;
+  elementReload: () => void;
 }
 
 const BoardDetail = (props: Props) => {
@@ -64,9 +65,10 @@ const BoardDetail = (props: Props) => {
     }
   };
 
-  const goMain = () => {
-    navigate('/')
-  };
+  const deleteFunction = () => {
+    props.elementReload()
+    props.detailClose()
+  }
 
   if (isLoading) {
     return <div></div>; // 또는 로딩 스피너 컴포넌트
@@ -99,7 +101,7 @@ const BoardDetail = (props: Props) => {
         >
           <Board 
             board={board}
-            deleteFunction={goMain} 
+            deleteFunction={deleteFunction} 
             isDetail={true}
           />
         </div>

@@ -125,12 +125,21 @@ const UBoard = (props: Props) => {
     setIsDetailOpen(true)
   }
 
+  useEffect(() => {
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    if (isDetailOpen) {
+      contentBox.classList.add('md:scrollbar-hide')
+    } else {
+      contentBox.classList.remove('md:scrollbar-hide')
+    }
+  }, [isDetailOpen])
+
   return (
     <div className={`px-[4rem]`}>
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
-          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose}/>
+          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose} elementReload={pageReload}/>
         ) : (
           <></>
         )

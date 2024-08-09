@@ -165,6 +165,15 @@ function CampingSearch() {
     console.log(filterCondition)
   }, [selectedLocation])
 
+  useEffect(() => {
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    if (isModalOpen) {
+      contentBox.classList.add('md:scrollbar-hide')
+    } else {
+      contentBox.classList.remove('md:scrollbar-hide')
+    }
+  }, [isModalOpen])
+
   return (
     <div className={`lg:h-[calc(100vh-3.2rem)] z-[30]`}>
       {/* 메인 화면 */}

@@ -75,9 +75,9 @@ const Community = () => {
   useEffect(() => {
     const contentBox = document.querySelector('#contentBox') as HTMLElement;
     if (isDetailOpen) {
-      contentBox.classList.add('scrollbar-hide')
+      contentBox.classList.add('md:scrollbar-hide')
     } else {
-      contentBox.classList.remove('scrollbar-hide')
+      contentBox.classList.remove('md:scrollbar-hide')
     }
   }, [isDetailOpen])
 
@@ -86,7 +86,7 @@ const Community = () => {
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
-          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose}/>
+          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose} elementReload={pageReload}/>
         ) : (
           <></>
         )
