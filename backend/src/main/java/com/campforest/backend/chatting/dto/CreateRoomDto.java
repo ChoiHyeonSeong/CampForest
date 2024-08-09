@@ -1,4 +1,4 @@
-package com.campforest.backend.board.dto;
+package com.campforest.backend.chatting.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

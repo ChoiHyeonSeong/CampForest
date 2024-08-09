@@ -111,6 +111,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
 
     private TransactionChatDto convertToDto(TransactionChatRoom room) {
         TransactionChatDto dto = new TransactionChatDto();
+        dto.setProductId(room.getProductId());
         dto.setRoomId(room.getRoomId());
         dto.setBuyerId(room.getBuyerId());
         dto.setSellerId(room.getSellerId());
