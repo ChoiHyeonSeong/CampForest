@@ -9,6 +9,7 @@ import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
 import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 
 import ProfileImage from '@assets/images/basic_profile.png'
+import NavTopPushModal from './NavTopPushModal';
 
 type Props = {
   toggleMenu: () => void;
