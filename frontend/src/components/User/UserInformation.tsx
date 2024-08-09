@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { registOptional } from '@store/registSlice';
 
-import ProfileImg from '@assets/images/profileimg2.png';
+import ProfileImg from '@assets/images/basic_profile.png';
 import { ReactComponent as XIcon } from '@assets/icons/close-filled.svg';
 
 import DatePicker from 'react-datepicker';

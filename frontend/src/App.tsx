@@ -92,7 +92,7 @@ function App() {
               <Route path='/camping' element={<CampingSearch />} />
               <Route path='/user/password/*' element={<FindPassword />} />
               <Route path="/community/:category" element={<Community />} />
-              <Route path="/board/detail/:boardId" element={<BoardDetail />} />
+              {/* <Route path="/board/detail/:boardId" element={<BoardDetail />} /> */}
               <Route path="/search/*" element={<SearchPage />} />
               <Route path="/landing" element={<LandingPage />} />
             </Routes>

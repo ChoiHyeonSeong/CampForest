@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 import ProfileModal from './ProfileModal';
 
 import { ReactComponent as BigLogoIcon } from '@assets/logo/logo.svg'
 import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
 import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 
-import ProfileImage from '@assets/images/profileimgs.png'
-import NavTopPushModal from './NavTopPushModal';
+import ProfileImage from '@assets/images/basic_profile.png'
 
 type Props = {
   toggleMenu: () => void;
@@ -16,6 +16,7 @@ type Props = {
 }
 
 const NavbarTop = (props: Props) => {
+  const user = useSelector((state: RootState) => state.userStore);
   const [locPath, setLocPath] = useState<string | null>(null);
   const currentLoc = useLocation();
 
@@ -47,6 +48,10 @@ const NavbarTop = (props: Props) => {
   useEffect(() => {
     setLocPath(currentLoc.pathname)
   }, [currentLoc]);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = ProfileImage;
+  };
 
   return (
     <div 
@@ -114,7 +119,11 @@ const NavbarTop = (props: Props) => {
               overflow-hidden border rounded-full cursor-pointer
             `}
           >
-            <img src={ProfileImage} alt="NOIMG" />
+            <img 
+              src={user.profileImage ? user.profileImage : ProfileImage} 
+              alt="NOIMG" 
+              onError={handleImageError}  
+            />
           </div>
           <ProfileModal
             isOpen={isProfileModalOpen}

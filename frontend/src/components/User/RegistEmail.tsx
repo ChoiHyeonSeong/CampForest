@@ -120,6 +120,8 @@ const RegistEmail: React.FC = () => {
         if (result?.data.status === 'C000') {
           alert('이메일이 발송되었습니다.')
           setEmailCertificationState(1)
+        } else if (result?.data.status === 'U011') {
+          alert('이미 가입된 이메일입니다.')
         } else {
           alert('다시 요청해주세요.')
         }

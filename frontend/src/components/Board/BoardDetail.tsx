@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import Board from './Board'
 import BoardComment, { CommentType } from './BoardComment'
 import CommentInput from './CommentInput';
-import { useParams } from 'react-router-dom';
 import { BoardType } from '@components/Board/Board';
 import { boardDetail } from '@services/boardService';
 import { useNavigate } from 'react-router-dom';
 import { commentList, commentWrite } from '@services/commentService';
 
-const BoardDetail = () => {
+type Props = {
+  selectedBoardId: number;
+  detailClose: () => void;
+}
+
+const BoardDetail = (props: Props) => {
   const navigate = useNavigate();
-  const params = useParams();
-  const boardId = Number(params.boardId)
+  const boardId = props.selectedBoardId
+
   const [comments, setComments] = useState<CommentType[]>([]);
   const [board, setBoard] = useState<BoardType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,11 +77,24 @@ const BoardDetail = () => {
   }
 
   return (
-    <div className={`flex justify-center min-h-screen`}>
-      <div className={`flex flex-col lg:flex-row w-full lg:w-[60rem] mb-[3rem] lg:pt-[1rem]`}>
+    <div 
+      onClick={props.detailClose}
+      className={`
+        flex justify-center fixed inset-0 z-[20] lg:z-[100] max-md:h-[calc(100vh-6.4rem)] max-lg:mt-[3.2rem]
+        bg-light-black bg-opacity-80 max-lg:bg-light-white max-lg:bg-opacity-100
+        dark:bg-dark-black dark:bg-opacity-80 dark:max-lg:bg-dark-white dark:max-lg:bg-opacity-100
+        overflow-y-auto
+      `}
+    >
+      <div 
+        onClick={(event) => event.stopPropagation()}
+        className={`
+          flex flex-col z-[110] w-full lg:w-[40rem] h-fit lg:mb-[3rem] lg:pt-[1rem]
+        `}
+      >
         <div 
           className={`
-            lg:w-3/5 min-h-[80vh]
+            w-full 
             rounded-md
           `}
         >
@@ -90,43 +107,32 @@ const BoardDetail = () => {
         {/* 게시물 상세 */}
         <div 
           className={`
-            relative w-full lg:w-2/5 lg:h-[80vh] max-lg:p-[0.5rem]
-            bg-light-white;
-            dark:bg-dark-white;
-            shadow-lg overflow-hidden lg:rounded-md
+            relative w-full
+            bg-light-white
+            dark:bg-dark-white
+            shadow-lg overflow-hidden
           `}
         >
-          <div 
-            className={`
-              hidden lg:flex lg:items-center lg:absolute lg:top-0 w-full h-[5rem]
-              bg-light-signature
-              dark:bg-dark-signature
-            `}
-          >
-            <div 
-              className={`
-                ps-[1rem]
-                font-medium text-lg
-              `}
-            >
-              댓글
-            </div>
-          </div>
 
           <div 
             className={`
-              lg:absolute lg:top-[5rem] w-full h-[calc(100%-8rem)] lg:px-[0.5rem]
-              lg:overflow-y-scroll 
+              w-full
             `}
           >
-            {comments.map((comment) => (
-              <BoardComment 
-                key={comment.commentId} 
-                comment={comment}
-              />
-            ))}
+            {
+              comments.length >= 1 ? (
+                comments.map((comment) => (
+                  <BoardComment 
+                    key={comment.commentId} 
+                    comment={comment}
+                  />
+                ))
+              ) : (
+                <div className='m-[3rem]'>아직 댓글이 없습니다.</div>
+              )
+            }
           </div>
-          <div className={`lg:absolute lg:bottom-0 w-full h-[3rem]`}>
+          <div className={`w-full h-[3rem]`}>
             <CommentInput
               onAddComment={handleAddComment} />
           </div>
