@@ -141,10 +141,7 @@ public class UserController {
 	@GetMapping("/public/info")
 	public ApiResponse<?> getUserInfo(@RequestParam("userId") Long userId) {
 		try {
-			Users users = userService.findByUserId(userId)
-				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-
-			ResponseInfoDTO responseDTO = ResponseInfoDTO.fromEntity(users);
+			ResponseInfoDTO responseDTO = userService.getUserInfo(userId);
 			return ApiResponse.createSuccess(responseDTO, "유저 정보 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
@@ -157,17 +154,13 @@ public class UserController {
 		@RequestParam(value = "cursor", defaultValue = "0") Long cursor,
 		@RequestParam(value = "limit", defaultValue = "10") int limit){
 		try {
-			List<Users> usersList = userService.findByNicknameContaining(nickname, cursor, limit);
-			if (usersList.isEmpty()) {
+			List<ResponseInfoDTO> responseDTOList = userService.findByNicknameContaining(nickname, cursor, limit);
+			if (responseDTOList.isEmpty()) {
 				return ApiResponse.createSuccess(Collections.emptyList(), "검색 결과가 없습니다.");
 			}
 			long totalCount = userService.countByNicknameContaining(nickname);
-
-			List<ResponseInfoDTO> responseDTOList = usersList.stream()
-				.map(ResponseInfoDTO::fromEntity)
-				.collect(Collectors.toList());
 			long lastId = responseDTOList.get(responseDTOList.size() - 1).getUserId();
-			boolean hasNext = usersList.size() == limit;
+			boolean hasNext = responseDTOList.size() == limit;
 
 			ResponseSearchDTO response = ResponseSearchDTO.builder()
 				.totalCount(totalCount)

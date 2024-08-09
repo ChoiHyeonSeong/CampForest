@@ -30,6 +30,7 @@ import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
+import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.model.Follow;
 import com.campforest.backend.user.model.Interest;
 import com.campforest.backend.user.model.UserImage;
@@ -88,6 +89,26 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<Users> findByUserId(Long userId) {
 		return userRepository.findByUserId(userId);
+	}
+
+	@Override
+	public ResponseInfoDTO getUserInfo(Long userId) {
+		Users user = userRepository.findByUserId(userId)
+			.orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+
+		long followerCount = followRepository.countFollowersByUserId(userId);
+		long followingCount = followRepository.countFollowingsByUserId(userId);
+
+		return ResponseInfoDTO.builder()
+			.userId(user.getUserId())
+			.nickname(user.getNickname())
+			.followerCount((int) followerCount)
+			.followingCount((int) followingCount)
+			.introduction(user.getIntroduction())
+			.temperature(user.getTemperature())
+			.profileImage(user.getUserImage() == null ? null : user.getUserImage().getImageUrl())
+			.isOpen(user.isOpen())
+			.build();
 	}
 
 	@Override
@@ -221,9 +242,26 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<Users> findByNicknameContaining(String nickname, Long cursor, int limit) {
+	public List<ResponseInfoDTO> findByNicknameContaining(String nickname, Long cursor, int limit) {
 		Pageable pageable = PageRequest.of(0, limit);
-		return userRepository.findByNicknameContainingAndIdGreaterThan(nickname, cursor, pageable);
+		List<Users> userlist = userRepository.findByNicknameContainingAndIdGreaterThan(nickname, cursor, pageable);
+
+		List<ResponseInfoDTO> responseList = new ArrayList<>();
+		for(Users user : userlist) {
+			long followerCount = followRepository.countFollowersByUserId(user.getUserId());
+			long followingCount = followRepository.countFollowingsByUserId(user.getUserId());
+			responseList.add(ResponseInfoDTO.builder()
+				.userId(user.getUserId())
+				.nickname(user.getNickname())
+				.followerCount((int) followerCount)
+				.followingCount((int) followingCount)
+				.introduction(user.getIntroduction())
+				.temperature(user.getTemperature())
+				.profileImage(user.getUserImage() == null ? null : user.getUserImage().getImageUrl())
+				.isOpen(user.isOpen())
+				.build());
+		}
+		return responseList;
 	}
 
 	@Override
