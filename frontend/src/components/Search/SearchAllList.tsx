@@ -31,36 +31,34 @@ const SearchAllList = (props: Props) => {
       setBoardList([]);
       return;
     }
-
+    
     try {
       // 1. 프로필 검색
-      const profileResult = await nicknameSearch(props.searchText);
-      if (profileResult.users && Array.isArray(profileResult.users)) {
-        const filteredProfiles = profileResult.users.filter((profile: profileType) => 
-          profile.nickname.includes(props.searchText)
-        );
-        setProfileList(filteredProfiles.slice(0, 5));
-        setTotalProfileCount(filteredProfiles.length);
+      const profileResult = await nicknameSearch(props.searchText, 0, 5);
+      console.log(profileResult)
+      if (profileResult.users) {
+        setProfileList(profileResult.users);
+      }
+      if (profileResult.totalCount) {
+        setTotalProfileCount(profileResult.totalCount);
       }
 
       // 2. 상품 검색
       const productResult = await productList({ 
         titleKeyword: props.searchText, 
         productType: '',
-        page: 0,
-        size: 1000,
+        cursorId: null,
+        size: 5,
       });
-      if (productResult && productResult.products) {
-        setProductsList(productResult.products.slice(0, 5));
-        setTotalProductCount(productResult.products.length);
-      }
+      setProductsList(productResult.products);
+      setTotalProductCount(productResult.totalCount);
 
       // 3. 게시글 검색
-      const boardResult = await boardTitleSearch(props.searchText, 0, 1000);
-      if (boardResult && Array.isArray(boardResult)) {
-        setBoardList(boardResult.slice(0, 3));
-        setTotalBoardCount(boardResult.length);
-      }
+      const boardResult = await boardTitleSearch(props.searchText, null, 2);
+      console.log(boardResult)
+      setBoardList(boardResult.content);
+      setTotalBoardCount(boardResult.totalCount);
+
     } catch (error) {
       console.error("Error fetching search results:", error);
     }
@@ -213,8 +211,8 @@ const SearchAllList = (props: Props) => {
           
         </div>
         <div className=''>
-          {boardList.map((board) =>
-              <SearchBoard board={board}/>  
+          {boardList.map((board, index) =>
+              <SearchBoard key={index} board={board}/>  
             )
           }
         </div>

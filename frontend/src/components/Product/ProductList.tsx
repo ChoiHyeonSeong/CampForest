@@ -53,7 +53,7 @@ const ProductList = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isAccBtnActive, setIsAccBtnActive] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(1);
-  const productPageRef = useRef(0);
+  const productCursorRef = useRef<number | null>(null);
 
   // 각 Dropdown에 대한 상태 추가
   const [selectedCategory, setSelectedCategory] = useState<Option>(categories[0]);
@@ -72,7 +72,7 @@ const ProductList = () => {
     if (tabIndex !== activeTab) {
       setProducts([]);
       setNextPageExist(true);
-      productPageRef.current = 0;
+      productCursorRef.current = null;
     }
     setActiveTab(tabIndex);
   };
@@ -93,14 +93,29 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       dispatch(setIsLoading(true));
-      const result = await productList({
-        productType: activeTab === 1 ? 'SALE' : 'RENT',
-        page: productPageRef.current,
-        size: 10,
-      });
+      let result: {
+        hasNext: boolean, 
+        nextCursorId: number | null, 
+        products: ProductType[],
+        totalCount: number,
+      }
+
+      if (productCursorRef.current !== null) {
+        result = await productList({
+          productType: activeTab === 1 ? 'SALE' : 'RENT',
+          cursorId: productCursorRef.current,
+          size: 20,
+        });
+      } else {
+        result = await productList({
+          productType: activeTab === 1 ? 'SALE' : 'RENT',
+          size: 20,
+        });
+      }
+      
       dispatch(setIsLoading(false));
-      productPageRef.current += 1;
-      if (result.data) {
+      productCursorRef.current = result.nextCursorId;
+      if (!result.hasNext) {
         setNextPageExist(false);
       }
       setProducts((prevProducts) => [...prevProducts, ...result.products]);

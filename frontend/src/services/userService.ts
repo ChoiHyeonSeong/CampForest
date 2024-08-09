@@ -23,8 +23,8 @@ export const followingList = async (userId: number) => {
 
   return response.data.data;
 }
-export const nicknameSearch = async (nickname: string) => {
-  const response = await axios.get(`/user/public/search?nickname=${nickname}`,);
+export const nicknameSearch = async (nickname: string, cursor: number | null = 0, limit: number = 10) => {
+  const response = await axios.get(`/user/public/search?nickname=${nickname}&cursor=${cursor}&limit=${limit}`,);
 
   console.log(response.data);
   return (response.data.data);

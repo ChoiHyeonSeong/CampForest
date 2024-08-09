@@ -9,20 +9,20 @@ type Props = {
 
 const SearchProfileList = (props: Props) => {
   const [profileList, setProfileList] = useState<profileType[]>([]);
+  const [profileCount, setProfileCount] = useState(0);
 
   const fetchProfileList = useCallback(async () => {
-    const result = await nicknameSearch(props.searchText);
-    const list = result.users
-    const size = result.size
-    
-    if (list && Array.isArray(list)) {
-      // 정확히 일치하는 결과만 필터링하게 하기
-      const filteredResults = list.filter(profile => 
-        profile.nickname.includes(props.searchText)
-      );
-      setProfileList(filteredResults);
-    } else {
-      setProfileList([]);
+    try {
+      const result = await nicknameSearch(props.searchText, 10);
+      console.log(result)
+      if (result.users) {
+        setProfileList(result.users);
+      }
+      if (result.totalCount) {
+        setProfileCount(result.totalCount);
+      }
+    } catch (error) {
+      console.log(error)
     }
   }, [props.searchText]);
 
@@ -36,7 +36,7 @@ const SearchProfileList = (props: Props) => {
       <p className='font-medium text-lg md:text-xl'>
         프로필
         <span className='ms-[0.5rem] font-bold'>
-          {profileList.length}
+          {profileCount}
         </span>
       </p>
 
