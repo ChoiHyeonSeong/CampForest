@@ -213,7 +213,11 @@ const RegistEmail: React.FC = () => {
 
   return (
     <div>
+
+      {/* 회원가입 폼 */}
       <form>
+
+        {/* 이름 */}
         <div 
           className={`
             my-[3rem] lg:my-[1.5rem]
@@ -232,9 +236,9 @@ const RegistEmail: React.FC = () => {
           </div>
           <input
             className={`
-              px-[1rem] py-[0.75rem]
-              bg-light-white
-              dark:bg-dark-white
+              p-[0.75rem]
+              bg-transparent placeholder:text-light-gray-2
+              placeholder:dark:text-dark-gray-2
               focus:outline-none
             `}
             placeholder="이름을 입력해주세요."
@@ -267,9 +271,9 @@ const RegistEmail: React.FC = () => {
               <input
                 className={`
                   ${certificationInputTextClass[phoneCertificationState]}
-                  px-[1rem] py-[0.75rem]
-                  bg-light-white
-                dark:bg-dark-white
+                  p-[0.75rem]
+                  bg-transparent placeholder:text-light-gray-2
+                  placeholder:dark:text-dark-gray-2
                   focus:outline-none
                 `}
                 placeholder="휴대폰 번호 (- 제외)"
@@ -291,11 +295,10 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
-                  ${phoneCertificationState === 1 ? '' : 'dark:placeholder-dark-gray-1 placeholder-light-gray-1'}
+                  ${phoneCertificationState === 1 ? '' : 'dark:placeholder-dark-gray-2 placeholder-light-gray-2'}
                   ${certificationInputTextClass[phoneCertificationState]}
-                  w-[55%] px-[1rem] py-[0.75rem]
-                  bg-light-white
-                  dark:bg-dark-white
+                  w-[55%] p-[0.75rem]
+                  bg-transparent 
                   focus:outline-none
                 `}
                 placeholder="인증번호 입력"
@@ -358,9 +361,9 @@ const RegistEmail: React.FC = () => {
               <input
                 className={`
                   ${certificationInputTextClass[emailCertificationState]}
-                  px-[1rem] py-[0.75rem]
-                  bg-light-white
-                  dark:bg-dark-white
+                  p-[0.75rem]
+                  bg-transparent placeholder:text-light-gray-2
+                  placeholder:dark:text-dark-gray-2
                   focus:outline-none
                 `}
                 placeholder="이메일을 입력해주세요."
@@ -381,11 +384,10 @@ const RegistEmail: React.FC = () => {
             >
               <input
                 className={`
-                  ${emailCertificationState === 1 ? '' : 'dark:placeholder-dark-gray-1 placeholder-light-gray-1'}
+                  ${emailCertificationState === 1 ? '' : 'dark:placeholder-dark-gray-2 placeholder-light-gray-2'}
                   ${certificationInputTextClass[emailCertificationState]}
-                  w-[55%] px-[1rem] py-[0.75rem]
-                  bg-light-white
-                  dark:bg-dark-white
+                  w-[55%] p-[0.75rem]
+                  bg-transparent
                   focus:outline-none
                 `}
                 placeholder="인증번호 입력"
@@ -454,10 +456,10 @@ const RegistEmail: React.FC = () => {
           </div>
           <input
             className={`
-              px-[1rem] py-[0.75rem]
-              bg-light-white
-              dark:bg-dark-white
-              focus:outline-none 
+              p-[0.75rem]
+              bg-transparent placeholder:text-light-gray-2
+              placeholder:dark:text-dark-gray-2
+              focus:outline-none
             `}
             placeholder="비밀번호를 입력해주세요."
             type="password"
@@ -470,7 +472,7 @@ const RegistEmail: React.FC = () => {
         </div>
         <div 
           className={`
-            my-[0.25rem]
+            my-[0.5rem] ps-[0.75rem]
             text-light-warning
             dark:text-dark-warning
             text-xs 
@@ -493,11 +495,10 @@ const RegistEmail: React.FC = () => {
           >
           <input
             className={`
-              ${isPasswordValid ? '' : 'dark:placeholder-dark-gray-1 placeholder-light-gray-1'}
-              px-[1rem] py-[0.75rem]
-              bg-light-white
-              dark:bg-dark-white
-              focus:outline-none 
+              ${isPasswordValid ? '' : 'dark:placeholder-dark-gray-2 placeholder-light-gray-2'}
+              p-[0.75rem]
+              bg-transparent
+              focus:outline-none
             `}
             placeholder="비밀번호 확인"
             type="password"
@@ -526,7 +527,8 @@ const RegistEmail: React.FC = () => {
         </div>
       </form>
 
-      <div className={`flex items-center mt-[2rem] mx-[0.75rem]`}>
+      {/* 약관동의 */}
+      {/* <div className={`flex items-center mt-[2rem] mx-[0.75rem]`}>
         <input 
           className={`
             size-[1rem] 
@@ -544,7 +546,7 @@ const RegistEmail: React.FC = () => {
             모든 약관에 동의합니다.
           </span>
         <ArrowBottomIcon className={`ms-auto`} />
-      </div>
+      </div> */}
     </div>
   );
 };
