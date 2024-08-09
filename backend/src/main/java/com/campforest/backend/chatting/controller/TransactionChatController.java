@@ -90,7 +90,6 @@ public class TransactionChatController {
 	public ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
 		try {
 			List<MessageWithTransactionDTO> messages = transactionChatService.getChatHistory(roomId);
-			System.out.println(roomId + " " + messages.toString());
 			return ApiResponse.createSuccess(messages, "채팅 메시지 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);

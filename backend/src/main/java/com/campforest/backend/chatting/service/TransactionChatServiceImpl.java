@@ -39,17 +39,10 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     @Transactional
     @Override
     public TransactionChatMessage saveMessage(Long roomId, TransactionChatMessage message) {
+        System.out.println("save메시지안에서 데이터 들어있는지 확인" + message.getTransactionId());
         TransactionChatRoom room = transactionChatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
-        message= TransactionChatMessage.builder()
-                .content(message.getContent())
-                .senderId(message.getSenderId())
-                .messageType(message.getMessageType())
-                .roomId(roomId)
-                .build();
-        if(message.getMessageType().equals(MessageType.TRANSACTION)) {
-            message.setTransactionId(message.getTransactionId());
-        }
+        message.setRoomId(room.getRoomId());
         return transactionChatMessageRepository.save(message);
     }
 
@@ -59,7 +52,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         TransactionChatRoom room = transactionChatRoomRepository.findById(roomId)
             .orElseThrow(() -> new RuntimeException("채팅룸 없습니다요"));
         List<TransactionChatMessage> messages = transactionChatMessageRepository.findByChatRoom(roomId);
-
+        System.out.println(messages.toString());
         return messages.stream()
             .map(message -> {
                 if (message.getMessageType() == MessageType.MESSAGE) {
