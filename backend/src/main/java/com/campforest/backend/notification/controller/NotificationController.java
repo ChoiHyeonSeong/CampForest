@@ -50,9 +50,12 @@ public class NotificationController {
 		return emitter;
 	}
 
-	@PostMapping("/read/{id}")
-	public void markAsRead(@AuthenticationPrincipal UserDetails userDetails, Long id) {
-		notificationService.markAsRead(id);
+	@PostMapping("/readAll")
+	public ApiResponse<?> markAsRead(@AuthenticationPrincipal UserDetails userDetails) {
+		Users user = userService.findByEmail(userDetails.getUsername())
+			.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+		int updateCount = notificationService.markAsRead(user);
+		return ApiResponse.createSuccess(null, updateCount + "개의 알림을 읽음 처리 완료");
 	}
 
 	@GetMapping("/all")
