@@ -9,6 +9,8 @@ import com.campforest.backend.user.model.Users;
 public interface NotificationService {
 	void createNotification(Users receiver, Users sender, NotificationType type, String message);
 
+	void createChatNotification(Users receiver, Users sender, NotificationType type, String message, Long roomId);
+
 	int markAsRead(Users user);
 
 	List<Notification> getAll(Users user);
