@@ -61,7 +61,7 @@ const CommentInput = (props: Props) => {
         <button 
           onClick={handleAddComment} 
           className={`
-            me-[0.5rem] 
+            mx-[0.5rem] 
             text-light-anchor
             dark:text-dark-anchor
           `}
@@ -70,7 +70,7 @@ const CommentInput = (props: Props) => {
         </button>
       </div>
       {showEmojiPicker && (
-        <div className={`absolute bottom-[3rem] z-[10]`}>
+        <div className={`absolute bottom-[3rem] z-[30]`}>
           <Picker onEmojiSelect={handleEmojiSelect} />
         </div>
       )}

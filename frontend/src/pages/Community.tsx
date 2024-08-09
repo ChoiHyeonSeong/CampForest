@@ -5,6 +5,7 @@ import Board, { BoardType } from '@components/Board/Board';
 import { useInView } from 'react-intersection-observer';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
+import BoardDetail from '@components/Board/BoardDetail';
 
 const Community = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,8 @@ const Community = () => {
 
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState<number | null>(null);
 
   const boardCursorIdRef = useRef<number | null>(null);
 
@@ -60,13 +63,41 @@ const Community = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
 
+  const detailClose = () => {
+    setIsDetailOpen(false)
+  }
+
+  const detailOpen = (selectedId: number) => {
+    setSelectedDetail(selectedId)
+    setIsDetailOpen(true)
+  }
+
+  useEffect(() => {
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    if (isDetailOpen) {
+      contentBox.classList.add('scrollbar-hide')
+    } else {
+      contentBox.classList.remove('scrollbar-hide')
+    }
+  }, [isDetailOpen])
+
   return (
     <div>
+      {/* 디테일 모달 */}
+      {
+        isDetailOpen && selectedDetail !== null ? (
+          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose}/>
+        ) : (
+          <></>
+        )
+      }
+
+      {/* 본문 */}
       <div className={`flex justify-center`}>
         <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
             <div className={`my-[1.25rem]`} key={index}>
-              <Board board={board} deleteFunction={pageReload} isDetail={false}/>
+              <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen}/>
             </div>
           ))}
         </div>

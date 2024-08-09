@@ -82,7 +82,6 @@ const BoardDetail = (props: Props) => {
       className={`
         flex justify-center fixed inset-0 z-[20] lg:z-[100] max-md:h-[calc(100vh-6.4rem)] max-lg:mt-[3.2rem]
         bg-light-black bg-opacity-80 max-lg:bg-light-white max-lg:bg-opacity-100
-        dark:bg-dark-black dark:bg-opacity-80 dark:max-lg:bg-dark-white dark:max-lg:bg-opacity-100
         overflow-y-auto
       `}
     >
