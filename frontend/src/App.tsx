@@ -37,7 +37,6 @@ function App() {
   const currentLoc = useLocation();
 
   useThemeEffect();
-  useSSE();
 
   // 채팅방 목록 가져오기
   const fetchChatList = async () => {
@@ -109,7 +108,7 @@ function App() {
         {modals.isLoading ? <LoadingModal /> : <></>}
 
         {/* 배경 스타라이트 */}
-        <StarLight/>
+        <StarLight />
       </div>
     </WebSocketProvider>
   );

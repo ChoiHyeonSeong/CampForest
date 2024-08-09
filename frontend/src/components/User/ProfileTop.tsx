@@ -112,6 +112,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
         dispatch(updateCommunityChatUserList({...response, inProgress: false}));
       }
     });
+
   }
 
   return (
