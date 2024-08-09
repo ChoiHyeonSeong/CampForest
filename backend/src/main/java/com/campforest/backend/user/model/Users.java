@@ -98,7 +98,7 @@ public class Users {
 	private String introduction;
 
 	@Setter
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JsonManagedReference
 	private UserImage userImage;
 
