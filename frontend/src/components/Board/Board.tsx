@@ -43,13 +43,12 @@ type Props = {
   deleteFunction: () => void;
   isDetail: boolean;
   detailOpen? : (param: number) => void;
+  updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
+  updateSaved: (boardId: number, isSaved: boolean) => void;
 }
 
 const Board = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
-  const [liked, setLiked] = useState(props.board.liked);
-  const [saved, setSaved] = useState(props.board.saved);
-  const [likeCount, setLikeCount] = useState(props.board.likeCount);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [timeDifference, setTimeDifference] = useState('');
@@ -70,18 +69,37 @@ const Board = (props: Props) => {
     }
   }
   
+  // const toggleLike = async () => {
+  //   try {
+  //     if (user.isLoggedIn) {
+  //       if (liked) {
+  //         // dislike
+  //         const result = await boardDislike(props.board.boardId, user.userId)
+  //         setLiked(false)
+  //         setLikeCount(result);
+  //       } else {
+  //         const result = await boardLike(props.board.boardId, user.userId)
+  //         setLiked(true)
+  //         setLikeCount(result);
+  //       }
+  //     } else {
+  //       alert("로그인 해주세요.")
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
   const toggleLike = async () => {
     try {
       if (user.isLoggedIn) {
-        if (liked) {
+        if (props.board.liked) {
           // dislike
           const result = await boardDislike(props.board.boardId, user.userId)
-          setLiked(false)
-          setLikeCount(result);
+          props.updateLike(props.board.boardId, false, result)
         } else {
           const result = await boardLike(props.board.boardId, user.userId)
-          setLiked(true)
-          setLikeCount(result);
+          props.updateLike(props.board.boardId, true, result)
         }
       } else {
         alert("로그인 해주세요.")
@@ -110,16 +128,16 @@ const Board = (props: Props) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
+  
   const handleBookmark = async () => {
     try {
       if (user.isLoggedIn) {
-        if (saved) {
+        if (props.board.saved) {
           await deleteSave(props.board.boardId);
-          setSaved(false);
+          props.updateSaved(props.board.boardId, false)
         } else {
           await boardSave(props.board.boardId);
-          setSaved(true);
+          props.updateSaved(props.board.boardId, true)
         }
       } else {
         alert("로그인 해주세요.")
@@ -128,7 +146,7 @@ const Board = (props: Props) => {
       console.error('북마크 취소 실패: ', error);
     }
   }
-
+  
   return (
     <div 
       className={`
@@ -296,7 +314,7 @@ const Board = (props: Props) => {
       >
         <div>
           <div className={`flex items-center`}>
-            {liked ? (
+            {props.board.liked ? (
               <HeartIcon 
                 onClick={toggleLike}
                 className={`
@@ -323,7 +341,7 @@ const Board = (props: Props) => {
                 text-start md:text-sm
               `}
             >
-              {likeCount}
+              {props.board.likeCount}
             </div>
           </div>
         </div>
@@ -349,7 +367,7 @@ const Board = (props: Props) => {
         </div>
 
         <div className='flex items-center'>
-          {saved ? 
+          {props.board.saved ? 
             (<BookmarkIcon
               onClick={() => handleBookmark()}
               className={`
