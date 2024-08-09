@@ -18,7 +18,7 @@ const Community = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [selectedDetail, setSelectedDetail] = useState<number | null>(null);
+  const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
 
   const boardCursorIdRef = useRef<number | null>(null);
 
@@ -68,8 +68,14 @@ const Community = () => {
   }
 
   const detailOpen = (selectedId: number) => {
-    setSelectedDetail(selectedId)
-    setIsDetailOpen(true)
+    const selected = boards.find(board => {
+      return Number(board.boardId) === selectedId
+    })
+    console.log(selected)
+    if (selected) {
+      setSelectedDetail(selected)
+      setIsDetailOpen(true)
+    }
   }
 
   useEffect(() => {
@@ -81,12 +87,43 @@ const Community = () => {
     }
   }, [isDetailOpen])
 
+  const updateComment = async (boardId: number, commentCount: number) => {
+    setBoards(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, commentCount: commentCount }
+          : board
+      )
+    );
+  }
+
+  const updateLike = async (boardId: number, isLiked: boolean, likedCount: number) => {
+    setBoards(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, likeCount: likedCount, liked: isLiked } // 좋아요 수를 1 증가시킴
+          : board
+      )
+    );
+  };
+
+  const updateSaved = async (boardId: number, isSaved: boolean) => {
+    console.log(isSaved)
+    setBoards(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, liked: isSaved }
+          : board
+      )
+    );
+  }
+
   return (
     <div>
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
-          <BoardDetail selectedBoardId={selectedDetail} detailClose={detailClose} elementReload={pageReload}/>
+          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved}/>
         ) : (
           <></>
         )
@@ -97,7 +134,7 @@ const Community = () => {
         <div className={`w-[100%] md:w-[40rem]`}>
           {boards?.map((board, index) => (
             <div className={`my-[1.25rem]`} key={index}>
-              <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen}/>
+              <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen} updateLike={updateLike} updateSaved={updateSaved}/>
             </div>
           ))}
         </div>

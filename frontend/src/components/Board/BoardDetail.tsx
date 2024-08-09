@@ -8,42 +8,45 @@ import { useNavigate } from 'react-router-dom';
 import { commentList, commentWrite } from '@services/commentService';
 
 type Props = {
-  selectedBoardId: number;
+  selectedBoard: BoardType;
   detailClose: () => void;
-  elementReload: () => void;
+  pageReload: () => void;
+  updateComment: (boardId: number, commentCount: number) => void;
+  updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
+  updateSaved: (boardId: number, isSaved: boolean) => void;
 }
 
 const BoardDetail = (props: Props) => {
   const navigate = useNavigate();
-  const boardId = props.selectedBoardId
+  // const boardId = props.selectedBoardId
 
   const [comments, setComments] = useState<CommentType[]>([]);
-  const [board, setBoard] = useState<BoardType | null>(null);
+  const [board, setBoard] = useState<BoardType | null>();
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchBoard = async () => {
-    try {
-      setIsLoading(true)
-      const result = await boardDetail(boardId);
-      setIsLoading(false)
+  // const fetchBoard = async () => {
+  //   try {
+  //     setIsLoading(true)
+  //     const result = await boardDetail(boardId);
+  //     setIsLoading(false)
 
-      console.log(result)
-      setBoard(result.data.data);
-    } catch (error) {
-      setIsLoading(false)
-      console.error('게시글 불러오기 실패: ', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     console.log(result)
+  //     setBoard(result.data.data);
+  //   } catch (error) {
+  //     setIsLoading(false)
+  //     console.error('게시글 불러오기 실패: ', error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const fetchComments = async () => {
     try {
-      const result = await commentList(boardId);
+      const result = await commentList(props.selectedBoard.boardId);
       console.log(result.content);
       setComments(result.content);
-      if(board) {
-        setBoard({...board, commentCount: result.totalElements});
+      if (props.selectedBoard) {
+        props.updateComment(props.selectedBoard.boardId, result.totalElements)
       }
     } catch (error) {
       console.error('댓글 불러오기 실패: ', error);
@@ -51,13 +54,13 @@ const BoardDetail = (props: Props) => {
   };
 
   useEffect(() => {
-    fetchBoard();
+    // fetchBoard();
     fetchComments();
-  }, [boardId]);
+  }, [props.selectedBoard.boardId]);
 
   const handleAddComment = async (comment: string) => {
     try {
-      await commentWrite(boardId, comment);
+      await commentWrite(props.selectedBoard.boardId, comment);
       fetchComments();
 
     } catch (error) {
@@ -66,15 +69,11 @@ const BoardDetail = (props: Props) => {
   };
 
   const deleteFunction = () => {
-    props.elementReload()
+    props.pageReload()
     props.detailClose()
   }
 
-  if (isLoading) {
-    return <div></div>; // 또는 로딩 스피너 컴포넌트
-  }
-
-  if (!board) {
+  if (!props.selectedBoard) {
     return <div>게시글을 찾을 수 없습니다.</div>;
   }
 
@@ -101,9 +100,11 @@ const BoardDetail = (props: Props) => {
           `}
         >
           <Board 
-            board={board}
+            board={props.selectedBoard}
             deleteFunction={deleteFunction} 
             isDetail={true}
+            updateLike={props.updateLike}
+            updateSaved={props.updateSaved}
           />
         </div>
         {/* 게시물 상세 */}
@@ -132,7 +133,7 @@ const BoardDetail = (props: Props) => {
               )
             }
           </div>
-          <div className={`w-full h-[3rem]`}>
+          <div className={`z-[300] w-full h-[3rem]`}>
             <CommentInput
               onAddComment={handleAddComment} />
           </div>

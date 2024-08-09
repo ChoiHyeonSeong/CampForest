@@ -55,7 +55,7 @@ const CommentInput = (props: Props) => {
             flex-1 px-[0.5rem] py-[0.25rem] 
             bg-light-white border-light-border
             dark:bg-dark-white dark:border-dark-border
-            outline-none focus:border-none border border-transparent rounded cursor-text
+            outline-none border border-transparent rounded cursor-text
           `}
         />
         <button 
@@ -70,7 +70,7 @@ const CommentInput = (props: Props) => {
         </button>
       </div>
       {showEmojiPicker && (
-        <div className={`absolute bottom-[3rem] z-[30]`}>
+        <div className={`absolute bottom-[3rem] z-[10]`}>
           <Picker onEmojiSelect={handleEmojiSelect} />
         </div>
       )}

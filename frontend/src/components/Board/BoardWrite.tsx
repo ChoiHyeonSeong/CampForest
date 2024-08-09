@@ -9,6 +9,8 @@ import { RootState } from '@store/store'
 
 import MultiImageUpload from '@components/Public/MultiImageUpload'
 
+import { throttle } from '@utils/throttle'
+
 type CategoryType = {
   text: string;
   value: string;
@@ -31,17 +33,30 @@ const BoardWrite = () => {
   const [boardImages, setBoardImages] = useState<File[]>([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const dispatch = useDispatch()
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
+
+    console.log(123123)
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
     try {
       const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
       dispatch(setIsBoardWriteModal(false));
       window.location.reload();
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsSubmitting(false);
     }
   }
+
+  // 3초 쓰로틀링
+  const throttledHandleWrite = throttle(handleWrite, 3000)
 
   const categories: CategoryType[] = [
     {
@@ -284,7 +299,7 @@ const BoardWrite = () => {
                 md:static w-full mt-[1rem]
                 md:text-center
               `} 
-              onClick={handleWrite}
+              onClick={throttledHandleWrite}
             >
               <button 
                 className={`

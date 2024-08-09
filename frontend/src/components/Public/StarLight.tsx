@@ -1,6 +1,9 @@
 import useSSE from '@hooks/useSSE';
 import React, { useEffect } from 'react'
 
+
+import CampImage from '@assets/images/camp2-removebg-preview.png'
+
 type Props = {}
 
 const StarLight = (props: Props) => {
