@@ -308,12 +308,12 @@ const Board = (props: Props) => {
       {/* 좋아요, 댓글, 북마크 아이콘 */}
       <div 
         className={`
-          flex items-center justify-between mb-[1rem] px-[3rem]
+          flex items-center mb-[1rem] px-[1rem]
           text-center
         `}
       >
         <div>
-          <div className={`flex items-center`}>
+          <div className={`flex items-center me-[1rem]`}>
             {props.board.liked ? (
               <HeartIcon 
                 onClick={toggleLike}
@@ -352,7 +352,7 @@ const Board = (props: Props) => {
         >
           <CommentIcon 
             className={`
-              size-[1.5rem]
+              size-[1.25rem]
               cursor-pointer 
             `}
           />
@@ -366,7 +366,7 @@ const Board = (props: Props) => {
           </div>
         </div>
 
-        <div className='flex items-center'>
+        <div className='flex items-center ms-auto'>
           {props.board.saved ? 
             (<BookmarkIcon
               onClick={() => handleBookmark()}

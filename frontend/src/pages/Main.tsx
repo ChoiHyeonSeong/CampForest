@@ -17,33 +17,13 @@ const useQuery = () => {
 
 function Main() {
   const query = useQuery();
-  useEffect(() => {
-    const queryCode = query.get('code')
-
-    if (queryCode !== null) {
-      const getAccessToken = async () => {
-        try {
-          const response = await getOAuthAccessToken(queryCode)
-          dispatch(setUser(response.user));
-          console.log(response)
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
-      getAccessToken()
-    }
-  }, []);
-
+  const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
   const dispatch = useDispatch();
-
   const [ref, inView] = useInView();
-
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
-
   const boardCursorIdRef = useRef<number | null>(null);
 
   const fetchBoards = async () => {
@@ -61,28 +41,15 @@ function Main() {
       console.error('게시글 불러오기 실패: ', error);
     }
   };
-
+  
   const pageReload = () => {
     boardCursorIdRef.current = null
     setBoards([]);
     setNextPageExist(true);
-
+    
     fetchBoards()
   }
-
-  useEffect(() => {
-    pageReload()
-  }, [])
-
-  useEffect(() => {
-    // inView가 true 일때만 실행한다.
-    if (inView && nextPageExist) {
-      console.log(inView, '무한 스크롤 요청')
-      fetchBoards()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [inView]);
-
+  
   const detailClose = () => {
     setIsDetailOpen(false)
   }
@@ -96,25 +63,7 @@ function Main() {
       setIsDetailOpen(true)
     }
   }
-
-  useEffect(() => {
-    const selected = boards.find(board => {
-      return Number(board.boardId) === selectedDetail?.boardId
-    })
-    if (selected) {
-      setSelectedDetail(selected)
-    }
-  }, [boards])
-
-  useEffect(() => {
-    const contentBox = document.querySelector('#contentBox') as HTMLElement;
-    if (isDetailOpen) {
-      contentBox.classList.add('md:scrollbar-hide')
-    } else {
-      contentBox.classList.remove('md:scrollbar-hide')
-    }
-  }, [isDetailOpen])
-
+  
   const updateComment = async (boardId: number, commentCount: number) => {
     setBoards(prevBoards =>
       prevBoards.map(board =>
@@ -145,6 +94,65 @@ function Main() {
     );
   }
 
+  useEffect(() => {
+    const queryCode = query.get('code')
+
+    if (queryCode !== null) {
+      const getAccessToken = async () => {
+        try {
+          const response = await getOAuthAccessToken(queryCode)
+          dispatch(setUser(response.user));
+          console.log(response)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      
+      getAccessToken()
+    }
+  }, []);
+  
+  useEffect(() => {
+    pageReload()
+  }, [])
+
+  useEffect(() => {
+    // inView가 true 일때만 실행한다.
+    if (inView && nextPageExist) {
+      console.log(inView, '무한 스크롤 요청')
+      fetchBoards()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
+  }, [inView]);
+
+  // 게시글 선택 시 detail 창 열기
+  useEffect(() => {
+    const selected = boards.find(board => {
+      return Number(board.boardId) === selectedDetail?.boardId
+    })
+    if (selected) {
+      setSelectedDetail(selected)
+    }
+  }, [boards])
+
+  // Detail 창이 열리면 바깥 스크롤 바 숨김
+  useEffect(() => {
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    if (isDetailOpen) {
+      contentBox.classList.add('md:scrollbar-hide')
+    } else {
+      contentBox.classList.remove('md:scrollbar-hide')
+    }
+  }, [isDetailOpen])
+
+  useEffect(() => {
+    boards.forEach((board, index) => {
+      setTimeout(() => {
+        setVisibleBoards(prev => [...prev, board.boardId]);
+      }, index * 100); // 각 게시물마다 100ms 지연
+    });
+  }, [boards])
+
   return (
     <div>
       {/* 디테일 모달 */}
@@ -159,9 +167,19 @@ function Main() {
       {/* 본문 */}
       <div className={`flex justify-center`}>
         <div className={`w-[100%] md:w-[40rem]`}>
-          {boards?.map((board, index) => (
-            <div className={`my-[1.25rem]`} key={board.boardId}>
-              <Board board={board} deleteFunction={pageReload} isDetail={false} detailOpen={detailOpen} updateLike={updateLike} updateSaved={updateSaved}/>
+          {boards?.map((board) => (
+            <div 
+              className={`my-[1.25rem] ${visibleBoards.includes(board.boardId) ? 'fade-in-down' : 'opacity-0'}`} 
+              key={board.boardId}
+            >
+              <Board 
+                board={board} 
+                deleteFunction={pageReload} 
+                isDetail={false} 
+                detailOpen={detailOpen} 
+                updateLike={updateLike} 
+                updateSaved={updateSaved}
+              />
             </div>
           ))}
         </div>

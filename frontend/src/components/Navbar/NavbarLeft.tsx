@@ -94,6 +94,7 @@ const NavbarLeft = (props: Props) => {
               className={`
                 ${isHovered && !isEitherOpen ? 'lg:w-[10rem]' : 'lg:w-[0rem]'} 
                 ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'}
+                hover:scale-110 transition-transform
               `}
             >
               <LongLogo 
@@ -108,12 +109,16 @@ const NavbarLeft = (props: Props) => {
         </div>
         
         {/* 메뉴들 */}
-        <div className={`flex flex-col flex-grow justify-center gap-8`}>
+        <div className={`flex flex-col flex-grow mt-[4rem] gap-[1rem] px-[0.5rem]`}>
 
           {/* 대여판매 */}
           <div 
             onClick={() => props.toggleExtendMenu('rental')}
-            className={`flex h-[3.5rem] cursor-pointer`} 
+            className={`
+              flex h-[3.5rem]
+              hover:bg-light-gray
+              cursor-pointer rounded-lg transition-colors
+            `} 
           >
             <div className={`flex flex-all-center w-[5rem]`}> 
               <RentalIcon 
@@ -139,7 +144,11 @@ const NavbarLeft = (props: Props) => {
           {/* 커뮤니티 */}
           <div 
             onClick={() => props.toggleExtendMenu('community')}
-            className={`flex h-[3.5rem] cursor-pointer`} 
+            className={`
+              flex h-[3.5rem]
+              hover:bg-light-gray
+              cursor-pointer rounded-lg transition-colors
+            `} 
           >
             <div className={`flex flex-all-center w-[5rem]`}>
               <CommunityIcon 
@@ -164,7 +173,13 @@ const NavbarLeft = (props: Props) => {
 
           {/* 캠핑장 찾기 */}
           <Link to='/camping' onClick={props.closeMenu} >
-            <div className={`flex h-[3.5rem] cursor-pointer`}>
+            <div
+              className={`
+                flex h-[3.5rem]
+                hover:bg-light-gray
+                cursor-pointer rounded-lg transition-colors
+              `}
+            >
               <div className={`flex flex-all-center w-[5rem]`}>
                 <CampingIcon 
                   className={`
@@ -190,7 +205,11 @@ const NavbarLeft = (props: Props) => {
           {/* 채팅 */}
           <div 
             onClick={() => props.toggleExtendMenu('chat')}
-            className={`flex h-[3.5rem] cursor-pointer`} 
+            className={`
+              flex h-[3.5rem]
+              hover:bg-light-gray
+              cursor-pointer rounded-lg transition-colors
+            `} 
           >
             <div className={`flex flex-all-center relative w-[5rem]`}>
               <ChatIcon 
@@ -226,7 +245,11 @@ const NavbarLeft = (props: Props) => {
           {/* 알림 */}
           <div 
             onClick={() => props.toggleExtendMenu('notification')}
-            className={`hidden lg:flex h-[3.5rem] cursor-pointer`}
+            className={`
+              hidden lg:flex h-[3.5rem]
+              hover:bg-light-gray
+              cursor-pointer rounded-lg transition-colors
+            `} 
           >
             <div className={`flex flex-all-center relative w-[5rem]`}>
               <PushIcon 
@@ -262,7 +285,11 @@ const NavbarLeft = (props: Props) => {
           {/* 검색 */}
           <div 
             onClick={() => props.toggleExtendMenu('search')}
-            className={`flex h-[3.5rem] cursor-pointer`}
+            className={`
+              flex h-[3.5rem]
+              hover:bg-light-gray
+              cursor-pointer rounded-lg transition-colors
+            `} 
           >
             <div className={`flex flex-all-center w-[5rem]`}>
               <SearchIcon 

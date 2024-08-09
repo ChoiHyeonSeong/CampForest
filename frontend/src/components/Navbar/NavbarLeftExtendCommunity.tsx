@@ -73,13 +73,20 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       {/* 채팅방 카테고리 */}
       <div 
         className={`
-          flex flex-col h-[calc(100vh-5rem)] ps-[2.5rem]
+          flex flex-col h-[calc(100vh-5rem)] ps-[1rem]
           overflow-y-auto scrollbar-hide text-left
         `}
       >
         {communityCategory.map((eachObj, index) => (
           <Link key={index} to={`/community/${eachObj.path}`} onClick={props.closeMenu}>
-            <div className={`p-[1.5rem]`}>{eachObj.title}</div>
+            <div
+              className={`
+                p-[1.5rem]
+                hover:bg-light-gray rounded-lg
+              `}
+            >
+              {eachObj.title}
+            </div>
           </Link>
         ))}
       </div>

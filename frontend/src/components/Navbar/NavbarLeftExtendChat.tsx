@@ -16,7 +16,6 @@ const NavbarLeftExtendChat = (props: Props) => {
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const isLogin = useSelector((state: RootState) => state.userStore.isLoggedIn);
   const selectedCategory = useSelector((state: RootState) => state.chatStore.selectedCategory);
-  const chatState = useSelector((state: RootState) => state.chatStore);
 
   return (
     <div
@@ -44,24 +43,23 @@ const NavbarLeftExtendChat = (props: Props) => {
             cursor-pointer
           `}
         />
-        <p className={`text-2xl font-medium`}>채팅 {chatState.roomId}</p>
+        <p className={`text-2xl font-medium`}>채팅</p>
       </div>
 
       {/* 채팅방 카테고리 */}
       <div 
         className={`
-          flex w-full h-[2.5rem]
+          flex relative w-full h-[2.5rem]
           bg-light-white
           dark:bg-dark-white
         `}
       >
         <div
           className={`
-            ${selectedCategory === '일반' ? 'border-light-signature dark:border-dark-signature' : ''}
             flex flex-all-center w-1/2 h-full
             text-light-text border-light-border-2
             dark:text-dark-text dark:border-dark-border-2
-            border-b transition-all duration-150 cursor-pointer font-medium
+            border-b cursor-pointer font-medium
           `}
           onClick={() => dispatch(selectCommnunity())}
         >
@@ -69,16 +67,25 @@ const NavbarLeftExtendChat = (props: Props) => {
         </div>
         <div
           className={`
-            ${selectedCategory === '거래' ? 'border-light-signature dark:border-dark-signature' : ''}
             flex flex-all-center w-1/2 h-full
             text-light-text border-light-border-2
             dark:text-dark-text dark:border-dark-border-2
-            border-b transition-all duration-150 cursor-pointer font-medium
+            border-b cursor-pointer font-medium
           `}
           onClick={() => dispatch(selectTransaction())}
         >
           거래
         </div>
+        {/* 밑줄 효과 */}
+        <div
+          className={`
+            ${selectedCategory === '일반' ? 'left-0' : selectedCategory === '거래' ? 'left-1/2' : ''}
+            absolute bottom-0 h-[0.1rem] w-1/2
+            bg-light-signature
+            dark:bg-dark-signature
+            transition-all duration-300 ease-in-out
+          `}
+        />
       </div>
 
       {/* 채팅 유저 목록 */}

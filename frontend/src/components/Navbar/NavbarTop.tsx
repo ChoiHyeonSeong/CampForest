@@ -115,7 +115,7 @@ const NavbarTop = (props: Props) => {
             onClick={toggleProfileModal}
             className={`
               hidden md:block size-[1.85rem] ms-[0] md:ms-[0.75rem] lg:ms-0
-              overflow-hidden rounded-full cursor-pointer
+              overflow-hidden rounded-full cursor-pointer hover:scale-105 transition-transform duration-300
             `}
           >
             <img 
