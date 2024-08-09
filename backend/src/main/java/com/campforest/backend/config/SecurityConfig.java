@@ -78,14 +78,6 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher("/**/*.js"),
-			new AntPathRequestMatcher("/**/*.css"),
-			new AntPathRequestMatcher("/**/*.ico"),
-			new AntPathRequestMatcher("/error"));
-	}
-
-	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
