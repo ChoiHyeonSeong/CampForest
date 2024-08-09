@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
-import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
+import { ReactComponent as FilterIcon } from '@assets/icons/filter3.svg';
 
 import CampingDetail from '@components/CampingSearch/CampingDetail';
 import CampingFilter from '@components/CampingSearch/CampingFilter';
@@ -225,9 +225,23 @@ function CampingSearch() {
               </div>
             </div>
 
-            <div onClick={() => setIsFilterOpen(true)} className='flex h-[1.5rem] mx-[1rem] cursor-pointer'>
-              <div>필터</div>
-              <FilterIcon className={`fill-light-black dark:fill-dark-black`}/>
+            <div
+              onClick={() => setIsFilterOpen(true)}
+              className='
+                flex items-center w-fit h-fit mt-[0.75rem] px-[0.5rem] py-[0.25rem]
+                bg-light-bgbasic
+                dark:bg-dark-bgbasic
+                cursor-pointer rounded
+              '
+            >
+              <div className='me-[0.3rem] font-medium'>지역선택</div>
+              <FilterIcon 
+                className={`
+                  size-[0.85rem]
+                  fill-light-border-icon
+                  dark:fill-dark-border-icon
+                `}
+                />
             </div>
             <CampingFilter 
               isOpen={isFilterOpen}
@@ -241,7 +255,7 @@ function CampingSearch() {
               
             </div>
 
-            <div className={`${filterCondition.length > 1 ? 'lg:h-[33.5rem]' : 'lg:h-[35.5rem]'} overflow-y-auto scrollbar-hide`}>
+            <div className={`${filterCondition.length > 1 ? 'lg:h-[33.5rem]' : 'lg:h-[35.5rem]'} overflow-y-auto scrollbar-hide mt-[1rem] px-[0.75rem]`}>
               <CampingList modalOpen={modalOpen} />
             </div>
           </div>

@@ -97,7 +97,7 @@ const NavbarTop = (props: Props) => {
           <PushIcon
             onClick={togglePushModal}
             className={`
-              block lg:hidden size-[1.55rem] 
+              block lg:hidden size-[1.45rem] 
               stroke-light-black
               dark:stroke-dark-black
               cursor-pointer
@@ -114,10 +114,8 @@ const NavbarTop = (props: Props) => {
           <div 
             onClick={toggleProfileModal}
             className={`
-              hidden md:block size-[1.75rem] ms-[0] md:ms-[0.75rem] lg:ms-0
-              border-light-black bg-light-black
-              dark:border-dark-black dark:bg-dark-black
-              overflow-hidden border rounded-full cursor-pointer
+              hidden md:block size-[1.85rem] ms-[0] md:ms-[0.75rem] lg:ms-0
+              overflow-hidden rounded-full cursor-pointer
             `}
           >
             <img 
