@@ -38,12 +38,9 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void markAsRead(Long notificationId) {
-		Notification notification = notificationRepository.findById(notificationId)
-			.orElseThrow(() -> new IllegalArgumentException(ErrorCode.NOTIFICATION_NOT_FOUND.getMessage()));
-
-		notification.setRead(true);
-		notificationRepository.save(notification);
+	@Transactional
+	public int markAsRead(Users user) {
+		return notificationRepository.updateAllByReceiver(user);
 	}
 
 	@Override
