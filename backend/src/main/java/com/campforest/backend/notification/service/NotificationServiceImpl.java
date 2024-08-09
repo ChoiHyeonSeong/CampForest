@@ -22,7 +22,6 @@ public class NotificationServiceImpl implements NotificationService {
 	private final SseEmitters sseEmitters;
 
 	@Override
-	@Transactional
 	public void createNotification(Users receiver, Users sender, NotificationType type, String message) {
 		Notification notification = Notification.builder()
 			.receiver(receiver)
@@ -39,7 +38,6 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	@Transactional
 	public void markAsRead(Long notificationId) {
 		Notification notification = notificationRepository.findById(notificationId)
 			.orElseThrow(() -> new IllegalArgumentException(ErrorCode.NOTIFICATION_NOT_FOUND.getMessage()));
