@@ -40,6 +40,7 @@ function App() {
   const isDark = useSelector((state: RootState) => state.themeStore.isDark);
 
   useThemeEffect();
+  useSSE();
 
   // 채팅방 목록 가져오기
   const fetchChatList = async () => {

@@ -9,8 +9,6 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(undefin
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const jwt = sessionStorage.getItem('accessToken');
   const webSocket = useWebSocketHook({ jwt });
-
-  useSSE();
   
   return (
     <WebSocketContext.Provider value={webSocket}>
