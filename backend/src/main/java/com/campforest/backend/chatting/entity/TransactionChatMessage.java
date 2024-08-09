@@ -50,6 +50,7 @@ public class TransactionChatMessage {
 
 	@Enumerated(EnumType.STRING)
 	private MessageType messageType;
+
 	@Column(name = "transaction_id")
 	private Long transactionId;
 
