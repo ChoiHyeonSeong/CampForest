@@ -112,7 +112,7 @@ const Community = () => {
     setBoards(prevBoards =>
       prevBoards.map(board =>
         board.boardId === boardId
-          ? { ...board, liked: isSaved }
+          ? { ...board, saved: isSaved }
           : board
       )
     );

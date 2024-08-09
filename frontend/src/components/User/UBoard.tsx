@@ -165,7 +165,7 @@ const UBoard = (props: Props) => {
     setBoards(prevBoards =>
       prevBoards.map(board =>
         board.boardId === boardId
-          ? { ...board, liked: isSaved }
+          ? { ...board, saved: isSaved }
           : board
       )
     );
