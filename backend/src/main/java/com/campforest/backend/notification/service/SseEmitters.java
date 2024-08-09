@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -45,24 +47,44 @@ public class SseEmitters {
 		return emitter;
 	}
 
-	public void send(Long userId, NotificationDTO notification) {
-		SseEmitter emitter = emitters.get(userId);
-		if (emitter != null) {
-			try {
-				semaphore.acquire();
-				emitter.send(SseEmitter.event()
-					.name("notification")
-					.data(notification));
-			} catch (IOException e) {
-				emitters.remove(userId);
-				log.error("Failed to send notification to user: {}", userId, e);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				log.error("Interrupted while sending notification to user: {}", userId, e);
-			} finally {
-				semaphore.release();
+	// public void send(Long userId, NotificationDTO notification) {
+	// 	SseEmitter emitter = emitters.get(userId);
+	// 	if (emitter != null) {
+	// 		try {
+	// 			semaphore.acquire();
+	// 			emitter.send(SseEmitter.event()
+	// 				.name("notification")
+	// 				.data(notification));
+	// 		} catch (IOException e) {
+	// 			emitters.remove(userId);
+	// 			log.error("Failed to send notification to user: {}", userId, e);
+	// 		} catch (InterruptedException e) {
+	// 			Thread.currentThread().interrupt();
+	// 			log.error("Interrupted while sending notification to user: {}", userId, e);
+	// 		} finally {
+	// 			semaphore.release();
+	// 		}
+	// 	}
+	// }
+
+	@Async
+	public CompletableFuture<Void> send(Long userId, NotificationDTO notification) {
+		return CompletableFuture.runAsync(() -> {
+			SseEmitter emitter = emitters.get(userId);
+			if (emitter != null) {
+				try {
+					semaphore.acquire();
+					emitter.send(SseEmitter.event()
+						.name("notification")
+						.data(notification));
+				} catch (IOException | InterruptedException e) {
+					emitters.remove(userId);
+					log.error("Failed to send notification to user: {}", userId, e);
+				} finally {
+					semaphore.release();
+				}
 			}
-		}
+		});
 	}
 
 	// 연결 유지를 위한 더미 이벤트 전송 메서드
