@@ -40,7 +40,7 @@ public class NotificationController {
 			.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
 
 		SseEmitter emitter = sseEmitters.createEmitter(users.getUserId());
-		response.setHeader("X-Accel-Buffering", "no");
+		response.setHeader("Cache-Control", "no-cache");
 		response.setHeader("Connection", "keep-alive");
 
 		try {
