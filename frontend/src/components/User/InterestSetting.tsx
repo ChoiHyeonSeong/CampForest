@@ -77,8 +77,8 @@ const InterestSetting = () => {
           <span
             className={`
               ms-[0.25rem]
-              text-light-heart
-              dark:text-dark-heart
+              text-light-warning
+              dark:text-dark-warning
             `}
             >
               *
@@ -110,10 +110,10 @@ const InterestSetting = () => {
 
       <div 
         className={`
-          w-full h-fit mt-[0.5rem] p-[0.75rem] 
+          w-full h-fit px-[0.75rem] py-[0.5rem] 
           bg-slate-50
           dark:bg-dark-white
-          shadow-lg rounded-xl
+          shadow-lg rounded
         `}
       >
         <div className='mb-[1rem]'>
@@ -121,16 +121,16 @@ const InterestSetting = () => {
             className={`
               text-light-text
               dark:text-dark-text
-              font-medium text-[1.125rem] 
+              font-medium text-[1.1rem] 
             `}
           >
             6개 중
             <span 
               className={`
-                mx-[0.25rem]
+                ms-[0.3rem]
                 text-light-signature
                 dark:text-dark-signature
-                text-[1.5rem]
+                text-[1.4rem] font-bold
               `}
             >
               {selectedCount}

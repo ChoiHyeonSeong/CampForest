@@ -34,8 +34,15 @@ function Login() {
   }, [email, password])
 
   return (
-    <div className={`flex justify-center items-center min-h-[100vh] -mt-[3rem]`}>
-      <div className={`w-[100%] lg:w-[35rem] md:max-w-[42rem] p-[1.5rem] lg:p-0 bg-light-white dark:bg-dark-white`}>
+    <div className={`flex justify-center items-center min-h-screen`}>
+      <div
+        className={`
+          w-[100%] h-fit md:max-w-[42rem] p-[2.5rem]
+          bg-light-white bg-opacity-80
+          dark:bg-dark-white dark:bg-opacity-80
+          rounded
+        `}
+      >
         <h3 className={`pb-[0.75rem] mb-[2.5rem] text-[2rem] text-center`}>로그인</h3>
 
         <p className={`${isLoginFailed ? 'block' : 'hidden'} mb-[2.5rem] text-light-warning dark:text-dark-warning text-center whitespace-pre-line`}>
