@@ -81,7 +81,12 @@ const Chat = () => {
 
   const handleSendButton = () => {
     if (userInput.trim() !== '') {
-      sendMessage(`/pub/${chatState.roomId}/send`, { senderId: userId, content: userInput });
+      if (chatState.chatInProgressType === '일반') {
+        sendMessage(`/pub/${chatState.roomId}/send`, { senderId: userId, content: userInput });
+      } else {
+        sendMessage(`/pub/transaction/${chatState.roomId}/send`, 
+          { senderId: userId, content: userInput, message_type: "MESSAGE"});
+      }
       setUserInput('');
     }
   };

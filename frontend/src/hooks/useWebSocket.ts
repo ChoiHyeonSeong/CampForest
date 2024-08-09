@@ -50,6 +50,26 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         });
       });
     }
+    const transactionChatUserList = store.getState().chatStore.transactionChatUserList;
+    if (transactionChatUserList) {
+      transactionChatUserList.forEach((chatRoom: any) => {
+        // 메시지를 받았을 때
+        client.subscribe(`/sub/transaction/${chatRoom.roomId}`, (message) => {
+          const response = JSON.parse(message.body);
+          console.log('Received chat message: ', response);
+          const state: RootState = store.getState();
+
+          // 현재 열려 있는 채팅방 내용 갱신
+          if (state.chatStore.roomId === response.roomId) {
+            store.dispatch(updateCommunityChatUserList({...response, inProgress: true}));
+            sendMessage(`/pub/transaction/${response.roomId}/markAsRead`, response.roomId);
+            store.dispatch(addMessageToChatInProgress(response));
+          } else {
+            store.dispatch(updateCommunityChatUserList({...response, inProgress: false}));
+          }
+        })
+      })
+    }
   }, []);
 
   useEffect(() => {
