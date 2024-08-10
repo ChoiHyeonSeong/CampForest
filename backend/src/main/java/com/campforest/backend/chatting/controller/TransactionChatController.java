@@ -96,18 +96,19 @@ public class TransactionChatController {
 		}
 	}
 
+	@SendTo("/sub/transaction/{roomId}")
 	@MessageMapping("/transaction/{roomId}/markAsRead")
 	public void markMessagesAsReadWebSocket(
 		@DestinationVariable Long roomId,
 		@Payload Long userId) {
-		try {
-			transactionChatService.markMessagesAsRead(roomId, userId);
-			// 읽음 처리 완료를 클라이언트에게 알림
-			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/readStatus", userId);
-		} catch (Exception e) {
-			// 에러 처리
-			messagingTemplate.convertAndSend("/sub/transaction/" + roomId + "/error", "메시지 읽음 처리 실패");
-		}
+		transactionChatService.markMessagesAsRead(roomId, userId);
+		TransactionChatMessage receiverMessage = TransactionChatMessage.builder()
+				.roomId(roomId)
+				.senderId(userId)
+				.messageType(MessageType.READ)
+				.content("읽음")
+				.build();
+		transactionChatService.saveMessage(roomId, receiverMessage);
 	}
 
 	// //user가 속한 채팅방 목록 가져옴.
@@ -501,7 +502,7 @@ public class TransactionChatController {
 	}
 
 	@MessageMapping("/transaction/{roomId}/{userId}/denySale")
-	@SendTo("/sub/transaction/{roomId}")
+	@SendTo("/sub/transactifon/{roomId}")
 	public TransactionChatMessage denySale(
 		@DestinationVariable Long roomId,
 		@DestinationVariable Long userId,
