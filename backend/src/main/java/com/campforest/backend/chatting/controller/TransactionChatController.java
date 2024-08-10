@@ -502,7 +502,7 @@ public class TransactionChatController {
 	}
 
 	@MessageMapping("/transaction/{roomId}/{userId}/denySale")
-	@SendTo("/sub/transactifon/{roomId}")
+	@SendTo("/sub/transaction/{roomId}")
 	public TransactionChatMessage denySale(
 		@DestinationVariable Long roomId,
 		@DestinationVariable Long userId,
