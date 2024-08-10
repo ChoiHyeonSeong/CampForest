@@ -25,17 +25,11 @@ const SearchProductList = (props : Props) => {
       const result = await productList({ 
         titleKeyword: props.searchText, 
         productType: selectedFilter === '전체' ? '' : selectedFilter === '판매' ? 'SALE' : 'RENT',
-        page: 0,
         size: 10,
       });
-      
-      if (result && result.products) {
-        setProducts(result.products);
-        setSearchCount(result.totalElements || 0);
-      } else {
-        setProducts([]);
-        setSearchCount(0);
-      }
+      console.log(result)
+      setProducts(result.products);
+      setSearchCount(result.totalCount);
     } catch (error) {
       console.error("Error fetching product list:", error);
       setProducts([]);

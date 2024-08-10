@@ -19,7 +19,7 @@ type SearchParams = {
   maxPrice?: number,
   locations?: {},
   titleKeyword?: string,
-  page?: number,
+  cursorId?: number | null,
   size?: number
 }
 

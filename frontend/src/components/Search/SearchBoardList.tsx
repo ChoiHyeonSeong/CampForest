@@ -10,20 +10,18 @@ type Props = {
 
 const SearchBoardList = (props: Props) => {
   const [boardList, setBoardList] = useState<BoardType[]>([]);
+  const [boardCount, setBoardCount] = useState(0);
 
   const fetchBoardList = useCallback(async () => {
     if (props.searchText.length < 2) {
       setBoardList([]);
       return;
     }
-
     try {
-      const result = await boardTitleSearch(props.searchText, 0, 10);
-      if (result && Array.isArray(result)) {
-        setBoardList(result);
-      } else {
-        setBoardList([]);
-      }
+      const result = await boardTitleSearch(props.searchText, null, 1000);
+      setBoardList(result.content);
+      setBoardCount(result.totalCount)
+
     } catch (error) {
       console.error("Error fetching board list:", error);
       setBoardList([]);
@@ -42,7 +40,7 @@ const SearchBoardList = (props: Props) => {
       <p className='font-medium text-lg md:text-xl'>
         커뮤니티
         <span className='ms-[0.5rem] font-bold'>
-          {boardList.length}
+          {boardCount}
         </span>
       </p>
 
