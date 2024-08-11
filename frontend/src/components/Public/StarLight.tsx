@@ -1,8 +1,6 @@
 import useSSE from '@hooks/useSSE';
 import React, { useEffect } from 'react'
-
-
-import CampImage from '@assets/images/camp2-removebg-preview.png'
+import Mountain from '@assets/images/mountain.png'
 
 type Props = {}
 
@@ -33,6 +31,15 @@ const StarLight = (props: Props) => {
         <div className="stars"></div>
         <div className="stars2"></div>
         <div className="stars3"></div>
+      </div>
+      
+      {/* Mountains and forest */}
+      <div className="absolute -bottom-[16.5rem] left-0 w-full">
+        <img 
+          src={Mountain} 
+          alt="Mountain landscape" 
+          className="object-cover w-full brightness-50 contrast-125"
+        />
       </div>
     </div>
   )

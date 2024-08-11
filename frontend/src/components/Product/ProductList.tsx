@@ -7,6 +7,7 @@ import { productList } from '@services/productService';
 import ProductCard, { ProductType } from '@components/Product/ProductCard';
 import Dropdown from '@components/Public/Dropdown';
 import PriceRangeModal from '@components/Product/PriceRangeModal';
+import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
 
 type Option = {
   id: number;
@@ -131,16 +132,19 @@ const ProductList = () => {
     }
   }, [inView, nextPageExist, fetchProducts]);
 
-  const handleProductLike = () => {
-    
-  }
-
   return (
     <div className={`flex justify-center items-center`}>
       <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-[1.5rem]`}>
-        <div className={`hidden md:flex items-center justify-between mt-[1.5rem] mb-[2.5rem]`}>
-          <div className={`font-medium md:text-2xl lg:text-3xl`}>
-            상품 판매/대여
+        <div className={`hidden md:flex items-center justify-between lg:mt-[3rem] mb-[2.5rem]`}>
+          <div className={`flex font-medium md:text-[1.6rem]`}>
+            <p>상품 판매/대여</p>
+            <div className='flex items-center ms-[0.75rem]'>
+              <RightArrowIcon className='fill-light-black dark:fill-dark-black' />
+              <span className='ms-[0.75rem] text-base text-light-signature dark:text-dark-signature'>
+                title
+              </span>
+            </div>
+            
           </div>
           <Link
             to="/product/write"

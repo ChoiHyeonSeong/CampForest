@@ -24,6 +24,7 @@
     "autoprefixer": "^10.4.19",
     "axios": "^1.7.2",
     "event-source-polyfill": "^1.0.31",
+    "framer-motion": "^11.3.24",
     "fullpage.js": "^4.0.26",
     "postcss": "^8.4.39",
     "react": "^18.3.1",

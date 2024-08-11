@@ -34,7 +34,7 @@ const LandingPage = () => {
 
 
   return (
-    <div className='fixed inset-0 w-screen h-screen z-[100] pt-[35%] md:pt-[10%] bg-landing-bg-sm md:bg-landing-bg-lg bg-cover bg-center bg-no-repeat overflow-hidden'>
+    <div className='fixed inset-0 w-screen h-screen z-[100] pt-[35%] md:pt-[10%] bg-landing-bg-sm md:bg-landing-bg bg-cover bg-center bg-no-repeat overflow-hidden'>
       <div className='flex flex-col justify-between items-center h-[50%] text-white text-center'>
         <div>
           <img
