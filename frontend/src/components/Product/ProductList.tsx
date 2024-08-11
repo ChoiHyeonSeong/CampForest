@@ -113,6 +113,7 @@ const ProductList = () => {
         });
       }
       
+      console.log(result)
       dispatch(setIsLoading(false));
       productCursorRef.current = result.nextCursorId;
       if (!result.hasNext) {
@@ -132,6 +133,10 @@ const ProductList = () => {
       fetchProducts();
     }
   }, [inView, activeTab]);
+
+  const handleProductLike = () => {
+    
+  }
 
   return (
     <div className={`flex justify-center items-center`}>

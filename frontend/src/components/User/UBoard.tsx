@@ -103,7 +103,7 @@ const UBoard = (props: Props) => {
 
   useEffect(() => {
     getCnt()
-  }, [])
+  }, [userId, userState.userId])
 
   const detailClose = () => {
     setIsDetailOpen(false)

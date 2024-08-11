@@ -6,6 +6,8 @@ import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 import { Link } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
 
+import { productLike, productDislike } from '@services/productService';
+
 export type ProductType = {
   category: string;
   deposit: number | null;
@@ -17,8 +19,10 @@ export type ProductType = {
   productName: string;
   productPrice: number;
   productType: string;
+  saved: boolean;
   sold: boolean;
   userId: number;
+  userImage: string;
 }
 
 type Props = {
@@ -26,13 +30,24 @@ type Props = {
 }
 
 const ProductCard = (props: Props) => {
+  const [liked, setLiked] = useState(props.product.saved);
 
-  const [isLiked, setIsLiked] = useState(false);
-
-  const toggleLike = (e: React.MouseEvent) => {
+  const toggleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    setIsLiked(!isLiked);
+    try {
+      if (liked) {
+        const response = await productDislike(props.product.productId)
+        console.log(response)
+        setLiked(false)
+      } else {
+        const response = await productLike(props.product.productId)
+        console.log(response)
+        setLiked(true)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
@@ -105,7 +120,7 @@ const ProductCard = (props: Props) => {
             cursor-pointer
           `}
         >
-          {isLiked ? 
+          {liked ? 
             (<HeartIcon 
                 className={`
                   size-[1.2rem] md:size-[1.4rem]
