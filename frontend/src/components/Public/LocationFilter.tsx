@@ -24,7 +24,7 @@ type Props = {
   selectedLocation: SelecetedLocType | null;
 }
 
-const CampingFilter = (props: Props) => {
+const LocationFilter = (props: Props) => {
   const [selectedCity, setSelectedCity] = useState<string>('전체');
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>(['전체']);
 
@@ -151,4 +151,4 @@ const CampingFilter = (props: Props) => {
   );
 };
 
-export default CampingFilter;
+export default LocationFilter;

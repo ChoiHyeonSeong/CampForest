@@ -8,6 +8,10 @@ import ProductCard, { ProductType } from '@components/Product/ProductCard';
 import Dropdown from '@components/Public/Dropdown';
 import PriceRangeModal from '@components/Product/PriceRangeModal';
 
+import LocationFilter from '@components/Public/LocationFilter';
+
+import { koreaAdministrativeDivisions } from '@utils/koreaAdministrativeDivisions';
+
 type Option = {
   id: number;
   name: string;
@@ -36,6 +40,11 @@ const LOCATIONS: Option[] = [
   { id: 8, name: '제주' },
 ];
 
+type SelecetedLocType = {
+  city: string; 
+  districts: string[];
+}
+
 const ProductList = () => {
   // Redux
   const dispatch = useDispatch();
@@ -44,13 +53,16 @@ const ProductList = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Option>(CATEGORIES[0]);
-  const [selectedLocation, setSelectedLocation] = useState<Option>(LOCATIONS[0]);
+  // const [selectedLocation, setSelectedLocation] = useState<Option>(LOCATIONS[0]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500000]);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [nextPageExist, setNextPageExist] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<SelecetedLocType | null>(null);
 
   // Refs
   const productCursorRef = useRef<number | null>(null);
@@ -69,9 +81,9 @@ const ProductList = () => {
       filtered = filtered.filter(product => product.category === selectedCategory.name);
     }
 
-    if (selectedLocation.name !== '지역 전체') {
-      filtered = filtered.filter(product => product.location.includes(selectedLocation.name));
-    }
+    // if (selectedLocation.name !== '지역 전체') {
+    //   filtered = filtered.filter(product => product.location.includes(selectedLocation.name));
+    // }
 
     if (showAvailableOnly) {
       filtered = filtered.filter(product => !product.sold);
@@ -131,9 +143,10 @@ const ProductList = () => {
     }
   }, [inView, nextPageExist, fetchProducts]);
 
-  const handleProductLike = () => {
-    
-  }
+  const handleSelect = (city: string, districts: string[]) => {
+    setSelectedLocation({ city, districts });
+    console.log(city, districts)
+  };
 
   return (
     <div className={`flex justify-center items-center`}>
@@ -171,8 +184,8 @@ const ProductList = () => {
         </div>
 
 
-  {/* 필터 */}
-  <div className="flex flex-wrap gap-[0.5rem] items-center relative z-[30] mb-[0.75rem]">
+        {/* 필터 */}
+        <div className="flex flex-wrap gap-[0.5rem] items-center relative z-[30] mb-[0.75rem]">
           <Dropdown
             label="카테고리"
             options={CATEGORIES}
@@ -196,14 +209,44 @@ const ProductList = () => {
               onApply={handleApplyPriceRange}
             />
           </div>
-          <Dropdown
+          
+          <div 
+            className={`
+              inline-block relative
+              text-center
+            `}
+          >
+            <button
+              type="button"
+              className={`  
+                inline-flex justify-between items-center w-full min-w-[4rem] px-[1rem] py-[0.5rem]
+                bg-light-gray
+                dark:bg-dark-gray
+                text-sm font-medium rounded-md shadow-sm`}
+              onClick={() => setIsFilterOpen(true)}
+            >
+              지역 필터
+            </button>
+          </div>
+
+          {/* <Dropdown
             label="지역"
             options={LOCATIONS}
             isOpen={openDropdown === 'locations'}
             onToggle={() => handleToggle('locations')}
             onSelect={setSelectedLocation}
             selectedOption={selectedLocation}
+          /> */}
+
+          <LocationFilter 
+            isOpen={isFilterOpen}
+            onClose={() => setIsFilterOpen(false)}
+            divisions={koreaAdministrativeDivisions}
+            onSelect={handleSelect}
+            selectedLocation={selectedLocation}
           />
+              
+
           <button
             className={`px-[1rem] py-[0.5rem] text-sm font-medium duration-200 cursor-pointer rounded-md shadow-sm ${
               showAvailableOnly

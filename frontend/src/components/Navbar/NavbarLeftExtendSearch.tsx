@@ -4,6 +4,8 @@ import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 
+import eventEmitter from '@utils/eventEmitter';
+
 type Props = {
   isExtendMenuOpen: boolean;
   toggleExtendMenu: (param:string) => void;
@@ -15,20 +17,28 @@ const NavbarLeftExtendSearch = (props: Props) => {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const navigate = useNavigate();
 
+  const loadRecentSearches = () => {
+    const storedSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    setRecentSearches(storedSearches);
+  };
+
   useEffect(() => {
-    const loadRecentSearches = () => {
-      const storedSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-      setRecentSearches(storedSearches);
-    };
-  
     loadRecentSearches();
   
+    const handleRecentSearchesUpdate = () => {
+      loadRecentSearches();
+    };
+
+    eventEmitter.on('recentSearchesUpdated', handleRecentSearchesUpdate);
+
     // 이벤트 리스너 추가
     window.addEventListener('recentSearchesUpdated', loadRecentSearches);
   
     // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       window.removeEventListener('recentSearchesUpdated', loadRecentSearches);
+
+      eventEmitter.off('recentSearchesUpdated', handleRecentSearchesUpdate);
     };
   }, []);
 

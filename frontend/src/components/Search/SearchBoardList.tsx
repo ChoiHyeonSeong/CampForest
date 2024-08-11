@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import SearchBoard from '@components/Search/SerarchBoard'
 import { BoardType } from '@components/Board/Board';
 import { boardTitleSearch } from '@services/boardService';
 import NoResultSearch from '@components/Search/NoResultSearch'
+
+import { useInView } from 'react-intersection-observer';
 
 type Props = {
   searchText: string;
@@ -12,16 +14,28 @@ const SearchBoardList = (props: Props) => {
   const [boardList, setBoardList] = useState<BoardType[]>([]);
   const [boardCount, setBoardCount] = useState(0);
 
+  const [ref, inView] = useInView();
+  const [nextPageExist, setNextPageExist] = useState(true);
+
+  const nextCursorRef = useRef<number | null>(null)
+
   const fetchBoardList = useCallback(async () => {
     if (props.searchText.length < 2) {
       setBoardList([]);
       return;
     }
+
     try {
-      const result = await boardTitleSearch(props.searchText, null, 1000);
-      setBoardList(result.content);
+      const result = await boardTitleSearch(props.searchText, nextCursorRef.current, 10);
+      console.log(result)
+      setBoardList((prevBoards) => [...prevBoards, ...result.content]);
       setBoardCount(result.totalCount)
 
+      if (!result.hasNext) {
+        setNextPageExist(false)
+      } 
+      nextCursorRef.current = result.nextCursor
+      
     } catch (error) {
       console.error("Error fetching board list:", error);
       setBoardList([]);
@@ -35,6 +49,14 @@ const SearchBoardList = (props: Props) => {
     fetchBoardList();
   }, [fetchBoardList]);
   
+  useEffect(() => {
+    if (inView && nextPageExist) {
+      console.log(inView, '무한 스크롤 요청');
+      fetchBoardList();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
+  }, [inView]);
+
   return (
     <div>
       <p className='font-medium text-lg md:text-xl'>
@@ -51,6 +73,8 @@ const SearchBoardList = (props: Props) => {
         ) :
         <NoResultSearch searchText={props.searchText} />
       }
+
+    <div ref={ref} className={`${boardList.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
     </div>
   )
 }

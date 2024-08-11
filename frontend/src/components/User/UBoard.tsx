@@ -144,7 +144,7 @@ const UBoard = (props: Props) => {
       prevBoards.map(board =>
         board.boardId === boardId
           ? { ...board, likeCount: likedCount, liked: isLiked } // 좋아요 수를 1 증가시킴
-          : board
+            : board
       )
     );
   };
@@ -158,6 +158,12 @@ const UBoard = (props: Props) => {
           : board
       )
     );
+
+    if (isSaved) {
+      setTotalSavedBoardCnt(totalSavedBoardCnt + 1)
+    } else {
+      setTotalSavedBoardCnt(totalSavedBoardCnt - 1)
+    }
   }
 
   useEffect(() => {

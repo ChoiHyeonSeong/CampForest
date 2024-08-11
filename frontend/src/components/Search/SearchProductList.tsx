@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { productList } from '@services/productService';
 import SearchProduct from '@components/Search/SearchProduct';
 import { ProductType } from '@components/Product/ProductCard';
 import NoResultSearch from '@components/Search/NoResultSearch'
+
+import { useInView } from 'react-intersection-observer';
 
 type Props = {
   searchText: string;
@@ -14,6 +16,11 @@ const SearchProductList = (props : Props) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [searchCount, setSearchCount] = useState(0);
 
+  const [ref, inView] = useInView();
+  const [nextPageExist, setNextPageExist] = useState(true);
+
+  const nextCursorRef = useRef<number | null>(null)
+  
   const fetchProductList = useCallback(async () => {
     if (props.searchText.length < 2) {
       setProducts([]);
@@ -25,11 +32,17 @@ const SearchProductList = (props : Props) => {
       const result = await productList({ 
         titleKeyword: props.searchText, 
         productType: selectedFilter === '전체' ? '' : selectedFilter === '판매' ? 'SALE' : 'RENT',
-        size: 10,
+        cursorId: nextCursorRef.current,
+        size: 20,
       });
       console.log(result)
-      setProducts(result.products);
+      setProducts((prevProducts) => [...prevProducts, ...result.products]);
       setSearchCount(result.totalCount);
+
+      if (!result.hasNext) {
+        setNextPageExist(false)
+      } 
+      nextCursorRef.current = result.nextCursorId
     } catch (error) {
       console.error("Error fetching product list:", error);
       setProducts([]);
@@ -52,6 +65,14 @@ const SearchProductList = (props : Props) => {
     fetchProductList();
   };
  
+  useEffect(() => {
+    if (inView && nextPageExist) {
+      console.log(inView, '무한 스크롤 요청');
+      fetchProductList();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
+  }, [inView]);
+
   return (
     <div>
       <div className='flex justify-between items-center'>
@@ -117,6 +138,8 @@ const SearchProductList = (props : Props) => {
         ? <SearchProduct product={products}/>
         : <NoResultSearch searchText={props.searchText} />
       }
+      
+      <div ref={ref} className={`${products.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
     </div>
   )
 }

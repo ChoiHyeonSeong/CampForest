@@ -6,7 +6,8 @@ import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import { ReactComponent as FilterIcon } from '@assets/icons/filter3.svg';
 
 import CampingDetail from '@components/CampingSearch/CampingDetail';
-import CampingFilter from '@components/CampingSearch/CampingFilter';
+
+import LocationFilter from '@components/Public/LocationFilter';
 
 import { koreaAdministrativeDivisions } from '@utils/koreaAdministrativeDivisions';
 
@@ -262,7 +263,7 @@ function CampingSearch() {
                 `}
                 />
             </div>
-            <CampingFilter 
+            <LocationFilter 
               isOpen={isFilterOpen}
               onClose={() => setIsFilterOpen(false)}
               divisions={koreaAdministrativeDivisions}
