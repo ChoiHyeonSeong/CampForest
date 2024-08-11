@@ -16,8 +16,20 @@ const NavbarLeftExtendSearch = (props: Props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-    setRecentSearches(storedSearches);
+    const loadRecentSearches = () => {
+      const storedSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+      setRecentSearches(storedSearches);
+    };
+  
+    loadRecentSearches();
+  
+    // 이벤트 리스너 추가
+    window.addEventListener('recentSearchesUpdated', loadRecentSearches);
+  
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('recentSearchesUpdated', loadRecentSearches);
+    };
   }, []);
 
   const addRecentSearch = (search: string) => {

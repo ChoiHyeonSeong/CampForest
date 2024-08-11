@@ -38,7 +38,7 @@ const Aside = (props: Props) => {
       {/* Aside 글쓰기 (로그인 해야 보임) */}
       <div className={`${props.user.isLoggedIn ? 'flex' : 'hidden'} items-center relative mb-[0.5rem]`}>
         <div className={`flex absolute right-[0.5rem]`}>
-          <Link 
+        <Link 
             onClick={toggleExpand} 
             to='product/write' 
             className={`
@@ -47,14 +47,28 @@ const Aside = (props: Props) => {
               bg-light-black 
               dark:bg-dark-black 
               rounded-full transition-all duration-300 ease-in-out delay-100
+              group
             `}
           >
             <RentalIcon 
               className={`
+                size-[1.6rem]
                 stroke-light-white 
                 dark:stroke-dark-white
+                cursor-pointer
+                group-hover:hidden
               `}
             />
+            <span
+              className="
+                hidden group-hover:block
+                text-light-white
+                dark:text-dark-white
+                text-sm duration-150
+              "
+            >
+              거래
+            </span>
           </Link>
           <div 
             onClick={() => {
@@ -67,14 +81,28 @@ const Aside = (props: Props) => {
               bg-light-black
               dark:bg-dark-black
               rounded-full transition-all duration-300 ease-in-out
+              group
             `}
           >
             <CommunityIcon 
               className={`
+                size-[1.6rem]
                 stroke-light-white 
                 dark:stroke-dark-white
+                cursor-pointer group-hover:hidden
               `}
             />
+            <span
+              className="
+                hidden group-hover:flex flex-col items-center justify-center
+                text-light-white
+                dark:text-dark-white
+                text-xs leading-tight cursor-pointer duration-150
+              "
+            >
+              <span>커뮤</span>
+              <span>니티</span>
+            </span>
           </div>
         </div>
 
@@ -94,6 +122,7 @@ const Aside = (props: Props) => {
                 fill-light-white
                 dark:fill-dark-white
                 rotate-90
+                cursor-pointer
               `}
             /> 
           ) : (
@@ -101,6 +130,7 @@ const Aside = (props: Props) => {
               className={`
                 stroke-light-white 
                 dark:stroke-dark-white
+                cursor-pointer
               `}
             />
           )}
@@ -114,7 +144,7 @@ const Aside = (props: Props) => {
           flex flex-all-center w-[2.75rem] h-[2.75rem] 
           bg-light-black hover:bg-light-signature
           dark:bg-dark-black dark:hover:bg-dark-signature
-          rounded-full duration-200
+          rounded-full duration-200 cursor-pointer
         `}
       >
           <TopBtnIcon className={`stroke-light-white dark:stroke-dark-white`}/>

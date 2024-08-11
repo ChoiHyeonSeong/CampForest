@@ -56,13 +56,15 @@ const NavbarBottom = (props: Props) => {
       <div 
         className={`flex flex-all-center w-[3.2rem] cursor-pointer`}
       >
-        <SearchIcon 
-          className={`
-            size-[1.6rem]
-            stroke-light-black
-            dark:stroke-dark-black
-          `}
-        />
+        <Link to='/search'>
+          <SearchIcon 
+            className={`
+              size-[1.6rem]
+              stroke-light-black
+              dark:stroke-dark-black
+            `}
+          />
+        </Link>
       </div>  
       
       {/* 홈 */}

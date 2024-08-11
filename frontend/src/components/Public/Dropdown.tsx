@@ -49,9 +49,9 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
           className={`
             ${shouldChangeIcon ? 'border-light-signature dark:border-dark-signature' : 'border-light-border-1 dark:border-dark-border-1'} 
             inline-flex justify-between items-center w-full min-w-[7rem] px-[1rem] py-[0.5rem]
-            border-light-border bg-light-gray
-            dark:border-dark-border dark:bg-dark-gray
-            text-sm font-medium rounded-md border shadow-sm focus:outline-none`}
+            bg-light-gray
+            dark:bg-dark-gray
+            text-sm font-medium rounded-md shadow-sm`}
           onClick={onToggle}
         >
           {selectedOption.name}
@@ -59,16 +59,16 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
             <RefreshIcon 
               className={`
                 size-[1.25rem] ms-[0.5rem] -mr-[0.25rem]
-                text-light-text-secondary
-                dark:text-dark-text-secondary
+                text-light-text-secondary fill-light-border-icon
+                dark:text-dark-text-secondary dark:fill-dark-border-icon
               `} 
               onClick={handleRefreshClick} />
           ) : (
             <ArrowBottomIcon 
               className={`
                 size-[0.75rem] ms-[0.5rem] -mr-[0.25rem] 
-                text-light-text-secondary
-                dark:text-dark-text-secondary
+                text-light-text-secondary fill-light-border-icon
+                dark:text-dark-text-secondary dark:fill-dark-border-icon
               `}
             />
           )}
@@ -77,7 +77,7 @@ const Dropdown = ({ label, options, isOpen, onToggle, onSelect, selectedOption }
       {isOpen && (
         <div 
           className={`
-            origin-top-left absolute left-0 z-[10] w-max mt-[0.5rem] 
+            origin-top-left absolute left-0 z-[20] w-max mt-[0.5rem] 
             border-light-border-2 bg-light-white
             dark:border-dark-border-2 dark:bg-dark-white
             rounded-md shadow-lg border focus:outline-none
