@@ -33,7 +33,7 @@ const SearchProfileList = (props: Props) => {
 
   return (
     <div>
-      <p className='font-medium text-lg md:text-xl'>
+      <p className='mb-[1rem] font-medium text-lg md:text-xl'>
         프로필
         <span className='ms-[0.5rem] font-bold'>
           {profileCount}

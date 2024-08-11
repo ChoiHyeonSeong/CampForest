@@ -12,7 +12,14 @@ type Props = {
 
 const SearchProfile = (props: Props) => {
   return (
-    <div className='flex justify-between items-center w-full px-[0.5rem] md:px-[1rem] py-[1.5rem] border-light-border-1 dark:border-dark-border-1 border-b'>
+    <div
+      className='
+        flex justify-between items-center w-full mb-[0.5rem] px-[0.5rem] md:px-[1rem] py-[1.5rem]
+        border-light-border-1 bg-light-white bg-opacity-80
+        dark:border-dark-border-1 dark:bg-dark-white dark:bg-opacity-80
+        border-b rounded
+      '
+    >
       <div className='flex items-center'>
         {/* 프로필 이미지 */}
         <div className='size-[2.9rem] md:size-[3.1rem] me-[0.5rem] rounded-full overflow-hidden border border-light-border-1'>

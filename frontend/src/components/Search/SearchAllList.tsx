@@ -74,7 +74,7 @@ const SearchAllList = (props: Props) => {
       {/* 프로필 */}
       <div className='mb-[3rem]'>
         <div className='flex justify-between mb-1'>
-          <p className='font-bold text-lg '>
+          <p className='mb-[1rem] font-bold text-lg '>
             프로필
             <span 
               className='
@@ -92,7 +92,7 @@ const SearchAllList = (props: Props) => {
             flex items-center
             cursor-pointer
             '
-            onClick={() => navigate('/search/profile')}
+            onClick={() => navigate(`/search/profile?query=${encodeURIComponent(props.searchText)}`)}
           >
             <button
               className='
@@ -141,7 +141,7 @@ const SearchAllList = (props: Props) => {
             flex items-center
             cursor-pointer
             '
-            onClick={() => navigate('/search/product')}
+            onClick={() => navigate(`/search/product?query=${encodeURIComponent(props.searchText)}`)}
           >
             <button
               className='
@@ -171,7 +171,7 @@ const SearchAllList = (props: Props) => {
       {/* 커뮤니티 */}
       <div className='mb-[3rem]'>
       <div className='flex justify-between mb-1'>
-          <p className='font-bold text-lg '>
+          <p className='mb-[1rem] font-bold text-lg '>
             커뮤니티
             <span 
               className='
@@ -189,7 +189,7 @@ const SearchAllList = (props: Props) => {
             flex items-center
             cursor-pointer
             '
-            onClick={() => navigate('/search/board')}
+            onClick={() => navigate(`/search/board?query=${encodeURIComponent(props.searchText)}`)}
           >
             <button
               className='

@@ -151,8 +151,15 @@ const ProductWrite = () => {
   }
 
   return (
-    <div className={`flex justify-center`}>
-      <div className={`w-[40rem] md:mt-6 lg:mt-0 p-6 md:p-0`}>
+    <div className={`flex justify-center min-h-screen`}>
+      <div
+        className={`
+          w-full md:w-[40rem] md:my-[1.5rem] p-[1.5rem]
+          bg-light-white bg-opacity-80
+          dark:bg-dark-white dark:bg-opacity-80
+          rounded
+        `}
+      >
         <h4
           className='text-2xl font-bold'
         >거래 글쓰기</h4>
@@ -171,8 +178,8 @@ const ProductWrite = () => {
                 placeholder='제목을 입력하세요.'
                 className={`
                   w-[31rem] me-[2rem] px-[0.5rem] py-[0.25rem]
-                  bg-light-white border-light-border
-                  dark:bg-dark-white dark:border-dark-border
+                  bg-light-white border-light-border placeholder:text-light-text-secondary
+                  dark:bg-dark-white dark:border-dark-border dark:placeholder:text-dark-text-secondary
                   border-b focus:outline-none
                 `}
               />
@@ -251,11 +258,11 @@ const ProductWrite = () => {
               onChange={handleInputChange}
               className={`
                 w-full min-h-[10rem] p-[1rem]
-                bg-light-white border-light-border-3
-                dark:bg-dark-white dark:border-dark-border-3
+                bg-light-white border-light-border-3 placeholder:text-light-text-secondary
+                dark:bg-dark-white dark:border-dark-border-3 dark:placeholder:text-dark-text-secondary
                 resize-none border focus:outline-none
               `}
-              placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉'
+              placeholder='상품에 대한 설명을 작성해주세요. &#13;&#10;상세한 설명과 사진은 판매 및 대여에 도움이 됩니다.'
             />
             {errors.productContent && 
               <p 
@@ -311,20 +318,20 @@ const ProductWrite = () => {
                 금액
               </div>
               <div className={`flex flex-col`}>
-                <div className={`flex`}>
+                <div className={`flex items-center`}>
                   <input
                     type='number'
                     name='productPrice'
                     value={formData.productPrice || ""}
                     onChange={handleInputChange}
                     className={`
-                      w-[90%] me-[0.75rem] px-[0.5rem] 
+                      w-[90%] me-[0.75rem] px-[0.5rem] py-[0.2rem]
                       bg-light-white border-light-border
                       dark:bg-dark-white dark:border-dark-border
                       text-end border-b focus:outline-none
                     `} 
                   />
-                  <div>
+                  <div className='text-lg'>
                     원
                   </div>
                 </div>
@@ -356,13 +363,13 @@ const ProductWrite = () => {
                   value={formData.deposit || ""}
                   onChange={handleInputChange}
                   className={`
-                    w-[90%] me-[0.75rem] px-[0.5rem]
-                    bg-light-white border-light-border
-                    dark:bg-dark-white dark:border-dark-border
+                    w-[90%] me-[0.75rem] px-[0.5rem] py-[0.2rem]
+                    bg-light-white border-light-border placeholder:text-light-text-secondary
+                    dark:bg-dark-white dark:border-dark-border dark:placeholder:text-dark-text-secondary
                     text-end border-b focus:outline-none
                   `}
                 />
-                <div>
+                <div className='text-lg'>
                   원
                 </div>
               </div>
@@ -387,11 +394,14 @@ const ProductWrite = () => {
                 border
               `}
             >
-              <LocationIcon 
-                fill='333333' 
-                className={`me-[0.5rem]`}
+              <LocationIcon
+                className={`
+                  size-[1.25rem] me-[0.5rem]
+                  fill-light-border-icon
+                  dark:fill-dark-border-icon
+                `}
               />
-              <div className={`${formData.location === '장소를 선택하세요.' ? 'text-[#999999]' : 'text-black'}`}>
+              <div className={`${formData.location === '장소를 선택하세요.' ? 'text-light-text-secondary dark:text-dark-text-secondary' : 'text-light-text-secondary dark:text-dark-text-secondary'} cursor-pointer`}>
                 {formData.location}
               </div>
             </div>
@@ -406,14 +416,14 @@ const ProductWrite = () => {
               {errors.location}
             </p>}
           </div>
-          <div className={`text-end`}>
+          <div className={`text-center`}>
             <button 
               type='submit' 
               className={`
-                w-1/2 mb-[2rem] py-[0.35rem]
-                bg-light-black text-light-white
-                dark:bg-dark-black dark:text-dark-white
-                text-center
+                w-full md:w-1/2 mb-[2rem] py-[0.35rem]
+                bg-light-black text-light-white hover:bg-light-signature
+                dark:bg-dark-black dark:text-dark-white hover:dark:bg-dark-signature
+                transition-all duration-150
               `}
             >
               작성 완료

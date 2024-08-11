@@ -30,10 +30,10 @@ const SerarchBoard = (props: Props) => {
   return (
     <div
       className='
-        flex justify-between items-center w-full px-[0.5rem] md:px-[1rem] py-[1.5rem]
-        border-light-border-1
-        dark:border-dark-border-1
-        border-b
+        flex justify-between items-center w-full px-[0.5rem] md:px-[1rem] py-[1.5rem] mb-[0.5rem]
+        border-light-border-1 bg-light-white bg-opacity-80
+        dark:border-dark-border-1 dark:bg-dark-white dark:bg-opacity-80
+        border-b rounded
         '
       >
       {/* 게시물 내용 */}
