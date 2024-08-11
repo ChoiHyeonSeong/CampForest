@@ -90,6 +90,7 @@ const ProductList = () => {
         size: 20,
       });
       
+      console.log(result)
       dispatch(setIsLoading(false));
       productCursorRef.current = result.nextCursorId;
       setNextPageExist(result.hasNext);
@@ -129,6 +130,10 @@ const ProductList = () => {
       fetchProducts();
     }
   }, [inView, nextPageExist, fetchProducts]);
+
+  const handleProductLike = () => {
+    
+  }
 
   return (
     <div className={`flex justify-center items-center`}>

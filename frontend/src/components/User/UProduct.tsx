@@ -7,94 +7,167 @@ import { ReactComponent as FilterIcon } from '@assets/icons/filter2.svg';
 import ProductCard, { ProductType } from '@components/Product/ProductCard';
 
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useInView } from 'react-intersection-observer';
 
 import { likedList, productList } from '@services/productService';
 import { RootState } from '@store/store';
 
+import { setIsLoading } from '@store/modalSlice';
 
 type Props = {}
 
+type ContentType = {
+  createdAt: string;
+  id: number;
+  product: ProductType
+  userId: number;
+}
+
 const UProduct = (props: Props) => {
+  const dispatch = useDispatch();
   const [myBoard, setMyBoard] = useState(true);
   const userId = Number(useParams().userId);
   const userState = useSelector((state: RootState) => state.userStore);
   const [ref, inView] = useInView();
-  const [likedRef, likedInView] = useInView();
+
   const [products, setProducts] = useState<ProductType[]>([]);
-  const [likedProducts, setLikedProducts] = useState<ProductType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
-  const [nextLikedPageExist, setNextLikedPageExist] = useState(true);
-  const isFirstLoadRef = useRef(true);
-  const isFirstLikedLoadRef = useRef(true);
-  const productPageRef = useRef(0);
-  const likedProductPageRef = useRef(0);
+
+  const productCursorRef = useRef<number | null>(null);
+
+  const [totalProductCnt, setTotalProductCnt] = useState(0);
+  const [totalLikedProductCnt, setTotalLikedProductCnt] = useState(0);
+
 
   const fetchProducts = async () => {
     try {
-      const response = await productList({findUserId: userId, productType: ''});
-      console.log('product', response)
+      dispatch(setIsLoading(true));
+      let result: {
+        hasNext: boolean, 
+        nextCursorId: number | null, 
+        products: ProductType[],
+        totalCount: number,
+      }
 
-      productPageRef.current += 1;
-      if (response.products.last) {
+      if (productCursorRef.current !== null) {
+        result = await productList({
+          productType: '',
+          findUserId: userId,
+          cursorId: productCursorRef.current,
+          size: 20,
+        });
+      } else {
+        result = await productList({
+          productType: '',
+          findUserId: userId,
+          size: 20,
+        });
+      }
+      
+      console.log(result)
+      dispatch(setIsLoading(false));
+      productCursorRef.current = result.nextCursorId;
+      if (!result.hasNext) {
         setNextPageExist(false);
       }
-      setProducts((prevProducts) => [...prevProducts, ...response.products]);
+      setProducts((prevProducts) => [...prevProducts, ...result.products]);
     } catch (error) {
-      console.error("Failed to fetch products: ", error);
+      dispatch(setIsLoading(false));
+      console.error('판매/대여 게시글 불러오기 실패: ', error);
     }
-  }
+  };
+
 
   const fetchLikedProducts = async () => {
     try {
-      const response = await likedList();
-
-      likedProductPageRef.current += 1;
-      if (response.last) {
-        setNextLikedPageExist(false);
+      dispatch(setIsLoading(true));
+      let result: {
+        hasNext: boolean, 
+        nextCursorId: number | null, 
+        content: ContentType[],
+        totalCount: number,
       }
-      setLikedProducts((prevProducts) => [...prevProducts, ...response.content]);
+
+      if (productCursorRef.current !== null) {
+        result = await likedList({
+          cursorId: productCursorRef.current,
+          size: 20,
+        });
+      } else {
+        result = await likedList({
+          size: 20,
+        });
+      }
+      
+      console.log(result)
+      dispatch(setIsLoading(false));
+      productCursorRef.current = result.nextCursorId;
+      if (!result.hasNext) {
+        setNextPageExist(false);
+      }
+      setProducts((prevProducts) => [...prevProducts, ...result.content.map(item => item.product)]);
     } catch (error) {
-      console.error("Failed to fetch likedProducts: ", error);
+      dispatch(setIsLoading(false));
+      console.error('판매/대여 게시글 불러오기 실패: ', error);
     }
-  }
+  };
+
 
   useEffect(() => {
     // inView가 true일 때만 실행한다.
     if (inView && nextPageExist) {
       console.log(inView, '작성글 무한 스크롤 요청');
-      fetchProducts();
+      if (myBoard) {
+        console.log(123)
+        fetchProducts();
+      } else {
+        console.log(456)
+        fetchLikedProducts();
+      }
     }
   }, [inView]);
 
-  useEffect(() => {
-    // inView가 true일 때만 실행한다.
-    if (likedInView && nextLikedPageExist) {
-      console.log(inView, '관심 무한 스크롤 요청');
+  const pageReload = (isLiked: boolean = true) => {
+    productCursorRef.current = null
+    setProducts([]);
+    setNextPageExist(true);
+    if (isLiked) {
       fetchLikedProducts();
+    } else {
+      fetchProducts();
     }
-  }, [likedInView]);
-
-  const pageReload = () => {
-    isFirstLoadRef.current = true;
-    isFirstLikedLoadRef.current = true;
-    fetchProducts();
-    fetchLikedProducts();
   };
 
   useEffect(() => {
-    pageReload();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId])
-
-  function handleType (myBoard: boolean) {
     if (myBoard) {
-      setMyBoard(true);
+      pageReload(false)
     } else {
-      setMyBoard(false);
+      pageReload(true)
     }
+  }, [myBoard])
+
+  const getCnt = async () => {
+    const response1 = await productList({
+      productType: '',
+      findUserId: userId,
+      size: 1,
+    });;
+    console.log(userState.userId , userId)
+    if (userState.userId === userId) {
+      const response2 = await likedList({
+        size: 1,
+      }); 
+      console.log(response2)
+      setTotalLikedProductCnt(response2.totalCount)
+    }
+    setTotalProductCnt(response1.totalCount)
   }
+
+  useEffect(() => {
+    console.log(123)
+    getCnt()
+  }, [userId, userState.userId])
 
   return (
     <div>
@@ -107,7 +180,7 @@ const UProduct = (props: Props) => {
         >
           {/* 작성글 */}
           <div
-            onClick={() => handleType(true)}
+            onClick={() => setMyBoard(true)}
             className={`
               ${myBoard ? 'font-bold' : 'text-light-text-secondary'}
               flex items-center
@@ -125,12 +198,12 @@ const UProduct = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              작성글 {products.length}
+              작성글 {totalProductCnt}
             </span>
           </div>
           {/* 북마크 */}
           <div 
-            onClick={() => handleType(false)}
+            onClick={() => setMyBoard(false)}
             className={`
             ${userId !== userState.userId ? 'hidden' : ''}
               flex items-center ms-[2.5rem]
@@ -149,7 +222,7 @@ const UProduct = (props: Props) => {
                 text-[0.875rem]
               `}
             >
-              관심 {likedProducts.length}
+              관심 {totalLikedProductCnt}
             </span>
           </div>
           {/* 필터 */}
@@ -176,25 +249,13 @@ const UProduct = (props: Props) => {
       </div>
       <div 
         className={`
-          ${myBoard ? '' : 'hidden'}
           grid grid-cols-2 md:grid-cols-3
         `}
       >
         {products?.map((product: any, key) => (
           <ProductCard key={key} product={product}/>
         ))}
-        <div ref={ref} className={`${isFirstLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
-      </div>
-      <div 
-        className={`
-          ${myBoard ? 'hidden' : ''}
-          grid grid-cols-2 md:grid-cols-3
-        `}
-      >
-        {likedProducts?.map((product: any, key) => (
-          <ProductCard key={key} product={product.product}/>
-        ))}
-        <div ref={likedRef} className={`${isFirstLikedLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
+        <div ref={ref} className={`${products.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
       </div>
     </div>
   )

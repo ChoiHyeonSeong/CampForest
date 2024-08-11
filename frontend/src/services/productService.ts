@@ -20,7 +20,8 @@ type SearchParams = {
   locations?: {},
   titleKeyword?: string,
   cursorId?: number | null,
-  size?: number
+  size?: number,
+  userId?: number,
 }
 
 export const productWrite = async (productRegistDto: ProductRegistDto, productImages: File[]) => {
@@ -55,8 +56,27 @@ export const productDetail = async (productId: number) => {
   return response.data.data;
 }
 
-export const likedList = async () => {
-  const response = await axiosInstance.get(`/saveproduct/list`);
+type LikedParams = {
+  cursorId?: number | null,
+  size?: number
+}
+
+export const productLike = async (productId: number) => {
+  const params = { productId: productId }
+  const response = await axiosInstance.post(`/saveproduct`, null, { params: params });
+  console.log('product Like', response);
+  return response
+}
+
+export const productDislike = async (productId: number) => {
+  const params = { productId: productId }
+  const response = await axiosInstance.delete(`/saveproduct`, { params: params });
+  console.log('product Like', response);
+  return response
+}
+
+export const likedList = async (likedParams: LikedParams) => {
+  const response = await axiosInstance.get(`/saveproduct/list`, { params: likedParams });
   console.log('관심', response);
   return response.data.data
 }
