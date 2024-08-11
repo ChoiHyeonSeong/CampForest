@@ -189,7 +189,13 @@ const Chat = () => {
               >
                 {message.content}
               </div>
-              <div>
+              <div 
+                className='
+                shrink-0 mt-auto mb-[0.125rem] ms-[0.5rem] 
+                text-xs text-end'>
+                <div>
+                  {message.createdAt ? formatTime(message.createdAt) : ''}
+                </div>
               </div>
             </div>
           ) : (
@@ -205,7 +211,7 @@ const Chat = () => {
                 <div>
                   {message.read ? '' : '1'}
                 </div>
-                <div>
+                <div className='mt-auto mb-[0.125rem]'>
                   {message.createdAt ? formatTime(message.createdAt) : ''}
                 </div>
               </div>
@@ -254,7 +260,13 @@ const Chat = () => {
               >
                 {message.message.content}
               </div>
-              <div>
+              <div 
+                className='
+                shrink-0 mt-auto mb-[0.125rem] ms-[0.5rem] 
+                text-xs text-end'>
+                <div>
+                  {message.message.createdAt ? formatTime(message.message.createdAt) : ''}
+                </div>
               </div>
             </div>
           ) : (
@@ -265,7 +277,7 @@ const Chat = () => {
             >
               <div 
                 className='
-                shrink-0 me-[0.5rem] 
+                shrink-0 mt-auto mb-[0.125rem] me-[0.5rem] 
                 text-xs text-end'>
                 <div>
                   {message.message.read ? '' : '1'}

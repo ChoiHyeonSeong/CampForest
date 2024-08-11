@@ -23,7 +23,6 @@ const useSSE = () => {
     // 읽음 처리를 받았을 때
     subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
       const readerId = JSON.parse(message.body); // 읽은 사람 Id
-  
       if (userState.userId !== readerId) {
         dispatch(updateMessageReadStatus({ roomId: roomId, readerId }));
       }  
