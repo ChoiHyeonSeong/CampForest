@@ -85,7 +85,31 @@ const chatSlice = createSlice({
         }
         return chatRoom;
       });
+      // totalUnreadCount 업데이트
+      state.totalUnreadCount += totalUnreadCountDiff;
+    },
+    updateTransactionChatUserList: (state, action: PayloadAction<{ roomId: Number; content: string; createdAt: string; inProgress: boolean }>) => {
+      let totalUnreadCountDiff = 0;
     
+      state.transactionChatUserList = state.transactionChatUserList.map(chatRoom => {
+        if (chatRoom.roomId === action.payload.roomId) {
+          const newUnreadCount = action.payload.inProgress ? 0 : chatRoom.unreadCount + 1;
+          
+          if (action.payload.inProgress) {
+            totalUnreadCountDiff -= chatRoom.unreadCount;
+          } else {
+            totalUnreadCountDiff += 1;
+          }
+    
+          return { 
+            ...chatRoom, 
+            createdAt: action.payload.createdAt, 
+            unreadCount: newUnreadCount, 
+            lastMessage: action.payload.content 
+          };
+        }
+        return chatRoom;
+      });
       // totalUnreadCount 업데이트
       state.totalUnreadCount += totalUnreadCountDiff;
     },
@@ -114,6 +138,7 @@ export const {
   setCommunityChatUserList,
   setTransactionChatUesrList,
   updateCommunityChatUserList,
+  updateTransactionChatUserList,
   updateMessageReadStatus,
   setTotalUnreadCount
 } = chatSlice.actions;

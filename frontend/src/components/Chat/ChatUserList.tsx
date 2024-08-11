@@ -3,7 +3,7 @@ import TransactionChatUser from './TransactionChatUser';
 import Chat from './Chat';
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { setChatInProgress, setChatInProgressType, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList } from '@store/chatSlice';
+import { setChatInProgress, setChatInProgressType, setIsChatOpen, setOtherId, setRoomId, updateCommunityChatUserList, updateTransactionChatUserList } from '@store/chatSlice';
 import { useWebSocket } from 'Context/WebSocketContext';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 }
 
 const ChatUserList = (props: Props) => {
-  const { markRead } = useWebSocket();
+  const { publishMessage } = useWebSocket();
   const dispatch = useDispatch();
   const userState = useSelector((state: RootState) => state.userStore);
   const chatState = useSelector((state: RootState) => state.chatStore);
@@ -24,7 +24,8 @@ const ChatUserList = (props: Props) => {
       dispatch(setChatInProgressType('일반'));
     }
     dispatch(setOtherId(communityChatUser.otherUserId));
-    markRead(`/pub/room/${communityChatUser.roomId}/markAsRead`, userState.userId );
+    // 읽음 처리
+    publishMessage(`/pub/room/${communityChatUser.roomId}/markAsRead`, '');
     dispatch(updateCommunityChatUserList({
       roomId: communityChatUser.roomId,
       content: communityChatUser.lastMessage,
@@ -42,10 +43,16 @@ const ChatUserList = (props: Props) => {
     }
     dispatch(setOtherId(transactionChatUser.otherUserId));
     // 읽음 처리
+    publishMessage(`/pub/transaction/${transactionChatUser.roomId}/markAsRead`, '');
     // 채팅 유저 목록 업데이트
+    dispatch(updateTransactionChatUserList({
+      roomId: transactionChatUser.roomId,
+      content: transactionChatUser.lastMessage,
+      createdAt: transactionChatUser.lastMessageTime,
+      inProgress: true,
+    }))
     dispatch(setIsChatOpen(true));
   }
-
 
   return (
     <div 

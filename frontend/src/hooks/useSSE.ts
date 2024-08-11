@@ -16,10 +16,10 @@ const useSSE = () => {
   const lastConnectionTimeRef = useRef(0);
   const [retryCount, setRetryCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
-  const { subscribe, sendMessage } = useWebSocket();
+  const { subscribe, publishMessage } = useWebSocket();
   const maxRetries = 5;
 
-  function subscribeToChat(roomId: number) {
+  function subscribeToCommunityChat(roomId: number) {
     // 읽음 처리를 받았을 때
     subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
       const readerId = JSON.parse(message.body); // 읽은 사람 Id
@@ -34,7 +34,7 @@ const useSSE = () => {
       const currentRoomId = roomIdRef.current;
       if (currentRoomId === response.roomId) {
         dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-        sendMessage(`/pub/room/${response.roomId}/markAsRead`, userState.userId);
+        publishMessage(`/pub/room/${response.roomId}/markAsRead`, userState.userId);
         dispatch(addMessageToChatInProgress(response));
       } else {
         dispatch(updateCommunityChatUserList({...response, inProgress: false}));

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
 import { RootState, store } from '@store/store';
-import { addMessageToChatInProgress, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
+import { addMessageToChatInProgress, setChatInProgressType, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
 import { communityChatList, initCommunityChat } from '@services/chatService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { ChatUserType } from '@components/Chat/ChatUser';
@@ -31,11 +31,10 @@ type Props = {
 export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, fetchUserInfo }: Props) {
   const dispatch = useDispatch();
   const chatState = useSelector((state: RootState) => state.chatStore);
-  const roomIdRef = useRef(chatState.roomId);
   const userId = Number(useParams().userId);
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
-  const { subscribe, sendMessage } = useWebSocket();
+  const { subscribe, publishMessage } = useWebSocket();
 
   const [fireTemperature, setFireTemperature] = useState(400);
 
@@ -47,16 +46,13 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     }
     fetchUserInfo();
   }, [userId])
-
-  useEffect(() => {
-    roomIdRef.current = chatState.roomId;
-  }, [chatState.roomId])
   
   const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
   
   async function handleChatButton() {
     const matchedUser = chatState.communityChatUserList.find((chatUser) => chatUser.otherUserId === userId);
     if (matchedUser) {
+      await dispatch(setChatInProgressType('일반'))
       await dispatch(setOtherId(matchedUser.otherUserId));
       await dispatch(setRoomId(matchedUser.roomId));
       await dispatch(setIsChatOpen(true));
@@ -64,6 +60,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
       try {
         const roomId = await initCommunityChat(userId);
         await fetchCommunityChatList()
+        await dispatch(setChatInProgressType('일반'))
         await dispatch(setOtherId(userId));
         await dispatch(setIsChatOpen(true));
         await dispatch(setRoomId(roomId));
@@ -103,10 +100,11 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     // 메세지를 받았을 때
     subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
       const response = JSON.parse(message.body);
-      const currentRoomId = roomIdRef.current;
-      if (currentRoomId === response.roomId) {
+      const state: RootState = store.getState();
+
+      if (state.chatStore.roomId === response.roomId) {
         dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-        sendMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
+        publishMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
         dispatch(addMessageToChatInProgress(response));
       } else {
         dispatch(updateCommunityChatUserList({...response, inProgress: false}));

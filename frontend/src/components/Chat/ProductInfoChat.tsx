@@ -2,11 +2,11 @@ import React from 'react'
 
 type Props = {}
 
-const ProductInfoChat = (props: Props) => {
+const ProductInfoChat = ({ }: Props) => {
   return (
     <div 
       className='
-        flex justify-between items-center absolute top-[4.25rem] left-0 w-full p-[0.8rem] 
+        flex justify-between items-center w-full p-[0.8rem] 
         bg-light-white border-light-border
         dark:bg-dark-white dark-border-dark-border
         border-y'>
