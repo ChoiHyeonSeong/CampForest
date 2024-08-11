@@ -21,10 +21,6 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       path: 'all'
     },
     {
-      title: '캠핑장 후기',
-      path: 'place'
-    },
-    {
       title: '장비 후기',
       path: 'equipment'
     },
