@@ -11,6 +11,7 @@ public class TransactionChatRoomListDto {
 	private Long roomId;
 	private Long otherUserId;
 	private String productImage;
+	private Long productId;
 	private String lastMessage;
 	private LocalDateTime lastMessageTime;
 	private Long unreadCount;

@@ -64,4 +64,14 @@ public class TransactionChatRoomRepositoryImpl implements TransactionChatRoomRep
                 .fetch();
     }
 
+
+    @Override
+    public Long findProductIdByRoomId(Long roomId) {
+        return queryFactory
+            .select(transactionChatRoom.productId)
+            .from(transactionChatRoom)
+            .where(transactionChatRoom.roomId.eq(roomId))
+            .fetchOne();
+    }
+
 }
