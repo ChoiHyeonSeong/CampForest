@@ -68,6 +68,28 @@ public class CommunityChatController {
 
         return communityChatService.saveMessage(roomId, message);
     }
+
+    @MessageMapping("/room/{roomId}/markAsRead")
+    public void markMessagesAsReadWebSocket(
+        @DestinationVariable Long roomId,
+        @Payload Long userId) {
+        try {
+            communityChatService.markMessagesAsRead(roomId, userId);
+
+            CommunityChatMessage message = new CommunityChatMessage();
+            message.setType("READ");
+            message.setSenderId(userId);
+
+            messagingTemplate.convertAndSend("/sub/community/" + roomId, message);
+        } catch (Exception e) {
+            CommunityChatMessage errorMessage = new CommunityChatMessage();
+            errorMessage.setType("ERROR");
+            errorMessage.setContent("메시지 읽음 처리 실패");
+
+            messagingTemplate.convertAndSend("/sub/community/" + roomId, errorMessage);
+        }
+    }
+
     @GetMapping("/room/{roomId}/messages")
     public  ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
         try {
@@ -75,23 +97,6 @@ public class CommunityChatController {
         return  ApiResponse.createSuccess(messages, "채팅 메시지 조회 성공");
         }catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);
-        }
-    }
-
-    //roomId에서 userId의 상대유저가 보낸메세지 읽음처리
-    // @MessageMapping("/{roomId}/send")
-    // @SendTo("/sub/community/{roomId}")
-    @MessageMapping("/room/{roomId}/markAsRead")
-    public void markMessagesAsReadWebSocket(
-        @DestinationVariable Long roomId,
-        @Payload Long userId) {
-        try {
-            communityChatService.markMessagesAsRead(roomId, userId);
-            // 읽음 처리 완료를 클라이언트에게 알림
-            messagingTemplate.convertAndSend("/sub/community/" + roomId + "/readStatus", userId);
-        } catch (Exception e) {
-            // 에러 처리
-            messagingTemplate.convertAndSend("/sub/community/" + roomId + "/error", "메시지 읽음 처리 실패");
         }
     }
 
