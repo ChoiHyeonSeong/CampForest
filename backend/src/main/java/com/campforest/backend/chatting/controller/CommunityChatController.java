@@ -80,7 +80,7 @@ public class CommunityChatController {
             message.setType("READ");
             message.setSenderId(userId);
 
-            messagingTemplate.convertAndSend("/sub/community/" + roomId, message);
+            messagingTemplate.convertAndSend("/sub/community/" + roomId, message                                          );
         } catch (Exception e) {
             CommunityChatMessage errorMessage = new CommunityChatMessage();
             errorMessage.setType("ERROR");
@@ -91,9 +91,14 @@ public class CommunityChatController {
     }
 
     @GetMapping("/room/{roomId}/messages")
-    public  ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
+    public  ApiResponse<?> getChatHistory(@PathVariable Long roomId, Authentication authentication) throws Exception {
+        Users user = userService.findByEmail(authentication.getName())
+            .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+        Long userId = user.getUserId();
+
         try {
-        List<CommunityChatMessage> messages = communityChatService.getChatHistory(roomId);
+        List<CommunityChatMessage> messages = communityChatService.getChatHistory(roomId, userId);
         return  ApiResponse.createSuccess(messages, "채팅 메시지 조회 성공");
         }catch (Exception e) {
             return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);
@@ -132,4 +137,19 @@ public class CommunityChatController {
         }
     }
 
+    @PostMapping("/room/{roomId}/exit")
+    public ApiResponse<?> exitChatRoom(@PathVariable Long roomId, Authentication authentication) {
+        try {
+            Users user = userService.findByEmail(authentication.getName())
+                .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+            Long userId = user.getUserId();
+
+            communityChatService.exitChatRoom(roomId, userId);
+
+            return ApiResponse.createSuccess(null, "채팅방 나가기 성공");
+        } catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.CHAT_ROOM_EXIT_FAILED);
+        }
+    }
 }

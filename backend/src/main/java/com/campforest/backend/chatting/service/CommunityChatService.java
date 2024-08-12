@@ -13,11 +13,13 @@ public interface CommunityChatService {
 
     CommunityChatMessage saveMessage(Long roomId, CommunityChatMessage message);
 
-    List<CommunityChatMessage> getChatHistory(Long roomId);
+    List<CommunityChatMessage> getChatHistory(Long roomId, Long userId);
 
     Long getUnreadMessageCount(Long roomId, Long userId);
 
     void markMessagesAsRead(Long roomId, Long userId);
 
     public List<CommunityChatRoomListDto> getChatRoomsForUser(Long userId);
+
+    void exitChatRoom(Long roomId, Long userId);
 }
