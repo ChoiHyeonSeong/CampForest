@@ -133,6 +133,7 @@ public class CommunityChatController {
         List<CommunityChatRoomListDto> rooms = communityChatService.getChatRoomsForUser(nowId);
         return ApiResponse.createSuccess(rooms,"채팅방 목록 가져오기 성공");
         }catch (Exception e) {
+            e.printStackTrace();
             return ApiResponse.createError(ErrorCode.CHAT_ROOM_LIST_FAILED);
         }
     }
