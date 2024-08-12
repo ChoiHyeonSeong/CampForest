@@ -7,6 +7,8 @@ import ProductCard from '@components/Product/ProductCard';
 import { productDetail } from '@services/productService';
 import { useParams } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
+import { UseSelector, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -62,6 +64,20 @@ function Detail() {
     nickname: '',
     userImage: ''
   });
+
+  const [category, setCategory] = useState('');
+
+  useEffect(() => {
+    if (product.category === '침낭') {
+      setCategory('침낭/매트')
+    } else if (product.category === '코펠') {
+      setCategory('코펠/식기')
+    } else if (product.category === '침낭') {
+      setCategory('침낭/매트')
+    } else {
+      setCategory(product.category)
+    }
+  }, [product])
 
   const fetchProduct = async () => {
     try {
@@ -237,7 +253,7 @@ function Detail() {
             >
               <div className={`flex`}>
                 <div className={`me-[1.5rem]`}>
-                  캠핑 장비 {'>'} {product.category}
+                  캠핑 장비 {'>'} {category}
                 </div>
                 <div 
                   className={`
@@ -250,12 +266,11 @@ function Detail() {
                 </div>
               </div>
               <MoreOptionsMenu
-                isUserPost={isUserPost}
+                isUserPost={user.userId === product.userId}
                 deleteId={0}
                 deleteFunction={() => {
                   console.log('test');
                 }}
-                copyURL=""
               />
             </div>
             <div className={`text-2xl font-medium`}>

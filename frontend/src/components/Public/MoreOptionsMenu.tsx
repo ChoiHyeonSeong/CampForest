@@ -6,7 +6,6 @@ type Props = {
   isUserPost: boolean;
   deleteFunction: () => void;
   deleteId: number;
-  copyURL:string;
 };
 
 const MoreOptionsMenu = (props: Props) => {
@@ -14,13 +13,6 @@ const MoreOptionsMenu = (props: Props) => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const copyLink = () => {
-    const currentUrl = window.location.href;
-    navigator.clipboard.writeText(currentUrl+props.copyURL);
-    console.log(currentUrl+props.copyURL)
-    alert('링크가 복사되었습니다!');
   };
 
   return (
@@ -61,25 +53,6 @@ const MoreOptionsMenu = (props: Props) => {
             >
               신고하기
             </button>
-          </div>
-          <div 
-            className={`
-              w-full ps-[0.75rem]
-              border-light-border
-              dark:border-dark-border
-              border-b
-            `}
-          >
-            <button 
-              className={`
-                py-[0.75rem]
-                hover:text-light-signature
-                dark:hover:text-dark-signature 
-                text-base
-              `}
-              onClick={copyLink}>
-                링크복사
-              </button>
           </div>
           {props.isUserPost ? (
             <>

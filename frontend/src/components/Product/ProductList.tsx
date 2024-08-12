@@ -13,6 +13,8 @@ import LocationFilter from '@components/Public/LocationFilter';
 
 import { koreaAdministrativeDivisions } from '@utils/koreaAdministrativeDivisions';
 
+import Pagination from '@components/Public/Pagination';
+
 type Option = {
   id: number;
   name: string;
@@ -65,6 +67,10 @@ const ProductList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<SelecetedLocType | null>(null);
 
+  // 상태 추가
+const [totalPages, setTotalPages] = useState<number>(0);
+const [currentPage, setCurrentPage] = useState<number>(1);
+
   // Refs
   const productCursorRef = useRef<number | null>(null);
 
@@ -93,6 +99,9 @@ const ProductList = () => {
     setFilteredProducts(filtered);
   }, [products, priceRange, selectedCategory, selectedLocation, showAvailableOnly]);
 
+  // 페이지 가져오기
+
+
   // 상품 데이터 fetch
   const fetchProducts = useCallback(async () => {
     try {
@@ -108,11 +117,22 @@ const ProductList = () => {
       productCursorRef.current = result.nextCursorId;
       setNextPageExist(result.hasNext);
       setProducts(prevProducts => [...prevProducts, ...result.products]);
+
+      // 전체 페이지 수 계산 (한 페이지당 10개 항목 기준)
+      const calculatedTotalPages = Math.ceil(result.totalCount / 10);
+      setTotalPages(calculatedTotalPages);
+    
     } catch (error) {
       dispatch(setIsLoading(false));
       console.error('판매/대여 게시글 불러오기 실패: ', error);
     }
   }, [dispatch, activeTab]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    // 여기에 새 페이지의 데이터를 가져오는 로직 추가
+    // 예: fetchProductsForPage(newPage);
+  };  
 
   // 이벤트 핸들러
   const handleTabClick = useCallback((tabIndex: number) => {
@@ -277,10 +297,17 @@ const ProductList = () => {
             />
           ))}
         </div>
+
+        <Pagination
+          totalItems={products.length}
+          itemsPerPage={10}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </div>
 
       {/* intersection observer */}
-      <div ref={ref} className="h-[0.25rem]"></div>
+      {/* <div ref={ref} className="h-[0.25rem]"></div> */}
     </div>
   );
 };

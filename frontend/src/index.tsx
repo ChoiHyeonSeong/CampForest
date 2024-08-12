@@ -8,6 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { store } from '@store/store';
 import { BrowserRouter } from 'react-router-dom';
+import { WebSocketProvider } from 'Context/WebSocketContext';
 
 const baseURL = process.env.REACT_APP_BACKEND_URL
 
@@ -20,9 +21,11 @@ const root = ReactDOM.createRoot(
 root.render(
   // <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <WebSocketProvider>      
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </WebSocketProvider>
     </Provider>
   // </React.StrictMode>
 );
