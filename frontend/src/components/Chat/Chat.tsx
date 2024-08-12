@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { communityChatDetail, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';
+import { setChatInProgress, setIsChatOpen, setProductId } from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 import ProductInfoChat from "./ProductInfoChat";
 
@@ -28,7 +28,7 @@ export type TransactionMessageType = {
   read: boolean;
   roomId: number;
   senderId: number;
-  transactionId?: number;
+  transactionId?: number; 
 }
 
 export type TransactionEntityType = {
@@ -86,10 +86,12 @@ const Chat = () => {
       let fetchedMessages;
       if(chatState.chatInProgressType === '일반') {
         fetchedMessages = await communityChatDetail(chatState.roomId);
+        dispatch(setChatInProgress(fetchedMessages));
       } else if (chatState.chatInProgressType === '거래') {
         fetchedMessages = await transactionChatDetail(chatState.roomId);
+        dispatch(setProductId(fetchedMessages.productId));
+        dispatch(setChatInProgress(fetchedMessages.messages));
       }
-      dispatch(setChatInProgress(fetchedMessages));
     } catch (error) {
       console.error("Failed to fetch messages:", error);
     }
@@ -128,7 +130,7 @@ const Chat = () => {
         publishMessage(`/pub/${chatState.roomId}/send`, { senderId: userId, content: userInput });
       } else {
         publishMessage(`/pub/transaction/${chatState.roomId}/send`, 
-          { senderId: userId, content: userInput, message_type: "MESSAGE"});
+          { senderId: userId, content: userInput, messageType: "MESSAGE"});
       }
       setUserInput('');
     }
@@ -169,9 +171,11 @@ const Chat = () => {
         </div>
       </div>
       {/* 상품 정보 */}
-      <div>
-        <ProductInfoChat />
-      </div>
+      {chatState.chatInProgressType === '거래' && (
+        <div>
+          <ProductInfoChat />
+        </div>
+      )}
       <div className='h-full ps-[0.75rem] overflow-scroll' ref={scrollRef}>
         {unifiedMessages && unifiedMessages.length > 0 ? (
           unifiedMessages.map((message) => (

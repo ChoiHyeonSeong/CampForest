@@ -46,24 +46,20 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
     const communityChatUserList = store.getState().chatStore.communityChatUserList;
     if (communityChatUserList) {
       communityChatUserList.forEach((chatRoom: any) => {
-        // 읽음 처리를 받았을 때
-        client.subscribe(`/sub/community/${chatRoom.roomId}/readStatus`, (message) => {
-          const readerId = JSON.parse(message.body); // 읽은 사람 Id
-          const state = store.getState();
-          if (state.userStore.userId !== readerId) {
-            store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId }));
-          }  
-        });
         // 메시지를 받았을 때
         client.subscribe(`/sub/community/${chatRoom.roomId}`, (message) => {
           const response = JSON.parse(message.body);
           console.log('Received chat message:', response);
           const state: RootState = store.getState();
-          
+          if(response.messageType === 'READ') {
+            if (state.userStore.userId !== response.senderId) {
+              store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId: response.senderId }));
+            }  
+          }
           // 현재 열려 있는 채팅방 내용 갱신
-          if (state.chatStore.roomId === response.roomId) {
+          else if (state.chatStore.roomId === response.roomId) {
             store.dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-            publishMessage(`/pub/room/${response.roomId}/markAsRead`, response.userId);
+            publishMessage(`/pub/room/${response.roomId}/markAsRead`, response.senderId);
             store.dispatch(addMessageToChatInProgress(response));
           } else {
             // 채팅방 목록 업데이트
@@ -81,11 +77,17 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
           const response = JSON.parse(message.body);
           console.log('Received chat message: ', response);
           const state: RootState = store.getState();
-
+          
+          if(response.messageType === 'READ') {
+          if (state.userStore.userId !== response.senderId) {
+            store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId: response.senderId }));
+          }  
+          }
           // 현재 열려 있는 채팅방 내용 갱신
-          if (state.chatStore.roomId === response.roomId) {
+          else if (state.chatStore.roomId === response.roomId) {
             store.dispatch(updateTransactionChatUserList({...response, inProgress: true}));
-            publishMessage(`/pub/transaction/${response.roomId}/markAsRead`, response.roomId);
+            publishMessage(`/pub/transaction/${chatState.roomId}/read`, 
+              state.userStore.userId );
             store.dispatch(addMessageToChatInProgress(response));
           } else {
             store.dispatch(updateTransactionChatUserList({...response, inProgress: false}));
@@ -100,7 +102,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
       return; // JWT가 없으면 웹소켓 연결을 시도하지 않음.
     }
     const newClient = new Client({
-      webSocketFactory: () => new SockJS('https://i11d208.p.ssafy.io/ws'),
+      webSocketFactory: () => new SockJS(`${process.env.REACT_APP_BACKEND_WS}`),
       connectHeaders: {
         Authorization: `${jwt}`,
       },

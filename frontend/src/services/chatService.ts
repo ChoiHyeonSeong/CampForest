@@ -46,3 +46,14 @@ export const transactionChatDetail = async (roomId: number) => {
   console.log(response.data);
   return response.data.data;
 }
+
+export const initTransactionChat = async (productId: number, userId: number): Promise<number> => {
+  const response = await axiosInstance.post(`/transactionchat/room`, { productId: productId, seller: userId }, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+  
+  console.log('initTransactionChat', response);
+  return response.data.data.roomId;
+}

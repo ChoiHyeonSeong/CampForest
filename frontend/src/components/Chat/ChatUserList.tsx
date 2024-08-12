@@ -25,7 +25,7 @@ const ChatUserList = (props: Props) => {
     }
     dispatch(setOtherId(communityChatUser.otherUserId));
     // 읽음 처리
-    publishMessage(`/pub/room/${communityChatUser.roomId}/markAsRead`, '');
+    publishMessage(`/pub/room/${communityChatUser.roomId}/markAsRead`, userState.userId);
     dispatch(updateCommunityChatUserList({
       roomId: communityChatUser.roomId,
       content: communityChatUser.lastMessage,
@@ -43,7 +43,7 @@ const ChatUserList = (props: Props) => {
     }
     dispatch(setOtherId(transactionChatUser.otherUserId));
     // 읽음 처리
-    publishMessage(`/pub/transaction/${transactionChatUser.roomId}/markAsRead`, '');
+    publishMessage(`/pub/transaction/${transactionChatUser.roomId}/read`, userState.userId );
     // 채팅 유저 목록 업데이트
     dispatch(updateTransactionChatUserList({
       roomId: transactionChatUser.roomId,
