@@ -141,6 +141,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
   }, [jwt, subscribeInitial]);
 
   const publishMessage = useCallback((destination: string, body: any) => {
+    console.log(body);
     if (clientRef.current && clientRef.current.active) {
       clientRef.current.publish({
         destination,

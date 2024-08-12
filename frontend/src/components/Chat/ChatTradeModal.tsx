@@ -1,11 +1,16 @@
 import { ProductDetailType } from '@components/Product/ProductDetail';
 import ProductMap from '@components/Product/ProductMap';
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
+import { useWebSocket } from 'Context/WebSocketContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 type Props = {
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   product: ProductDetailType;
 }
 
@@ -16,6 +21,9 @@ const ChatTradeModal = (props: Props) => {
   const [firstDate, setFirstDate] = useState<Date>(new Date());
   const [secondDate, setSecondDate] = useState<Date>(new Date());
   const [loadMap, setLoadMap] = useState(false);
+  const { publishMessage } = useWebSocket();
+  const chatState = useSelector((state: RootState) => state.chatStore);
+  const userState = useSelector((state: RootState) => state.userStore);
 
   const handleFirstDateChange = (date: Date | null) => {
     if(date) {
@@ -40,6 +48,20 @@ const ChatTradeModal = (props: Props) => {
     setLocation(dongName);
   }
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (props.product.productType === 'SALE') {
+      publishMessage(`/pub/transaction/room/${chatState.roomId}/${userState.userId}/saleRequest`, {
+        productId: props.product.productId,
+        sellerId: props.product.userId,
+        buyerId: userState.userId,
+        meetingTime: firstDate,
+        meetingPlace: location,
+      })
+    }
+  }
+
   return (
     <div
       className='
@@ -55,8 +77,20 @@ const ChatTradeModal = (props: Props) => {
           dark:bg-dark-white
           rounded-lg
         '>
-          <div className='mb-[1rem] text-2xl'>
-          거래 요청
+          <div className='flex justify-between mb-[1rem] text-2xl'>
+            <div>
+              거래 요청
+            </div>
+            <div>
+              <CloseIcon 
+                className='
+                  fill-light-black
+                  dark:fill-dark-black
+                  cursor-pointer
+                ' 
+                onClick={() => props.setModalOpen(false)}
+              />
+            </div>
           </div>
           {/* 상품 정보 */}
           <div 
@@ -122,7 +156,10 @@ const ChatTradeModal = (props: Props) => {
             </div>
           </div>
           {/* 입력 폼 */}
-          <form className='p-[0.5rem]'>
+          <form 
+            className='p-[0.5rem]'
+            onSubmit={handleSubmit}
+          >
             <div className='mb-[1.5rem]'>
               <div className='font-semibold text-lg'>
                 {props.product.productType === 'SALE' ? '거래 ' : '대여 '}

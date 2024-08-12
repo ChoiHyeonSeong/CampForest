@@ -158,8 +158,10 @@ const Chat = () => {
       `}
     >
       {/* 모달 */}
-      {product && modalOpen && (
-        <ChatTradeModal product={product}/>
+      {product && (
+        <div className={`${modalOpen ? '' : 'hidden'}`}>
+          <ChatTradeModal setModalOpen={setModalOpen} product={product}/>
+        </div>
       )}
       {/* 상대 정보 */}
       <div className={`flex items-center shrink-0 p-[0.8rem]

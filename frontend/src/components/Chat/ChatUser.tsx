@@ -82,6 +82,7 @@ const ChatUser = (props: Props) => {
            {/* 마지막 메세지 */}
           <div
             className={`
+              max-w-[2rem]
               text-light-text-secondary
               dark:text-dark-text-secondary
               text-sm truncate
