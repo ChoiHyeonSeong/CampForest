@@ -85,6 +85,7 @@ const ChatUserList = (props: Props) => {
       <div className={`${chatState.selectedCategory === '거래' ? '' : 'hidden'}`}>
       {chatState.transactionChatUserList.map((transactionChatUser, index) => (
           <div
+            key={index}
             className='
               bg-light-white
               dark:bg-dark-white
