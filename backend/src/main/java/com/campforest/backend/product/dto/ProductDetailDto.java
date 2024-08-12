@@ -28,6 +28,7 @@ public class ProductDetailDto {
 	private List<String> imageUrls;
 	private UserImage userImage;
 	private String nickname;
+	private boolean saved;
 
 
 	public ProductDetailDto(Product product, List<String> imageUrls, String nickname, UserImage userImage) {

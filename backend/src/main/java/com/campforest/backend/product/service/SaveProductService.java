@@ -103,6 +103,7 @@ public class SaveProductService {
 			.limit(size)
 			.map(saveProduct -> {
 				ProductSearchDto productSearchDto = getProductSearchDto(saveProduct.getProduct().getId());
+				productSearchDto.setSaved(true);
 				return new SaveProductDto(saveProduct, productSearchDto);
 			})
 			.collect(Collectors.toList());
