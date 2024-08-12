@@ -66,8 +66,13 @@ public class SaleService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
-
+		Long saleId = 0L;
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
+		for(Sale sale : sales) {
+			if(sale.getSaleStatus().equals(TransactionStatus.RECEIVED)) {
+				saleId = sale.getId();
+			}
+		}
 
 		sales[0].acceptSale();
 		sales[1].acceptSale();
@@ -75,6 +80,7 @@ public class SaleService {
 		Map<String, Long> result = new HashMap<>();
 		result.put("requesterId", requesterId);
 		result.put("receiverId", receiverId);
+		result.put("saleId", saleId);
 
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
