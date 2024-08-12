@@ -36,10 +36,14 @@ public class SaleService {
 
 		Map<String, Long> result = new HashMap<>();
 		Long requesterId = saleRequestDto.getRequesterId();
+
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
 
 		result.put("requesterId", requesterId);
 		result.put("receiverId", receiverId);
+
+		System.out.println("receiver" + receiverId);
+		System.out.println("requester" + requesterId);
 
 		Sale sale = buildSale(saleRequestDto, product, requesterId, receiverId, TransactionStatus.REQUESTED);
 		sale.requestSale();
@@ -176,7 +180,7 @@ public class SaleService {
 			.build();
 	}
 
-	private Sale reverseBuildSale(SaleRequestDto saleRequestDto, Product product, Long requesterId, Long receiverId,
+	private Sale reverseBuildSale(SaleRequestDto saleRequestDto, Product product, Long receiverId, Long requesterId,
 		TransactionStatus status) {
 		return Sale.builder()
 			.product(product)
