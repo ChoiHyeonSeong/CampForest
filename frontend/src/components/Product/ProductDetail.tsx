@@ -7,8 +7,6 @@ import ProductCard from '@components/Product/ProductCard';
 import { productDetail } from '@services/productService';
 import { useParams } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
-import { UseSelector, useSelector } from 'react-redux';
-import { RootState } from '@store/store';
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -266,7 +264,7 @@ function Detail() {
                 </div>
               </div>
               <MoreOptionsMenu
-                isUserPost={user.userId === product.userId}
+                isUserPost={loginUserId === product.userId}
                 deleteId={0}
                 deleteFunction={() => {
                   console.log('test');
