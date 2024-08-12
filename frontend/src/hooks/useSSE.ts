@@ -118,7 +118,7 @@ const useSSE = () => {
     let reconnectTimeout: NodeJS.Timeout;
 
     if (userState.isLoggedIn && !isConnected) {
-      reconnectTimeout = setTimeout(createEventSource, 1000 * Math.pow(2, retryCount));
+      createEventSource();
     } else if (!userState.isLoggedIn) {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();

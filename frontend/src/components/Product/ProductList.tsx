@@ -307,7 +307,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
       </div>
 
       {/* intersection observer */}
-      {/* <div ref={ref} className="h-[0.25rem]"></div> */}
+      <div ref={ref} className="h-[0.25rem]"></div>
     </div>
   );
 };

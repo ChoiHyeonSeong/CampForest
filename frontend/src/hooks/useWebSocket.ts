@@ -83,9 +83,9 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
           const state: RootState = store.getState();
           
           if(response.messageType === 'READ') {
-          if (state.userStore.userId !== response.senderId) {
-            store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId: response.senderId }));
-          }  
+            if (state.userStore.userId !== response.senderId) {
+              store.dispatch(updateMessageReadStatus({ roomId: chatRoom.roomId, readerId: response.senderId }));
+            }
           }
           // 현재 열려 있는 채팅방 내용 갱신
           else if (state.chatStore.roomId === response.roomId) {

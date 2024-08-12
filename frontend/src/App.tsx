@@ -39,10 +39,7 @@ function App() {
 
   useThemeEffect();
   
-  function SSEHandler() {
-    useSSE();
-    return null;
-  }
+
 
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;
@@ -62,7 +59,6 @@ function App() {
 
   return (
     <div>
-      <SSEHandler />
       <div className="App h-screen overflow-hidden">
         <Navbar />
         <div className='flex h-full'>
