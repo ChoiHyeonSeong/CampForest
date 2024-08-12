@@ -21,54 +21,78 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class SseEmitters {
-	private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>(256, 0.75f, 64);
+	private final Map<Long, EmitterInfo> emitters = new ConcurrentHashMap<>();
+
+	private static class EmitterInfo {
+		final SseEmitter emitter;
+		final long creationTime;
+
+		EmitterInfo(SseEmitter emitter) {
+			this.emitter = emitter;
+			this.creationTime = System.currentTimeMillis();
+		}
+	}
 
 	public SseEmitter createEmitter(Long userId) {
-		SseEmitter oldEmitter = emitters.remove(userId);
-		if (oldEmitter != null) {
-			oldEmitter.complete();
-		}
-
-		SseEmitter emitter = new SseEmitter(7200000L); // 2시간
-		emitters.put(userId, emitter);
-		emitter.onCompletion(() -> {
-			emitters.remove(userId);
-		});
-		emitter.onTimeout(() -> {
-			emitters.remove(userId);
-		});
-		emitter.onError((e) -> {
-			emitters.remove(userId);
-		});
+		removeEmitter(userId);
+		SseEmitter emitter = new SseEmitter(300000L); // 5분
+		emitters.put(userId, new EmitterInfo(emitter));
+		emitter.onCompletion(() -> removeEmitter(userId));
+		emitter.onTimeout(() -> removeEmitter(userId));
+		emitter.onError((e) -> removeEmitter(userId));
 		return emitter;
 	}
 
 	public void send(Long userId, NotificationDTO notification) {
-		SseEmitter emitter = emitters.get(userId);
-		if (emitter != null) {
+		EmitterInfo info = emitters.get(userId);
+		if (info != null) {
 			try {
-				emitter.send(SseEmitter.event()
+				info.emitter.send(SseEmitter.event()
 					.name("notification")
 					.data(notification));
 			} catch (IOException e) {
-				emitters.remove(userId);
-				log.error("Failed to send notification to user: {}", userId, e);
+				log.warn("Failed to send notification to user: {}", userId, e);
+				removeEmitter(userId);
 			}
 		}
 	}
 
-	// 연결 유지를 위한 더미 이벤트 전송 메서드
 	@Scheduled(fixedRate = 300000) // 5분마다
 	public void sendKeepAlive() {
-		List<Long> toRemove = new ArrayList<>();
-		emitters.forEach((userId, emitter) -> {
+		emitters.forEach((userId, info) -> {
 			try {
-				emitter.send(SseEmitter.event().name("keepAlive").data(""));
+				info.emitter.send(SseEmitter.event().name("keepAlive").data(""));
 			} catch (IOException e) {
-				toRemove.add(userId);
-				emitter.completeWithError(e);
+				log.warn("Failed to send keep-alive to user: {}", userId, e);
+				removeEmitter(userId);
 			}
 		});
-		toRemove.forEach(emitters::remove);
+	}
+
+	@Scheduled(fixedRate = 3600000) // 1시간마다
+	public void cleanupOldEmitters() {
+		long now = System.currentTimeMillis();
+		emitters.entrySet().removeIf(entry -> {
+			if (now - entry.getValue().creationTime > 7200000) {
+				try {
+					entry.getValue().emitter.complete();
+				} catch (Exception e) {
+					log.warn("Error while completing old emitter for user: {}", entry.getKey(), e);
+				}
+				return true;
+			}
+			return false;
+		});
+	}
+
+	private void removeEmitter(Long userId) {
+		EmitterInfo info = emitters.remove(userId);
+		if (info != null) {
+			try {
+				info.emitter.complete();
+			} catch (Exception e) {
+				log.warn("Error while completing emitter for user: {}", userId, e);
+			}
+		}
 	}
 }
