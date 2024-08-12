@@ -20,6 +20,7 @@ export type UseWebSocketReturn = {
 export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => {
   const [connected, setConnected] = useState(false);
   const chatState = useSelector((state: RootState) => state.chatStore);
+  const isLoggedIn = useSelector((state: RootState) => state.userStore.isLoggedIn)
   const clientRef = useRef<Client | null>(null);
 
   // 채팅방 목록 가져오기
@@ -138,7 +139,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         newClient.deactivate();
       }
     };
-  }, [jwt, subscribeInitial]);
+  }, [isLoggedIn, subscribeInitial]);
 
   const publishMessage = useCallback((destination: string, body: any) => {
     console.log(body);
@@ -154,7 +155,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
     if (clientRef.current && clientRef.current.active) {
       clientRef.current.subscribe(destination, callback);
     }
-  }, []);
+  }, [jwt]);
 
   return { connected, publishMessage, subscribe };
 };

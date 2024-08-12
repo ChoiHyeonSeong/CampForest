@@ -15,7 +15,6 @@ const useSSE = () => {
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const lastConnectionTimeRef = useRef(0);
   const [retryCount, setRetryCount] = useState(0);
-  const [isConnected, setIsConnected] = useState(false);
   const { subscribe, publishMessage } = useWebSocket();
   const maxRetries = 5;
 
@@ -56,10 +55,6 @@ const useSSE = () => {
       return;
     }
 
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
-
     const accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
       console.error("액세스 토큰이 없습니다.");
@@ -80,7 +75,6 @@ const useSSE = () => {
 
     eventSource.onopen = async (event) => {
       console.log("SSE 연결 성공", event);
-      setIsConnected(true);
       const notificationList = await getNotificationList();
       dispatch(setNotificationList(notificationList));
       setRetryCount(0);
@@ -105,10 +99,7 @@ const useSSE = () => {
 
     eventSource.onerror = (error) => {
       console.error("SSE 오류:", error);
-      setIsConnected(false);
-      eventSource.close();
       setRetryCount(prevCount => prevCount + 1);
-      // 재연결 로직은 useEffect에서 처리
     };
 
     eventSourceRef.current = eventSource;
@@ -117,12 +108,11 @@ const useSSE = () => {
   useEffect(() => {
     let reconnectTimeout: NodeJS.Timeout;
 
-    if (userState.isLoggedIn && !isConnected) {
+    if (userState.isLoggedIn && !eventSourceRef.current) {
       createEventSource();
     } else if (!userState.isLoggedIn) {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
-        setIsConnected(false);
       }
     }
 
@@ -131,9 +121,7 @@ const useSSE = () => {
         clearTimeout(reconnectTimeout);
       }
     }; 
-  }, [userState.isLoggedIn, createEventSource, isConnected, retryCount]);
-
-  return isConnected;
+  }, [userState.isLoggedIn, retryCount]);
 };
 
 export default useSSE;

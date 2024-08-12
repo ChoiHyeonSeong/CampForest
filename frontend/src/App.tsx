@@ -22,25 +22,18 @@ import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
 import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
-import { communityChatList } from '@services/chatService';
-import { store } from '@store/store';
-import { setCommunityChatUserList, setTotalUnreadCount, setTransactionChatUesrList } from '@store/chatSlice';
-import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
-import { transactionChatList } from '@services/chatService';
-import useSSE from "@hooks/useSSE";
 import LightMode from '@components/Public/LightMode';
+import useSSE from '@hooks/useSSE';
 
 function App() {
   const modals = useSelector((state: RootState) => state.modalStore);
   const dispatch = useDispatch()
   const currentLoc = useLocation();
   const isDark = useSelector((state: RootState) => state.themeStore.isDark);
-
+  
   useThemeEffect();
   
-
-
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;
     bodyBox.classList.add('bg-light-white');
@@ -56,6 +49,8 @@ function App() {
     });
     dispatch(setIsBoardWriteModal(false));
   }, [currentLoc]);
+
+  useSSE();
 
   return (
     <div>

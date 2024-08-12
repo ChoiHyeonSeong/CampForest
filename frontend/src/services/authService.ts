@@ -61,7 +61,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   try {
     const response = await axiosInstance.post('/user/public/login', { email, password });
     const data = response.data.data;
-    console.log(data)
+    // console.log(data)
     const Authorization = response.headers.authorization;
     const user = { userId: data.userId, 
                    nickname: data.nickname, 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useEffect } from 'react';
 import { useWebSocket as useWebSocketHook, UseWebSocketReturn } from '@hooks/useWebSocket';
 
 type WebSocketContextType = UseWebSocketReturn;

@@ -21,7 +21,7 @@ function Login() {
     try {
       const data = await login(email, password);
       dispatch(setUser(data.user));
-      console.log('Login successful');
+      // console.log('Login successful');
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
