@@ -1,8 +1,6 @@
 import React from 'react'
 import EachCategory from './EachCategory';
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
-
-import campfire from '@assets/images/campfire.png'
 import { useNavigate } from 'react-router-dom';
 
 // 카테고리 사진
