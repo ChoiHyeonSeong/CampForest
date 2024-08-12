@@ -56,6 +56,9 @@ public class Rent {
 	@Column(name = "receiver_id")
 	private Long receiverId;
 
+	@Column(name = "real_price")
+	private Long realPrice;
+
 	@Column(name = "rent_start_date")
 	private LocalDateTime rentStartDate;
 

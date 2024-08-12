@@ -193,6 +193,7 @@ public class RentService {
 			.meetingPlace(rentRequestDto.getMeetingPlace())
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
+			.realPrice(rentRequestDto.getPrice())
 			.build();
 	}
 
@@ -212,6 +213,7 @@ public class RentService {
 			.meetingPlace(rentRequestDto.getMeetingPlace())
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
+			.realPrice(rentRequestDto.getPrice())
 			.build();
 	}
 
