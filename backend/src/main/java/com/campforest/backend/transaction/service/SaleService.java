@@ -101,12 +101,17 @@ public class SaleService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
+		System.out.println("confirm service"+" reqID"+requesterId+ " receiverId: "+receiverId );
 
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
-
+		System.out.println("getRents"+sales[0].toString()+" "+sales[1].toString() );
 		boolean isRequesterSeller = requesterId.equals(saleRequestDto.getSellerId());
+		System.out.println(isRequesterSeller);
 		sales[0].confirmSale(isRequesterSeller); // 소유자가 요청자일 경우
-		sales[1].confirmSale(!isRequesterSeller); // 소유자가 아닌 경우
+		sales[1].confirmSale(isRequesterSeller); // 소유자가 아닌 경우
+
+		saleRepository.save(sales[0]);
+		saleRepository.save(sales[1]);
 
 		if (sales[0].isFullyConfirmed() && sales[1].isFullyConfirmed()) {
 			sales[0].setSaleStatus(TransactionStatus.CONFIRMED);
@@ -114,8 +119,8 @@ public class SaleService {
 
 			product.setSold(true);
 			productRepository.save(product);
-		}
 
+		}
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
 	}
@@ -125,11 +130,11 @@ public class SaleService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
-
+		Long productId = product.getId();
 		Sale sale = saleRepository.findByProductIdAndRequesterIdAndReceiverId(
-				saleRequestDto.getProductId(), requesterId, receiverId)
+				productId, requesterId, receiverId)
 			.orElseThrow(() -> new IllegalArgumentException("없다요"));
-
+		System.out.println(sale);
 		return new SaleResponseDto(sale);
 	}
 
