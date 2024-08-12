@@ -28,7 +28,7 @@ public class ProductSearchDto {
 	private UserImage userImage;
 	private Long deposit;
 	private boolean isSold;
-	private boolean isSaved;
+	private boolean saved;
 
 	public ProductSearchDto() {}
 

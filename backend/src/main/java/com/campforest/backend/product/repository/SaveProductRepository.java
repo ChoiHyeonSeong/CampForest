@@ -17,4 +17,7 @@ SaveProductRepository extends JpaRepository<SaveProduct, Long>, SaveProductCusto
 	Page<SaveProduct> findAllByUserUserId(Long userId, Pageable pageable);
 
 	List<SaveProduct> findAllByUserUserId(Long userId);
+
+	boolean existsByUserUserIdAndProductId(Long userId, Long productId);
+
 }

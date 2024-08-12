@@ -76,10 +76,18 @@ public class ProductController {
 
 	//게시물 정보 가져오기
 	@GetMapping("/public/{productId}")
-	public ApiResponse<?> getProduct(@PathVariable Long productId) {
+	public ApiResponse<?> getProduct(Authentication authentication, @PathVariable Long productId) {
 		ProductDetailDto findProduct;
+		Long userId = null;
+
+		// 사용자 인증 정보가 있으면 userId 추출
+		if (authentication != null && authentication.isAuthenticated()) {
+			Users user = userService.findByEmail(authentication.getName()).orElse(null);
+			userId = user != null ? user.getUserId() : null;
+		}
+
 		try {
-			findProduct = productService.getProduct(productId);
+			findProduct = productService.getProduct(productId, userId);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.PRODUCT_NOT_FOUND);
 		}

@@ -77,6 +77,32 @@ public class ProductService {
 		return new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
 	}
 
+	//게시물 조회기능
+	public ProductDetailDto getProduct(Long productId, Long userId) {
+		Product findProduct = productRepository.findById(productId)
+			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
+
+		Users user = userRepository.findById(findProduct.getUserId())
+			.orElseThrow(() -> new IllegalArgumentException("유저 없음요 "));
+
+		findProduct.incrementHit(); // 조회수 증가
+		productRepository.save(findProduct); // 변경 사항 저장
+
+		List<String> imageUrls = findProduct.getProductImages()
+			.stream().map(ProductImage::getImageUrl)
+			.collect(Collectors.toList());
+
+		boolean isSaved = false;
+		if (userId != null) {
+			isSaved = saveProductRepository.existsByUserUserIdAndProductId(userId, productId);
+		}
+
+		ProductDetailDto productDetailDto = new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
+		productDetailDto.setSaved(isSaved);
+
+		return new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
+	}
+
 	//게시물 수정 기능
 	@Transactional
 	public void updateProduct(Long productId, ProductUpdateDto productUpdateDto) {
