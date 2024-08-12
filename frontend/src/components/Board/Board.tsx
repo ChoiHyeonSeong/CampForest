@@ -173,7 +173,7 @@ const Board = (props: Props) => {
           {/* 사진 */}
           <div 
             className={`
-              ${props.board.imageUrls.length > 0 ? 'bg-light-black dark:bg-dark-black' : 'hidden'}
+              ${props.board.imageUrls.length > 0 ? 'bg-black' : 'hidden'}
               flex flex-all-center relative w-full max-w-full
               cursor-pointer overflow-hidden aspect-1
             `} 
@@ -351,8 +351,8 @@ const Board = (props: Props) => {
               onClick={() => handleBookmark()}
               className={`
                 inline size-[1.5rem]
-                stroke-light-border-icon
-                dark:stroke-dark-border-icon
+                fill-light-border-icon
+                dark:fill-dark-border-icon
                 cursor-pointer
               `}
             />) : (<BookmarkIcon

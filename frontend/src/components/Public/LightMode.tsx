@@ -7,7 +7,7 @@ const LightMode = (props: Props) => {
   return (
     <div className="fixed inset-0 w-full h-full z-[-1] overflow-hidden">
       {/* Sky background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-700 to-sky-50"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-900 to-sky-200"></div>
 
       {/* Sun */}
       {/* <div className="absolute -top-[1rem] left-[20%] w-[100px] h-[100px] rounded-full bg-[#fff8d7] shadow-sun"></div> */}
@@ -22,9 +22,9 @@ const LightMode = (props: Props) => {
       </div>
 
       {/* Mountains and forest */}
-      <div className="absolute -bottom-[16.5rem] left-0 w-full">
+      {/* <div className="absolute -bottom-[16.5rem] left-0 w-full">
         <img src={Mountain} alt="Mountain landscape" className="object-cover w-full" />
-      </div>
+      </div> */}
     </div>
   );
 }
