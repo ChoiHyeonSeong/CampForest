@@ -64,6 +64,7 @@ public class TransactionChatController {
 	private final RentRepository rentRepository;
 	private final SaleRepository saleRepository;
 
+
 	@PostMapping("/room")
 	public ApiResponse<?> createChatRoom(
 		Authentication authentication,
@@ -77,6 +78,13 @@ public class TransactionChatController {
 			Long buyer = user.getUserId();
 			TransactionChatDto room = transactionChatService.createOrGetChatRoom(createRoomDto.getProductId(), buyer,
 				createRoomDto.getSeller());
+
+			Users receiver = userService.findByUserId(createRoomDto.getSeller())
+				.orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
+
+			notificationService.createChatNotification(receiver, user, NotificationType.CHAT, "님과 채팅이 시작되었습니다.",
+				room.getRoomId());
+
 			return ApiResponse.createSuccess(room, "채팅방 생성 성공하였습니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_ROOM_CREATION_FAILED);
