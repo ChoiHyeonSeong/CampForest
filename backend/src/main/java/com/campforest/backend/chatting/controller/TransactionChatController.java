@@ -44,7 +44,9 @@ import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/transactionchat")
@@ -83,9 +85,19 @@ public class TransactionChatController {
 	public TransactionChatMessage sendMessage(
 		@DestinationVariable Long roomId,
 		@Payload TransactionChatMessage message) {
-		return transactionChatService.saveMessage(roomId, message);
+		try {
+			TransactionChatMessage savedMessage = transactionChatService.saveMessage(roomId, message);
+			return savedMessage;
+		} catch (Exception e) {
+			// 로그 기록
+			log.error("메시지 저장 중 오류 발생: ", e);
+			// 오류 메시지 반환
+			TransactionChatMessage errorMessage = new TransactionChatMessage();
+			errorMessage.setMessageType(MessageType.MESSAGE);
+			errorMessage.setContent("메시지 저장 실패");
+			return errorMessage;
+		}
 	}
-
 	@GetMapping("/room/{roomId}/messages")
 	public ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
 		try {
