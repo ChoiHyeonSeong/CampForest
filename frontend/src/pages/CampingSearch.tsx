@@ -1,14 +1,11 @@
-import CampingList from '@components/CampingSearch/CampingList';
 import React, { useState, useEffect, useRef } from 'react';
-
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import { ReactComponent as FilterIcon } from '@assets/icons/filter3.svg';
-
+import CampingList from '@components/CampingSearch/CampingList';
 import CampingDetail from '@components/CampingSearch/CampingDetail';
-
 import LocationFilter from '@components/Public/LocationFilter';
-
+import CampingDetailFilter from '@components/CampingSearch/CampingDetailFilter';
 import { koreaAdministrativeDivisions } from '@utils/koreaAdministrativeDivisions';
 
 const geolocationOptions = {
@@ -39,6 +36,8 @@ function CampingSearch() {
   const currentLat = useRef(35.9078);
   const currentLng = useRef(127.7669);
   const [map, setMap] = useState<naver.maps.Map | null>(null);
+
+  const [isDetailFilterOpen, setIsDetailFilterOpen] = useState(false);
 
   const handleSelect = (city: string, districts: string[]) => {
     setSelectedLocation({ city, districts });
@@ -209,9 +208,8 @@ function CampingSearch() {
           </div>
           
           {/* 캠핑장리스트 */}
-          <div className={`w-full lg:min-w-[470px] lg:h-full
-      lg:ms-[1rem] mt-[0.75rem] lg:mt-0 
-      flex flex-col`}>
+          <div
+            className={`flex flex-col w-full lg:min-w-[470px] lg:h-full lg:ms-[1rem] mt-[0.75rem] lg:mt-0`}>
             
             <div className={`h-[3rem] mb-[0.75rem]`}>
               <div className={`relative w-[100%]`}>
@@ -246,31 +244,55 @@ function CampingSearch() {
               </div>
             </div>
 
+            <div className="flex space-x-2 mt-[0.75rem]">
             <div
               onClick={() => setIsFilterOpen(true)}
               className='
-                flex items-center w-fit h-fit mt-[0.75rem] px-[0.5rem] py-[0.25rem]
-                bg-light-bgbasic
-                dark:bg-dark-bgbasic
+                flex items-center w-fit h-fit px-[0.5rem] py-[0.25rem]
+                bg-light-bgbasic dark:bg-dark-bgbasic
                 cursor-pointer rounded
               '
             >
-              <div className='me-[0.3rem] font-medium'>지역선택</div>
+              <div className='me-[0.3rem] font-medium'>지역필터</div>
               <FilterIcon 
                 className={`
                   size-[0.85rem]
                   fill-light-border-icon
                   dark:fill-dark-border-icon
                 `}
-                />
+              />
             </div>
-            <LocationFilter 
-              isOpen={isFilterOpen}
-              onClose={() => setIsFilterOpen(false)}
-              divisions={koreaAdministrativeDivisions}
-              onSelect={handleSelect}
-              selectedLocation={selectedLocation}
-            />
+            <div
+              onClick={() => setIsDetailFilterOpen(true)}
+              className='
+                flex items-center w-fit h-fit px-[0.5rem] py-[0.25rem]
+                bg-light-bgbasic dark:bg-dark-bgbasic
+                cursor-pointer rounded
+              '
+            >
+              <div className='me-[0.3rem] font-medium'>상세필터</div>
+              <FilterIcon 
+                className={`
+                  size-[0.85rem]
+                  fill-light-border-icon
+                  dark:fill-dark-border-icon
+                `}
+              />
+            </div>
+          </div>
+
+          <LocationFilter 
+            isOpen={isFilterOpen}
+            onClose={() => setIsFilterOpen(false)}
+            divisions={koreaAdministrativeDivisions}
+            onSelect={handleSelect}
+            selectedLocation={selectedLocation}
+          />
+          
+          <CampingDetailFilter
+            isOpen={isDetailFilterOpen}
+            onClose={() => setIsDetailFilterOpen(false)}
+          />
             
             <div className={`${filterCondition.length > 1 ? 'h-[2rem]' : 'h-0'} mb-[0.75rem]`}>
               
