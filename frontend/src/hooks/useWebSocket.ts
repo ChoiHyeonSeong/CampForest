@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Client, Message } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { RootState, store } from '@store/store';
-import { addMessageToChatInProgress, updateCommunityChatUserList, updateMessageReadStatus, updateTransactionChatUserList } from '@store/chatSlice';
+import { addMessageToChatInProgress, setCommunityChatUserList, setTotalUnreadCount, setTransactionChatUesrList, updateCommunityChatUserList, updateMessageReadStatus, updateTransactionChatUserList } from '@store/chatSlice';
 import { useSelector } from 'react-redux';
+import { communityChatList, transactionChatList } from '@services/chatService';
+import { ChatUserType } from '@components/Chat/ChatUser';
 
 type UseWebSocketProps = {
   jwt: string | null;
@@ -19,11 +21,25 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
   const [connected, setConnected] = useState(false);
   const chatState = useSelector((state: RootState) => state.chatStore);
   const clientRef = useRef<Client | null>(null);
-  const transactionChatUserListRef = useRef(chatState.transactionChatUserList);
 
-  useEffect(() => {
-    transactionChatUserListRef.current = chatState.transactionChatUserList;
-  }, [chatState.transactionChatUserList])
+  // 채팅방 목록 가져오기
+  const fetchChatList = async () => {
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+      const communityChatUserList = await communityChatList();
+      let count = 0;
+      communityChatUserList.map((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setCommunityChatUserList(communityChatUserList));
+      const transactionChatUserList = await transactionChatList();
+      transactionChatUserList.map((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setTotalUnreadCount(count));
+      store.dispatch(setTransactionChatUesrList(transactionChatUserList));
+    }
+  }
 
   const subscribeInitial = useCallback((client: Client) => {
     // 사용자가 진행 중이었던 채팅방 목록 불러오고 구독
@@ -47,7 +63,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
           // 현재 열려 있는 채팅방 내용 갱신
           if (state.chatStore.roomId === response.roomId) {
             store.dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-            publishMessage(`/pub/room/${response.roomId}/markAsRead`, response.roomId);
+            publishMessage(`/pub/room/${response.roomId}/markAsRead`, response.userId);
             store.dispatch(addMessageToChatInProgress(response));
           } else {
             // 채팅방 목록 업데이트
@@ -56,25 +72,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         });
       });
     }
-    // if (transactionChatUserListRef.current) {
-    //   transactionChatUserListRef.current.forEach((chatRoom: any) => {
-    //     // 메시지를 받았을 때
-    //     client.subscribe(`/sub/transaction/${chatRoom.roomId}`, (message) => {
-    //       const response = JSON.parse(message.body);
-    //       console.log('Received chat message: ', response);
-    //       const state: RootState = store.getState();
 
-    //       // 현재 열려 있는 채팅방 내용 갱신
-    //       if (state.chatStore.roomId === response.roomId) {
-    //         store.dispatch(updateTransactionChatUserList({...response, inProgress: true}));
-    //         publishMessage(`/pub/transaction/${response.roomId}/markAsRead`, response.roomId);
-    //         store.dispatch(addMessageToChatInProgress(response));
-    //       } else {
-    //         store.dispatch(updateTransactionChatUserList({...response, inProgress: false}));
-    //       }
-    //     })
-    //   })
-    // }
     const transactionChatUserList = store.getState().chatStore.transactionChatUserList;
     if (transactionChatUserList) {
       transactionChatUserList.forEach((chatRoom: any) => {
@@ -114,9 +112,10 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
       heartbeatOutgoing: 4000,
     });
 
-    newClient.onConnect = () => {
+    newClient.onConnect = async () => {
       setConnected(true);
       console.log('Connected to WebSocket');
+      await fetchChatList();
       subscribeInitial(newClient);
     };
 

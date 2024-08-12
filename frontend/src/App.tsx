@@ -47,31 +47,6 @@ function App() {
     return null;
   }
 
-  // 채팅방 목록 가져오기
-  const fetchChatList = async () => {
-    const userId = sessionStorage.getItem('userId');
-    if (userId) {
-      const communityChatUserList = await communityChatList();
-      let count = 0;
-      communityChatUserList.map((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
-      store.dispatch(setCommunityChatUserList(communityChatUserList));
-      const transactionChatUserList = await transactionChatList();
-      transactionChatUserList.map((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
-      store.dispatch(setTotalUnreadCount(count));
-      store.dispatch(setTransactionChatUesrList(transactionChatUserList));
-    }
-  }
-  
-  useEffect(() => {
-    if(userState.isLoggedIn) {
-      fetchChatList();
-    }
-  }, [userState.isLoggedIn]);
-
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;
     bodyBox.classList.add('bg-light-white');
