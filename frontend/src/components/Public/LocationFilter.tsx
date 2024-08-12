@@ -119,18 +119,6 @@ const LocationFilter = (props: Props) => {
           
         </div>
         <div className='flex justify-center mt-[0.5rem]'>
-          {/* <button
-            onClick={closeFilter}
-            className="
-              mt-[1rem] px-[1rem] py-[0.5rem] 
-              bg-light-signature text-light-white hover:bg-light-signature-hover
-              dark:bg-dark-signature dark:text-dark-white dark:hover:bg-dark-signature-hover
-              rounded
-            "
-          >
-            닫기
-          </button> */}
-          
           <button
             onClick={() => {
               props.onSelect(selectedCity, selectedDistricts);

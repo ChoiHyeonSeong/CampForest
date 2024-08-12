@@ -12,11 +12,11 @@ type ProductRegistDto = {
 }
 
 type SearchParams = {
-  category?: string,
+  category?: string | null,
   findUserId?: number,
   productType: string,
-  minPrice?: number,
-  maxPrice?: number,
+  minPrice?: number | null,
+  maxPrice?: number | null,
   locations?: string[],
   titleKeyword?: string,
   cursorId?: number | null,
