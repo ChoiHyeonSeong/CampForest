@@ -182,6 +182,7 @@ public class SaleService {
 			.meetingPlace(saleRequestDto.getMeetingPlace())
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
+			.realPrice(saleRequestDto.getPrice())
 			.build();
 	}
 
@@ -198,6 +199,7 @@ public class SaleService {
 			.meetingPlace(saleRequestDto.getMeetingPlace())
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
+			.realPrice(saleRequestDto.getPrice())
 			.build();
 	}
 

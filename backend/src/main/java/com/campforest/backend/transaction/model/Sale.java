@@ -84,6 +84,9 @@ public class Sale {
 	@Column(columnDefinition = "boolean default false")
 	private boolean confirmedBySeller;
 
+	@Column(name = "real_price")
+	private Long realPrice;
+
 	public void requestSale() {
 		this.saleStatus = TransactionStatus.REQUESTED;
 	}
