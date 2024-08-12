@@ -500,7 +500,7 @@ public class TransactionChatController {
 			Map<String, Long> map = saleService.acceptSale(saleRequestDto, requester.getUserId());
 			Long receiverId = map.get("receiverId");
 			Long saleId = map.get("saleId");
-
+			System.out.println("accept res: "+receiverId+" sale: "+ saleId);
 			//여기서 리시버는 처음에 거래요청한 사람일듯
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
@@ -539,12 +539,19 @@ public class TransactionChatController {
 			Users requester = userService.findByUserId(userId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			saleService.denySale(saleRequestDto, requester.getUserId());
+			Map<String, Long> map = saleService.denySale(saleRequestDto, requester.getUserId());
+			Long receiverId = map.get("receiverId");
+			Long saleId = map.get("saleId");
+			Users receiver = userService.findByUserId(receiverId)
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+				requester.getNickname() + "님이 판매 요청을 거절하였습니다.");
 
 			TransactionChatMessage denyMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.messageType(MessageType.TRANSACTION)
+				.transactionId(saleId)
 				.content(requester.getNickname() + "님이 판매 요청을 거절하였습니다.")
 				.build();
 			transactionChatService.saveMessage(roomId, denyMessage);
