@@ -16,8 +16,24 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '@store/store';
-import { addMessageToChatInProgress, selectTransaction, setChatInProgressType, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, setTransactionChatUesrList, updateMessageReadStatus, updateTransactionChatUserList } from '@store/chatSlice';
-import { initTransactionChat, transactionChatList } from '@services/chatService';
+import {
+  addMessageToChatInProgress,
+  selectTransaction,
+  setChatInProgress,
+  setChatInProgressType,
+  setIsChatOpen,
+  setOtherId,
+  setRoomId,
+  setTotalUnreadCount,
+  setTransactionChatUesrList,
+  updateMessageReadStatus,
+  updateTransactionChatUserList,
+} from '@store/chatSlice';
+import {
+  initTransactionChat,
+  transactionChatDetail,
+  transactionChatList,
+} from '@services/chatService';
 import { ChatUserType } from '@components/Chat/ChatUser';
 import { useWebSocket } from 'Context/WebSocketContext';
 
@@ -41,7 +57,6 @@ export type ProductDetailType = {
 function Detail() {
   const dispatch = useDispatch();
   const { subscribe, publishMessage } = useWebSocket();
-  const isUserPost = false; // 예시로 사용자 게시물 여부를 나타내는 값
   const loginUserId = Number(sessionStorage.getItem('userId'));
   const productId = Number(useParams().productId);
   const chatState = useSelector((state: RootState) => state.chatStore);
@@ -60,22 +75,22 @@ function Detail() {
     productType: '',
     userId: 0,
     nickname: '',
-    userImage: ''
+    userImage: '',
   });
 
   const [category, setCategory] = useState('');
 
   useEffect(() => {
     if (product.category === '침낭') {
-      setCategory('침낭/매트')
+      setCategory('침낭/매트');
     } else if (product.category === '코펠') {
-      setCategory('코펠/식기')
+      setCategory('코펠/식기');
     } else if (product.category === '침낭') {
-      setCategory('침낭/매트')
+      setCategory('침낭/매트');
     } else {
-      setCategory(product.category)
+      setCategory(product.category);
     }
-  }, [product])
+  }, [product]);
 
   const fetchProduct = async () => {
     try {
@@ -92,9 +107,12 @@ function Detail() {
   }, []);
 
   async function handleChatButton() {
-    const matchedUser = chatState.transactionChatUserList.find((chatUser) => chatUser.otherUserId === product.userId);
+    console.log(productId);
+    const matchedUser = chatState.transactionChatUserList.find(
+      (chatUser) => chatUser.productId === productId,
+    );
     if (matchedUser) {
-      dispatch(setChatInProgressType('거래'))
+      dispatch(setChatInProgressType('거래'));
       dispatch(selectTransaction());
       dispatch(setOtherId(matchedUser.otherUserId));
       dispatch(setRoomId(matchedUser.roomId));
@@ -102,8 +120,8 @@ function Detail() {
     } else {
       try {
         const roomId = await initTransactionChat(productId, product.userId);
-        await fetchTransactionChatList()
-        dispatch(setChatInProgressType('거래'))
+        await fetchTransactionChatList();
+        dispatch(setChatInProgressType('거래'));
         dispatch(selectTransaction());
         dispatch(setOtherId(product.userId));
         dispatch(setIsChatOpen(true));
@@ -122,28 +140,43 @@ function Detail() {
       let count = 0;
       response.map((chatUser: ChatUserType) => {
         count += chatUser.unreadCount;
-      })
+      });
       store.dispatch(setTotalUnreadCount(count));
       store.dispatch(setTransactionChatUesrList(response));
     }
-  }
+  };
 
   function subscribeToChat(roomId: number) {
     // 메세지를 받았을 때
-    subscribe(`/sub/transaction/${roomId}`, (message: { body: string }) => {
+    subscribe(`/sub/transaction/${roomId}`, async (message: { body: string }) => {
       const response = JSON.parse(message.body);
       const state: RootState = store.getState();
-      if(response.messageType === 'READ') {
-        if (state.userStore.userId !== response.senderId) {
-          store.dispatch(updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }));
-        }  
+      if (response.messageType === 'READ') {
+        store.dispatch(
+          updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }),
+        );
+      } else if (response.messageType === 'TRANSACTION') {
+        console.log(response);
+        if (state.chatStore.roomId === response.roomId) {
+          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
+          publishMessage(`/pub/transaction/${response.roomId}/read`, state.userStore.userId);
+          const fetchedMessages = await transactionChatDetail(response.roomId);
+          dispatch(setChatInProgress(fetchedMessages.messages));
+        } else {
+          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
+        }
       }
-      else if (state.chatStore.roomId === response.roomId) {
-        dispatch(updateTransactionChatUserList({...response, inProgress: true}));
-        publishMessage(`/pub/transaction/${response.roomId}/read`, loginUserId);
-        dispatch(addMessageToChatInProgress(response));
+      // 현재 열려 있는 채팅방 내용 갱신
+      else if (response.messageType === 'MESSAGE') {
+        if (state.chatStore.roomId === response.roomId) {
+          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
+          publishMessage(`/pub/transaction/${chatState.roomId}/read`, state.userStore.userId);
+          store.dispatch(addMessageToChatInProgress(response));
+        } else {
+          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
+        }
       } else {
-        dispatch(updateTransactionChatUserList({...response, inProgress: false}));
+        console.log('타입이 없습니다');
       }
     });
   }
@@ -164,9 +197,11 @@ function Detail() {
 
   return (
     <div className={`flex justify-center mb-[5rem] `}>
-      <div className={`bg-light-gray w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6`}>
+      <div
+        className={`bg-light-gray w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6`}
+      >
         {/* 상단 */}
-        <div 
+        <div
           className={`
             flex lg:flex-row flex-col relative w-full mb-[2rem] p-[0.75rem]
             bg-light-gray
@@ -175,50 +210,50 @@ function Detail() {
         >
           {/* 이미지 */}
           <Swiper
-                className="w-2/5 aspect-1 bg-black"
-                style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
-                modules={[Navigation, Pagination]}
-                spaceBetween={0}
-                slidesPerView={1}
-                navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
-                pagination={{ clickable: true }}
-                onSwiper={(swiper: any) => console.log(swiper)}
-              >
-                {product.imageUrls.map((imageUrl, index) => (
-                  <SwiperSlide key={index} >
-                    <img
-                      src={imageUrl}
-                      alt="ProductImg"
-                      className="
+            className="w-2/5 aspect-1 bg-black"
+            style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
+            modules={[Navigation, Pagination]}
+            spaceBetween={0}
+            slidesPerView={1}
+            navigation={{ nextEl: '.my-next-button', prevEl: '.my-prev-button' }}
+            pagination={{ clickable: true }}
+            onSwiper={(swiper: any) => console.log(swiper)}
+          >
+            {product.imageUrls.map((imageUrl, index) => (
+              <SwiperSlide key={index}>
+                <img
+                  src={imageUrl}
+                  alt="ProductImg"
+                  className="
                         w-full h-full 
                         object-contain
                       "
-                    />
-                  </SwiperSlide>
-                ))}
-                <button 
-                  className={`
+                />
+              </SwiperSlide>
+            ))}
+            <button
+              className={`
                     my-next-button 
                     absolute top-1/2 right-[0.5rem] z-[10] p-[0.5rem]
                     transform -translate-y-1/2 rounded-full
                     bg-white bg-opacity-50
                   `}
-                >
-                  <RightArrowIcon className="w-[1.5rem] h-[1.5rem]" />
-                </button>
-                <button 
-                  className={`
+            >
+              <RightArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+            </button>
+            <button
+              className={`
                     my-prev-button
                     absolute top-1/2 left-2 z-10 p-2
                     transform -translate-y-1/2 rounded-full
                     bg-white bg-opacity-50
                   `}
-                >
-                  <LeftArrowIcon className="w-[1.5rem] h-[1.5rem]" />
-                </button>
-                <style
-                  dangerouslySetInnerHTML={{
-                    __html: `
+            >
+              <LeftArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+            </button>
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
                     .swiper-container {
                       width: 100% !important;
                       height: 100% !important;
@@ -237,13 +272,12 @@ function Detail() {
                       opacity: 1 !important;
                     }
                   `,
-                  }}
-                />
-              </Swiper>
+              }}
+            />
+          </Swiper>
           {/* 내용 */}
-          <div
-            className={`w-full lg:w-3/5 md:ps-[1.5rem]`}>
-            <div 
+          <div className={`w-full lg:w-3/5 md:ps-[1.5rem]`}>
+            <div
               className={`
                 flex justify-between mt-[1rem] mb-[0.5rem]
                 text-sm
@@ -253,7 +287,7 @@ function Detail() {
                 <div className={`me-[1.5rem]`}>
                   캠핑 장비 {'>'} {category}
                 </div>
-                <div 
+                <div
                   className={`
                     text-light-signature
                     dark:text-dark-signature
@@ -271,10 +305,8 @@ function Detail() {
                 }}
               />
             </div>
-            <div className={`text-2xl font-medium`}>
-              {product.productName}
-            </div>
-            <div 
+            <div className={`text-2xl font-medium`}>{product.productName}</div>
+            <div
               className={`
                 relative mt-[1.5rem]
                 border-light-border
@@ -282,54 +314,42 @@ function Detail() {
                 text-sm border-b
               `}
             >
-              <div 
+              <div
                 className={`
                   w-full min-h-[7rem]
                   break-all
                 `}
               >
-                {product.productContent
-              }</div>
+                {product.productContent}
+              </div>
               <div className={`flex my-[1.5rem]`}>
-                <div>
-                  조회
-                </div>
-                <div className={`ms-[0.25rem] me-[0.5rem]`}>
-                  {product.hit}
-                </div>
-                <div>
-                  관심
-                </div>
-                <div className={`ms-[0.25rem] me-[0.5rem]`}>
-                  {product.interestHit}
-                </div>
+                <div>조회</div>
+                <div className={`ms-[0.25rem] me-[0.5rem]`}>{product.hit}</div>
+                <div>관심</div>
+                <div className={`ms-[0.25rem] me-[0.5rem]`}>{product.interestHit}</div>
               </div>
             </div>
             <div className={`flex justify-between pt-[1.5rem]`}>
               <div>
-                <div className={`font-medium`}>
-                  픽업 | 반납 장소
-                </div>
-                <div 
+                <div className={`font-medium`}>픽업 | 반납 장소</div>
+                <div
                   className={`
                     p-[0.5rem]
                     text-sm
                   `}
                 >
-                  <div>
-                    {product.location}
-                  </div>
+                  <div>{product.location}</div>
                 </div>
               </div>
               {/* 가격 */}
               <div className={`mt-[1rem]`}>
-                <div 
+                <div
                   className={`
                     flex justify-between mb-[0.5rem]
                     text-lg md:text-xl
                   `}
                 >
-                  <div 
+                  <div
                     className={`
                       me-[1.25rem] 
                       font-semibold
@@ -339,9 +359,7 @@ function Detail() {
                   </div>
                   <div className={`font-bold`}>
                     {priceComma(product.productPrice)} 원
-                    <span className={`${product.productType === 'SALE' ? 'hidden' : ''}`}>
-                      /일
-                    </span>
+                    <span className={`${product.productType === 'SALE' ? 'hidden' : ''}`}>/일</span>
                   </div>
                 </div>
                 <div
@@ -351,7 +369,7 @@ function Detail() {
                     text-base md:text-lg
                   `}
                 >
-                  <div 
+                  <div
                     className={`
                       me-[1.25rem]
                       font-semibold
@@ -359,16 +377,14 @@ function Detail() {
                   >
                     보증금
                   </div>
-                  <div className={`font-bold`}>
-                    {product.deposit} 원
-                  </div>
+                  <div className={`font-bold`}>{product.deposit} 원</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         {/* 판매자 정보 및 거래버튼 */}
-        <div 
+        <div
           className={`
             flex flex-col lg:flex-row justify-between mt-[2.5rem] mb-[3.5rem] px-[1rem] py-[1.5rem]
             
@@ -378,13 +394,10 @@ function Detail() {
           {/* 판매자 정보 */}
           <div className={`flex flex-col w-full lg:w-[calc(100%-24.5rem)] max-lg:mb-8`}>
             <div className={`w-full mb-[0.75rem]`}>
-              <span className={`font-medium`}>
-                {product.nickname} 
-              </span>
-              의 제품
+              <span className={`font-medium`}>{product.nickname}</span>의 제품
             </div>
             <div className={`flex w-full`}>
-              <div 
+              <div
                 className={`
                   shrink-0 size-[3rem] me-[1rem]
                   bg-light-black
@@ -392,14 +405,11 @@ function Detail() {
                   rounded-full
                 `}
               >
-                <img 
-                  src={product.userImage} 
-                  alt={''} 
-                />
+                <img src={product.userImage} alt={''} />
               </div>
               <div className={`flex flex-col w-full`}>
                 <div className={`flex mb-[0.5rem]`}>
-                  <div 
+                  <div
                     className={`
                       me-[0.75rem]
                       font-medium 
@@ -407,7 +417,7 @@ function Detail() {
                   >
                     거래 불꽃 온도
                   </div>
-                  <div 
+                  <div
                     className={`
                       text-light-heart
                       dark:text-dark-heart
@@ -417,7 +427,7 @@ function Detail() {
                     573°C
                   </div>
                 </div>
-                <div 
+                <div
                   className={`
                     w-full lg:w-4/5 h-4
                     bg-light-gray
@@ -425,7 +435,7 @@ function Detail() {
                     rounded-full
                   `}
                 >
-                  <div 
+                  <div
                     className={`
                       relative w-1/2 h-full
                       bg-gradient-to-r from-light-warning to-light-signature
@@ -445,7 +455,7 @@ function Detail() {
           </div>
           {/* 거래버튼 */}
           <div className={`flex items-center md:justify-center`}>
-            <button 
+            <button
               className={`
                 flex flex-all-center w-1/2 md:max-w-[20rem] lg:w-[12rem] h-[2.5rem] me-[0.5rem] py-[0.5rem]
                 bg-light-white border-light-signature text-light-signature
@@ -455,7 +465,7 @@ function Detail() {
             >
               찜하기
             </button>
-            <button 
+            <button
               className={`
                 flex flex-all-center w-1/2 md:max-w-[20rem] lg:w-[12rem] h-[2.5rem] py-[0.5rem] 
                 bg-light-signature text-light-white
@@ -470,16 +480,13 @@ function Detail() {
         </div>
         {/* 판매자의 추가거래 상품 받아오기 */}
         <div>
-          <div 
+          <div
             className={`
               mb-[0.75rem] 
               text-lg
             `}
           >
-            <span className={`font-medium`}>
-              사용자1
-            </span>
-            의 다른 거래 상품 구경하기
+            <span className={`font-medium`}>사용자1</span>의 다른 거래 상품 구경하기
           </div>
           <div className={`w-full flex flex-wrap`} />
           {/* <Swiper

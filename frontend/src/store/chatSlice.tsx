@@ -1,31 +1,49 @@
-import { TransactionMessageType } from '@components/Chat/Chat';
+import { TransactionEntityType, TransactionMessageType } from '@components/Chat/Chat';
 import { ChatUserType } from '@components/Chat/ChatUser';
+import { ProductDetailType } from '@components/Product/ProductDetail';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type ChatState = {
   isChatOpen: boolean;
   selectedCategory: string;
   roomId: number;
-  productId: number;
+  product: ProductDetailType;
   chatInProgressType: string;
   chatInProgress: TransactionMessageType[];
   otherId: number;
   communityChatUserList: ChatUserType[];
   transactionChatUserList: ChatUserType[];
   totalUnreadCount: number;
+  saleStatus: string;
 }
 
 const initialState: ChatState = {
   isChatOpen: false,
   selectedCategory: '일반',
   roomId: 0,
-  productId: 0,
+  product: {
+    category: '',
+    deposit: 0,
+    hit: 0,
+    imageUrls: [],
+    interestHit: 0,
+    location: '',
+    productContent: '',
+    productId: 0,
+    productName: '',
+    productPrice: 0,
+    productType: '',
+    userId: 0,
+    nickname: '',
+    userImage: '',
+  },
   chatInProgressType: '일반',
   chatInProgress: [],
   otherId: 0,
   communityChatUserList: [],
   transactionChatUserList: [],
   totalUnreadCount: 0,
+  saleStatus: '',
 };
 
 const chatSlice = createSlice({
@@ -47,8 +65,8 @@ const chatSlice = createSlice({
     setRoomId: (state, action: PayloadAction<number>) => {
       state.roomId = action.payload;
     },
-    setProductId: (state, action: PayloadAction<number>) => {
-      state.productId = action.payload;
+    setProduct: (state, action: PayloadAction<ProductDetailType>) => {
+      state.product = action.payload;
     },
     setChatInProgress: (state, action: PayloadAction<TransactionMessageType[]>) => {
       state.chatInProgress = action.payload;
@@ -60,6 +78,7 @@ const chatSlice = createSlice({
       if (!state.chatInProgress) {
         state.chatInProgress = []; // null이면 빈 배열로 초기화
       }
+      console.log('addMessageToChatInProgress:', action.payload);
       state.chatInProgress.push(action.payload);
     },
     setOtherId: (state, action: PayloadAction<number>) => {
@@ -131,6 +150,9 @@ const chatSlice = createSlice({
     setTotalUnreadCount: (state, action: PayloadAction<number>) => {
       state.totalUnreadCount = action.payload;
     },
+    setSaleStatus: (state, action: PayloadAction<string>) => {
+      state.saleStatus = action.payload;
+    },
   }
 })
 
@@ -139,7 +161,7 @@ export const {
   selectCommnunity, 
   selectTransaction, 
   setRoomId, 
-  setProductId,
+  setProduct,
   setChatInProgress,
   setChatInProgressType,
   addMessageToChatInProgress,
@@ -149,6 +171,7 @@ export const {
   updateCommunityChatUserList,
   updateTransactionChatUserList,
   updateMessageReadStatus,
-  setTotalUnreadCount
+  setTotalUnreadCount,
+  setSaleStatus,
 } = chatSlice.actions;
 export default chatSlice.reducer;

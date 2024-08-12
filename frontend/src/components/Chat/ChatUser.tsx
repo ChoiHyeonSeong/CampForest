@@ -11,6 +11,7 @@ export type ChatUserType = {
   lastMessage: string;
   lastMessageTime: string;
   unreadCount: number;
+  productId?: number;
 }
 
 type Props = {
@@ -82,7 +83,7 @@ const ChatUser = (props: Props) => {
            {/* 마지막 메세지 */}
           <div
             className={`
-              max-w-[2rem]
+              max-w-[8rem]
               text-light-text-secondary
               dark:text-dark-text-secondary
               text-sm truncate

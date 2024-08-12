@@ -41,6 +41,7 @@ export const transactionChatList = async () => {
 }
 
 export const transactionChatDetail = async (roomId: number) => {
+  console.log(roomId);
   const response = await axiosInstance.get(`/transactionchat/room/${roomId}/messages`);
 
   console.log(response.data);

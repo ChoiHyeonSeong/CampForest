@@ -84,6 +84,8 @@ const useSSE = () => {
       const eventData = JSON.parse(event.data);
       console.log('새 알림', eventData);
       switch (eventData.notificationType) {
+        case 'SALE':
+          break;
         case 'CHAT':
           // subscribeToChat(eventData.)
           break;

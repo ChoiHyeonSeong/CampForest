@@ -94,7 +94,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
       const response = JSON.parse(message.body);
       const state: RootState = store.getState();
-      if(response.messageType === 'READ') {
+      if(response.type === 'READ') {
         if (state.userStore.userId !== response.senderId) {
           store.dispatch(updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }));
         }  
