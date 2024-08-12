@@ -78,7 +78,7 @@ public class ProductService {
 	}
 
 	//게시물 조회기능
-	public ProductDetailDto getProduct(Long productId, Long userId) {
+	public ProductDetailDto getProductByUserId(Long productId, Long userId) {
 		Product findProduct = productRepository.findById(productId)
 			.orElseThrow(() -> new IllegalArgumentException("상품 없음요"));
 
@@ -100,7 +100,7 @@ public class ProductService {
 		ProductDetailDto productDetailDto = new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
 		productDetailDto.setSaved(isSaved);
 
-		return new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
+		return productDetailDto;
 	}
 
 	//게시물 수정 기능
