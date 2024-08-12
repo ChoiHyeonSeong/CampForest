@@ -43,7 +43,9 @@ const NavbarTop = (props: Props) => {
   };
 
   const closePushModal = () => {
-    readAllNotifications();
+    if(isPushModalOpen) {
+      readAllNotifications();
+    }
     setIsPushModalOpen(false);
   };
 
