@@ -91,6 +91,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         List<TransactionChatRoom> rooms = transactionChatRoomRepository.findByUser1IdOrUser2Id(userId, userId);
         return rooms.stream().map(room -> {
             TransactionChatRoomListDto dto = convertToListDto(room,userId);
+            dto.setProductId(transactionChatRoomRepository.findProductIdByRoomId(room.getRoomId()));
             dto.setUnreadCount(transactionChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
             return dto;
         }).collect(Collectors.toList());
@@ -114,11 +115,8 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     private TransactionChatRoomListDto convertToListDto(TransactionChatRoom room, Long currentUserId) {
         TransactionChatRoomListDto dto = new TransactionChatRoomListDto();
         dto.setRoomId(room.getRoomId());
-
-
         Long otherUserId = room.getBuyerId().equals(currentUserId) ? room.getSellerId() : room.getBuyerId();
         dto.setOtherUserId(otherUserId);
-
         TransactionChatMessage lastMessage = getLastMessageForRoom(room.getRoomId());
         if (lastMessage != null) {
             dto.setLastMessage(lastMessage.getContent());
