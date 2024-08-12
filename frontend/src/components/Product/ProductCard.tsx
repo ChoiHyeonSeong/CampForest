@@ -27,6 +27,7 @@ export type ProductType = {
 
 type Props = {
   product: ProductType;
+  likedTrigger?: (param: boolean) => void;
 }
 
 const ProductCard = (props: Props) => {
@@ -40,10 +41,16 @@ const ProductCard = (props: Props) => {
         const response = await productDislike(props.product.productId)
         console.log(response)
         setLiked(false)
+        if (props.likedTrigger) {
+          props.likedTrigger(false)
+        }
       } else {
         const response = await productLike(props.product.productId)
         console.log(response)
         setLiked(true)
+        if (props.likedTrigger) {
+          props.likedTrigger(true)
+        }
       }
     } catch (error) {
       console.log(error)

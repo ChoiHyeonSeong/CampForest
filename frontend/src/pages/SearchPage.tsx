@@ -6,6 +6,8 @@ import SearchBoardList from '@components/Search/SearchBoardList'
 import SearchProductList from '@components/Search/SearchProductList'
 import SearchAllList from '@components/Search/SearchAllList';
 
+import eventEmitter from '@utils/eventEmitter';
+
 const SearchPage = () => {
   const [inputText, setInputText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +21,8 @@ const SearchPage = () => {
     const storedSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
     const updatedSearches = [search, ...storedSearches.filter((s: string) => s !== search)].slice(0, 10);
     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+
+    eventEmitter.emit('recentSearchesUpdated', updatedSearches);
   }, []);
 
   // 검색 실행 함수

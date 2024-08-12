@@ -108,10 +108,6 @@ const NavbarLeftExtendMobile = (props: Props) => {
       linkTo: 'community/all',
     },
     {
-      title: '캠핑장 후기',
-      linkTo: 'community/place',
-    },
-    {
       title: '캠핑장비 후기',
       linkTo: 'community/equipment',
     },

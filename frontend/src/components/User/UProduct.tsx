@@ -169,6 +169,14 @@ const UProduct = (props: Props) => {
     getCnt()
   }, [userId, userState.userId])
 
+  const likedTrigger = (isLiked: boolean) => {
+    if (isLiked) {
+      setTotalLikedProductCnt(totalLikedProductCnt + 1)
+    } else {
+      setTotalLikedProductCnt(totalLikedProductCnt - 1)
+    }
+  }
+
   return (
     <div>
       <div>
@@ -253,7 +261,7 @@ const UProduct = (props: Props) => {
         `}
       >
         {products?.map((product: any, key) => (
-          <ProductCard key={key} product={product}/>
+          <ProductCard key={key} product={product} likedTrigger={likedTrigger}/>
         ))}
         <div ref={ref} className={`${products.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
       </div>

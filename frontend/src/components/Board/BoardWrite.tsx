@@ -26,7 +26,7 @@ const BoardWrite = () => {
   const isBoardWriteModal = useSelector((state: RootState) => state.modalStore.isBoardWriteModal)
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
-  const [category, setCategory] = useState<CategoryType>({text: '캠핑장 후기', value: 'place'});
+  const [category, setCategory] = useState<CategoryType>({text: '장비 후기', value: 'equipment'});
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState<boolean>(false);
   const [boardOpen, setBoardOpen] = useState<boolean>(true);
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
@@ -59,10 +59,6 @@ const BoardWrite = () => {
   const throttledHandleWrite = throttle(handleWrite, 3000)
 
   const categories: CategoryType[] = [
-    {
-      text: '캠핑장 후기',
-      value: 'place'
-    },
     {
       text: '장비 후기',
       value: 'equipment'
@@ -122,7 +118,7 @@ const BoardWrite = () => {
   const formClear = () => {
     setTitle('');
     setContent('');
-    setCategory({text: '캠핑장 후기', value: 'place'});
+    setCategory({text: '장비 후기', value: 'equipment'});
     setIsCategoryDropdownOpen(false);
     setBoardOpen(true);
     setIsBoardOpenDropdownOpen(false);
