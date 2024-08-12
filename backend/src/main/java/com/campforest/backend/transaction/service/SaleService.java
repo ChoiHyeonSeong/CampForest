@@ -2,6 +2,7 @@ package com.campforest.backend.transaction.service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -231,10 +232,10 @@ public class SaleService {
 
 
 	private Sale[] getSales(SaleRequestDto saleRequestDto, Long requesterId, Long receiverId) {
-		Sale sale1 = saleRepository.findByProductIdAndRequesterIdAndReceiverId(saleRequestDto.getProductId(),
+		Sale sale1 = saleRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(saleRequestDto.getProductId(),
 				requesterId, receiverId)
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
-		Sale sale2 = saleRepository.findByProductIdAndRequesterIdAndReceiverId(saleRequestDto.getProductId(),
+		Sale sale2 = saleRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(saleRequestDto.getProductId(),
 				receiverId, requesterId)
 			.orElseThrow(() -> new IllegalArgumentException("상대방 요청을 찾을 수 없습니다."));
 		return new Sale[] {sale1, sale2};
