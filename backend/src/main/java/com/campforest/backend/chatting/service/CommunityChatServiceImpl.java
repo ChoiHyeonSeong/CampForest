@@ -38,7 +38,10 @@ public class CommunityChatServiceImpl implements CommunityChatService {
                 .content(message.getContent())
                 .senderId(message.getSenderId())
                 .build();
-        return communityChatMessageRepository.save(message);
+
+        message = communityChatMessageRepository.save(message);
+        message.setType("MESSAGE");
+        return message;
     }
 
     @Transactional
@@ -63,6 +66,7 @@ public class CommunityChatServiceImpl implements CommunityChatService {
         CommunityChatRoom chatRoom = communityChatRoomRepository.findById(roomId).orElseThrow();
         communityChatRoomRepository.save(chatRoom);
     }
+
     @Override
     public List<CommunityChatRoomListDto> getChatRoomsForUser(Long userId) {
         List<CommunityChatRoom> rooms = communityChatRoomRepository.findByUser1IdOrUser2Id(userId, userId);

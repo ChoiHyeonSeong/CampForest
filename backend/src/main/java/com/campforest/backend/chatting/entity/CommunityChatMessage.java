@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,6 +39,9 @@ public class CommunityChatMessage {
 	private LocalDateTime createdAt;
 	@Column(name = "is_read")
 	private boolean isRead;
+
+	@Transient
+	private String type;
 
 	@PrePersist
 	protected void onCreate() {
