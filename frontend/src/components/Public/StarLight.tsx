@@ -1,4 +1,3 @@
-import useSSE from '@hooks/useSSE';
 import React, { useEffect } from 'react'
 import Mountain from '@assets/images/mountain.png'
 
@@ -12,8 +11,6 @@ const StarLight = (props: Props) => {
     }
     return value;
   };
-  
-  useSSE();
 
   useEffect(() => {
     const stars1 = document.querySelector('.stars') as HTMLElement;

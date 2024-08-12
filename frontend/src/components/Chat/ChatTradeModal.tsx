@@ -52,12 +52,13 @@ const ChatTradeModal = (props: Props) => {
     e.preventDefault();
 
     if (props.product.productType === 'SALE') {
-      publishMessage(`/pub/transaction/room/${chatState.roomId}/${userState.userId}/saleRequest`, {
+      publishMessage(`/pub/transaction/${chatState.roomId}/${userState.userId}/saleRequest`, {
         productId: props.product.productId,
         sellerId: props.product.userId,
         buyerId: userState.userId,
         meetingTime: firstDate,
         meetingPlace: location,
+        price: price,
       })
     }
   }
