@@ -21,7 +21,6 @@ const Notification = ({notification}: Props) => {
                 님이 회원님을 팔로우하기 시작했습니다.
               </span>
               <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
-                {/* TODO: 시간 계산 로직 필요 */}
                 {formatTime(notification.createdAt)}
               </span>
             </div>
@@ -44,7 +43,6 @@ const Notification = ({notification}: Props) => {
                 님 외 여러 명이 회원님의 게시글을 좋아합니다.
               </span>
               <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
-                {/* TODO: 시간 계산 로직 필요 */}
                 {formatTime(notification.createdAt)}
               </span>
             </div>
@@ -57,6 +55,76 @@ const Notification = ({notification}: Props) => {
             </div>
           </div>
         );
+        case 'COMMENT':
+          return (
+            <div className={`flex w-full items-center`}>
+            <div className={`col-span-4 px-[0.75rem] text-sm`}>
+              <span className={`font-bold`}>
+                {notification.senderNickname}
+              </span>
+              <span>
+                님이 회원님의 게시물에 댓글을 남겼습니다.
+              </span>
+              <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
+                {formatTime(notification.createdAt)}
+              </span>
+            </div>
+            <div className={`shrink-0 size-[2.75rem]`}>
+              <img 
+                src={userImage} 
+                alt="NoImg" 
+                className={`h-full border-light-border dark:border-dark-border border`}
+              />
+            </div>
+          </div>
+        )
+        case 'SALE':
+          return (
+            <div className={`flex w-full items-center`}>
+            <div className={`col-span-4 px-[0.75rem] text-sm`}>
+              <span className={`font-bold`}>
+                {notification.senderNickname}
+              </span>
+              <span>
+                님이 판매를 요청하였습니다.
+              </span>
+              <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
+                {formatTime(notification.createdAt)}
+              </span>
+            </div>
+            <div className={`shrink-0 size-[2.75rem]`}>
+              <img 
+                src={userImage} 
+                alt="NoImg" 
+                className={`h-full border-light-border dark:border-dark-border border`}
+              />
+            </div>
+          </div>
+          )
+        // 채팅 요청이 들어왔을 때(삭제 예정)
+        case 'CHAT':
+          return (
+            <div className={`flex w-full items-center`}>
+            <div className={`col-span-4 px-[0.75rem] text-sm`}>
+              <span className={`font-bold`}>
+                {notification.senderNickname}
+              </span>
+              <span>
+                님이 채팅을 시작하였습니다.
+              </span>
+              <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
+                {formatTime(notification.createdAt)}
+              </span>
+            </div>
+            <div className={`shrink-0 size-[2.75rem]`}>
+              <img 
+                src={userImage} 
+                alt="NoImg" 
+                className={`h-full border-light-border dark:border-dark-border border`}
+              />
+            </div>
+          </div>
+          )
       default:
         return null;
     }

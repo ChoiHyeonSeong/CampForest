@@ -82,6 +82,7 @@ const useSSE = () => {
       console.log("SSE 연결 성공", event);
       setIsConnected(true);
       const notificationList = await getNotificationList();
+      console.log('알림 목록', notificationList);
       dispatch(setNotificationList(notificationList));
       setRetryCount(0);
     };
