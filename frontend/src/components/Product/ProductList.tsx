@@ -170,7 +170,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
   };
 
   return (
-    <div className={`flex justify-center items-center`}>
+    <div className={`flex justify-center items-center min-h-screen`}>
       <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-[1.5rem]`}>
         <div className={`hidden md:flex items-center justify-between lg:mt-[3rem] mb-[2.5rem]`}>
           <div className={`flex font-medium md:text-[1.6rem]`}>
@@ -213,7 +213,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
 
 
         {/* 필터 */}
-        <div className="flex flex-wrap gap-[0.5rem] items-center relative z-[30] mb-[0.75rem]">
+        <div className="flex flex-wrap gap-[0.5rem] items-center relative z-[10] mb-[0.75rem]">
           <Dropdown
             label="카테고리"
             options={CATEGORIES}

@@ -163,20 +163,19 @@ function Detail() {
   }, []);
 
   return (
-    <div className={`flex justify-center mb-[5rem]`}>
-      <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-6 lg:pt-6`}>
+    <div className={`flex justify-center mb-[5rem] `}>
+      <div className={`bg-light-gray w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6`}>
         {/* 상단 */}
         <div 
           className={`
-            flex lg:flex-row flex-col relative w-full mb-[2rem] 
-            bg-light-white bg-opacity-80
-            dark:bg-dark-white dark:bg-opacity-80
-            overflow-hidden
+            flex lg:flex-row flex-col relative w-full mb-[2rem] p-[0.75rem]
+            bg-light-gray
+            overflow-hidden rounded
           `}
         >
           {/* 이미지 */}
           <Swiper
-                className="w-2/5 aspect-1"
+                className="w-2/5 aspect-1 bg-black"
                 style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
                 modules={[Navigation, Pagination]}
                 spaceBetween={0}
@@ -242,7 +241,8 @@ function Detail() {
                 />
               </Swiper>
           {/* 내용 */}
-          <div className={`w-full lg:w-3/5 md:ps-[1.5rem]`}>
+          <div
+            className={`w-full lg:w-3/5 md:ps-[1.5rem]`}>
             <div 
               className={`
                 flex justify-between mt-[1rem] mb-[0.5rem]
@@ -371,6 +371,7 @@ function Detail() {
         <div 
           className={`
             flex flex-col lg:flex-row justify-between mt-[2.5rem] mb-[3.5rem] px-[1rem] py-[1.5rem]
+            
             rounded-sm 
           `}
         >

@@ -31,13 +31,13 @@ const StarLight = (props: Props) => {
       </div>
       
       {/* Mountains and forest */}
-      <div className="absolute -bottom-[16.5rem] left-0 w-full">
+      {/* <div className="absolute -bottom-[16.5rem] left-0 w-full">
         <img 
           src={Mountain} 
           alt="Mountain landscape" 
           className="object-cover w-full brightness-50 contrast-125"
         />
-      </div>
+      </div> */}
     </div>
   )
 }
