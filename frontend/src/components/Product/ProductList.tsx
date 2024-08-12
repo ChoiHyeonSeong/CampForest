@@ -9,9 +9,7 @@ import Dropdown from '@components/Public/Dropdown';
 import PriceRangeModal from '@components/Product/PriceRangeModal';
 import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
 
-import LocationFilter from '@components/Public/LocationFilter';
-
-import { koreaAdministrativeDivisions } from '@utils/koreaAdministrativeDivisions';
+import LocationDetailFilter from '@components/Public/LocationDetailFilter';
 
 import Pagination from '@components/Public/Pagination';
 
@@ -44,8 +42,16 @@ const LOCATIONS: Option[] = [
 ];
 
 type SelecetedLocType = {
-  city: string; 
-  districts: string[];
+  city: string;
+  district: string;
+  town: string[];
+}
+
+type ProductListResponse = {
+  products: ProductType[];
+  nextCursorId: number | null;
+  hasNext: boolean;
+  totalCount: number;
 }
 
 const ProductList = () => {
@@ -53,11 +59,8 @@ const ProductList = () => {
   const dispatch = useDispatch();
 
   // 상태 관리
+  
   const [products, setProducts] = useState<ProductType[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Option>(CATEGORIES[0]);
-  // const [selectedLocation, setSelectedLocation] = useState<Option>(LOCATIONS[0]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500000]);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [nextPageExist, setNextPageExist] = useState(true);
@@ -67,85 +70,137 @@ const ProductList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<SelecetedLocType | null>(null);
 
+  const [filterCondition, setFilterCondition] = useState({
+    selectedCategory: CATEGORIES[0],
+    priceRange: [0, 500000],
+  });
   // 상태 추가
-const [totalPages, setTotalPages] = useState<number>(0);
-const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalElementsCnt, setTotalElementsCnt] = useState(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const maxVisitedPageRef = useRef<number>(0);
 
   // Refs
   const productCursorRef = useRef<number | null>(null);
 
-  // 무한 스크롤
-  const [ref, inView] = useInView();
+  const resetState = async () => {
+    setProducts([]);
+    setNextPageExist(true);
+    productCursorRef.current = null;
 
-  // 상품 필터링 로직
-  const filterProducts = useCallback(() => {
-    let filtered = products.filter(product => 
-      product.productPrice >= priceRange[0] && 
-      product.productPrice <= priceRange[1]
-    );
+    setTotalElementsCnt(0)
+    setTotalPages(0)
+    setCurrentPage(1)
+    maxVisitedPageRef.current = 0
+  }
 
-    if (selectedCategory.name !== '분류 전체') {
-      filtered = filtered.filter(product => product.category === selectedCategory.name);
-    }
-
-    // if (selectedLocation.name !== '지역 전체') {
-    //   filtered = filtered.filter(product => product.location.includes(selectedLocation.name));
-    // }
-
-    if (showAvailableOnly) {
-      filtered = filtered.filter(product => !product.sold);
-    }
-
-    setFilteredProducts(filtered);
-  }, [products, priceRange, selectedCategory, selectedLocation, showAvailableOnly]);
-
-  // 페이지 가져오기
-
-
-  // 상품 데이터 fetch
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (cursor: number | null = null): Promise<ProductListResponse> => {
     try {
+      let category: string | null;
+
+      
+      if (filterCondition.selectedCategory.name === '침낭/매트') {
+        category = '침낭'
+      } else if (filterCondition.selectedCategory.name === '코펠/식기') {
+        category = '코펠'
+      } else if (filterCondition.selectedCategory.name === '버너/화로') {
+        category = '버너'
+      } else if (filterCondition.selectedCategory.name === '분류 전체') {
+        category = null
+      } else {
+        category = filterCondition.selectedCategory.name
+      }
+
+      console.log(category, filterCondition.priceRange, filterCondition.selectedCategory)
       dispatch(setIsLoading(true));
       const result = await productList({
         productType: activeTab === 1 ? 'SALE' : 'RENT',
-        cursorId: productCursorRef.current,
-        size: 20,
+        cursorId: cursor,
+        category: category,
+        minPrice: filterCondition.priceRange[0],
+        maxPrice: filterCondition.priceRange[1],
+        size: 10,
       });
-      
       console.log(result)
       dispatch(setIsLoading(false));
-      productCursorRef.current = result.nextCursorId;
-      setNextPageExist(result.hasNext);
-      setProducts(prevProducts => [...prevProducts, ...result.products]);
-
-      // 전체 페이지 수 계산 (한 페이지당 10개 항목 기준)
-      const calculatedTotalPages = Math.ceil(result.totalCount / 10);
-      setTotalPages(calculatedTotalPages);
-    
+      return result;
     } catch (error) {
       dispatch(setIsLoading(false));
       console.error('판매/대여 게시글 불러오기 실패: ', error);
+      throw error;
     }
-  }, [dispatch, activeTab]);
+  }, [dispatch, activeTab, filterCondition.selectedCategory, filterCondition.priceRange]);
 
-  const handlePageChange = (newPage: number) => {
+  const fetchProductsForPage = useCallback(async (targetPage: number) => {
+    if (targetPage <= maxVisitedPageRef.current) {
+      return;
+    }
+
+    let currentCursor = productCursorRef.current;
+    let currentPageCount = maxVisitedPageRef.current + 1;
+
+    while (currentPageCount <= targetPage && nextPageExist) {
+      const result = await fetchProducts(productCursorRef.current);
+      if (result === null) return;
+      setProducts(prevProducts => [...prevProducts, ...result.products]);
+      console.log(result)
+      currentCursor = result.nextCursorId;
+      setNextPageExist(result.hasNext);
+
+      if (currentPageCount === 1) {
+        const calculatedTotalPages = Math.ceil(result.totalCount / 10);
+        setTotalPages(calculatedTotalPages);
+        setTotalElementsCnt(result.totalCount)
+      }
+
+      currentPageCount++;
+    }
+
+    productCursorRef.current = currentCursor;
+    maxVisitedPageRef.current = Math.max(maxVisitedPageRef.current, targetPage);
+  }, [fetchProducts, nextPageExist]);
+
+
+  const handlePageChange = useCallback((newPage: number) => {
+    console.log(newPage, totalPages, currentPage)
+    if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
     setCurrentPage(newPage);
-    // 여기에 새 페이지의 데이터를 가져오는 로직 추가
-    // 예: fetchProductsForPage(newPage);
-  };  
+    fetchProductsForPage(newPage);
+  }, [fetchProductsForPage, totalPages, currentPage]);
 
   // 이벤트 핸들러
+  
+  const [isStateReset, setIsStateReset] = useState(false)
+
   const handleTabClick = useCallback((tabIndex: number) => {
     if (tabIndex !== activeTab) {
-      setProducts([]);
-      setNextPageExist(true);
-      productCursorRef.current = null;
+      setFilterCondition({
+        selectedCategory: CATEGORIES[0],
+        priceRange: [0, 500000],
+      })
       setActiveTab(tabIndex);
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    resetState()
+    setIsStateReset(true)
+    console.log(filterCondition.selectedCategory, filterCondition.priceRange)
+  }, [filterCondition.selectedCategory, filterCondition.priceRange])
+
+  useEffect(() => {
+    if (isStateReset) {
+      console.log(456)
+      fetchProductsForPage(1);
+      setIsStateReset(false)
+    }
+  }, [isStateReset]);
+
   const handleApplyPriceRange = useCallback((min: number, max: number) => {
-    setPriceRange([min, max]);
+    setFilterCondition(prev => ({
+      ...prev,
+      priceRange: [min, max]
+    }))
     setIsModalOpen(false);
   }, []);
 
@@ -153,21 +208,17 @@ const [currentPage, setCurrentPage] = useState<number>(1);
     setOpenDropdown(prev => prev === dropdown ? null : dropdown);
   }, []);
 
-  // useEffect 훅
-  useEffect(() => {
-    filterProducts();
-  }, [filterProducts]);
-
-  useEffect(() => {
-    if (inView && nextPageExist) {
-      fetchProducts();
-    }
-  }, [inView, nextPageExist, fetchProducts]);
-
-  const handleSelect = (city: string, districts: string[]) => {
-    setSelectedLocation({ city, districts });
-    console.log(city, districts)
+  const handleSelect = (selected: SelecetedLocType) => {
+    setSelectedLocation(selected);
+    console.log(selected)
   };
+
+  const handleCategorySelect = (option: Option) => {
+    setFilterCondition(prev => ({
+      ...prev,
+      selectedCategory: option
+    }))
+  }
 
   return (
     <div className={`flex justify-center items-center min-h-screen`}>
@@ -219,17 +270,17 @@ const [currentPage, setCurrentPage] = useState<number>(1);
             options={CATEGORIES}
             isOpen={openDropdown === 'categories'}
             onToggle={() => handleToggle('categories')}
-            onSelect={setSelectedCategory}
-            selectedOption={selectedCategory}
+            onSelect={handleCategorySelect}
+            selectedOption={filterCondition.selectedCategory}
           />
           <div>
             <button 
               onClick={() => setIsModalOpen(true)} 
               className="px-[1rem] py-[0.5rem] border-light-border bg-light-gray dark:border-dark-border dark:bg-dark-gray text-sm font-medium rounded-md border shadow-sm"
             >
-              {priceRange[0] === 0 && priceRange[1] === 500000
+              {filterCondition.priceRange[0] === 0 && filterCondition.priceRange[1] === 500000
                 ? "가격 필터"
-                : `${priceRange[0].toLocaleString()}원 ~ ${priceRange[1].toLocaleString()}원`}
+                : `${filterCondition.priceRange[0].toLocaleString()}원 ~ ${filterCondition.priceRange[1].toLocaleString()}원`}
             </button>
             <PriceRangeModal
               isOpen={isModalOpen}
@@ -266,10 +317,9 @@ const [currentPage, setCurrentPage] = useState<number>(1);
             selectedOption={selectedLocation}
           /> */}
 
-          <LocationFilter 
+          <LocationDetailFilter 
             isOpen={isFilterOpen}
             onClose={() => setIsFilterOpen(false)}
-            divisions={koreaAdministrativeDivisions}
             onSelect={handleSelect}
             selectedLocation={selectedLocation}
           />
@@ -290,24 +340,25 @@ const [currentPage, setCurrentPage] = useState<number>(1);
 
         {/* 상품 목록 */}
         <div className="grid lg:grid-cols-5 md:grid-cols-4 grid-cols-3 w-full">
-          {filteredProducts.map((product) => (
+          {/* {products.map((product) => (
             <ProductCard 
               key={product.productId} 
               product={product} 
             />
+          ))} */}
+
+          {products.slice((currentPage - 1) * 10, currentPage * 10).map((product) => (
+            <ProductCard key={product.productId} product={product} />
           ))}
         </div>
 
         <Pagination
-          totalItems={products.length}
+          totalItems={totalElementsCnt}
           itemsPerPage={10}
           currentPage={currentPage}
           onPageChange={handlePageChange}
         />
       </div>
-
-      {/* intersection observer */}
-      <div ref={ref} className="h-[0.25rem]"></div>
     </div>
   );
 };
