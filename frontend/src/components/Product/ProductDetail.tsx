@@ -7,6 +7,8 @@ import ProductCard from '@components/Product/ProductCard';
 import { productDetail } from '@services/productService';
 import { useParams } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
+import { UseSelector, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -27,12 +29,13 @@ type ProductDetailType = {
   productName: string;
   productPrice: number;
   productType: string;
-  userId: string;
+  userId: number;
   nickname: string;
   userImage: string;
 };
 
 function Detail() {
+  const user = useSelector((state: RootState) => state.userStore)
   const isUserPost = false; // 예시로 사용자 게시물 여부를 나타내는 값
   const productId = Number(useParams().productId);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -48,10 +51,25 @@ function Detail() {
     productName: '',
     productPrice: 0,
     productType: '',
-    userId: '',
+    userId: 0,
     nickname: '',
     userImage: ''
   });
+
+  const [category, setCategory] = useState('');
+
+  useEffect(() => {
+    if (product.category === '침낭') {
+      setCategory('침낭/매트')
+    } else if (product.category === '코펠') {
+      setCategory('코펠/식기')
+    } else if (product.category === '침낭') {
+      setCategory('침낭/매트')
+    } else {
+      setCategory(product.category)
+    }
+  }, [product])
+
   const fetchProduct = async () => {
     try {
       const result = await productDetail(productId);
@@ -169,7 +187,7 @@ function Detail() {
             >
               <div className={`flex`}>
                 <div className={`me-[1.5rem]`}>
-                  캠핑 장비 {'>'} {product.category}
+                  캠핑 장비 {'>'} {category}
                 </div>
                 <div 
                   className={`
@@ -182,12 +200,11 @@ function Detail() {
                 </div>
               </div>
               <MoreOptionsMenu
-                isUserPost={isUserPost}
+                isUserPost={user.userId === product.userId}
                 deleteId={0}
                 deleteFunction={() => {
                   console.log('test');
                 }}
-                copyURL=""
               />
             </div>
             <div className={`text-2xl font-medium`}>
