@@ -43,6 +43,7 @@ type Props = {
   deleteFunction: () => void;
   isDetail: boolean;
   detailOpen? : (param: number) => void;
+  updateComment: (boardId: number, commentCount: number) => void;
   updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
   updateSaved: (boardId: number, isSaved: boolean) => void;
 }

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
 import { Link } from 'react-router-dom';
-import { commentDislike, commentLike } from '@services/commentService';
+import { commentDelete, commentDislike, commentLike, commentList } from '@services/commentService';
 import defaultProfileImage from '@assets/images/basic_profile.png'
 import { formatTime } from '@utils/formatTime';
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 export type CommentType = {
   commentId: number;
@@ -18,13 +20,16 @@ export type CommentType = {
 }
 
 type Props = {
+  updateComment: (boardId: number, commentCount: number) => void;
   comment: CommentType;
 };
 
 const BoardComment = (props: Props) => {
+  const userId = useSelector((state: RootState) => state.userStore.userId);
   const [timeDifference, setTimeDifference] = useState('');
   const [liked, setLiked] = useState(props.comment.liked);
   const [likeCount, setLikeCount] = useState(props.comment.likeCount);
+  const [visible, setVisible] = useState(true);
 
   const like = async () => {
     try {
@@ -54,7 +59,8 @@ const BoardComment = (props: Props) => {
   return (
     <div 
       className={`
-        flex justify-between items-center w-full min-h-[5rem] px-[0.5rem] py-[0.75rem]
+        ${visible ? 'flex' : 'hidden'}
+        justify-between items-center w-full min-h-[5rem] px-[1.25rem] py-[0.75rem]
         bg-light-white border-light-border-1
         dark:bg-dark-white dark:border-dark-border-1
           border-b
@@ -100,6 +106,23 @@ const BoardComment = (props: Props) => {
             >
               {timeDifference}
             </div>
+            {props.comment.commentWriterId === userId &&
+            <div 
+              className='
+                ms-[0.5rem]
+                text-light-warning
+                dark:text-dark-warning
+                text-sm cursor-pointer
+              '
+              onClick={async () => {
+                commentDelete(props.comment.commentId);
+                setVisible(false);
+                const result = await commentList(props.comment.boardId);
+                props.updateComment(props.comment.boardId, result.totalElements-1);
+              }}
+            >
+                삭제
+            </div>}
           </div>
           {/* user-comment */}
           <div 
