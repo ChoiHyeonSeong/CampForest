@@ -24,6 +24,8 @@ public class ProductRegistDto {
 	private Category category;
 	private Long deposit;
 	private List<String> productImageUrl;
+	private Double latitude;
+	private Double longitude;
 
 
 	public Product toEntity() {
@@ -35,6 +37,8 @@ public class ProductRegistDto {
 			.productContent(productContent)
 			.location(location)
 			.productType(productType)
+			.latitude(latitude)
+			.longitude(longitude)
 			.interest_hit(0L)
 			.hit(0L)
 			.createdAt(LocalDateTime.now())

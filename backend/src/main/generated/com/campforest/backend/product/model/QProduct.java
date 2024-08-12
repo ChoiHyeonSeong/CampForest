@@ -34,7 +34,11 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final BooleanPath isSold = createBoolean("isSold");
 
+    public final NumberPath<Double> latitude = createNumber("latitude", Double.class);
+
     public final StringPath location = createString("location");
+
+    public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
 
     public final StringPath productContent = createString("productContent");
 

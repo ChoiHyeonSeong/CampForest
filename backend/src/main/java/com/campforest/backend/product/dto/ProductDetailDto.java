@@ -29,6 +29,8 @@ public class ProductDetailDto {
 	private UserImage userImage;
 	private String nickname;
 	private boolean saved;
+	private Double latitude;
+	private Double longitude;
 
 
 	public ProductDetailDto(Product product, List<String> imageUrls, String nickname, UserImage userImage) {
@@ -46,5 +48,7 @@ public class ProductDetailDto {
 		this.nickname = nickname;
 		this.deposit = product.getDeposit();
 		this.userId = product.getUserId();
+		this.latitude = product.getLatitude();
+		this.longitude = product.getLongitude();
 	}
 }

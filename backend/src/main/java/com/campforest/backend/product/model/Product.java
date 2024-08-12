@@ -94,6 +94,12 @@ public class Product {
 	@JsonManagedReference
 	private List<SaveProduct> savedBy = new ArrayList<>();
 
+	@Column(name = "latitude")
+	private Double latitude;
+
+	@Column(name = "longitude")
+	private Double longitude;
+
 	public void update(ProductUpdateDto productUpdateDto) {
 		this.productName = productUpdateDto.getProductName();
 		this.productPrice = productUpdateDto.getProductPrice();
