@@ -28,16 +28,20 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
     if (userId) {
       const communityChatUserList = await communityChatList();
       let count = 0;
-      communityChatUserList.map((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
-      store.dispatch(setCommunityChatUserList(communityChatUserList));
+      if(communityChatUserList) {
+        communityChatUserList.map((chatUser: ChatUserType) => {
+          count += chatUser.unreadCount;
+        })
+        store.dispatch(setCommunityChatUserList(communityChatUserList));
+      }
       const transactionChatUserList = await transactionChatList();
-      transactionChatUserList.map((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
+        if(transactionChatUserList) {
+        transactionChatUserList.map((chatUser: ChatUserType) => {
+          count += chatUser.unreadCount;
+        })
+        store.dispatch(setTransactionChatUesrList(transactionChatUserList));
+      } 
       store.dispatch(setTotalUnreadCount(count));
-      store.dispatch(setTransactionChatUesrList(transactionChatUserList));
     }
   }
 

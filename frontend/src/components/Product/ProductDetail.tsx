@@ -21,7 +21,7 @@ import { initTransactionChat, transactionChatList } from '@services/chatService'
 import { ChatUserType } from '@components/Chat/ChatUser';
 import { useWebSocket } from 'Context/WebSocketContext';
 
-type ProductDetailType = {
+export type ProductDetailType = {
   category: string;
   deposit: number | null;
   hit: number;

@@ -16,11 +16,15 @@ const NavbarLeftExtendChat = (props: Props) => {
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const isLogin = useSelector((state: RootState) => state.userStore.isLoggedIn);
   const selectedCategory = useSelector((state: RootState) => state.chatStore.selectedCategory);
-
+  const chatState = useSelector((state: RootState) => state.chatStore);
   return (
     <div
       className={`
-        ${props.isExtendMenuOpen  ? 'translate-x-[5rem]' : '-translate-x-full'}
+        ${props.isExtendMenuOpen && chatState.isChatOpen ? 
+          'max-lg:-translate-x-[15rem]' : 
+          props.isExtendMenuOpen ? 'max-lg:translate-x-[5rem]' :
+        'max-lg:-translate-x-full'}
+        ${props.isExtendMenuOpen ? 'lg:translate-x-[5rem]' : 'lg:-translate-x-full'}
         fixed z-[35] w-[20rem] h-[100%] pt-[3.2rem] lg:pt-[0]
         bg-light-white border-light-border-1
         dark:bg-dark-white dark:border-dark-border-1

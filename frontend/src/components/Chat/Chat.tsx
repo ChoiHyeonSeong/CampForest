@@ -8,6 +8,8 @@ import { useWebSocket } from 'Context/WebSocketContext';
 import { setChatInProgress, setIsChatOpen, setProductId } from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 import ProductInfoChat from "./ProductInfoChat";
+import ChatTradeModal from './ChatTradeModal';
+import { ProductDetailType } from '@components/Product/ProductDetail';
 
 type UnifiedMessage = {
   content: string;
@@ -71,6 +73,8 @@ function unifyMessage(message: Message): UnifiedMessage {
 }
 
 const Chat = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [product, setProduct] = useState<ProductDetailType>()
   const { publishMessage } = useWebSocket();
   const dispatch = useDispatch();
   const chatState = useSelector((state: RootState) => state.chatStore);
@@ -145,10 +149,18 @@ const Chat = () => {
   const unifiedMessages = messages.map(unifyMessage);
 
   return (
-    <div className={`flex flex-col max-md:hidden fixed top-0 w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
-      bg-light-white outline-light-border-1
-      dark:bg-dark-white dark:outline-dark-border-1
-      transition-all duration-300 ease-in-out outline outline-1`}>
+    <div 
+      className={`
+        flex flex-col max-md:hidden fixed top-0 w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+        bg-light-white outline-light-border-1
+        dark:bg-dark-white dark:outline-dark-border-1
+        transition-all duration-300 ease-in-out outline outline-1
+      `}
+    >
+      {/* 모달 */}
+      {product && modalOpen && (
+        <ChatTradeModal product={product}/>
+      )}
       {/* 상대 정보 */}
       <div className={`flex items-center shrink-0 p-[0.8rem]
         border-light-border-1
@@ -173,7 +185,7 @@ const Chat = () => {
       {/* 상품 정보 */}
       {chatState.chatInProgressType === '거래' && (
         <div>
-          <ProductInfoChat />
+          <ProductInfoChat setModalOpen={setModalOpen} setProduct={setProduct} />
         </div>
       )}
       <div className='h-full ps-[0.75rem] overflow-scroll' ref={scrollRef}>

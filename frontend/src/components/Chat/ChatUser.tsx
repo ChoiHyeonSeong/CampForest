@@ -84,7 +84,7 @@ const ChatUser = (props: Props) => {
             className={`
               text-light-text-secondary
               dark:text-dark-text-secondary
-              text-sm line-clamp-1
+              text-sm truncate
             `}
           >
             {chatUser.lastMessage}

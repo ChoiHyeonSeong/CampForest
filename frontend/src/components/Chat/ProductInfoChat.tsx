@@ -1,35 +1,24 @@
+import { ProductDetailType } from '@components/Product/ProductDetail';
 import { productDetail } from '@services/productService';
 import { RootState } from '@store/store';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-
-type ProductType = {
-  imageUrl: string,
-  productName: string,
-  deposit?: number,
-  productPrice: number,
-  productType: string
-}
 
 type Props = {
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setProduct: React.Dispatch<React.SetStateAction<ProductDetailType | undefined>>;
 }
 
-const ProductInfoChat = ({ }: Props) => {
-  const [product, setProduct] = useState<ProductType>()
+const ProductInfoChat = (props: Props) => {
+  const [product, setProduct] = useState<ProductDetailType>()
   const productId = useSelector((state: RootState) => state.chatStore.productId);
 
   async function fetchProduct () {
     if(productId !== 0) {
       const result = await productDetail(productId);
 
-      setProduct({
-        imageUrl: result.imageUrls[0],
-        productName: result.productName,
-        deposit: result.deposit,
-        productPrice: result.productPrice,
-        productType: result.productType
-      });
+      setProduct(result);
+      props.setProduct(result);
     }
   }
 
@@ -56,7 +45,7 @@ const ProductInfoChat = ({ }: Props) => {
             overflow-hidden
           '
         >
-          <img src={product?.imageUrl} alt='상품이미지'></img> {/* 이미지 들어갈 곳 */}
+          <img src={product?.imageUrls[0]} alt='상품이미지'></img> {/* 이미지 들어갈 곳 */}
         </div>
 
         {/* 상품상세 */}
@@ -86,7 +75,7 @@ const ProductInfoChat = ({ }: Props) => {
           text-white rounded cursor-pointer
         '
         onClick={() => {
-
+          props.setModalOpen(true);
         }}
       >
         거래요청
