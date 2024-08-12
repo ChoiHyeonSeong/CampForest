@@ -39,7 +39,6 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     @Transactional
     @Override
     public TransactionChatMessage saveMessage(Long roomId, TransactionChatMessage message) {
-        System.out.println("save메시지안에서 데이터 들어있는지 확인" + message.getTransactionId());
         TransactionChatRoom room = transactionChatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
         message.setRoomId(room.getRoomId());
