@@ -87,7 +87,7 @@ public class ProductController {
 		}
 
 		try {
-			findProduct = productService.getProduct(productId, userId);
+			findProduct = productService.getProductByUserId(productId, userId);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.PRODUCT_NOT_FOUND);
 		}
