@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,14 +37,15 @@ public class SaleService {
 
 		Map<String, Long> result = new HashMap<>();
 		Long requesterId = saleRequestDto.getRequesterId();
-
+		System.out.println(requesterId);
+		System.out.println("seller" + saleRequestDto.getSellerId() + "buyer" + saleRequestDto.getBuyerId());
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
+		System.out.println("1단계 request " +  "requester " + requesterId + " receiver " + receiverId);
 
 		result.put("requesterId", requesterId);
 		result.put("receiverId", receiverId);
 
-		System.out.println("receiver" + receiverId);
-		System.out.println("requester" + requesterId);
+		System.out.println("2단계 request" +  "requester " + requesterId + " receiver " + receiverId);
 
 		Sale sale = buildSale(saleRequestDto, product, requesterId, receiverId, TransactionStatus.REQUESTED);
 		sale.requestSale();
@@ -53,6 +55,7 @@ public class SaleService {
 			requesterId, TransactionStatus.RECEIVED);
 		reverseSale.receiveSale();
 		saleRepository.save(reverseSale);
+		System.out.println("3단계 request " +  "requester " + requesterId + " receiver " + receiverId);
 
 		result.put("saleId", sale.getId());
 		result.put("reverseSaleId", reverseSale.getId());
@@ -66,16 +69,22 @@ public class SaleService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
+		System.out.println("1단계 accept " +  "requester " + requesterId + " receiver " + receiverId);
+
 		Long saleId = 0L;
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
+		System.out.println("2단계 accept " +  "requester " + requesterId + " receiver " + receiverId);
+
 		for(Sale sale : sales) {
 			if(sale.getSaleStatus().equals(TransactionStatus.RECEIVED)) {
 				saleId = sale.getId();
 			}
 		}
+		System.out.println("3단계 accept " +  "requester " + requesterId + " receiver " + receiverId);
 
 		sales[0].acceptSale();
 		sales[1].acceptSale();
+		System.out.println("4단계 accept " +  "requester " + requesterId + " receiver " + receiverId);
 
 		Map<String, Long> result = new HashMap<>();
 		result.put("requesterId", requesterId);
@@ -84,6 +93,7 @@ public class SaleService {
 
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
+		System.out.println("5단계 accept " +  "requester " + requesterId + " receiver " + receiverId);
 
 		return result;
 	}
@@ -94,17 +104,22 @@ public class SaleService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
-
+		System.out.println("1단계 deny " +  "requester " + requesterId + " receiver " + receiverId);
 		Long saleId = 0L;
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
+
+		System.out.println("2단계 deny " +  "requester " + requesterId + " receiver " + receiverId);
+
 		for(Sale sale : sales) {
 			if(sale.getSaleStatus().equals(TransactionStatus.RECEIVED)) {
 				saleId = sale.getId();
 			}
 		}
+		System.out.println("3단계 deny " +  "requester " + requesterId + " receiver " + receiverId);
 
 		sales[0].denySale();
 		sales[1].denySale();
+		System.out.println("4단계 deny " +  "requester " + requesterId + " receiver " + receiverId);
 
 		Map<String, Long> result = new HashMap<>();
 		result.put("requesterId", requesterId);
@@ -113,38 +128,54 @@ public class SaleService {
 
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
+		System.out.println("5단계 deny " +  "requester " + requesterId + " receiver " + receiverId);
 
 		return result;
 	}
 
 	@Transactional
-	public void confirmSale(SaleRequestDto saleRequestDto, Long requesterId) {
+	public Map<String, Long> confirmSale(SaleRequestDto saleRequestDto, Long requesterId) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
 		System.out.println("confirm service"+" reqID"+requesterId+ " receiverId: "+receiverId );
-
+		Long saleId = 0L;
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
 		System.out.println("getRents"+sales[0].toString()+" "+sales[1].toString() );
+		for(Sale sale : sales) {
+			if(sale.getSaleStatus().equals(TransactionStatus.RESERVED)) {
+				saleId = sale.getId();
+			}
+		}
+
 		boolean isRequesterSeller = requesterId.equals(saleRequestDto.getSellerId());
 		System.out.println(isRequesterSeller);
 		sales[0].confirmSale(isRequesterSeller); // 소유자가 요청자일 경우
 		sales[1].confirmSale(isRequesterSeller); // 소유자가 아닌 경우
 
+		Sale sale = saleRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(saleRequestDto.getProductId(),
+				requesterId, receiverId)
+			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
+
+		sale.confirmSaleStatus();
+
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
 
 		if (sales[0].isFullyConfirmed() && sales[1].isFullyConfirmed()) {
-			sales[0].setSaleStatus(TransactionStatus.CONFIRMED);
-			sales[1].setSaleStatus(TransactionStatus.CONFIRMED);
-
 			product.setSold(true);
 			productRepository.save(product);
-
 		}
+
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+		result.put("saleId", saleId);
+
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
+		return result;
 	}
 
 	public SaleResponseDto getSale(SaleRequestDto saleRequestDto, Long requesterId) {

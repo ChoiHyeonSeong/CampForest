@@ -131,4 +131,9 @@ public class Sale {
 	public boolean isFullyConfirmed() {
 		return this.confirmedByBuyer && this.confirmedBySeller;
 	}
+
+	public void confirmSaleStatus() {
+		this.saleStatus = TransactionStatus.CONFIRMED;
+		this.modifiedAt = LocalDateTime.now();
+	}
 }

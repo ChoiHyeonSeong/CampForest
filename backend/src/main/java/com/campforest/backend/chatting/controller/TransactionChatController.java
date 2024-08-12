@@ -584,14 +584,22 @@ public class TransactionChatController {
 		@Payload SaleRequestDto saleRequestDto
 	) {
 		try {
-			Users requester = userService.findByUserId(userId)
-				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			saleService.confirmSale(saleRequestDto, requester.getUserId());
+				Users requester = userService.findByUserId(userId)
+					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+				Map<String, Long> map = saleService.confirmSale(saleRequestDto, requester.getUserId());
+				Long receiverId = map.get("receiverId");
+				Long saleId = map.get("saleId");
+			Users receiver = userService.findByUserId(receiverId)
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+				requester.getNickname() + "님이 거래를 완료하였습니다.");
 
 			TransactionChatMessage confirmMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
+				.transactionId(saleId)
 				.messageType(MessageType.TRANSACTION)
 				.content(requester.getNickname() + "님이 거래를 완료하였습니다.")
 				.build();
