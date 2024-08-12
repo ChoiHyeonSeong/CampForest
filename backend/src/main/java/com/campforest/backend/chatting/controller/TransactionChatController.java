@@ -108,19 +108,26 @@ public class TransactionChatController {
 	}
 
 	@SendTo("/sub/transaction/{roomId}")
-	@MessageMapping("/transaction/{roomId}/markAsRead")
-	public Long markMessagesAsReadWebSocket(
+	@MessageMapping("/transaction/{roomId}/read")
+	public TransactionChatMessage markMessagesAsReadWebSocket(
 		@DestinationVariable Long roomId,
 		@Payload Long userId) {
-		transactionChatService.markMessagesAsRead(roomId, userId);
-		TransactionChatMessage receiverMessage = TransactionChatMessage.builder()
+		try {
+			transactionChatService.markMessagesAsRead(roomId, userId);
+			TransactionChatMessage receiverMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.messageType(MessageType.READ)
 				.content("읽음")
 				.build();
-		transactionChatService.saveMessage(roomId, receiverMessage);
-		return userId;
+			return receiverMessage;
+		} catch (Exception e) {
+			TransactionChatMessage errorMessage = new TransactionChatMessage();
+			errorMessage.setMessageType(MessageType.MESSAGE);
+			errorMessage.setContent("읽음 에러 " + e);
+			return errorMessage;
+		}
+
 	}
 
 	// //user가 속한 채팅방 목록 가져옴.
