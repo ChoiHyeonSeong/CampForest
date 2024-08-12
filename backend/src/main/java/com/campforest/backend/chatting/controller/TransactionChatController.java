@@ -384,7 +384,7 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 			rentService.update(rentRequestDto, requester.getUserId());
-
+			//BUYER, product, time place seller
 			TransactionChatMessage updateMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
@@ -473,24 +473,13 @@ public class TransactionChatController {
 				.build();
 			transactionChatService.saveMessage(roomId, requesterMessage);
 
-			TransactionChatMessage receiverMessage = TransactionChatMessage.builder()
-				.roomId(roomId)
-				.senderId(userId)
-				.messageType(MessageType.TRANSACTION)
-				.transactionId(reverseSaleId)
-				.content("새로운 판매 요청이 도착했습니다. 상품ID: " + productId + " 상품 이름: " + productService.getProduct(productId)
-					.getProductName())
-				.build();
-			transactionChatService.saveMessage(roomId, receiverMessage);
-
-			// 요청자에게 전송할 메시지를 반환
 			return requesterMessage;
 		} catch (Exception e) {
 			// 에러 처리
 			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
-				.content("거래 요청 처리 중 오류가 발생했습니다: " + e.getMessage())
+				.content("거래 요청 처리 중 오류가 발생했습니다: " + e)
 				.build();
 			return errorMessage;
 		}
@@ -616,6 +605,7 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
 			SaleResponseDto saleResponseDto = saleService.getSale(saleRequestDto, requester.getUserId());
+			System.out.println(saleResponseDto);
 			TransactionChatMessage getRentMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)

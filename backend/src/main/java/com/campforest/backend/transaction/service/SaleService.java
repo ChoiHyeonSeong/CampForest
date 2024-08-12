@@ -31,7 +31,7 @@ public class SaleService {
 	public Map<String, Long> saleRequest(SaleRequestDto saleRequestDto) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
-
+		product.setProductPrice(saleRequestDto.getPrice());
 		validateDuplicateRequest(saleRequestDto);
 
 		Map<String, Long> result = new HashMap<>();
@@ -131,10 +131,10 @@ public class SaleService {
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
 		Long productId = product.getId();
+		System.out.println(productId+" "+requesterId+" "+receiverId);
 		Sale sale = saleRepository.findByProductIdAndRequesterIdAndReceiverId(
 				productId, requesterId, receiverId)
 			.orElseThrow(() -> new IllegalArgumentException("없다요"));
-		System.out.println(sale);
 		return new SaleResponseDto(sale);
 	}
 
