@@ -453,7 +453,8 @@ const ProductWrite = () => {
             -translate-y-1/2 -translate-x-1/2
           `}
         >
-      <ProductMap 
+      <ProductMap
+        isPersonal={false}
         handleLocation={handleLocation} 
         openMap={openMap} />
       </div>}

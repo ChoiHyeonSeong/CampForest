@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
 import { RootState, store } from '@store/store';
-import { addMessageToChatInProgress, setChatInProgressType, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
+import { addMessageToChatInProgress, selectCommnunity, setChatInProgressType, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
 import { communityChatList, initCommunityChat } from '@services/chatService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { ChatUserType } from '@components/Chat/ChatUser';
@@ -52,18 +52,20 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
   async function handleChatButton() {
     const matchedUser = chatState.communityChatUserList.find((chatUser) => chatUser.otherUserId === userId);
     if (matchedUser) {
-      await dispatch(setChatInProgressType('일반'))
-      await dispatch(setOtherId(matchedUser.otherUserId));
-      await dispatch(setRoomId(matchedUser.roomId));
-      await dispatch(setIsChatOpen(true));
+      dispatch(setChatInProgressType('일반'))
+      dispatch(selectCommnunity());
+      dispatch(setOtherId(matchedUser.otherUserId));
+      dispatch(setRoomId(matchedUser.roomId));
+      dispatch(setIsChatOpen(true));
     } else {
       try {
         const roomId = await initCommunityChat(userId);
         await fetchCommunityChatList()
-        await dispatch(setChatInProgressType('일반'))
-        await dispatch(setOtherId(userId));
-        await dispatch(setIsChatOpen(true));
-        await dispatch(setRoomId(roomId));
+        dispatch(setChatInProgressType('일반'))
+        dispatch(selectCommnunity());
+        dispatch(setOtherId(userId));
+        dispatch(setIsChatOpen(true));
+        dispatch(setRoomId(roomId));
   
         // roomId가 확실히 업데이트된 후에 subscribe 함수 호출
         subscribeToChat(roomId);
@@ -88,21 +90,16 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
   }
 
   function subscribeToChat(roomId: number) {
-    // 읽음 처리를 받았을 때
-    subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
-      const readerId = JSON.parse(message.body); // 읽은 사람 Id
-  
-      if (loginUserId !== readerId) {
-        dispatch(updateMessageReadStatus({ roomId: roomId, readerId }));
-      }  
-    });
-  
     // 메세지를 받았을 때
     subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
       const response = JSON.parse(message.body);
       const state: RootState = store.getState();
-
-      if (state.chatStore.roomId === response.roomId) {
+      if(response.messageType === 'READ') {
+        if (state.userStore.userId !== response.senderId) {
+          store.dispatch(updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }));
+        }  
+      }
+      else if (state.chatStore.roomId === response.roomId) {
         dispatch(updateCommunityChatUserList({...response, inProgress: true}));
         publishMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
         dispatch(addMessageToChatInProgress(response));

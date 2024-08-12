@@ -1,4 +1,4 @@
-import { Message } from '@components/Chat/Chat';
+import { TransactionMessageType } from '@components/Chat/Chat';
 import { ChatUserType } from '@components/Chat/ChatUser';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -6,8 +6,9 @@ type ChatState = {
   isChatOpen: boolean;
   selectedCategory: string;
   roomId: number;
+  productId: number;
   chatInProgressType: string;
-  chatInProgress: Message[];
+  chatInProgress: TransactionMessageType[];
   otherId: number;
   communityChatUserList: ChatUserType[];
   transactionChatUserList: ChatUserType[];
@@ -18,6 +19,7 @@ const initialState: ChatState = {
   isChatOpen: false,
   selectedCategory: '일반',
   roomId: 0,
+  productId: 0,
   chatInProgressType: '일반',
   chatInProgress: [],
   otherId: 0,
@@ -45,13 +47,19 @@ const chatSlice = createSlice({
     setRoomId: (state, action: PayloadAction<number>) => {
       state.roomId = action.payload;
     },
-    setChatInProgress: (state, action: PayloadAction<Message[]>) => {
+    setProductId: (state, action: PayloadAction<number>) => {
+      state.productId = action.payload;
+    },
+    setChatInProgress: (state, action: PayloadAction<TransactionMessageType[]>) => {
       state.chatInProgress = action.payload;
     },
     setChatInProgressType: (state, action: PayloadAction<string>) => {
       state.chatInProgressType = action.payload;
     },
-    addMessageToChatInProgress: (state, action: PayloadAction<Message>) => {
+    addMessageToChatInProgress: (state, action: PayloadAction<TransactionMessageType>) => {
+      if (!state.chatInProgress) {
+        state.chatInProgress = []; // null이면 빈 배열로 초기화
+      }
       state.chatInProgress.push(action.payload);
     },
     setOtherId: (state, action: PayloadAction<number>) => {
@@ -131,6 +139,7 @@ export const {
   selectCommnunity, 
   selectTransaction, 
   setRoomId, 
+  setProductId,
   setChatInProgress,
   setChatInProgressType,
   addMessageToChatInProgress,

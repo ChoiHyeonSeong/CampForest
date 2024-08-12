@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { communityChatDetail, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { setChatInProgress, setIsChatOpen } from '@store/chatSlice';
+import { setChatInProgress, setIsChatOpen, setProductId } from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 import ProductInfoChat from "./ProductInfoChat";
+import ChatTradeModal from './ChatTradeModal';
+import { ProductDetailType } from '@components/Product/ProductDetail';
 
 type UnifiedMessage = {
   content: string;
@@ -28,7 +30,7 @@ export type TransactionMessageType = {
   read: boolean;
   roomId: number;
   senderId: number;
-  transactionId?: number;
+  transactionId?: number; 
 }
 
 export type TransactionEntityType = {
@@ -71,6 +73,8 @@ function unifyMessage(message: Message): UnifiedMessage {
 }
 
 const Chat = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [product, setProduct] = useState<ProductDetailType>()
   const { publishMessage } = useWebSocket();
   const dispatch = useDispatch();
   const chatState = useSelector((state: RootState) => state.chatStore);
@@ -86,10 +90,12 @@ const Chat = () => {
       let fetchedMessages;
       if(chatState.chatInProgressType === '일반') {
         fetchedMessages = await communityChatDetail(chatState.roomId);
+        dispatch(setChatInProgress(fetchedMessages));
       } else if (chatState.chatInProgressType === '거래') {
         fetchedMessages = await transactionChatDetail(chatState.roomId);
+        dispatch(setProductId(fetchedMessages.productId));
+        dispatch(setChatInProgress(fetchedMessages.messages));
       }
-      dispatch(setChatInProgress(fetchedMessages));
     } catch (error) {
       console.error("Failed to fetch messages:", error);
     }
@@ -128,7 +134,7 @@ const Chat = () => {
         publishMessage(`/pub/${chatState.roomId}/send`, { senderId: userId, content: userInput });
       } else {
         publishMessage(`/pub/transaction/${chatState.roomId}/send`, 
-          { senderId: userId, content: userInput, message_type: "MESSAGE"});
+          { senderId: userId, content: userInput, messageType: "MESSAGE"});
       }
       setUserInput('');
     }
@@ -143,10 +149,18 @@ const Chat = () => {
   const unifiedMessages = messages.map(unifyMessage);
 
   return (
-    <div className={`flex flex-col max-md:hidden fixed top-0 w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
-      bg-light-white outline-light-border-1
-      dark:bg-dark-white dark:outline-dark-border-1
-      transition-all duration-300 ease-in-out outline outline-1`}>
+    <div 
+      className={`
+        flex flex-col max-md:hidden fixed top-0 w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+        bg-light-white outline-light-border-1
+        dark:bg-dark-white dark:outline-dark-border-1
+        transition-all duration-300 ease-in-out outline outline-1
+      `}
+    >
+      {/* 모달 */}
+      {product && modalOpen && (
+        <ChatTradeModal product={product}/>
+      )}
       {/* 상대 정보 */}
       <div className={`flex items-center shrink-0 p-[0.8rem]
         border-light-border-1
@@ -169,9 +183,11 @@ const Chat = () => {
         </div>
       </div>
       {/* 상품 정보 */}
-      <div>
-        <ProductInfoChat />
-      </div>
+      {chatState.chatInProgressType === '거래' && (
+        <div>
+          <ProductInfoChat setModalOpen={setModalOpen} setProduct={setProduct} />
+        </div>
+      )}
       <div className='h-full ps-[0.75rem] overflow-scroll' ref={scrollRef}>
         {unifiedMessages && unifiedMessages.length > 0 ? (
           unifiedMessages.map((message) => (

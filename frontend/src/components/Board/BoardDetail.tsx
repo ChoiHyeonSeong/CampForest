@@ -3,8 +3,6 @@ import Board from './Board'
 import BoardComment, { CommentType } from './BoardComment'
 import CommentInput from './CommentInput';
 import { BoardType } from '@components/Board/Board';
-import { boardDetail } from '@services/boardService';
-import { useNavigate } from 'react-router-dom';
 import { commentList, commentWrite } from '@services/commentService';
 
 type Props = {
@@ -17,12 +15,9 @@ type Props = {
 }
 
 const BoardDetail = (props: Props) => {
-  const navigate = useNavigate();
   // const boardId = props.selectedBoardId
 
   const [comments, setComments] = useState<CommentType[]>([]);
-  const [board, setBoard] = useState<BoardType | null>();
-  const [isLoading, setIsLoading] = useState(true);
 
   // const fetchBoard = async () => {
   //   try {
@@ -103,6 +98,7 @@ const BoardDetail = (props: Props) => {
             board={props.selectedBoard}
             deleteFunction={deleteFunction} 
             isDetail={true}
+            updateComment={props.updateComment}
             updateLike={props.updateLike}
             updateSaved={props.updateSaved}
           />
@@ -124,7 +120,8 @@ const BoardDetail = (props: Props) => {
               comments.length >= 1 ? (
                 comments.map((comment) => (
                   <BoardComment 
-                    key={comment.commentId} 
+                    key={comment.commentId}
+                    updateComment={props.updateComment}
                     comment={comment}
                   />
                 ))
