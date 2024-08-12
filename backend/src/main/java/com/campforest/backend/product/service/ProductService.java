@@ -91,12 +91,14 @@ public class ProductService {
 		List<String> imageUrls = findProduct.getProductImages()
 			.stream().map(ProductImage::getImageUrl)
 			.collect(Collectors.toList());
-
 		boolean isSaved = false;
 		if (userId != null) {
-			isSaved = saveProductRepository.existsByUserUserIdAndProductId(userId, productId);
+			Optional<SaveProduct> saveProduct = saveProductRepository.findByUserUserIdAndProductId(userId,
+				productId);
+			if (saveProduct.isPresent()) {
+				isSaved = true;
+			}
 		}
-
 		ProductDetailDto productDetailDto = new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
 		productDetailDto.setSaved(isSaved);
 
