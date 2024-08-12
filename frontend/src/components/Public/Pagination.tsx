@@ -1,0 +1,58 @@
+import React, { useState } from 'react';
+
+interface PaginationProps {
+  totalItems: number;
+  itemsPerPage: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }: PaginationProps) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const maxVisiblePages = 10;
+
+  const getPageNumbers = () => {
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  };
+
+  return (
+    <div className="flex items-center justify-center space-x-2 mt-4">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+      >
+        이전
+      </button>
+      
+      {getPageNumbers().map((pageNumber) => (
+        <button
+          key={pageNumber}
+          onClick={() => onPageChange(pageNumber)}
+          className={`px-3 py-1 rounded ${
+            currentPage === pageNumber ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+          }`}
+        >
+          {pageNumber}
+        </button>
+      ))}
+      
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+      >
+        다음
+      </button>
+    </div>
+  );
+};
+
+export default Pagination;

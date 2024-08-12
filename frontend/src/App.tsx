@@ -22,19 +22,16 @@ import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
 import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
-import { WebSocketProvider } from 'Context/WebSocketContext'
 import { communityChatList } from '@services/chatService';
 import { store } from '@store/store';
 import { setCommunityChatUserList, setTotalUnreadCount, setTransactionChatUesrList } from '@store/chatSlice';
 import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
 import { transactionChatList } from '@services/chatService';
-import ForestBg from '@components/Public/ForestBg';
 import useSSE from "@hooks/useSSE";
 import LightMode from '@components/Public/LightMode';
 
 function App() {
-  const userState = useSelector((state: RootState) => state.userStore);
   const modals = useSelector((state: RootState) => state.modalStore);
   const dispatch = useDispatch()
   const currentLoc = useLocation();
@@ -46,31 +43,6 @@ function App() {
     useSSE();
     return null;
   }
-
-  // 채팅방 목록 가져오기
-  const fetchChatList = async () => {
-    const userId = sessionStorage.getItem('userId');
-    if (userId) {
-      const communityChatUserList = await communityChatList();
-      let count = 0;
-      communityChatUserList.map((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
-      store.dispatch(setCommunityChatUserList(communityChatUserList));
-      const transactionChatUserList = await transactionChatList();
-      transactionChatUserList.map((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
-      store.dispatch(setTotalUnreadCount(count));
-      store.dispatch(setTransactionChatUesrList(transactionChatUserList));
-    }
-  }
-  
-  useEffect(() => {
-    if(userState.isLoggedIn) {
-      fetchChatList();
-    }
-  }, [userState.isLoggedIn]);
 
   useEffect(() => {
     const bodyBox = document.querySelector('body') as HTMLElement;
@@ -87,9 +59,9 @@ function App() {
     });
     dispatch(setIsBoardWriteModal(false));
   }, [currentLoc]);
-    
+
   return (
-    <WebSocketProvider>
+    <div>
       <SSEHandler />
       <div className="App h-screen overflow-hidden">
         <Navbar />
@@ -125,7 +97,7 @@ function App() {
         
         {/* <ForestBg /> */}
       </div>
-    </WebSocketProvider>
+    </div>
   );
 }
 

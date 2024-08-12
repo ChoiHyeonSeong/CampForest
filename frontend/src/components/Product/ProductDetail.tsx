@@ -14,8 +14,14 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, store } from '@store/store';
+import { addMessageToChatInProgress, selectTransaction, setChatInProgressType, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, setTransactionChatUesrList, updateMessageReadStatus, updateTransactionChatUserList } from '@store/chatSlice';
+import { initTransactionChat, transactionChatList } from '@services/chatService';
+import { ChatUserType } from '@components/Chat/ChatUser';
+import { useWebSocket } from 'Context/WebSocketContext';
 
-type ProductDetailType = {
+export type ProductDetailType = {
   category: string;
   deposit: number | null;
   hit: number;
@@ -27,14 +33,18 @@ type ProductDetailType = {
   productName: string;
   productPrice: number;
   productType: string;
-  userId: string;
+  userId: number;
   nickname: string;
   userImage: string;
 };
 
 function Detail() {
+  const dispatch = useDispatch();
+  const { subscribe, publishMessage } = useWebSocket();
   const isUserPost = false; // 예시로 사용자 게시물 여부를 나타내는 값
+  const loginUserId = Number(sessionStorage.getItem('userId'));
   const productId = Number(useParams().productId);
+  const chatState = useSelector((state: RootState) => state.chatStore);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [product, setProduct] = useState<ProductDetailType>({
     category: '',
@@ -48,10 +58,25 @@ function Detail() {
     productName: '',
     productPrice: 0,
     productType: '',
-    userId: '',
+    userId: 0,
     nickname: '',
     userImage: ''
   });
+
+  const [category, setCategory] = useState('');
+
+  useEffect(() => {
+    if (product.category === '침낭') {
+      setCategory('침낭/매트')
+    } else if (product.category === '코펠') {
+      setCategory('코펠/식기')
+    } else if (product.category === '침낭') {
+      setCategory('침낭/매트')
+    } else {
+      setCategory(product.category)
+    }
+  }, [product])
+
   const fetchProduct = async () => {
     try {
       const result = await productDetail(productId);
@@ -65,6 +90,63 @@ function Detail() {
   useEffect(() => {
     fetchProduct();
   }, []);
+
+  async function handleChatButton() {
+    const matchedUser = chatState.transactionChatUserList.find((chatUser) => chatUser.otherUserId === product.userId);
+    if (matchedUser) {
+      dispatch(setChatInProgressType('거래'))
+      dispatch(selectTransaction());
+      dispatch(setOtherId(matchedUser.otherUserId));
+      dispatch(setRoomId(matchedUser.roomId));
+      dispatch(setIsChatOpen(true));
+    } else {
+      try {
+        const roomId = await initTransactionChat(productId, product.userId);
+        await fetchTransactionChatList()
+        dispatch(setChatInProgressType('거래'))
+        dispatch(selectTransaction());
+        dispatch(setOtherId(product.userId));
+        dispatch(setIsChatOpen(true));
+        dispatch(setRoomId(roomId));
+
+        subscribeToChat(roomId);
+      } catch (error) {
+        console.error('Error in handleChatButton: ', error);
+      }
+    }
+  }
+
+  const fetchTransactionChatList = async () => {
+    if (loginUserId) {
+      const response = await transactionChatList();
+      let count = 0;
+      response.map((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setTotalUnreadCount(count));
+      store.dispatch(setTransactionChatUesrList(response));
+    }
+  }
+
+  function subscribeToChat(roomId: number) {
+    // 메세지를 받았을 때
+    subscribe(`/sub/transaction/${roomId}`, (message: { body: string }) => {
+      const response = JSON.parse(message.body);
+      const state: RootState = store.getState();
+      if(response.messageType === 'READ') {
+        if (state.userStore.userId !== response.senderId) {
+          store.dispatch(updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }));
+        }  
+      }
+      else if (state.chatStore.roomId === response.roomId) {
+        dispatch(updateTransactionChatUserList({...response, inProgress: true}));
+        publishMessage(`/pub/transaction/${response.roomId}/read`, loginUserId);
+        dispatch(addMessageToChatInProgress(response));
+      } else {
+        dispatch(updateTransactionChatUserList({...response, inProgress: false}));
+      }
+    });
+  }
 
   // Swiper 크기 제어용
   useEffect(() => {
@@ -169,7 +251,7 @@ function Detail() {
             >
               <div className={`flex`}>
                 <div className={`me-[1.5rem]`}>
-                  캠핑 장비 {'>'} {product.category}
+                  캠핑 장비 {'>'} {category}
                 </div>
                 <div 
                   className={`
@@ -182,12 +264,11 @@ function Detail() {
                 </div>
               </div>
               <MoreOptionsMenu
-                isUserPost={isUserPost}
+                isUserPost={loginUserId === product.userId}
                 deleteId={0}
                 deleteFunction={() => {
                   console.log('test');
                 }}
-                copyURL=""
               />
             </div>
             <div className={`text-2xl font-medium`}>
@@ -381,6 +462,7 @@ function Detail() {
                 dark:bg-dark-signature
                 rounded-md 
               `}
+              onClick={handleChatButton}
             >
               채팅하기
             </button>

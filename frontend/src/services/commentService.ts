@@ -19,6 +19,12 @@ export const commentWrite = async (boardId: number, content: string) => {
   console.log(response);
 }
 
+export const commentDelete = async (commentId: number) => {
+  const response = await axiosInstance.delete(`/board/comment?commentId=${commentId}`);
+
+  console.log(response);
+}
+
 export const commentLike = async (commentId: number) => {
   const response = await axiosInstance.post(`/board/commentlike?commentId=${commentId}`);
   console.log(response);

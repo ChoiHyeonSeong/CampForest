@@ -17,7 +17,7 @@ type SearchParams = {
   productType: string,
   minPrice?: number,
   maxPrice?: number,
-  locations?: {},
+  locations?: string[],
   titleKeyword?: string,
   cursorId?: number | null,
   size?: number,
@@ -52,7 +52,7 @@ export const productList = async (searchParams: SearchParams) => {
 }
 
 export const productDetail = async (productId: number) => {
-  const response = await axios.get(`/product/public/${productId}`);
+  const response = await axiosInstance.get(`/product/public/${productId}`);
   return response.data.data;
 }
 

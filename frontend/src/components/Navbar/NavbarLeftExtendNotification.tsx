@@ -34,7 +34,7 @@ const NavbarLeftExtendCommunity = (props: Props) => {
     <div
       className={`
         ${props.isExtendMenuOpen ? 'translate-x-[5rem]' : '-translate-x-full'}
-        fixed z-[35] w-[20rem] h-[100%] pt-[3.2rem] lg:pt-[0]
+        fixed z-[35] w-[20rem] h-[100%] lg:pt-[0]
         bg-light-white border-light-border-1
         dark:bg-dark-white dark:border-dark-border-1
         border-r transition-all duration-300 ease-in-out

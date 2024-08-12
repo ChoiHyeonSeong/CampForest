@@ -130,7 +130,7 @@ const useSSE = () => {
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
       }
-    };
+    }; 
   }, [userState.isLoggedIn, createEventSource, isConnected, retryCount]);
 
   return isConnected;

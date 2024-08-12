@@ -68,7 +68,7 @@ function Main() {
     setBoards(prevBoards =>
       prevBoards.map(board =>
         board.boardId === boardId
-          ? { ...board, commentCount: commentCount }
+          ? { ...board, commentCount: commentCount}
           : board
       )
     );
@@ -177,6 +177,7 @@ function Main() {
                 deleteFunction={pageReload} 
                 isDetail={false} 
                 detailOpen={detailOpen} 
+                updateComment={updateComment}
                 updateLike={updateLike} 
                 updateSaved={updateSaved}
               />

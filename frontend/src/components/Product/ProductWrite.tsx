@@ -36,6 +36,7 @@ const categories: Option[] = [
   { id: 10, name: '기타' },
 ];
 
+
 const ProductWrite = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -63,6 +64,7 @@ const ProductWrite = () => {
   };
 
   const handleCategorySelect = (option: Option) => {
+    console.log(option)
     setSelectedCategory(option);
   };
 
@@ -96,16 +98,29 @@ const ProductWrite = () => {
       return;
     }
     
+    let category: string;
+
+    if (selectedCategory.name === '침낭/매트') {
+      category = '침낭'
+    } else if (selectedCategory.name === '코펠/식기') {
+      category = '코펠'
+    } else if (selectedCategory.name === '버너/화로') {
+      category = '버너'
+    } else {
+      category = selectedCategory.name
+    }
+
     const submitData = {
       ...formData,
       productType: selectedButton === '대여' ? 'RENT' : 'SALE',
-      category: selectedCategory.name,
+      category: category,
     };
 
     console.log(submitData);
     
     try { 
       dispatch(setIsLoading(true));
+      console.log(submitData)
       await productWrite(submitData, productImages);
       dispatch(setIsLoading(false));
       navigate('/product/list');
@@ -438,7 +453,8 @@ const ProductWrite = () => {
             -translate-y-1/2 -translate-x-1/2
           `}
         >
-      <ProductMap 
+      <ProductMap
+        isPersonal={false}
         handleLocation={handleLocation} 
         openMap={openMap} />
       </div>}

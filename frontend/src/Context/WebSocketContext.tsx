@@ -1,6 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useWebSocket as useWebSocketHook, UseWebSocketReturn } from '@hooks/useWebSocket';
-import useSSE from "@hooks/useSSE";
 
 type WebSocketContextType = UseWebSocketReturn;
 

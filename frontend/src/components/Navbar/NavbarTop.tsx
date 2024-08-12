@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import ProfileModal from './ProfileModal';
 
@@ -10,6 +10,8 @@ import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 
 import ProfileImage from '@assets/images/basic_profile.png'
 import NavTopPushModal from './NavTopPushModal';
+import { readNotification } from '@services/notificationService';
+import { updateNotificationList } from '@store/notificationSlice';
 
 type Props = {
   toggleMenu: () => void;
@@ -17,12 +19,21 @@ type Props = {
 }
 
 const NavbarTop = (props: Props) => {
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userStore);
   const [locPath, setLocPath] = useState<string | null>(null);
   const currentLoc = useLocation();
-
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPushModalOpen, setIsPushModalOpen] = useState(false);
+
+  async function readAllNotifications () {
+    try {
+      await readNotification()
+      dispatch(updateNotificationList());
+    } catch (error) {
+      console.error('읽음 처리 실패: ', error);
+    }
+  }
 
   const togglePushModal = () => {
     setIsPushModalOpen(!isPushModalOpen);
@@ -32,6 +43,9 @@ const NavbarTop = (props: Props) => {
   };
 
   const closePushModal = () => {
+    if(isPushModalOpen) {
+      readAllNotifications();
+    }
     setIsPushModalOpen(false);
   };
 

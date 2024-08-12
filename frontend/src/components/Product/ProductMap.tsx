@@ -1,6 +1,7 @@
 import React, { SetStateAction, useEffect, useState } from 'react';
 
 type Props = {
+  isPersonal: boolean;
   openMap: (value: boolean) => void;
   handleLocation: (dongName: string) => void;
 };

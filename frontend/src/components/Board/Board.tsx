@@ -43,6 +43,7 @@ type Props = {
   deleteFunction: () => void;
   isDetail: boolean;
   detailOpen? : (param: number) => void;
+  updateComment: (boardId: number, commentCount: number) => void;
   updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
   updateSaved: (boardId: number, isSaved: boolean) => void;
 }
@@ -68,27 +69,6 @@ const Board = (props: Props) => {
       props.detailOpen(props.board.boardId)
     }
   }
-  
-  // const toggleLike = async () => {
-  //   try {
-  //     if (user.isLoggedIn) {
-  //       if (liked) {
-  //         // dislike
-  //         const result = await boardDislike(props.board.boardId, user.userId)
-  //         setLiked(false)
-  //         setLikeCount(result);
-  //       } else {
-  //         const result = await boardLike(props.board.boardId, user.userId)
-  //         setLiked(true)
-  //         setLikeCount(result);
-  //       }
-  //     } else {
-  //       alert("로그인 해주세요.")
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
   const toggleLike = async () => {
     try {
@@ -185,7 +165,6 @@ const Board = (props: Props) => {
             isUserPost={user.userId === props.board.userId} 
             deleteFunction={deleteBoard} 
             deleteId={props.board.boardId}
-            copyURL={`board/detail/${props.board.boardId}`}
           />
         </div>
 

@@ -160,6 +160,7 @@ const Community = () => {
                   deleteFunction={pageReload} 
                   isDetail={false} 
                   detailOpen={detailOpen} 
+                  updateComment={updateComment}
                   updateLike={updateLike} 
                   updateSaved={updateSaved}
                 />

@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux';
 
 const NotificationList = () => {
   const notificationState = useSelector((state: RootState) => state.notificationStore);
+  
   return (
-    <div className={`px-[0.75rem] overflow-auto max-h-[95vh]`}>
+    <div className={`px-[0.75rem] overflow-auto max-h-[92vh]`}>
       {notificationState.newNotificationList.length !== 0 &&
       <div 
         className='
