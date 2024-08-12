@@ -22,8 +22,12 @@ import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
 import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
-import { WebSocketProvider } from 'Context/WebSocketContext'
+import { communityChatList } from '@services/chatService';
+import { store } from '@store/store';
+import { setCommunityChatUserList, setTotalUnreadCount, setTransactionChatUesrList } from '@store/chatSlice';
+import { ChatUserType } from '@components/Chat/ChatUser';
 import LandingPage from '@pages/LandingPage';
+import { transactionChatList } from '@services/chatService';
 import useSSE from "@hooks/useSSE";
 import LightMode from '@components/Public/LightMode';
 
@@ -55,9 +59,9 @@ function App() {
     });
     dispatch(setIsBoardWriteModal(false));
   }, [currentLoc]);
-    
+
   return (
-    <WebSocketProvider>
+    <div>
       <SSEHandler />
       <div className="App h-screen overflow-hidden">
         <Navbar />
@@ -93,7 +97,7 @@ function App() {
         
         {/* <ForestBg /> */}
       </div>
-    </WebSocketProvider>
+    </div>
   );
 }
 
