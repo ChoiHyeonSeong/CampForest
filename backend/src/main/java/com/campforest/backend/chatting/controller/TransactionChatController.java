@@ -98,7 +98,7 @@ public class TransactionChatController {
 
 	@SendTo("/sub/transaction/{roomId}")
 	@MessageMapping("/transaction/{roomId}/markAsRead")
-	public void markMessagesAsReadWebSocket(
+	public Long markMessagesAsReadWebSocket(
 		@DestinationVariable Long roomId,
 		@Payload Long userId) {
 		transactionChatService.markMessagesAsRead(roomId, userId);
@@ -109,6 +109,7 @@ public class TransactionChatController {
 				.content("읽음")
 				.build();
 		transactionChatService.saveMessage(roomId, receiverMessage);
+		return userId;
 	}
 
 	// //user가 속한 채팅방 목록 가져옴.
