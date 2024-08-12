@@ -101,6 +101,11 @@ public class Sale {
 		this.modifiedAt = LocalDateTime.now();
 	}
 
+	public void denySale() {
+		this.saleStatus = TransactionStatus.DENIED;
+		this.modifiedAt = LocalDateTime.now();
+	}
+
 	public void confirmSale(boolean isOwner) {
 		if (isOwner) {
 			this.confirmedBySeller = true;

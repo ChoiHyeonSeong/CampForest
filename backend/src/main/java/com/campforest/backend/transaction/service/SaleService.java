@@ -89,16 +89,32 @@ public class SaleService {
 	}
 
 	@Transactional
-	public void denySale(SaleRequestDto saleRequestDto, Long requesterId) {
+	public Map<String, Long> denySale(SaleRequestDto saleRequestDto, Long requesterId) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, saleRequestDto);
 
+		Long saleId = 0L;
 		Sale[] sales = getSales(saleRequestDto, requesterId, receiverId);
+		for(Sale sale : sales) {
+			if(sale.getSaleStatus().equals(TransactionStatus.RECEIVED)) {
+				saleId = sale.getId();
+			}
+		}
 
-		saleRepository.delete(sales[0]);
-		saleRepository.delete(sales[1]);
+		sales[0].denySale();
+		sales[1].denySale();
+
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+		result.put("saleId", saleId);
+
+		saleRepository.save(sales[0]);
+		saleRepository.save(sales[1]);
+
+		return result;
 	}
 
 	@Transactional
