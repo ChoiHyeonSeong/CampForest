@@ -127,9 +127,6 @@ const useSSE = () => {
     }
 
     return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
       }

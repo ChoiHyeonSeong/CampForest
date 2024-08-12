@@ -58,6 +58,8 @@ const NavbarTop = (props: Props) => {
     <div 
       className={`
         flex justify-between fixed lg:top-0 md:right-0 z-[50] lg:z-[30] w-[100%] lg:w-[1.75rem] h-[3.2rem] py-[0.25rem] ps-[0.5rem] md:ps-0 lg:mx-[1rem] 
+        bg-light-white
+        dark:bg-dark-white dark:bg-opacity-80
         lg:bg-inherit 
         dark:lg:bg-inherit
         lg:border-none

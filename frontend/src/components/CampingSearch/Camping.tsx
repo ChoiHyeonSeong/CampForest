@@ -8,37 +8,44 @@ const Camping = (props: Props) => {
   return (
     <div 
       onClick={props.modalOpen} 
-      className={`flex w-full md:min-w-[30rem]`}
+      className={`flex items-center w-full border-b border-light-border-1`}
     >
       {/* 캠핑이미지 */}
       <div 
         className={`
-          shrink-0 w-1/3 max-w-[8rem] m-[1rem]
+          hidden md:block md:w-[15rem]
+          aspect-[3/2]
           bg-slate-300
-          aspect-1 rounded overflow-hidden
+          rounded-sm overflow-hidden
+          m-2
         `}
       >
-        <img src="" alt="캠핑장사진" />
+        <img
+          src=""
+          alt="캠핑장사진"
+          className="w-full h-full object-cover"
+        
+        />
       </div>
 
       
-      <div className={`w-2/3 sm:w-3/4 ms-[0.75rem] my-[1rem]  py-[0.25rem]`}>
+      <div className={`w-full ms-[0.75rem] my-[0.5rem] py-[0.5rem]`}>
         {/* 캠핑장 이름 및 장소 */}
         <div className={`lex items-baseline mb-[0.5rem]`}>
           <div 
             className={`
-              me-[0.5rem]
-              text-2xl
+              mb-[0.25rem]
+              text-xl font-semibold line-clamp-1
             `}
           >
             OO캠핑장
           </div>
           <div
             className={`
-              ps-[0.25rem]
+              mb-[0.25rem]
               text-light-text-secondary
               dark:text-dark-text-secondary
-              text-xs
+              text-xs line-clamp-1
             `}
           >
             OO시 OO구 OO로 OO-OO
@@ -48,7 +55,7 @@ const Camping = (props: Props) => {
         {/* 캠핑태그 */}
         <div 
           className={`
-            max-md:hidden flex mb-[0.25rem] ms-[0.1rem] space-x-[0.5rem]
+            max-md:hidden flex mb-[0.25rem] space-x-[0.5rem]
             text-xs
           `}
         >
@@ -86,10 +93,10 @@ const Camping = (props: Props) => {
 
         {/* 캠핑후기 */}
         <div>
-          <div className={`flex items-center mt-[1rem]`}>
+          <div className={`flex items-center mt-[0.5rem]`}>
             <div className={`text-lg me-[0.5rem]`}>
               ★★★★★
-              <span>5.0</span>
+              <span className='ms-[0.25rem]'>5.0</span>
             </div>
             <div className={`text-xs`}>
               (28개의 평가)

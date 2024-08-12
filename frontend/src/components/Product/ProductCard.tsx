@@ -77,7 +77,7 @@ const ProductCard = (props: Props) => {
         {/* 기본 이미지 - 상시 */}
         <div 
           className={`
-            absolute z-[10] size-full
+            absolute z-[5] size-full
             overflow-hidden
           `}
         >
@@ -94,7 +94,7 @@ const ProductCard = (props: Props) => {
         <div 
           className={`
             ${props.product.sold ? '' : 'hidden'}
-            flex justify-center items-center absolute z-[20] w-full h-full
+            flex justify-center items-center absolute z-[6] w-full h-full
             bg-light-black
             dark:bg-dark-black
             opacity-60
@@ -123,7 +123,7 @@ const ProductCard = (props: Props) => {
         <div 
           onClick={toggleLike} 
           className={`
-            absolute z-[20] top-[0.25rem] right-[0.25rem] 
+            absolute z-[7] top-[0.25rem] right-[0.25rem] 
             cursor-pointer
           `}
         >

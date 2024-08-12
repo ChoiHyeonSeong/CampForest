@@ -178,10 +178,11 @@ function CampingSearch() {
   return (
     <div className={`z-[30]`}>
       {/* 메인 화면 */}
-      <div className={`flex justify-center items-center min-h-screen`}>
+      <div className={`flex flex-col justify-center items-center min-h-screen`}>
+        <h2 className='w-[100%] md:max-w-[48rem] lg:max-w-[80rem] font-bold text-4xl mb-[1.8rem]'>캠핑장 검색</h2>
         <div 
           className={`
-            flex flex-col lg:flex-row  w-[100%] md:max-w-[48rem] lg:max-w-[80rem] xl:max-w-[90rem] lg:h-[40rem] p-[0.75rem] mx-[0.5rem]
+            flex flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[42rem] p-[0.75rem] mx-[0.5rem]
             bg-light-white bg-opacity-80
             dark:bg-dark-white dark:bg-opacity-80
 
@@ -189,7 +190,7 @@ function CampingSearch() {
         >
               
           {/* 캠핑지도 */}
-          <div className='relative w-full lg:min-w-[400px] lg:max-w-[50rem] lg:h-[38.5rem] aspect-[4/3] lg:aspect-auto'>
+          <div className='relative w-full lg:min-w-[400px] lg:max-w-[50rem] h-[30rem] lg:h-full lg:aspect-auto'>
             <div 
               className={`
                z-[0] w-[100%] h-[100%]
@@ -208,7 +209,7 @@ function CampingSearch() {
           </div>
           
           {/* 캠핑장리스트 */}
-          <div className={`w-full lg:min-w-[470px] lg:h-[38.5rem] 
+          <div className={`w-full lg:min-w-[470px] lg:h-full
       lg:ms-[1rem] mt-[0.75rem] lg:mt-0 
       flex flex-col`}>
             
@@ -275,7 +276,14 @@ function CampingSearch() {
               
             </div>
 
-            <div className={`flex-grow overflow-y-auto scrollbar-hide px-[0.75rem]`}>
+            <div
+              className={`
+                flex-grow
+                bg-light-white
+                dark:bg-dark-white
+                overflow-y-auto
+              `}
+            >
               <CampingList modalOpen={modalOpen} />
             </div>
           </div>
