@@ -121,6 +121,7 @@ public enum ErrorCode {
 	CHAT_UNREAD_COUNT_FAILED("CH006", HttpStatus.BAD_REQUEST, "읽지 않은 메시지 수 조회에 실패했습니다."),
 	CHAT_ROOM_LIST_FAILED("CH007", HttpStatus.BAD_REQUEST, "채팅방 목록 조회에 실패했습니다."),
 	RENT_UPDATE_FAILED("R007", HttpStatus.BAD_REQUEST, "예약 업데이트 불가능합니다."),
+	CHAT_ROOM_EXIT_FAILED("CH008", HttpStatus.BAD_REQUEST, "채팅방 나가기 실패하였습니다"),
 
 	// Review Error
 	REVIEW_CREATION_FAILED("R008", HttpStatus.BAD_REQUEST, "리뷰 생성에 실패하였습니다."),

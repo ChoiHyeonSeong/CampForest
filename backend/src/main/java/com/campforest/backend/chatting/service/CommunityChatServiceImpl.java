@@ -32,22 +32,22 @@ public class CommunityChatServiceImpl implements CommunityChatService {
     @Override
     public CommunityChatMessage saveMessage(Long roomId, CommunityChatMessage message) {
         CommunityChatRoom room = communityChatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
-        message= CommunityChatMessage.builder()
-                .roomId(roomId)
-                .content(message.getContent())
-                .senderId(message.getSenderId())
-                .build();
+            .orElseThrow(() -> new RuntimeException("Chat room not found"));
 
-        message = communityChatMessageRepository.save(message);
-        message.setType("MESSAGE");
-        return message;
+        CommunityChatMessage newMessage = CommunityChatMessage.builder()
+            .roomId(roomId)
+            .content(message.getContent())
+            .senderId(message.getSenderId())
+            .receiverId(room.getUser1().equals(message.getSenderId()) ? room.getUser2() : room.getUser1())
+            .build();
+
+        return communityChatMessageRepository.save(newMessage);
     }
 
     @Transactional
     @Override
-    public List<CommunityChatMessage> getChatHistory(Long roomId) {
-        return communityChatMessageRepository.findByChatRoom(roomId);
+    public List<CommunityChatMessage> getChatHistory(Long roomId, Long userId) {
+        return communityChatMessageRepository.findByRoomIdAndNotDeletedForUser(roomId, userId);
     }
     @Transactional
     @Override
@@ -60,7 +60,13 @@ public class CommunityChatServiceImpl implements CommunityChatService {
     @Override
     public void markMessagesAsRead(Long roomId, Long userId) {
         List<CommunityChatMessage> unreadMessages = communityChatMessageRepository.findUnreadMessagesForUser(roomId, userId);
-        unreadMessages.forEach(message -> message.setRead(true));
+        unreadMessages.forEach(message -> {
+            message.setRead(true);
+            // 수신자에 대해 삭제되지 않은 메시지만 읽음 처리
+            if (message.getReceiverId().equals(userId) && !message.isDeletedForReceiver()) {
+                message.setRead(true);
+            }
+        });
         communityChatMessageRepository.saveAll(unreadMessages);
 
         CommunityChatRoom chatRoom = communityChatRoomRepository.findById(roomId).orElseThrow();
@@ -76,6 +82,23 @@ public class CommunityChatServiceImpl implements CommunityChatService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    @Transactional
+    @Override
+    public void exitChatRoom(Long roomId, Long userId) {
+        List<CommunityChatMessage> messages = communityChatMessageRepository.findByChatRoom(roomId);
+
+        for (CommunityChatMessage message : messages) {
+            if (message.getSenderId().equals(userId)) {
+                message.setDeletedForSender(true);
+            } else if (message.getReceiverId().equals(userId)) {
+                message.setDeletedForReceiver(true);
+            }
+        }
+
+        communityChatMessageRepository.saveAll(messages);
+    }
+
     private CommunityChatDto convertToDto(CommunityChatRoom room) {
         CommunityChatDto dto = new CommunityChatDto();
         dto.setRoomId(room.getRoomId());
@@ -83,8 +106,6 @@ public class CommunityChatServiceImpl implements CommunityChatService {
         dto.setUser2Id(room.getUser2());
         return dto;
     }
-
-
 
 
     private CommunityChatRoomListDto convertToListDto(CommunityChatRoom room, Long currentUserId) {
@@ -102,12 +123,6 @@ public class CommunityChatServiceImpl implements CommunityChatService {
         }
         return dto;
     }
-
-
-
-
-
-
 
 
     // 마지막 메시지를 가져오는 메서드 (이 메서드는 별도로 구현해야 합니다)
