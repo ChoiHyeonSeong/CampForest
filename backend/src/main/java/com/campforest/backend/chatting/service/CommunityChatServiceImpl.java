@@ -62,7 +62,6 @@ public class CommunityChatServiceImpl implements CommunityChatService {
         List<CommunityChatMessage> unreadMessages = communityChatMessageRepository.findUnreadMessagesForUser(roomId, userId);
         unreadMessages.forEach(message -> {
             message.setRead(true);
-            // 수신자에 대해 삭제되지 않은 메시지만 읽음 처리
             if (message.getReceiverId().equals(userId) && !message.isDeletedForReceiver()) {
                 message.setRead(true);
             }
