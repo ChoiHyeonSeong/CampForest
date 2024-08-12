@@ -33,7 +33,6 @@ public class SaleService {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 		product.setProductPrice(saleRequestDto.getPrice());
-		validateDuplicateRequest(saleRequestDto);
 
 		Map<String, Long> result = new HashMap<>();
 		Long requesterId = saleRequestDto.getRequesterId();
@@ -183,13 +182,6 @@ public class SaleService {
 
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
-	}
-
-	private void validateDuplicateRequest(SaleRequestDto saleRequestDto) {
-		saleRepository.findByProductIdAndRequesterId(saleRequestDto.getProductId(), saleRequestDto.getRequesterId())
-			.ifPresent(sale -> {
-				throw new RuntimeException("이미 구매 요청을 보냈습니다.");
-			});
 	}
 
 	private Sale buildSale(SaleRequestDto saleRequestDto, Product product, Long requesterId, Long receiverId,

@@ -12,6 +12,7 @@ public class RentRequestDto {
 	private Long productId;
 	private Long renterId;
 	private Long ownerId;
+	private Long price;
 	private LocalDateTime rentStartDate;
 	private LocalDateTime rentEndDate;
 	private LocalDateTime meetingTime;
