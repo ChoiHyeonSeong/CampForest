@@ -193,7 +193,7 @@ public class SaleService {
 	}
 
 	private Long determineReceiverId(Product product, Long requesterId, SaleRequestDto saleRequestDto) {
-		return requesterId.equals(product.getUserId()) ? saleRequestDto.getSellerId() :saleRequestDto.getBuyerId();
+		return requesterId.equals(product.getUserId()) ? saleRequestDto.getBuyerId() :saleRequestDto.getSellerId();
 	}
 
 
