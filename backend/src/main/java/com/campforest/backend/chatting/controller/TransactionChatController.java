@@ -90,11 +90,10 @@ public class TransactionChatController {
 			return savedMessage;
 		} catch (Exception e) {
 			// 로그 기록
-			log.error("메시지 저장 중 오류 발생: ", e);
 			// 오류 메시지 반환
 			TransactionChatMessage errorMessage = new TransactionChatMessage();
 			errorMessage.setMessageType(MessageType.MESSAGE);
-			errorMessage.setContent("메시지 저장 실패");
+			errorMessage.setContent("메시지 저장 실패"+e);
 			return errorMessage;
 		}
 	}
