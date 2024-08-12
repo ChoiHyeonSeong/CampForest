@@ -146,7 +146,7 @@ class ReviewServiceTest {
 			.userId(userId)
 			.productName("텐트")
 			.productContent("텐트치고싶다")
-			.category(Category.침낭_매트)
+			.category(Category.침낭)
 			.productType(ProductType.SALE)
 			.interest_hit(0L)
 			.deposit(0L)
