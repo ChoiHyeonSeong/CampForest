@@ -7,13 +7,19 @@ const ProductInfoChat = ({ }: Props) => {
     <div 
       className='
         flex justify-between items-center w-full p-[0.8rem] 
-        bg-light-white border-light-border
-        dark:bg-dark-white dark-border-dark-border
+        bg-light-bgbasic border-light-border
+        dark:bg-dark-bgbasic dark-border-dark-border
         border-y'>
       {/* 상품정보 */}
       <div className='flex items-center'>
         {/* 상품이미지 */}
-        <div className='size-[3.5rem] me-[0.75rem] bg-gray-300 overflow-hidden'>
+        <div
+          className='
+            shrink-0 size-[3.5rem] me-[0.75rem]
+            bg-gray-300
+            overflow-hidden
+          '
+        >
           <img src='' alt='상품이미지'></img> {/* 이미지 들어갈 곳 */}
         </div>
 
@@ -30,9 +36,17 @@ const ProductInfoChat = ({ }: Props) => {
         </div>
       </div>
  
-      {/* 거래 상태표시 0*/}
-      <div className='px-[0.7rem] py-[0.4rem] bg-light-gray-1 text-white rounded'>대여중</div>
-
+      {/* 거래 상태표시 */}
+      <div
+        className='
+          px-[0.7rem] py-[0.4rem]
+          bg-light-heart 
+          dark:bg-dark-heart
+          text-white rounded cursor-pointer
+        '
+      >
+        거래요청
+      </div>
     </div>
   )
 }

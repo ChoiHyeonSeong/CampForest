@@ -31,6 +31,7 @@ import LandingPage from '@pages/LandingPage';
 import { transactionChatList } from '@services/chatService';
 import ForestBg from '@components/Public/ForestBg';
 import useSSE from "@hooks/useSSE";
+import LightMode from '@components/Public/LightMode';
 
 function App() {
   const userState = useSelector((state: RootState) => state.userStore);
@@ -116,9 +117,12 @@ function App() {
         {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
         {modals.isLoading ? <LoadingModal /> : <></>}
 
+        {/* 라이트 모드 배경  */}
+        {!isDark && <LightMode />}
+
         {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
         {isDark && <StarLight />}
-        {/* forest */}
+        
         {/* <ForestBg /> */}
       </div>
     </WebSocketProvider>
