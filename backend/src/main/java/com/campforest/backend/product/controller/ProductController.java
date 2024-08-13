@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,34 +48,41 @@ public class ProductController {
 	private final UserService userService;
 
 	//게시물 작성
+	// 게시물 작성
 	@PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ApiResponse<?> createProduct(Authentication authentication,
+	public CompletableFuture<ApiResponse<?>> createProduct(Authentication authentication,
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
 		@RequestPart(value = "productRegistDto") ProductRegistDto productRegistDto
-	) throws Exception {
-		Users users = userService.findByEmail(authentication.getName())
-			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-
-		List<String> imageUrls = new ArrayList<>();
-		if (files != null) {
+	) {
+		return CompletableFuture.supplyAsync(() -> {
 			try {
-				for (MultipartFile file : files) {
-					String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
-					imageUrls.add(fileUrl);
+				Users user = userService.findByEmail(authentication.getName())
+					.orElseThrow(() -> new RuntimeException("유저 정보 조회 실패"));
+
+				List<CompletableFuture<String>> uploadFutures = new ArrayList<>();
+				if (files != null) {
+					for (MultipartFile file : files) {
+						String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+						uploadFutures.add(s3Service.uploadAsync(file.getOriginalFilename(), file, extension));
+					}
 				}
-			} catch (IOException e) {
+
+				List<String> imageUrls = uploadFutures.stream()
+					.map(CompletableFuture::join)
+					.collect(Collectors.toList());
+
+				productRegistDto.setProductImageUrl(imageUrls);
+				productRegistDto.setUserId(user.getUserId());
+
+				productService.createProduct(productRegistDto);
+
+				return ApiResponse.createSuccessWithNoContent("게시물 작성에 성공하였습니다");
+			} catch (Exception e) {
 				return ApiResponse.createError(ErrorCode.PRODUCT_CREATION_FAILED);
 			}
-		}
-
-		productRegistDto.setProductImageUrl(imageUrls);
-		productRegistDto.setUserId(users.getUserId());
-
-		productService.createProduct(productRegistDto);
-
-		return ApiResponse.createSuccessWithNoContent("게시물 작성에 성공하였습니다");
+		});
 	}
+
 
 	//게시물 정보 가져오기
 	@GetMapping("/public/{productId}")
