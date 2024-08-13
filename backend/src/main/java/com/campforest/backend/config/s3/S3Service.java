@@ -55,17 +55,6 @@ public class S3Service {
 		return uploadImageUrl;
 	}
 
-	@Async
-	public CompletableFuture<String> uploadAsync(String fileName, MultipartFile multipartFile, String extend) throws IOException {
-		return CompletableFuture.supplyAsync(() -> {
-			try {
-				return upload(fileName, multipartFile, extend);
-			} catch (IOException e) {
-				throw new CompletionException(e);
-			}
-		});
-	}
-
 	private String buildFileName(String fileName, String extend) {
 		String uuid = UUID.randomUUID().toString();
 		if (fileName.endsWith(extend)) {

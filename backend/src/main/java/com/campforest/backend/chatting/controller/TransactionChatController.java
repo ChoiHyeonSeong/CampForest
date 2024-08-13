@@ -66,7 +66,6 @@ public class TransactionChatController {
 	private final RentRepository rentRepository;
 	private final SaleRepository saleRepository;
 
-
 	@PostMapping("/room")
 	public ApiResponse<?> createChatRoom(
 		Authentication authentication,
@@ -84,7 +83,7 @@ public class TransactionChatController {
 			Users receiver = userService.findByUserId(createRoomDto.getSeller())
 				.orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
 
-			notificationService.createChatNotification(receiver, user, NotificationType.CHAT, "님과 채팅이 시작되었습니다.",
+			notificationService.createChatNotification(receiver, user, NotificationType.TRANSACTIONCHAT, "님과 채팅이 시작되었습니다.",
 				room.getRoomId());
 
 			return ApiResponse.createSuccess(room, "채팅방 생성 성공하였습니다");
@@ -106,24 +105,24 @@ public class TransactionChatController {
 			// 오류 메시지 반환
 			TransactionChatMessage errorMessage = new TransactionChatMessage();
 			errorMessage.setMessageType(MessageType.MESSAGE);
-			errorMessage.setContent("메시지 저장 실패"+e);
+			errorMessage.setContent("메시지 저장 실패" + e);
 			return errorMessage;
 		}
 	}
+
 	@GetMapping("/room/{roomId}/messages")
 	public ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
 		try {
 			List<MessageWithTransactionDTO> messages = transactionChatService.getChatHistory(roomId);
-			Long productId= transactionChatService.getRoomById(roomId).get().getProductId();
-			ChatHistoryDto historyDto = new ChatHistoryDto();
-			historyDto.setMessages(messages);
-			historyDto.setProductId(productId);
+			Long productId = transactionChatService.getRoomById(roomId).get().getProductId();
+
+			ChatHistoryDto historyDto = new ChatHistoryDto(messages, productId);
+
 			return ApiResponse.createSuccess(historyDto, "채팅 메시지 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_HISTORY_NOT_FOUND);
 		}
 	}
-
 
 	@MessageMapping("/transaction/{roomId}/read")
 	public void markMessagesAsReadWebSocket(
@@ -296,7 +295,7 @@ public class TransactionChatController {
 			Long rentId = map.get("rentId");
 
 			Users receiver = userService.findByUserId(receiverId)
-				.orElseThrow(()-> new IllegalArgumentException("사용자 정보 없음"));
+				.orElseThrow(() -> new IllegalArgumentException("사용자 정보 없음"));
 
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				requester.getNickname() + "님이 대여 요청을 거절하였습니다.");
@@ -341,7 +340,7 @@ public class TransactionChatController {
 			Long rentId = map.get("rentId");
 
 			Users receiver = userService.findByUserId(receiverId)
-				.orElseThrow(()-> new IllegalArgumentException("사용자 정보 없음"));
+				.orElseThrow(() -> new IllegalArgumentException("사용자 정보 없음"));
 
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				requester.getNickname() + "님이 대여 요청을 거절하였습니다.");
@@ -475,8 +474,8 @@ public class TransactionChatController {
 	) throws Exception {
 		try {
 			Long productId = saleRequestDto.getProductId();
-			TransactionChatRoom room =transactionChatService.getRoomById(roomId)
-				.orElseThrow (()->new Exception("방을 못찾았습니다"));
+			TransactionChatRoom room = transactionChatService.getRoomById(roomId)
+				.orElseThrow(() -> new Exception("방을 못찾았습니다"));
 			// 요청자 ID 설정
 			saleRequestDto.setRequesterId(userId);
 
@@ -498,8 +497,8 @@ public class TransactionChatController {
 			notificationService.createNotification(receiver, requester, NotificationType.SALE,
 				requester.getNickname() + "님이 판매를 요청하였습니다.");
 			Object transactionEntity = null;
-			 transactionEntity = transactionChatService.getSaleTransactionEntity(saleId);
-			System.out.println("transation: "+transactionEntity.toString());
+			transactionEntity = transactionChatService.getSaleTransactionEntity(saleId);
+			System.out.println("transation: " + transactionEntity.toString());
 			TransactionChatMessage requesterMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
@@ -509,8 +508,7 @@ public class TransactionChatController {
 					.getProductName())
 				.build();
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(requesterMessage, transactionEntity);
-			System.out.println("message 1"+messages);
-			System.out.println("message Test"+messages.toString());
+
 			transactionChatService.saveMessage(roomId, requesterMessage);
 
 			return messages;
@@ -540,12 +538,12 @@ public class TransactionChatController {
 			Map<String, Long> map = saleService.acceptSale(saleRequestDto, requester.getUserId());
 			Long receiverId = map.get("receiverId");
 			Long saleId = map.get("saleId");
-			System.out.println("accept res: "+receiverId+" sale: "+ saleId);
+			System.out.println("accept res: " + receiverId + " sale: " + saleId);
 			//여기서 리시버는 처음에 거래요청한 사람일듯
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+			notificationService.createNotification(receiver, requester, NotificationType.SALE,
 				requester.getNickname() + "님이 판매 요청을 수락하였습니다.");
 			Object transactionEntity = null;
 			transactionEntity = transactionChatService.getSaleTransactionEntity(saleId);
@@ -589,7 +587,7 @@ public class TransactionChatController {
 			Long saleId = map.get("saleId");
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+			notificationService.createNotification(receiver, requester, NotificationType.SALE,
 				requester.getNickname() + "님이 판매 요청을 거절하였습니다.");
 			Object transactionEntity = null;
 			transactionEntity = transactionChatService.getSaleTransactionEntity(saleId);
@@ -624,15 +622,15 @@ public class TransactionChatController {
 	) {
 		try {
 
-				Users requester = userService.findByUserId(userId)
-					.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+			Users requester = userService.findByUserId(userId)
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-				Map<String, Long> map = saleService.confirmSale(saleRequestDto, requester.getUserId());
-				Long receiverId = map.get("receiverId");
-				Long saleId = map.get("saleId");
+			Map<String, Long> map = saleService.confirmSale(saleRequestDto, requester.getUserId());
+			Long receiverId = map.get("receiverId");
+			Long saleId = map.get("saleId");
 			Users receiver = userService.findByUserId(receiverId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+			notificationService.createNotification(receiver, requester, NotificationType.SALE,
 				requester.getNickname() + "님이 거래를 완료하였습니다.");
 			Object transactionEntity = null;
 			transactionEntity = transactionChatService.getSaleTransactionEntity(saleId);
@@ -657,12 +655,11 @@ public class TransactionChatController {
 		}
 	}
 
-	@MessageMapping("/transaction/{roomId}/{userId}/getSale")
-	@SendTo("/sub/transaction/{roomId}")
+	@GetMapping("/transaction/{roomId}/{userId}/getSale")
 	public TransactionChatMessage getSale(
-		@DestinationVariable Long roomId,
-		@DestinationVariable Long userId,
-		@Payload SaleRequestDto saleRequestDto
+		@PathVariable Long roomId,
+		@PathVariable Long userId,
+		@RequestBody SaleRequestDto saleRequestDto
 	) {
 		try {
 			Users requester = userService.findByUserId(userId)

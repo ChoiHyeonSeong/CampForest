@@ -60,7 +60,7 @@ public class SaleService {
 
 		result.put("saleId", sale.getId());
 		result.put("reverseSaleId", reverseSale.getId());
-
+		System.out.println(sale.getId());
 		return result;
 	}
 
