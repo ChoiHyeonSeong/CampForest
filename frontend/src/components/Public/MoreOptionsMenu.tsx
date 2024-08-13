@@ -4,6 +4,7 @@ import { ReactComponent as MoreDotIcon } from '@assets/icons/more-dots.svg'
 
 type Props = {
   isUserPost: boolean;
+  updateFunction: () => void;
   deleteFunction: () => void;
   deleteId: number;
 };
