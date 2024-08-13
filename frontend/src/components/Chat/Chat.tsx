@@ -14,6 +14,7 @@ import { productDetail } from '@services/productService';
 import TransactionDetail from './TransactionDetail';
 
 type UnifiedMessage = {
+  [x: string]: any;
   content: string;
   createdAt: string;
   messageId: number;
@@ -117,7 +118,7 @@ const Chat = () => {
 
   async function fetchProduct () {
     const result = await productDetail(chatState.product.productId);
-    store.dispatch(setProduct(result));
+    dispatch(setProduct(result));
 }
 
   const fetchMessages = async () => {
@@ -227,6 +228,7 @@ const Chat = () => {
           {transactionEntity && 
             (
               <TransactionDetail 
+                modalOpen={modalOpen}
                 setModalOpen={setModalOpen}
                 transactionEntity={transactionEntity}
               />

@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { RootState, store } from '@store/store';
+import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { TransactionEntityType } from './Chat';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { setSaleStatus } from '@store/chatSlice';
+import { ReactComponent as CheckIcon } from '@assets/icons/check.svg';
+import { ReactComponent as CancleIcon } from '@assets/icons/close.svg';
 
 type Props = {
   setModalType: React.Dispatch<React.SetStateAction<string>>;
@@ -12,7 +14,12 @@ type Props = {
   transactionEntity: TransactionEntityType | undefined;
 };
 
-const ChatTradePropser = ({ setModalType, setModalOpen, setTransactionEntity, transactionEntity }: Props) => {
+const ChatTradePropser = ({
+  setModalType,
+  setModalOpen,
+  setTransactionEntity,
+  transactionEntity,
+}: Props) => {
   const dispatch = useDispatch();
   const product = useSelector((state: RootState) => state.chatStore.product);
   const user = useSelector((state: RootState) => state.userStore);
@@ -29,8 +36,8 @@ const ChatTradePropser = ({ setModalType, setModalOpen, setTransactionEntity, tr
       `}
     >
       {transactionEntity?.saleStatus === 'DENIED' && (
-      <div className='absolute top-0 left-0 rounded w-full h-full bg-light-black opacity-40 dark:bg-dark-white dark:opacity-40'></div>)
-      }
+        <div className="absolute top-0 left-0 rounded w-full h-full bg-light-black opacity-40 dark:bg-dark-white dark:opacity-40"></div>
+      )}
       {/* 상품정보 */}
       <div
         className="
@@ -126,56 +133,70 @@ const ChatTradePropser = ({ setModalType, setModalOpen, setTransactionEntity, tr
 
       {/* 수락하기 버튼 */}
       {transactionEntity?.saleStatus === 'DENIED' ? (
-        <div className="font-semibold ms-[0.5rem]">
-          거절된 거래입니다.
-        </div>
-      ) : 
-      transactionEntity?.saleStatus === 'REQUESTED' &&
+        <div className="font-semibold ms-[0.5rem]">거절된 거래입니다.</div>
+      ) : transactionEntity?.saleStatus === 'REQUESTED' &&
         transactionEntity?.requesterId !== user.userId ? (
-        <div className="flex gap-[0.5rem]">
+        <div className='flex gap-[0.5rem]'>
           <button
             className="
-        items-center w-full py-[0.25rem] 
-        bg-light-black text-light-white
-        dark:bg-dark-black dark:text-dark-white
-        rounded
-      "
-            onClick={() => {
-              console.log(transactionEntity.sellerId)
-              console.log(transactionEntity.buyerId)
-              publishMessage(`/pub/transaction/${chatState.roomId}/${user.userId}/acceptSale`, {
-                productId: product.productId,
-                sellerId: transactionEntity.sellerId,
-                buyerId: transactionEntity.buyerId,
-              });
-              dispatch(setSaleStatus('RESERVED'));
+            items-center w-2/3
+            bg-light-black text-light-white
+            dark:bg-dark-black dark:text-dark-white
+            rounded
+          "
+            onClick={async () => {
+                setTransactionEntity(transactionEntity);
+                setModalType('detail');
+                setModalOpen(true);
             }}
           >
-            수락하기
+            상세보기
           </button>
-          <button
-            className="
-        items-center w-full py-[0.25rem] 
-        bg-light-black text-light-white
-        dark:bg-dark-black dark:text-dark-white
-        rounded
-      "
-            onClick={() => {
-              console.log(transactionEntity.sellerId)
-              console.log(transactionEntity.buyerId)
-              publishMessage(`/pub/transaction/${chatState.roomId}/${user.userId}/denySale`, {
-                productId: product.productId,
-                sellerId: transactionEntity.sellerId,
-                buyerId: transactionEntity.buyerId,
-              });
-              dispatch(setSaleStatus('DENIED'));
-            }}
-          >
-            거절하기
-          </button>
+          <div className="flex w-1/3 ms-auto gap-[0.5rem]">
+            <button
+              className="
+              flex justify-center items-center w-full py-[0.25rem] 
+              bg-green-600 text-light-white
+              dark:bg-dark-black dark:text-dark-white
+              rounded
+            "
+              onClick={() => {
+                console.log(transactionEntity.sellerId);
+                console.log(transactionEntity.buyerId);
+                publishMessage(`/pub/transaction/${chatState.roomId}/${user.userId}/acceptSale`, {
+                  productId: product.productId,
+                  sellerId: transactionEntity.sellerId,
+                  buyerId: transactionEntity.buyerId,
+                });
+                dispatch(setSaleStatus('RESERVED'));
+              }}
+            >
+              <CheckIcon className="fill-light-white" />
+            </button>
+            <button
+              className="
+              flex justify-center items-center w-full py-[0.25rem] 
+              bg-light-warning text-light-white
+              dark:bg-dark-black dark:text-dark-white
+              rounded
+            "
+              onClick={() => {
+                console.log(transactionEntity.sellerId);
+                console.log(transactionEntity.buyerId);
+                publishMessage(`/pub/transaction/${chatState.roomId}/${user.userId}/denySale`, {
+                  productId: product.productId,
+                  sellerId: transactionEntity.sellerId,
+                  buyerId: transactionEntity.buyerId,
+                });
+                dispatch(setSaleStatus('DENIED'));
+              }}
+            >
+              <CancleIcon className="size-[1rem] fill-light-white" />
+            </button>
+          </div>
         </div>
       ) : (
-        <div className='flex gap-[0.5rem]'>
+        <div className="flex gap-[0.5rem]">
           <button
             className="
               items-center w-full py-[0.25rem] 
@@ -184,9 +205,9 @@ const ChatTradePropser = ({ setModalType, setModalOpen, setTransactionEntity, tr
               rounded
             "
             onClick={() => {
-              setTransactionEntity(transactionEntity)
-              setModalType('detail')
-              setModalOpen(true)
+              setTransactionEntity(transactionEntity);
+              setModalType('detail');
+              setModalOpen(true);
             }}
           >
             상세보기
@@ -200,28 +221,36 @@ const ChatTradePropser = ({ setModalType, setModalOpen, setTransactionEntity, tr
                 rounded 
               `}
               onClick={() => {
-                if(user.userId !== transactionEntity.receiverId) {
-                publishMessage(`/pub/transaction/${chatState.roomId}/${user.userId}/confirmSale`, {
-                  productId: product.productId,
-                    sellerId: transactionEntity.sellerId,
-                    buyerId: transactionEntity.buyerId,
-                  });
+                if (user.userId !== transactionEntity.receiverId) {
+                  publishMessage(
+                    `/pub/transaction/${chatState.roomId}/${user.userId}/confirmSale`,
+                    {
+                      productId: product.productId,
+                      sellerId: transactionEntity.sellerId,
+                      buyerId: transactionEntity.buyerId,
+                    },
+                  );
                 }
               }}
             >
               거래완료
             </button>
-        ) : transactionEntity?.saleStatus !== 'REQUESTED' && (<button
-          className={`
+          ) : (
+            transactionEntity?.saleStatus !== 'REQUESTED' && (
+              <button
+                className={`
             items-center w-full py-[0.25rem] 
             bg-light-signature text-light-white
             dark:bg-dark-signature dark:text-dark-white
             rounded cursor-default
           `}
-        >
-          거래완료
-        </button>)}
-      </div>)}
+              >
+                거래완료
+              </button>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 };

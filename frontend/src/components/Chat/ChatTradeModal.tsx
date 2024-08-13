@@ -321,8 +321,10 @@ const ChatTradeModal = (props: Props) => {
           `}
         >
       <ProductMap 
+        situation={'chatTradeModal'}
         isPersonal={true}
-        handleLocation={handleLocation} 
+        handleLocation={handleLocation}
+        setLocation={setLocation}
         openMap={openMap} />
       </div>}
       </div>

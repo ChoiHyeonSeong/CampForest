@@ -460,6 +460,7 @@ const ProductWrite = () => {
           `}
         >
       <ProductMap
+        situation={'productWrite'}
         isPersonal={false}
         handleLocation={handleLocation} 
         openMap={openMap} />

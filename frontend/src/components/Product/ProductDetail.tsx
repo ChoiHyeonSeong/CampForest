@@ -65,6 +65,8 @@ export type ProductDetailType = {
   userId: number;
   nickname: string;
   userImage: ImageType | null;
+  latitude: number;
+  longitude: number;
 };
 
 function Detail() {
@@ -91,6 +93,8 @@ function Detail() {
     nickname: '',
     userImage: null,
     saved: false,
+    latitude: 0,
+    longitude: 0,
   });
 
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([])

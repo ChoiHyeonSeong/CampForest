@@ -1,15 +1,35 @@
-import React, { useEffect } from 'react';
-import { TransactionEntityType } from './Chat';
+import React, { SetStateAction, useEffect, useState } from 'react';
 
 type Props = {
-  latitude: number,
-  longitude: number,
-}
+  latitude: number;
+  longitude: number;
+};
 
-const TransactionMap = (props: Props) => {
-  let map: naver.maps.Map | null = null;
-  let infoWindow: naver.maps.InfoWindow | null = null;
-  let dongName = '';
+let mapInstance: naver.maps.Map | null = null;
+let infoWindow: naver.maps.InfoWindow | null = null;
+let address = '';
+
+const loadScript = (src: string, callback: () => void) => {
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = src;
+  script.onload = () => callback();
+  document.head.appendChild(script);
+};
+
+type MapInformationProps = {
+  options: PositionOptions;
+  latitude: number;
+  longitude: number;
+};
+
+const MapInformation: React.FC<MapInformationProps> = ({ options, latitude, longitude }) => {
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  const handleSuccess = (position: GeolocationPosition) => {
+    const { latitude, longitude } = position.coords;
+    setLocation({ latitude, longitude });
+  };
 
   const initMap = () => {
     const mapOptions = {
@@ -19,24 +39,25 @@ const TransactionMap = (props: Props) => {
         position: naver.maps.Position.TOP_RIGHT,
       },
       center: new naver.maps.LatLng(
-        props.latitude,
-        props.longitude
+        location ? location.latitude : latitude,
+        location ? location.longitude : longitude,
       ),
       zoom: 15,
     };
 
     if (document.getElementById('map')) {
-      map = new naver.maps.Map('map', mapOptions);
+      mapInstance = new naver.maps.Map('map', mapOptions);
 
       const marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(props.latitude, props.longitude),
-        map: map
-      })
+        position: new naver.maps.LatLng(latitude, longitude),
+        map: mapInstance,
+      });
 
-      naver.maps.Event.addListener(map, 'click', (event) => {
-        map?.setCenter(new naver.maps.LatLng(event.coord.y, event.coord.x));
+      // 클릭한 곳으로 마커랑 인포 윈도우 이동
+      naver.maps.Event.addListener(mapInstance, 'click', (event) => {
+        mapInstance?.setCenter(new naver.maps.LatLng(event.coord.y, event.coord.x));
         marker.setPosition(new naver.maps.LatLng(event.coord.y, event.coord.x));
-        let contentString = '';
+        let contentString = `<div style='padding:10px;'>안녕하세요</div>`;
 
         naver.maps.Service.reverseGeocode(
           {
@@ -44,27 +65,29 @@ const TransactionMap = (props: Props) => {
             orders: [
               naver.maps.Service.OrderType.LEGAL_CODE,
               naver.maps.Service.OrderType.ADDR,
-            ].join(',')
+            ].join(','),
           },
           function (status, response) {
             if (status === naver.maps.Service.Status.ERROR) {
-              return alert(status);
+              return alert('Something Wrong');
             }
-            dongName = `${response.v2.results[0].region.area2.name} ${response.v2.results[0].region.area3.name}`;
-            contentString = `
-              <div style='padding:10px;'>
-                <div>
-                  ${dongName}
-                </div>
-              </div>
-            `
+
+            if(response.v2.results[0]) {
+              address = `${response.v2.address.jibunAddress}`;
+            } 
+            else {
+              address = `위치 정보가 없습니다.`
+            }
+
+            contentString = `<div style='padding:10px;'><div>${address}</div></div>`;
+            
             infoWindow = new naver.maps.InfoWindow({
               content: contentString,
               disableAnchor: true,
-              pixelOffset: new naver.maps.Point(0, -10)
+              pixelOffset: new naver.maps.Point(0, -10),
             });
-            if (map) {
-              infoWindow?.open(map, marker);
+            if (mapInstance) {
+              infoWindow?.open(mapInstance, marker);
             }
           },
         );
@@ -72,32 +95,53 @@ const TransactionMap = (props: Props) => {
     }
   };
 
-  const loadScript = (src: string, callback: () => void) => {
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = src;
-    script.onload = () => callback();
-    document.head.appendChild(script);
-  }
-
   useEffect(() => {
+    const { geolocation } = navigator;
+
+    if (geolocation) {
+      geolocation.getCurrentPosition(handleSuccess, null, options);
+    }
+
     if (typeof naver === 'undefined' || !naver.maps) {
       loadScript(
         'https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=52k7jcq0yh&callback=initMap&submodules=geocoder',
         initMap,
       );
-    }
-    else {
+    } else {
       initMap();
     }
   }, []);
 
+  useEffect(() => {
+    if (location && mapInstance) {
+      mapInstance.setCenter(new naver.maps.LatLng(location.latitude, location.longitude));
+    }
+  }, [location]);
+
   return (
-    <div className='w-[20rem]'>
-      <div
-        id='map'
-        className='h-[20rem] w-[20rem]' 
+    <div className={`w-full h-2/3`}>
+      <div 
+        id="map" 
+        className={`h-full w-full`} 
       />
+    </div>
+  );
+};
+
+const TransactionMap: React.FC<Props> = ({ latitude, longitude }) => {
+  const geolocationOptions = {
+    enableHighAccuracy: true,
+  };
+
+  return (
+    <div className={`w-full h-full`}>
+      <div className={`w-full h-full`}>
+        <MapInformation
+          options={geolocationOptions}
+          latitude={37.5666805}
+          longitude={126.9784147}
+        />
+      </div>
     </div>
   );
 };

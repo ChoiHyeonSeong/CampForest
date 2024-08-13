@@ -1,14 +1,18 @@
 import React from 'react';
 import TransactionMap from './TransactionMap';
 import { TransactionEntityType } from './Chat';
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
+import { RootState } from '@store/store';
+import { useSelector } from 'react-redux';
 
 type Props = {
+  modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   transactionEntity: TransactionEntityType;
 }
 
 const ChatTradeModal = (props: Props) => {
-
+  const product = useSelector((state: RootState) => state.chatStore.product);
   return (
     <div
       className='
@@ -24,9 +28,16 @@ const ChatTradeModal = (props: Props) => {
           dark:bg-dark-white
           rounded-lg
         '>
+          <div 
+            onClick={() => {props.setModalOpen(false)}}
+            className='fixed top-[0.75rem] right-[0.75rem] z-[50] cursor-pointer'
+          >
+            {product.latitude}
+            <CloseIcon />
+          </div>
           <TransactionMap 
-            latitude={props.transactionEntity.latitude} 
-            longitude={props.transactionEntity.longitude} 
+            latitude={product.latitude} 
+            longitude={product.longitude} 
           />
       </div>
     </div>
