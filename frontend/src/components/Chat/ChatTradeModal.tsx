@@ -13,11 +13,21 @@ type Props = {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+export type LocationType = {
+  address: string;
+  latitude: number;
+  longitude: number
+}
+
 const ChatTradeModal = (props: Props) => {
   const chatState = useSelector((state: RootState) => state.chatStore);
   const [price, setPrice] = useState<number>(chatState.product.productPrice);
   const [deposit, setDeposit] = useState<number | null>(chatState.product.deposit);
-  const [location, setLocation] = useState<string>(chatState.product.location);
+  const [location, setLocation] = useState<LocationType>({
+    address: chatState.product.location,
+    latitude: chatState.product.latitude,
+    longitude: chatState.product.longitude,
+  });
   const [firstDate, setFirstDate] = useState<Date>(new Date());
   const [secondDate, setSecondDate] = useState<Date>(new Date());
   const [loadMap, setLoadMap] = useState(false);
@@ -43,10 +53,6 @@ const ChatTradeModal = (props: Props) => {
     setLoadMap(value);
   }
 
-  const handleLocation = (dongName: string) => {
-    setLocation(dongName);
-  }
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
@@ -56,8 +62,23 @@ const ChatTradeModal = (props: Props) => {
         sellerId: chatState.product.userId,
         buyerId: chatState.product.userId === userState.userId ? chatState.otherId : userState.userId,
         meetingTime: firstDate,
-        meetingPlace: location,
+        meetingPlace: location.address,
         price: price,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      })
+    } else {
+      publishMessage(`/pub/transaction/${chatState.roomId}/${userState.userId}/rentRequest`, {
+        productId: chatState.product.productId,
+        renterId: chatState.product.userId === userState.userId ? chatState.otherId : userState.userId,
+        ownerId: chatState.product.userId,
+        rentStartDate: firstDate,
+        rentEndDate: secondDate,
+        meetingPlace: location.address,
+        realPrice: price,
+        deposit: deposit,
+        latitude: location.latitude,
+        longitude: location.longitude,
       })
     }
 
@@ -293,11 +314,11 @@ const ChatTradeModal = (props: Props) => {
                   `}
                 />
                 <div className={`
-                    ${location === '장소를 선택하세요.' ? 'text-light-text-secondary dark:text-dark-text-secondary' : 'text-light-text-secondary dark:text-dark-text-secondary'} 
+                    ${location.address === '장소를 선택하세요.' ? 'text-light-text-secondary dark:text-dark-text-secondary' : 'text-light-text-secondary dark:text-dark-text-secondary'} 
                     cursor-pointer
                   `}
                 >
-                  {location}
+                  {location.address}
                 </div>
               </div>
             </div>
@@ -323,7 +344,6 @@ const ChatTradeModal = (props: Props) => {
       <ProductMap 
         situation={'chatTradeModal'}
         isPersonal={true}
-        handleLocation={handleLocation}
         setLocation={setLocation}
         openMap={openMap} />
       </div>}

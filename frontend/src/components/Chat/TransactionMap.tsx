@@ -58,7 +58,7 @@ const MapInformation: React.FC<MapInformationProps> = ({ options, latitude, long
   const handleStart = () => {
     setTimeout(() => {
       setIsStart(true);
-    }, 300);
+    }, 3000);
   } 
 
   useEffect(() => {
@@ -75,6 +75,7 @@ const MapInformation: React.FC<MapInformationProps> = ({ options, latitude, long
 
   useEffect(() => {
     if(isStart && marker) {
+      console.log('지금 시작');
       mapInstance?.setCenter(new naver.maps.LatLng(latitude, longitude));
       marker.setPosition(new naver.maps.LatLng(latitude, longitude));
       let contentString = `<div style='padding:10px;'>안녕하세요</div>`;

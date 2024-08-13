@@ -44,6 +44,7 @@ export type ReviewType = {
 
 export type TransactionEntityType = {
   buyerId: number;
+  ownerId: number;
   confirmedByBuyer: boolean;
   confirmedBySeller: boolean;
   createdAt: string;
@@ -56,11 +57,14 @@ export type TransactionEntityType = {
   requesterId: number;
   reviews: ReviewType[];
   saleStatus: string;
+  rentStatus: string;
   sellerId: number;
+  renterId: number;
   realPrice: number;
-  price: number;
   latitude: number;
   longitude: number;
+  rentEndDate: string;
+  rentStartDate: string;
 };
 
 export type Message = {
@@ -121,36 +125,52 @@ const Chat = () => {
     dispatch(setProduct(result));
 }
 
-  const fetchMessages = async () => {
-    try {
-      let fetchedMessages;
-      if (chatState.chatInProgressType === '일반') {
-        fetchedMessages = await communityChatDetail(chatState.roomId);
-        dispatch(setChatInProgress(fetchedMessages));
-      } else if (chatState.chatInProgressType === '거래') {
-        fetchedMessages = await transactionChatDetail(chatState.roomId);
-        dispatch(setProduct({...chatState.product, productId: fetchedMessages.productId}))
-        dispatch(setChatInProgress(fetchedMessages.messages));
-        let lastSaleState = '';
-        let confirmedCount = 0;
-        await fetchedMessages.messages.forEach((message: any) => {
-          if(message.transactionEntity) {
-            if(message.transactionEntity.saleStatus === 'CONFIRMED') {
+const fetchMessages = async () => {
+  try {
+    let fetchedMessages;
+    if (chatState.chatInProgressType === '일반') {
+      fetchedMessages = await communityChatDetail(chatState.roomId);
+      dispatch(setChatInProgress(fetchedMessages));
+    } else if (chatState.chatInProgressType === '거래') {
+      fetchedMessages = await transactionChatDetail(chatState.roomId);
+      dispatch(setProduct({ ...chatState.product, productId: fetchedMessages.productId }));
+      dispatch(setChatInProgress(fetchedMessages.messages));
+
+      let lastSaleState = '';
+      let confirmedCount = 0;
+
+      for (const message of fetchedMessages.messages) {
+        if (message.transactionEntity) {
+          if (message.transactionEntity.saleStatus) {
+            if (message.transactionEntity.saleStatus === 'CONFIRMED') {
               ++confirmedCount;
-              if(confirmedCount === 2) {
+              if (confirmedCount === 2) {
                 lastSaleState = message.transactionEntity.saleStatus;
               }
-            } else {
+            } else if (message.transactionEntity.saleStatus !== '') {
               lastSaleState = message.transactionEntity.saleStatus;
             }
+          } else {
+            if (message.transactionEntity.rentStatus === 'CONFIRMED') {
+              ++confirmedCount;
+              if (confirmedCount === 2) {
+                lastSaleState = message.transactionEntity.rentStatus;
+              }
+            } else {
+              lastSaleState = message.transactionEntity.rentStatus;
+            }
           }
-        })
-        dispatch(setSaleStatus(lastSaleState));
+        }
       }
-    } catch (error) {
-      console.error('Failed to fetch messages:', error);
+
+      console.log('lastSaleState', lastSaleState);
+      dispatch(setSaleStatus(lastSaleState));
     }
-  };
+  } catch (error) {
+    console.error('Failed to fetch messages:', error);
+  }
+};
+
 
   const opponentInfo = async () => {
     try {

@@ -1,10 +1,11 @@
+import { LocationType } from '@components/Chat/ChatTradeModal';
 import React, { SetStateAction, useEffect, useState } from 'react';
 
 type Props = {
   isPersonal: boolean;
   openMap: (value: boolean) => void;
-  handleLocation: (dongName: string, latitude: number, longitude: number) => void;
-  setLocation?: React.Dispatch<SetStateAction<string>>;
+  handleLocation?: (dongName: string, latitude: number, longitude: number) => void;
+  setLocation?: React.Dispatch<SetStateAction<LocationType>>;
   situation: string
 };
 
@@ -157,11 +158,11 @@ const ProductMap: React.FC<Props> = ({ situation, setLocation, handleLocation, o
   const [buttonText, setButtonText] = useState('장소를 선택해주세요.');
 
   const handleButtonClick = () => {
-    if(situation === 'productWrite') {
+    if(situation === 'productWrite' && handleLocation) {
       handleLocation(dongName, returnLatitude, returnLongitude);
     } 
     else if(setLocation) {
-      setLocation(address);
+      setLocation({address, latitude: returnLatitude, longitude: returnLongitude});
     }
     openMap(false);
   };
