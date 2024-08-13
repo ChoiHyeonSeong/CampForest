@@ -24,6 +24,10 @@ type FilterCondition = {
   text: string;
 };
 
+type DetailFilterType = {
+  [key: string]: string[];
+};
+
 function CampingSearch() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalBlocked, setIsModalBlocked] = useState<boolean>(false);
@@ -38,11 +42,42 @@ function CampingSearch() {
   const [map, setMap] = useState<naver.maps.Map | null>(null);
 
   const [isDetailFilterOpen, setIsDetailFilterOpen] = useState(false);
+  const [detailFilters, setDetailFilters] = useState<DetailFilterType>({});
 
   const handleSelect = (city: string, districts: string[]) => {
     setSelectedLocation({ city, districts });
     console.log(city, districts)
   };
+
+  const handleDetailFilterSelect = (filters: DetailFilterType) => {
+    setDetailFilters(filters);
+  };
+
+  const removeLocationFilter = (filter: string) => {
+    if (selectedLocation) {
+      const [city, district] = filter.split(' ');
+      if (district) {
+        setSelectedLocation(prev => ({
+          ...prev!,
+          districts: prev!.districts.filter(d => d !== district)
+        }));
+      } else {
+        setSelectedLocation(null);
+      }
+    }
+  };
+
+  const removeDetailFilter = (category: string, option: string) => {
+    setDetailFilters(prev => {
+      const updatedCategory = prev[category].filter(item => item !== option);
+      if (updatedCategory.length === 0) {
+        const { [category]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [category]: updatedCategory };
+    });
+  };
+
 
   // 모달이 오픈될때 Modal을 block시킴
   const modalOpen = () => {
@@ -174,6 +209,7 @@ function CampingSearch() {
     }
   }, [isModalOpen])
 
+
   return (
     <div className={`z-[30]`}>
       {/* 메인 화면 */}
@@ -211,6 +247,7 @@ function CampingSearch() {
           <div
             className={`flex flex-col w-full lg:min-w-[470px] lg:h-full lg:ms-[1rem] mt-[0.75rem] lg:mt-0`}>
             
+            {/* 검색창 */}
             <div className={`h-[3rem] mb-[0.75rem]`}>
               <div className={`relative w-[100%]`}>
                 <div className={`absolute left-[0.75rem] top-[0.9rem]`}>
@@ -244,60 +281,78 @@ function CampingSearch() {
               </div>
             </div>
 
+            {/* 필터 */}
             <div className="flex space-x-2 mt-[0.75rem]">
-            <div
-              onClick={() => setIsFilterOpen(true)}
-              className='
-                flex items-center w-fit h-fit px-[0.5rem] py-[0.25rem]
-                bg-light-bgbasic dark:bg-dark-bgbasic
-                cursor-pointer rounded
-              '
-            >
-              <div className='me-[0.3rem] font-medium'>지역필터</div>
-              <FilterIcon 
-                className={`
-                  size-[0.85rem]
-                  fill-light-border-icon
-                  dark:fill-dark-border-icon
-                `}
-              />
+              <div
+                onClick={() => setIsFilterOpen(true)}
+                className='
+                  flex items-center w-fit h-fit px-[0.5rem] py-[0.25rem]
+                  bg-light-bgbasic dark:bg-dark-bgbasic
+                  cursor-pointer rounded
+                '
+              >
+                <div className='me-[0.3rem] font-medium'>지역필터</div>
+                <FilterIcon 
+                  className={`
+                    size-[0.85rem]
+                    fill-light-border-icon
+                    dark:fill-dark-border-icon
+                  `}
+                />
+              </div>
+              <div
+                onClick={() => setIsDetailFilterOpen(true)}
+                className='
+                  flex items-center w-fit h-fit px-[0.5rem] py-[0.25rem]
+                  bg-light-bgbasic dark:bg-dark-bgbasic
+                  cursor-pointer rounded
+                '
+              >
+                <div className='me-[0.3rem] font-medium'>상세필터</div>
+                <FilterIcon 
+                  className={`
+                    size-[0.85rem]
+                    fill-light-border-icon
+                    dark:fill-dark-border-icon
+                  `}
+                />
+              </div>
             </div>
-            <div
-              onClick={() => setIsDetailFilterOpen(true)}
-              className='
-                flex items-center w-fit h-fit px-[0.5rem] py-[0.25rem]
-                bg-light-bgbasic dark:bg-dark-bgbasic
-                cursor-pointer rounded
-              '
-            >
-              <div className='me-[0.3rem] font-medium'>상세필터</div>
-              <FilterIcon 
-                className={`
-                  size-[0.85rem]
-                  fill-light-border-icon
-                  dark:fill-dark-border-icon
-                `}
-              />
-            </div>
-          </div>
-
-          <LocationFilter 
-            isOpen={isFilterOpen}
-            onClose={() => setIsFilterOpen(false)}
-            divisions={koreaAdministrativeDivisions}
-            onSelect={handleSelect}
-            selectedLocation={selectedLocation}
-          />
-          
-          <CampingDetailFilter
-            isOpen={isDetailFilterOpen}
-            onClose={() => setIsDetailFilterOpen(false)}
-          />
             
-            <div className={`${filterCondition.length > 1 ? 'h-[2rem]' : 'h-0'} mb-[0.75rem]`}>
-              
+            {/* 선택한 태그를 띄우기 */}
+            <div className="flex flex-wrap gap-2 mt-2 mb-2">
+              {selectedLocation && selectedLocation.city !== '전체' && (
+                selectedLocation.districts.includes('전체') ? (
+                  <div className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
+                    <span>{selectedLocation.city}</span>
+                    <button onClick={() => removeLocationFilter(selectedLocation.city)} className="ml-1">
+                      <CloseIcon className="w-4 h-4 fill-light-border-icon dark:fill-dark-border-icon" />
+                    </button>
+                  </div>
+                ) : (
+                  selectedLocation.districts.map(district => (
+                    <div key={`${selectedLocation.city} ${district}`} className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
+                      <span>{`${selectedLocation.city} ${district}`}</span>
+                      <button onClick={() => removeLocationFilter(`${selectedLocation.city} ${district}`)} className="ml-1">
+                        <CloseIcon className="w-4 h-4 fill-light-border-icon dark:fill-dark-border-icon" />
+                      </button>
+                    </div>
+                  ))
+                )
+              )}
+              {Object.entries(detailFilters).map(([category, options]) => 
+                options.map(option => (
+                  <div key={`${category}-${option}`} className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
+                    <span>{`${category}: ${option}`}</span>
+                    <button onClick={() => removeDetailFilter(category, option)} className="ml-1">
+                      <CloseIcon className="w-4 h-4 fill-light-border-icon dark:fill-dark-border-icon" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
 
+            {/* 캠핑리스트 목록 */}
             <div
               className={`
                 flex-grow
@@ -308,12 +363,38 @@ function CampingSearch() {
             >
               <CampingList modalOpen={modalOpen} />
             </div>
+
           </div>
         </div>
       </div>
 
-      {/* 모달 */}
-      <CampingDetail isModalOpen={isModalOpen} isModalBlocked={isModalBlocked} modalClose={modalClose} handleTransitionEnd={handleTransitionEnd}/>
+
+      {/* 모달모음 */}
+
+      {/* 지역필터 모달 */}
+      <LocationFilter 
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        divisions={koreaAdministrativeDivisions}
+        onSelect={handleSelect}
+        selectedLocation={selectedLocation}
+      />
+            
+      {/* 상세필터 모달 */}
+      <CampingDetailFilter
+        isOpen={isDetailFilterOpen}
+        onClose={() => setIsDetailFilterOpen(false)}
+        onSelect={handleDetailFilterSelect}
+        selectedFilters={detailFilters}
+      />
+
+      {/* 캠핑 세부 정보모달 */}
+      <CampingDetail
+        isModalOpen={isModalOpen}
+        isModalBlocked={isModalBlocked}
+        modalClose={modalClose}
+        handleTransitionEnd={handleTransitionEnd}
+      />
     </div>
   );
 }
