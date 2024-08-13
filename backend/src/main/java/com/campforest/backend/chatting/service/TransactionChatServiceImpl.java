@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.chatting.dto.MessageWithTransactionDTO;
+import com.campforest.backend.chatting.dto.SaleDTO;
 import com.campforest.backend.chatting.dto.TransactionChatDto;
 import com.campforest.backend.chatting.dto.TransactionChatRoomListDto;
 import com.campforest.backend.chatting.entity.MessageType;
@@ -15,6 +16,7 @@ import com.campforest.backend.chatting.entity.TransactionChatRoom;
 import com.campforest.backend.chatting.repository.transactionchatmessage.TransactionChatMessageRepository;
 import com.campforest.backend.chatting.repository.transactionchatroom.TransactionChatRoomRepository;
 import com.campforest.backend.product.model.ProductType;
+import com.campforest.backend.transaction.model.Sale;
 import com.campforest.backend.transaction.repository.RentRepository;
 import com.campforest.backend.transaction.repository.SaleRepository;
 
@@ -96,10 +98,16 @@ public class TransactionChatServiceImpl implements TransactionChatService {
             return dto;
         }).collect(Collectors.toList());
     }
-
+    @Transactional
     @Override
     public Optional<TransactionChatRoom> getRoomById(Long roomId) {
         return transactionChatRoomRepository.findById(roomId);
+    }
+    @Transactional
+    @Override
+    public Object getTransactionEntity(Long saleId) {
+        Sale sale = saleRepository.findById(saleId).orElseThrow();
+        return toDTO(sale);
     }
 
     private TransactionChatDto convertToDto(TransactionChatRoom room) {
@@ -129,5 +137,26 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     private TransactionChatMessage getLastMessageForRoom(Long roomId) {
         return transactionChatMessageRepository.findTopByChatRoom_RoomIdOrderByCreatedAtDesc(roomId);
 
+    }
+
+    public SaleDTO toDTO(Sale sale) {
+        SaleDTO dto = new SaleDTO();
+        dto.setId(sale.getId());
+        dto.setProductId(sale.getProduct().getId());
+        dto.setProductName(sale.getProduct().getProductName());
+        dto.setBuyerId(sale.getBuyerId());
+        dto.setSellerId(sale.getSellerId());
+        dto.setRequesterId(sale.getRequesterId());
+        dto.setReceiverId(sale.getReceiverId());
+        dto.setSaleStatus(sale.getSaleStatus());
+        dto.setCreatedAt(sale.getCreatedAt());
+        dto.setModifiedAt(sale.getModifiedAt());
+        dto.setMeetingTime(sale.getMeetingTime());
+        dto.setMeetingPlace(sale.getMeetingPlace());
+        dto.setConfirmedByBuyer(sale.isConfirmedByBuyer());
+        dto.setConfirmedBySeller(sale.isConfirmedBySeller());
+        dto.setRealPrice(sale.getRealPrice());
+
+        return dto;
     }
 }

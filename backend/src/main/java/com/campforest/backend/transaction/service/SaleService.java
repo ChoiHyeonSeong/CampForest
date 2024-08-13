@@ -29,6 +29,7 @@ public class SaleService {
 	private final ProductRepository productRepository;
 	private final SaleRepository saleRepository;
 
+
 	@Transactional
 	public Map<String, Long> saleRequest(SaleRequestDto saleRequestDto) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
