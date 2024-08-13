@@ -87,6 +87,12 @@ public class Sale {
 	@Column(name = "real_price")
 	private Long realPrice;
 
+	@Column(name = "latitude")
+	private Double latitude;
+
+	@Column(name = "longitude")
+	private Double longitude;
+
 	public void requestSale() {
 		this.saleStatus = TransactionStatus.REQUESTED;
 	}
@@ -125,6 +131,8 @@ public class Sale {
 			.saleStatus(TransactionStatus.RECEIVED)
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
+			.latitude(this.latitude)
+			.longitude(this.longitude)
 			.build();
 	}
 

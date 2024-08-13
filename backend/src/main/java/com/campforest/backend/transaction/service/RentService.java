@@ -37,9 +37,9 @@ public class RentService {
 	public Map<String, Long> rentRequest(RentRequestDto rentRequestDto) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
-		product.setProductPrice(rentRequestDto.getPrice());
 
-		validateDuplicateRequest(rentRequestDto);
+
+		// validateDuplicateRequest(rentRequestDto);
 
 		Map<String, Long> result = new HashMap<>();
 		Long requesterId = rentRequestDto.getRequesterId();
@@ -206,6 +206,12 @@ public class RentService {
 		rents[0].setMeetingPlace(rentRequestDto.getMeetingPlace());
 		rents[1].setMeetingPlace(rentRequestDto.getMeetingPlace());
 
+		rents[0].setLongitude(rentRequestDto.getLongitude());
+		rents[1].setLongitude(rentRequestDto.getLongitude());
+
+		rents[0].setLatitude(rentRequestDto.getLatitude());
+		rents[1].setLatitude(rentRequestDto.getLatitude());
+
 		Rent rent = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
 			requesterId, receiverId)
 				.orElseThrow(() -> new IllegalArgumentException("없습니다"));
@@ -242,6 +248,8 @@ public class RentService {
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.realPrice(rentRequestDto.getPrice())
+			.longitude(rentRequestDto.getLongitude())
+			.latitude(rentRequestDto.getLatitude())
 			.build();
 	}
 
@@ -262,6 +270,8 @@ public class RentService {
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.realPrice(rentRequestDto.getPrice())
+			.longitude(rentRequestDto.getLongitude())
+			.latitude(rentRequestDto.getLatitude())
 			.build();
 	}
 

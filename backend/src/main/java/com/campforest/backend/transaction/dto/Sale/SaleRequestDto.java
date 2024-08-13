@@ -25,4 +25,6 @@ public class SaleRequestDto {
 	private Long receiverId;
 	private LocalDateTime meetingTime;
 	private String meetingPlace;
+	private Double longitude;
+	private Double latitude;
 }

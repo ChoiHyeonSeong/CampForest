@@ -95,6 +95,11 @@ public class Rent {
 	@Column(name = "confirmed_by_seller", columnDefinition = "boolean default false")
 	private boolean confirmedBySeller;
 
+	@Column(name = "latitude")
+	private Double latitude;
+
+	@Column(name = "longitude")
+	private Double longitude;
 
 	public void requestRent() {
 		this.rentStatus = TransactionStatus.REQUESTED;
