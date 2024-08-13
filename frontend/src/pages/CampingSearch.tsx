@@ -2,11 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import { ReactComponent as FilterIcon } from '@assets/icons/filter3.svg';
-import CampingList from '@components/CampingSearch/CampingList';
 import CampingDetail from '@components/CampingSearch/CampingDetail';
 import LocationFilter from '@components/Public/LocationFilter';
 import CampingDetailFilter from '@components/CampingSearch/CampingDetailFilter';
 import { koreaAdministrativeDivisions } from '@utils/koreaAdministrativeDivisions';
+import Camping, {CampingDataType} from '@components/CampingSearch/Camping';
+
+import { filterCategories } from '@components/CampingSearch/CampingDetailFilter';
+import { campingLoadRating } from '@services/campingService';
+import { useInView } from 'react-intersection-observer';
+import { set } from 'react-datepicker/dist/date_utils';
 
 const geolocationOptions = {
   enableHighAccuracy: true,
@@ -20,15 +25,23 @@ type SelecetedLocType = {
 }
 
 type FilterCondition = {
-  type: 'Location' | 'Normal';
-  text: string;
+  type: 'location' | 'induty' | 'lctCl' | 'sbrsCl' | 'posblFcltyCl' | 'animalCmgCl';
+  value: string;
 };
 
 type DetailFilterType = {
   [key: string]: string[];
 };
 
+type Rating = {
+  campsiteId: number;
+  averageRate: number;
+  reviewCount: number;
+}
+
 function CampingSearch() {
+  const [ref, inView] = useInView();
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalBlocked, setIsModalBlocked] = useState<boolean>(false);
 
@@ -42,7 +55,18 @@ function CampingSearch() {
   const [map, setMap] = useState<naver.maps.Map | null>(null);
 
   const [isDetailFilterOpen, setIsDetailFilterOpen] = useState(false);
-  const [detailFilters, setDetailFilters] = useState<DetailFilterType>({});
+
+  const initialDetailFilters: DetailFilterType = {};
+  // filterCategories 배열을 순회하며 초기값을 설정
+  filterCategories.forEach(category => {
+    initialDetailFilters[category.name] = ["전체"]; // 모든 카테고리의 초기값을 "전체"로 설정
+  });
+  const [detailFilters, setDetailFilters] = useState<DetailFilterType>(initialDetailFilters);
+
+  const [campingData, setCampingData] = useState<CampingDataType[]>([]);
+  const [filteredData, setFilteredData] = useState<CampingDataType[]>([]);
+  const [visibleCount, setVisibleCount] = useState(10); // 처음에 보여줄 camping 개수
+  const [selectedCampingData, setSelectedCampingData] = useState<CampingDataType | null>(null);
 
   const handleSelect = (city: string, districts: string[]) => {
     setSelectedLocation({ city, districts });
@@ -51,6 +75,7 @@ function CampingSearch() {
 
   const handleDetailFilterSelect = (filters: DetailFilterType) => {
     setDetailFilters(filters);
+    console.log(filters)
   };
 
   const removeLocationFilter = (filter: string) => {
@@ -80,7 +105,8 @@ function CampingSearch() {
 
 
   // 모달이 오픈될때 Modal을 block시킴
-  const modalOpen = () => {
+  const modalOpen = (selectedData: CampingDataType) => {
+    setSelectedCampingData(selectedData)
     setIsModalBlocked(true);
   };
 
@@ -130,6 +156,14 @@ function CampingSearch() {
       console.log("Naver map not loaded");
     });
 
+    // 캠핑 데이터 지연로딩
+    const loadData = async () => {
+      const response = await import('@utils/campingData.json') as { default: CampingDataType[] };
+      setCampingData(response.default);
+    };
+
+    loadData();
+
     return () => {
       setIsModalOpen(false);
       setIsModalBlocked(false);
@@ -169,7 +203,7 @@ function CampingSearch() {
   useEffect(() => {
     setFilterCondition(prevConditions => {
       // 이전의 Location 타입 조건을 제거
-      const updatedConditions = prevConditions.filter(condition => condition.type !== 'Location');
+      const updatedConditions = prevConditions.filter(condition => condition.type !== 'location');
       
       if (selectedLocation===null) return updatedConditions;
 
@@ -180,25 +214,128 @@ function CampingSearch() {
         if (districts.includes("전체")) {
           // 시/도만 선택된 경우
           updatedConditions.push({
-            type: 'Location',
-            text: city
+            type: 'location',
+            value: city
           });
         } else {
           // 특정 구/군들이 선택된 경우
           districts.forEach(district => {
             updatedConditions.push({
-              type: 'Location',
-              text: `${city} ${district}`
+              type: 'location',
+              value: `${city} ${district}`
             });
           });
         }
       }
+      console.log(updatedConditions)
       
       return updatedConditions;
     });
-
-    console.log(filterCondition)
   }, [selectedLocation])
+
+  useEffect(() => {
+    setFilterCondition(prevConditions => {
+      // 이전의 Filter 타입 조건을 제거
+      const updatedConditions = prevConditions.filter(condition => condition.type === 'location');
+
+      // 새로운 조건 추가
+      Object.keys(detailFilters).forEach(key => {
+        let type: 'induty' | 'lctCl' | 'sbrsCl' | 'posblFcltyCl' | 'animalCmgCl';
+        if (key === '야영장 타입') {
+          type = 'induty'
+        } else if (key === '입지구분') {
+          type = 'lctCl'
+        } else if (key === '부대시설') {
+          type = 'sbrsCl'
+        } else if (key === '주변시설') {
+          type = 'posblFcltyCl'
+        } else if (key === '반려동물') {
+          type = 'animalCmgCl'
+        }
+        const values = detailFilters[key];
+        // values가 배열이므로 각 값에 대해 조건 추가
+        values.forEach(value => {
+          if (value !== "전체") {  // "전체"가 아닌 경우에만 조건 추가
+            updatedConditions.push({
+              type: type,
+              value: value
+            });
+          }
+        });
+      });
+      
+      return updatedConditions;
+    });
+  }, [detailFilters])
+
+  // 필터링 로직
+  useEffect(() => {
+    console.log(123)
+
+    const campingListDiv = document.querySelector('#campingList'); // contentBox의 ID로 선택
+    if (campingListDiv) {
+      campingListDiv.scrollTop = 0; // 스크롤을 최상단으로 이동
+    }
+
+    const applyFilters = () => {
+      return campingData.filter(camping => {
+        return filterCondition.every(condition => {
+          if (condition.type === 'location') {
+            // location 필터링
+            const [doNm, sigunguNm] = condition.value.split(' '); // 시도와 시군구로 분리
+            const doNmMatch = camping.doNm ? camping.doNm.includes(doNm) : false;
+            const sigunguNmMatch = camping.sigunguNm ? camping.sigunguNm.includes(sigunguNm) : false;
+            return doNmMatch && sigunguNmMatch; // 둘 다 만족해야 함
+          } else {
+            // 다른 조건 필터링
+            const campingValue = camping[condition.type];
+            return campingValue ? campingValue.split(',').includes(condition.value) : false;
+          }
+        });
+      });
+    };
+
+    const filtered = applyFilters();
+    const initialIds = filtered.slice(0, 10)
+      .map(camping => camping.campsiteId)
+      .filter((id): id is number => id !== undefined); // id가 number인 경우만 필터링
+
+    if (filtered.length === 0) {
+      setFilteredData([]);
+      return; // 이후 코드 실행을 중지
+    }
+
+    const firstLoad = async () => {
+      try {
+        if (initialIds.length > 0) {
+          const response = await campingLoadRating(initialIds);
+          const ratingsData: Rating[] = response.data.data; // API 응답에서 데이터 추출 및 타입 지정
+    
+          console.log(ratingsData)
+          const updatedData = filtered.map(camping => {
+            const ratingInfo = ratingsData.find((rating: Rating) => rating.campsiteId === camping.campsiteId);
+            if (camping.campsiteId !== undefined && initialIds.includes(camping.campsiteId)) {
+              return {
+                ...camping,
+                averageRate: ratingInfo ? ratingInfo.averageRate : 0, // 평점이 없으면 0
+                reviewCount: ratingInfo ? ratingInfo.reviewCount : 0  // 리뷰 수가 없으면 0
+              };
+            }
+  
+            // 매칭되지 않는 캠핑장은 그대로 반환
+            return camping;
+          });
+    
+          setFilteredData(updatedData); // 업데이트된 filteredData를 상태에 설정
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    firstLoad()
+    setVisibleCount(10)
+  }, [filterCondition, campingData]);
 
   useEffect(() => {
     const contentBox = document.querySelector('#contentBox') as HTMLElement;
@@ -209,6 +346,60 @@ function CampingSearch() {
     }
   }, [isModalOpen])
 
+  useEffect(() => {
+    if (inView) {
+      console.log(inView, '무한 스크롤 요청');
+      // filteredData의 길이가 visibleCount보다 큰지 확인
+      if (visibleCount < filteredData.length) {
+        setVisibleCount((prevCount) => Math.min(prevCount + 10, filteredData.length));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps 
+  }, [inView, filteredData.length]); // filteredData의 길이도 의존성 배열에 추가
+
+  const sendLoadRatingRequest = async (newIds: number[]) => {
+    try {
+      const response = await campingLoadRating(newIds)
+      const ratingsData: Rating[] = response.data.data; // API 응답에서 데이터 추출 및 타입 지정
+      // filteredData 업데이트
+      console.log(ratingsData)
+      setFilteredData(prevData =>
+        prevData.map(camping => {
+          // 캠핑장 ID에 따라 평점 및 리뷰 수 추가
+          const ratingInfo = ratingsData.find((rating: Rating) => rating.campsiteId === camping.campsiteId);
+          // camping.campsiteId가 정의되어 있고 newIds에 포함되어 있는 경우에만 업데이트
+          if (camping.campsiteId !== undefined && newIds.includes(camping.campsiteId)) {
+            return {
+              ...camping,
+              averageRate: ratingInfo ? ratingInfo.averageRate : 0, // 평점이 없으면 0
+              reviewCount: ratingInfo ? ratingInfo.reviewCount : 0  // 리뷰 수가 없으면 0
+            };
+          }
+
+          // 매칭되지 않는 캠핑장은 그대로 반환
+          return camping;
+        })
+      );
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  useEffect(() => {
+    const newlyLoadedData = filteredData.slice(visibleCount - 10, visibleCount);
+    if (newlyLoadedData.length > 0) {
+      const newIds = newlyLoadedData
+        .map(camping => camping.campsiteId)
+        .filter((id): id is number => id !== undefined);
+      if (newIds.length > 0) {
+        sendLoadRatingRequest(newIds);
+      }
+    }
+  }, [visibleCount]);
+
+  useEffect(() => {
+    console.log(filteredData)
+  }, [filteredData])
 
   return (
     <div className={`z-[30]`}>
@@ -341,14 +532,16 @@ function CampingSearch() {
                 )
               )}
               {Object.entries(detailFilters).map(([category, options]) => 
-                options.map(option => (
-                  <div key={`${category}-${option}`} className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
-                    <span>{`${category}: ${option}`}</span>
-                    <button onClick={() => removeDetailFilter(category, option)} className="ml-1">
-                      <CloseIcon className="w-4 h-4 fill-light-border-icon dark:fill-dark-border-icon" />
-                    </button>
-                  </div>
-                ))
+                options
+                  .filter(option => option !== "전체")  // "전체"가 아닌 옵션만 필터링
+                  .map(option => (
+                    <div key={`${category}-${option}`} className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
+                      <span>{`${category}: ${option}`}</span>
+                      <button onClick={() => removeDetailFilter(category, option)} className="ml-1">
+                        <CloseIcon className="w-4 h-4 fill-light-border-icon dark:fill-dark-border-icon" />
+                      </button>
+                    </div>
+                  ))
               )}
             </div>
 
@@ -360,8 +553,17 @@ function CampingSearch() {
                 dark:bg-dark-white
                 overflow-y-auto
               `}
+              id='campingList'
             >
-              <CampingList modalOpen={modalOpen} />
+              {filteredData.slice(0, visibleCount).map((camping, index) => (
+                <Camping 
+                  key={index} 
+                  camping={camping} 
+                  modalOpen={modalOpen}
+                />
+              ))}
+                
+              <div ref={ref} className={`${filteredData.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
             </div>
 
           </div>
@@ -394,6 +596,7 @@ function CampingSearch() {
         isModalBlocked={isModalBlocked}
         modalClose={modalClose}
         handleTransitionEnd={handleTransitionEnd}
+        selectedData={selectedCampingData}
       />
     </div>
   );
