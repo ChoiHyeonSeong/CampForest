@@ -1,8 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-
 import EachCategory from './EachCategory';
-
 import campfire from '@assets/images/campfire.png'
 
 type Props = {

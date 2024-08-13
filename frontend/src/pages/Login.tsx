@@ -34,16 +34,23 @@ function Login() {
   }, [email, password])
 
   return (
-    <div className={`flex justify-center items-center min-h-screen`}>
+    <div className={`flex justify-center items-center w-full min-h-screen`}>
       <div
         className={`
-          w-[100%] h-fit md:max-w-[42rem] p-[2.5rem]
+          w-[100%] h-screen md:h-fit md:max-w-[42rem] p-[2rem]
           bg-light-white bg-opacity-80
           dark:bg-dark-white dark:bg-opacity-80
-          rounded
+          md:rounded
         `}
       >
-        <h3 className={`pb-[0.75rem] mb-[2.5rem] text-[2rem] text-center`}>로그인</h3>
+        <h3
+          className={`
+            pb-[0.75rem] mb-[2.5rem]
+            text-[2rem] text-center font-medium
+          `}
+        >
+          로그인
+        </h3>
 
         <p className={`${isLoginFailed ? 'block' : 'hidden'} mb-[2.5rem] text-light-warning dark:text-dark-warning text-center whitespace-pre-line`}>
           {'로그인에 실패했습니다\n아이디 / 비밀번호를 다시확인해주세요.'}
@@ -52,7 +59,17 @@ function Login() {
         <form onSubmit={handleLogin}>
           {/* 이메일 */}
           <div className={`mb-[1.5rem]`}>
-            <label htmlFor="email" className={`block mb-[0.5rem] text-light-text-secondary dark:text-dark-text-secondary text-left`}>이메일</label>
+            <label
+              htmlFor="email"
+              className={`
+                block mb-[0.5rem]
+                text-light-text placeholder:text-light-text-secondary
+                dark:text-dark-text dark:placeholder:text-dark-text-secondary
+                text-left
+              `}
+            >
+              이메일
+            </label>
             <input 
               type="email" 
               className={`
@@ -71,9 +88,10 @@ function Login() {
           <div className="mb-2">
             <label 
               htmlFor="password" 
-              className={`block mb-[0.5rem] 
-                text-light-text-secondary
-                dark:text-dark-text-secondary 
+              className={`
+                block mb-[0.5rem]
+                text-light-text placeholder:text-light-text-secondary
+                dark:text-dark-text dark:placeholder:text-dark-text-secondary
                 text-left
               `}
             >
@@ -96,8 +114,8 @@ function Login() {
           </div>
 
           {/* 비밀번호 잊으셨나요? */}
-          <div className={`flex justify-between items-center mb-[4rem]`}>
-            <a href="/" className={`w-[100%] text-light-anchor dark:text-dark-anchor text-sm text-right font-medium`}>비밀번호를 잊으셨나요?</a>
+          <div className={`flex justify-between items-center mb-[1.5rem] md:mb-[2.5rem]`}>
+            <a href="/user/password" className={`w-[100%] text-light-anchor dark:text-dark-anchor text-sm text-right font-medium`}>비밀번호를 잊으셨나요?</a>
           </div>
           <button 
             type="submit" 
@@ -113,7 +131,7 @@ function Login() {
         </form>
 
         {/* 회원가입 하세요 */}
-        <div className={`mt-[3rem] text-center`}>
+        <div className={`mt-[1rem] text-center`}>
           <p className={`text-light-text-secondary dark:text-dark-text-secondary`}>아직 회원이 아니신가요? 
             <Link to='/user/regist'>
               <span className={`text-light-anchor dark:text-dark-anchor font-medium cursor-pointer`}> 회원가입하세요!</span>
@@ -122,7 +140,7 @@ function Login() {
         </div>
 
         {/* 소셜 로그인 */}
-        <div className={`md:flex md:justify-center mt-[1.5rem] md:space-x-4`}>
+        <div className={`md:flex md:justify-center mt-[2.5rem] md:space-x-4`}>
           <button 
             onClick={kakaoLogin}
             className={`
