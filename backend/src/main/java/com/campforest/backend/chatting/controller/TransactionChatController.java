@@ -9,8 +9,10 @@ import com.campforest.backend.chatting.dto.ChatHistoryDto;
 import com.campforest.backend.chatting.dto.MessageWithTransactionDTO;
 import com.campforest.backend.chatting.dto.RentableRequestDto;
 import com.campforest.backend.chatting.entity.MessageType;
+import com.campforest.backend.chatting.entity.TransactionChatRoom;
 import com.campforest.backend.notification.model.NotificationType;
 import com.campforest.backend.notification.service.NotificationService;
+import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.service.ProductService;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
 import com.campforest.backend.transaction.dto.Rent.RentResponseDto;
@@ -442,14 +444,15 @@ public class TransactionChatController {
 	//SALE 거래 요철
 	@MessageMapping("/transaction/{roomId}/{userId}/saleRequest")
 	@SendTo("/sub/transaction/{roomId}")
-	public TransactionChatMessage sendSaleRequest(
+	public MessageWithTransactionDTO sendSaleRequest(
 		@DestinationVariable Long roomId,
 		@DestinationVariable Long userId,
 		@Payload SaleRequestDto saleRequestDto
 	) throws Exception {
 		try {
 			Long productId = saleRequestDto.getProductId();
-
+			TransactionChatRoom room =transactionChatService.getRoomById(roomId)
+				.orElseThrow (()->new Exception("방을 못찾았습니다"));
 			// 요청자 ID 설정
 			saleRequestDto.setRequesterId(userId);
 
@@ -470,7 +473,9 @@ public class TransactionChatController {
 			// 알림 생성
 			notificationService.createNotification(receiver, requester, NotificationType.SALE,
 				requester.getNickname() + "님이 판매를 요청하였습니다.");
-
+			Object transactionEntity = null;
+			 transactionEntity = transactionChatService.getTransactionEntity(saleId);
+			System.out.println("transation: "+transactionEntity.toString());
 			TransactionChatMessage requesterMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
@@ -479,9 +484,12 @@ public class TransactionChatController {
 				.content("새로운 판매 요청이 도착했습니다. 상품ID: " + productId + " 상품 이름: " + productService.getProduct(productId)
 					.getProductName())
 				.build();
+			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(requesterMessage, transactionEntity);
+			System.out.println("message 1"+messages);
+			System.out.println("message Test"+messages.toString());
 			transactionChatService.saveMessage(roomId, requesterMessage);
 
-			return requesterMessage;
+			return messages;
 		} catch (Exception e) {
 			// 에러 처리
 			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
@@ -489,14 +497,14 @@ public class TransactionChatController {
 				.senderId(userId)
 				.content("거래 요청 처리 중 오류가 발생했습니다: " + e)
 				.build();
-			return errorMessage;
+			return new MessageWithTransactionDTO(errorMessage, null);
 		}
 	}
 
 	//세일 수락
 	@MessageMapping("/transaction/{roomId}/{userId}/acceptSale")
 	@SendTo("/sub/transaction/{roomId}")
-	public TransactionChatMessage acceptSale(
+	public MessageWithTransactionDTO acceptSale(
 		@DestinationVariable Long roomId,
 		@DestinationVariable Long userId,
 		@Payload SaleRequestDto saleRequestDto
@@ -515,6 +523,9 @@ public class TransactionChatController {
 
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				requester.getNickname() + "님이 판매 요청을 수락하였습니다.");
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService.getTransactionEntity(saleId);
+
 			System.out.println(saleRequestDto.toString());
 			TransactionChatMessage acceptMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
@@ -524,21 +535,22 @@ public class TransactionChatController {
 				.content(requester.getNickname() + "님이 판매 요청을 수락하였습니다.")
 				.build();
 			transactionChatService.saveMessage(roomId, acceptMessage);
-
-			return acceptMessage;
+			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(acceptMessage, transactionEntity);
+			return messages;
 		} catch (Exception e) {
 			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.content("판매 요청 수락 중 오류가 발생했습니다: " + e.getMessage())
 				.build();
-			return errorMessage;
+
+			return new MessageWithTransactionDTO(errorMessage, null);
 		}
 	}
 
 	@MessageMapping("/transaction/{roomId}/{userId}/denySale")
 	@SendTo("/sub/transaction/{roomId}")
-	public TransactionChatMessage denySale(
+	public MessageWithTransactionDTO denySale(
 		@DestinationVariable Long roomId,
 		@DestinationVariable Long userId,
 		@Payload SaleRequestDto saleRequestDto
@@ -554,6 +566,8 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				requester.getNickname() + "님이 판매 요청을 거절하였습니다.");
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService.getTransactionEntity(saleId);
 
 			TransactionChatMessage denyMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
@@ -563,22 +577,22 @@ public class TransactionChatController {
 				.content(requester.getNickname() + "님이 판매 요청을 거절하였습니다.")
 				.build();
 			transactionChatService.saveMessage(roomId, denyMessage);
-
-			return denyMessage;
+			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(denyMessage, transactionEntity);
+			return messages;
 		} catch (Exception e) {
 			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.content("판매 요청 거절 중 오류가 발생했습니다: " + e.getMessage())
 				.build();
-			return errorMessage;
+			return new MessageWithTransactionDTO(errorMessage, null);
 		}
 	}
 	//
 
 	@MessageMapping("/transaction/{roomId}/{userId}/confirmSale")
 	@SendTo("/sub/transaction/{roomId}")
-	public TransactionChatMessage confirmSale(
+	public MessageWithTransactionDTO confirmSale(
 		@DestinationVariable Long roomId,
 		@DestinationVariable Long userId,
 		@Payload SaleRequestDto saleRequestDto
@@ -595,6 +609,8 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				requester.getNickname() + "님이 거래를 완료하였습니다.");
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService.getTransactionEntity(saleId);
 
 			TransactionChatMessage confirmMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
@@ -604,15 +620,15 @@ public class TransactionChatController {
 				.content(requester.getNickname() + "님이 거래를 완료하였습니다.")
 				.build();
 			transactionChatService.saveMessage(roomId, confirmMessage);
-
-			return confirmMessage;
+			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(confirmMessage, transactionEntity);
+			return messages;
 		} catch (Exception e) {
 			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.content("거래 확정 중 오류가 발생했습니다: " + e.getMessage())
 				.build();
-			return errorMessage;
+			return new MessageWithTransactionDTO(errorMessage, null);
 		}
 	}
 
@@ -650,7 +666,7 @@ public class TransactionChatController {
 
 	@MessageMapping("/transaction/{roomId}/{userId}/updateSale")
 	@SendTo("/sub/transaction/{roomId}")
-	public TransactionChatMessage updateMeetingTime(
+	public MessageWithTransactionDTO updateMeetingTime(
 		@DestinationVariable Long roomId,
 		@DestinationVariable Long userId,
 		@Payload SaleRequestDto saleRequestDto
@@ -668,15 +684,17 @@ public class TransactionChatController {
 				.content(requester.getNickname() + "님이 거래 날짜를 업데이트하였습니다.")
 				.build();
 			transactionChatService.saveMessage(roomId, updateMessage);
-
-			return updateMessage;
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService;
+			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(updateMessage, transactionEntity);
+			return messages;
 		} catch (Exception e) {
 			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.content("거래 날짜 업데이트 중 오류가 발생했습니다: " + e.getMessage())
 				.build();
-			return errorMessage;
+			return new MessageWithTransactionDTO(errorMessage, null);
 		}
 	}
 

@@ -23,4 +23,6 @@ public interface TransactionChatService {
 	public List<TransactionChatRoomListDto> getChatRoomsForUser(Long userId);
 
 	Optional<TransactionChatRoom> getRoomById(Long roomId);
+
+	Object getTransactionEntity(Long saleId);
 }
