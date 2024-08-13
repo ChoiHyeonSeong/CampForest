@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
 import geoData from '@utils/geoData.json'
 
 type Town = string;
@@ -63,9 +64,26 @@ const LocationFilter = (props: Props) => {
   };
 
   return (
-    <div className="flex flex-all-center fixed inset-0 bg-light-black bg-opacity-80 dark:bg-dark-black dark:bg-opacity-80">
-      <div className="flex flex-col w-[100%] max-w-[54rem] p-[1.5rem] bg-light-white dark:bg-dark-white rounded-lg">
-        <h2 className="mb-[1rem] text-xl font-bold">지역 선택</h2>
+    <div 
+      onClick={props.onClose}
+      className="flex flex-all-center fixed inset-0 bg-light-black bg-opacity-80"
+    >
+      <div 
+        onClick={e => e.stopPropagation()}
+        className="flex flex-col w-[100%] max-w-[54rem] p-[1.5rem] bg-light-white dark:bg-dark-white rounded-lg"
+      >
+        <div className='flex justify-between'>
+          <h2 className="mb-[1rem] text-xl font-bold">지역 선택</h2>
+          <CloseIcon 
+            onClick={props.onClose} 
+            className={`
+              size-[1.5rem]
+              fill-light-border-icon
+              dark:fill-dark-border-icon
+              cursor-pointer
+            `}
+          />
+        </div>
         <div className="flex flex-wrap h-[100vh-6.4rem] md:h-[30rem] md:mb-[3rem] max-md:overflow-y-auto">
           <div className="w-full md:w-[30%] pr-[0.5rem] mb-4">
             <h3 className="mb-[0.5rem] font-semibold">시/도</h3>

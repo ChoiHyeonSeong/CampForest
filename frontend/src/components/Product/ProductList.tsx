@@ -12,6 +12,8 @@ import LocationDetailFilter from '@components/Public/LocationDetailFilter';
 
 import Pagination from '@components/Public/Pagination';
 
+import { ReactComponent as RefreshIcon } from '@assets/icons/refresh.svg';
+
 type Option = {
   id: number;
   name: string;
@@ -46,7 +48,7 @@ type ProductListResponse = {
 
 type FilterCondition = {
   selectedCategory: {id: number; name: string}
-  priceRange: number[]
+  priceRange: (number | null)[]
   selectedLocation: SelecetedLocType | null
 }
 
@@ -70,7 +72,7 @@ const ProductList = () => {
 
   const [filterCondition, setFilterCondition] = useState<FilterCondition>({
     selectedCategory: CATEGORIES[0],
-    priceRange: [0, 500000],
+    priceRange: [null, null],
     selectedLocation: null
   });
 
@@ -117,6 +119,8 @@ const ProductList = () => {
     try {
       let category: string | null;
       let locations: string | null;
+      let minPrice: number | null;
+      let maxPrice: number | null;
 
       if (filterCondition.selectedCategory.name === '침낭/매트') {
         category = '침낭'
@@ -200,7 +204,7 @@ const ProductList = () => {
     if (tabIndex !== activeTab) {
       setFilterCondition({
         selectedCategory: CATEGORIES[0],
-        priceRange: [0, 500000],
+        priceRange: [null, null],
         selectedLocation: null
       })
       setActiveTab(tabIndex);
@@ -219,7 +223,7 @@ const ProductList = () => {
     }
   }, [isStateReset]);
 
-  const handleApplyPriceRange = useCallback((min: number, max: number) => {
+  const handleApplyPriceRange = useCallback((min: number | null, max: number | null) => {
     setFilterCondition(prev => ({
       ...prev,
       priceRange: [min, max]
@@ -243,6 +247,50 @@ const ProductList = () => {
     navigate(`/product/list/${option.url}`)
   }
 
+  const locationText = filterCondition.selectedLocation === null
+    ? '지역 필터'
+    : (() => {
+        const { city, district, town } = filterCondition.selectedLocation;
+        const townStrings = town.map(t => `${district} ${t}`);
+        return townStrings.length > 1
+          ? `${townStrings[0]} 외 ${townStrings.length - 1}개`
+          : townStrings[0];
+      })();
+
+  const locationReset = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering onToggle
+    setFilterCondition(prev => ({
+      ...prev,
+      selectedLocation: null
+    }))
+  }
+
+  const PriceFilter = () => {
+    const priceRangeText = (() => {
+      const [minPrice, maxPrice] = filterCondition.priceRange;
+  
+      if (minPrice === null && maxPrice === null) {
+        return "가격 필터";
+      } else if (minPrice === null && maxPrice !== null) {
+        return `~ ${maxPrice.toLocaleString()}원`;
+      } else if (minPrice !== null && maxPrice === null) {
+        return `${minPrice.toLocaleString()}원 ~`;
+      } else if (minPrice !== null && maxPrice !== null) {
+        return `${minPrice.toLocaleString()}원 ~ ${maxPrice.toLocaleString()}원`;
+      }
+    })();
+  
+    return <div>{priceRangeText}</div>;
+  }
+
+  const priceReset = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFilterCondition(prev => ({
+      ...prev,
+      priceRange: [null, null]
+    }))
+  }
+
   return (
     <div className={`flex justify-center items-center min-h-screen`}>
       <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-[1.5rem]`}>
@@ -252,7 +300,7 @@ const ProductList = () => {
             <div className='flex items-center ms-[0.75rem]'>
               <RightArrowIcon className='fill-light-black dark:fill-dark-black' />
               <span className='ms-[0.75rem] text-base text-light-signature dark:text-dark-signature'>
-                title
+                {filterCondition.selectedCategory.name}
               </span>
             </div>
             
@@ -288,22 +336,31 @@ const ProductList = () => {
 
         {/* 필터 */}
         <div className="flex flex-wrap gap-[0.5rem] items-center relative z-[10] mb-[0.75rem]">
-          <Dropdown
-            label="카테고리"
-            options={CATEGORIES}
-            isOpen={openDropdown === 'categories'}
-            onToggle={() => handleToggle('categories')}
-            onSelect={handleCategorySelect}
-            selectedOption={filterCondition.selectedCategory}
-          />
+          <div className='h-[2.25rem]'>
+            <Dropdown
+              label="카테고리"
+              options={CATEGORIES}
+              isOpen={openDropdown === 'categories'}
+              onToggle={() => handleToggle('categories')}
+              onSelect={handleCategorySelect}
+              selectedOption={filterCondition.selectedCategory}
+            />
+          </div>
           <div>
             <button 
               onClick={() => setIsModalOpen(true)} 
-              className="px-[1rem] py-[0.5rem] border-light-border bg-light-gray dark:border-dark-border dark:bg-dark-gray text-sm font-medium rounded-md border shadow-sm"
+              className="flex h-[2.25rem] px-[1rem] py-[0.5rem] border-light-border bg-light-gray dark:border-dark-border dark:bg-dark-gray text-sm font-medium rounded-md border shadow-sm"
             >
-              {filterCondition.priceRange[0] === 0 && filterCondition.priceRange[1] === 500000
-                ? "가격 필터"
-                : `${filterCondition.priceRange[0].toLocaleString()}원 ~ ${filterCondition.priceRange[1].toLocaleString()}원`}
+              {PriceFilter()}
+              <RefreshIcon 
+                className={`
+                  ${filterCondition.priceRange[0] === null && filterCondition.priceRange[1] === null ? 'hidden' : ''}
+                  size-[1.25rem] ms-[0.5rem] -mr-[0.25rem]
+                  text-light-text-secondary fill-light-border-icon
+                  dark:text-dark-text-secondary dark:fill-dark-border-icon
+                `} 
+                onClick={e => priceReset(e)} 
+              />
             </button>
             <PriceRangeModal
               isOpen={isModalOpen}
@@ -321,13 +378,23 @@ const ProductList = () => {
             <button
               type="button"
               className={`  
-                inline-flex justify-between items-center w-full min-w-[4rem] px-[1rem] py-[0.5rem]
+                inline-flex justify-between items-center w-full min-w-[4rem] h-[2.25rem] px-[1rem] py-[0.5rem]
                 bg-light-gray
                 dark:bg-dark-gray
                 text-sm font-medium rounded-md shadow-sm`}
               onClick={() => setIsFilterOpen(true)}
             >
-              지역 필터
+              {locationText}
+
+              <RefreshIcon 
+                className={`
+                  ${filterCondition.selectedLocation === null ? 'hidden' : ''}
+                  size-[1.25rem] ms-[0.5rem] -mr-[0.25rem]
+                  text-light-text-secondary fill-light-border-icon
+                  dark:text-dark-text-secondary dark:fill-dark-border-icon
+                `} 
+                onClick={e => locationReset(e)} 
+              />
             </button>
           </div>
 

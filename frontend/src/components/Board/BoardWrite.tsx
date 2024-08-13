@@ -142,7 +142,6 @@ const BoardWrite = () => {
       className={`
         fixed z-[10] md:z-[100] w-full h-[calc(100vh-5.95rem)] md:h-full mt-[3.2rem] md:mt-0
         bg-light-black bg-opacity-80
-        dark:bg-dark-black dark:bg-opacity-80
         inset-0
       `}
       onClick={() => dispatch(setIsBoardWriteModal(false))} 

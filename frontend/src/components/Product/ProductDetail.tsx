@@ -338,13 +338,18 @@ function Detail() {
   return (
     <div className={`flex justify-center mb-[5rem] `}>
       <div
-        className={`bg-light-gray w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6`}
+        className={`
+          w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6
+          bg-light-gray
+          dark:bg-dark-gray
+        `}
       >
         {/* 상단 */}
         <div
           className={`
             flex lg:flex-row flex-col relative w-full mb-[2rem] p-[0.75rem]
             bg-light-gray
+            dark:bg-dark-gray
             overflow-hidden rounded
           `}
         >
@@ -630,7 +635,7 @@ function Detail() {
           </div>
         </div>
         {/* 판매자의 추가거래 상품 받아오기 */}
-        <div>
+        <div className='mx-[1rem]'>
           <div
             className={`
               mb-[0.75rem] 
