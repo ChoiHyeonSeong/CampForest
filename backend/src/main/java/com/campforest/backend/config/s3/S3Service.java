@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,6 +53,17 @@ public class S3Service {
 		String uploadImageUrl = putS3(uploadFile, newFileName);
 		removeNewFile(uploadFile);
 		return uploadImageUrl;
+	}
+
+	@Async
+	public CompletableFuture<String> uploadAsync(String fileName, MultipartFile multipartFile, String extend) throws IOException {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				return upload(fileName, multipartFile, extend);
+			} catch (IOException e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	private String buildFileName(String fileName, String extend) {

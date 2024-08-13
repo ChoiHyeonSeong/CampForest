@@ -19,4 +19,7 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
 	List<Rent> findByProductIdAndRentStartDateAfter(Long productId, LocalDate currentDate);
 
+	Optional<Rent> findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(
+		Long productId, Long requesterId, Long receiverId);
+
 }
