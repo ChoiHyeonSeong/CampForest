@@ -34,6 +34,7 @@ import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.notification.model.NotificationType;
 import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.user.dto.request.RequestLoginDTO;
+import com.campforest.backend.user.dto.request.RequestPasswordDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
@@ -305,6 +306,20 @@ public class UserController {
 			return ApiResponse.createSuccess(following, "팔로잉 목록 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.FOLLOW_NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/public/password/reset")
+	public ApiResponse<?> resetUserPassword(@RequestBody RequestPasswordDTO requestDTO) {
+		try {
+			String encodedPassword = passwordEncoder.encode(requestDTO.getPassword());
+			requestDTO.setPassword(encodedPassword);
+
+			userService.updateUserPassword(requestDTO);
+
+			return ApiResponse.createSuccess(null, "비밀번호 변경에 성공하였습니다.");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
 		}
 	}
 
