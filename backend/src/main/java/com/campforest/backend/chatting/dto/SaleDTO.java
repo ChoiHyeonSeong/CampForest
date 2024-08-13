@@ -33,6 +33,8 @@ public class SaleDTO {
 		private boolean confirmedByBuyer;
 		private boolean confirmedBySeller;
 		private Long realPrice;
+		private Double latitude;
+		private Double longitude;
 
 
 }

@@ -1,5 +1,7 @@
 package com.campforest.backend.chatting.dto;
 
+import org.springframework.scheduling.annotation.Async;
+
 import com.campforest.backend.chatting.entity.TransactionChatMessage;
 
 import lombok.AllArgsConstructor;
@@ -11,10 +13,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 public class MessageWithTransactionDTO {
 
 	private TransactionChatMessage message;
 	private Object transactionEntity;
+
 }
