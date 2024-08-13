@@ -110,8 +110,8 @@ public class ReviewController {
 		}
 	}
 
-	// 받은 리뷰 조회
-	@GetMapping("/received")
+	// 자기가 받은 리뷰 조회
+	@GetMapping()
 	public ApiResponse<?> getAllReceivedReviews(Authentication authentication) {
 		try {
 			Users user = userService.findByEmail(authentication.getName())
@@ -119,6 +119,17 @@ public class ReviewController {
 
 			List<Review> reviews = reviewService.findAllReceivedReviews(user.getUserId());
 			return ApiResponse.createSuccess(reviews, "받은 리뷰 목록입니다.");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.REVIEW_READ_FAILED);
+		}
+	}
+
+	//다른 사람이 받은 리뷰 조회
+	@GetMapping("/received")
+	public ApiResponse<?> getAllReceivedReviewsOther(@RequestParam("userId") Long userId) {
+		try {
+			List<Review> reviews = reviewService.findAllReceivedReviews(userId);
+			return ApiResponse.createSuccess(reviews, "받은 리뷰 목록입니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.REVIEW_READ_FAILED);
 		}
