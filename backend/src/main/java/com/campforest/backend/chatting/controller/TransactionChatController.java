@@ -194,6 +194,7 @@ public class TransactionChatController {
 
 			// 요청자 ID 설정
 			rentRequestDto.setRequesterId(userId);
+			System.out.println(rentRequestDto.toString());
 
 			// 대여 요청 처리
 			Map<String, Long> result = rentService.rentRequest(rentRequestDto);
@@ -317,7 +318,7 @@ public class TransactionChatController {
 				.transactionId(rentId)
 				.content(requester.getNickname() + "님이 대여 요청을 거절하였습니다.")
 				.build();
-			transactionChatService.saveMessage(roomId, denyMessage);
+			// transactionChatService.saveMessage(roomId, denyMessage);
 
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(denyMessage, transactionEntity);
 			return messages;
@@ -363,7 +364,7 @@ public class TransactionChatController {
 				.transactionId(rentId)
 				.content(requester.getNickname() + "님이 대여를 확정하였습니다.")
 				.build();
-			transactionChatService.saveMessage(roomId, confirmMessage);
+			// transactionChatService.saveMessage(roomId, confirmMessage);
 
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(confirmMessage, transactionEntity);
 			return messages;
@@ -373,6 +374,7 @@ public class TransactionChatController {
 				.senderId(userId)
 				.content("대여 확정 중  오류가 발생했습니다: " + e)
 				.build();
+			e.printStackTrace();
 			return new MessageWithTransactionDTO(errorMessage, null);
 		}
 	}
@@ -455,7 +457,7 @@ public class TransactionChatController {
 				.orElseThrow(() -> new Exception("방을 못찾았습니다"));
 			// 요청자 ID 설정
 			saleRequestDto.setRequesterId(userId);
-
+			System.out.println(saleRequestDto.toString());
 			// 거래 요청 처리
 			Map<String, Long> result = saleService.saleRequest(saleRequestDto);
 			Long receiverId = result.get("receiverId");
