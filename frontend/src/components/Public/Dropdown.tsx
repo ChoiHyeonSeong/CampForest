@@ -5,6 +5,7 @@ import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.sv
 type Option = {
   id: number;
   name: string;
+  url?: string;
 };
 
 type DropdownProps = {

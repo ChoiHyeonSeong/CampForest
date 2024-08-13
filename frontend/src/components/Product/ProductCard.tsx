@@ -178,7 +178,7 @@ const ProductCard = (props: Props) => {
             font-light text-xs md:text-sm
           `}
         >
-          {props.product.location}
+          {props.product.location ? props.product.location : '-'}
         </p>
         <div className={`flex`}>
           <div className={`flex items-center me-[0.75rem]`}>
