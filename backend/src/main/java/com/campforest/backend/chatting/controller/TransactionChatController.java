@@ -584,7 +584,7 @@ public class TransactionChatController {
 				.transactionId(saleId)
 				.content(requester.getNickname() + "님이 판매 요청을 거절하였습니다.")
 				.build();
-			transactionChatService.saveMessage(roomId, denyMessage);
+			// transactionChatService.saveMessage(roomId, denyMessage);
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(denyMessage, transactionEntity);
 			return messages;
 		} catch (Exception e) {
@@ -627,7 +627,7 @@ public class TransactionChatController {
 				.messageType(MessageType.TRANSACTION)
 				.content(requester.getNickname() + "님이 거래를 완료하였습니다.")
 				.build();
-			transactionChatService.saveMessage(roomId, confirmMessage);
+			// transactionChatService.saveMessage(roomId, confirmMessage);
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(confirmMessage, transactionEntity);
 			return messages;
 		} catch (Exception e) {
