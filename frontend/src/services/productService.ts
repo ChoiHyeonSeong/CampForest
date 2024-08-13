@@ -25,6 +25,7 @@ type SearchParams = {
 }
 
 export const productWrite = async (productRegistDto: ProductRegistDto, productImages: File[]) => {
+  console.log('productWrite', productRegistDto)
   const formData = new FormData();
   const blob = new Blob([JSON.stringify(productRegistDto)], {type: 'application/json'});
   formData.append('productRegistDto', blob);
