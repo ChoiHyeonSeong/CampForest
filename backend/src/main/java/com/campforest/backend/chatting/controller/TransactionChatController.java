@@ -8,6 +8,7 @@ import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.chatting.dto.ChatHistoryDto;
 import com.campforest.backend.chatting.dto.MessageWithTransactionDTO;
 import com.campforest.backend.chatting.dto.RentableRequestDto;
+import com.campforest.backend.chatting.dto.SaleDTO;
 import com.campforest.backend.chatting.entity.MessageType;
 import com.campforest.backend.chatting.entity.TransactionChatRoom;
 import com.campforest.backend.notification.model.NotificationType;
@@ -77,6 +78,9 @@ public class TransactionChatController {
 			Users user = userService.findByEmail(authentication.getName())
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 			Long buyer = user.getUserId();
+			if(user.getUserId() == createRoomDto.getSeller()) {
+				return ApiResponse.createError(ErrorCode.BOARD_CREATION_FAILED);
+			}
 			TransactionChatDto room = transactionChatService.createOrGetChatRoom(createRoomDto.getProductId(), buyer,
 				createRoomDto.getSeller());
 
@@ -368,38 +372,6 @@ public class TransactionChatController {
 		}
 	}
 
-	@MessageMapping("/transaction/{roomId}/{userId}/getRent")
-	@SendTo("/sub/transaction/{roomId}")
-	public TransactionChatMessage getRent(
-		@DestinationVariable Long roomId,
-		@DestinationVariable Long userId,
-		@Payload RentRequestDto rentRequestDto
-	) {
-		try {
-			Users requester = userService.findByUserId(userId)
-				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-
-			RentResponseDto rentResponseDto = rentService.getRent(rentRequestDto, requester.getUserId());
-
-			TransactionChatMessage getRentMessage = TransactionChatMessage.builder()
-				.roomId(roomId)
-				.senderId(userId)
-				.messageType(MessageType.TRANSACTION)
-				.content("거래 정보: " + rentResponseDto.toString())
-				.build();
-			transactionChatService.saveMessage(roomId, getRentMessage);
-
-			return getRentMessage;
-		} catch (Exception e) {
-			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
-				.roomId(roomId)
-				.senderId(userId)
-				.content("거래 정보 조회 중 오류가 발생했습니다: " + e.getMessage())
-				.build();
-			return errorMessage;
-		}
-	}
-
 	@MessageMapping("/transaction/{roomId}/{userId}/updateRent")
 	@SendTo("/sub/transaction/{roomId}")
 	public MessageWithTransactionDTO updateRentDate(
@@ -654,37 +626,55 @@ public class TransactionChatController {
 			return new MessageWithTransactionDTO(errorMessage, null);
 		}
 	}
+	//
+	// @GetMapping("/transaction/{roomId}/{userId}/getSale")
+	// public TransactionChatMessage getSale(
+	// 	@PathVariable Long roomId,
+	// 	@PathVariable Long userId,
+	// 	@RequestBody SaleRequestDto saleRequestDto
+	// ) {
+	// 	try {
+	// 		Users requester = userService.findByUserId(userId)
+	// 			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+	//
+	// 		SaleResponseDto saleResponseDto = saleService.getSale(saleRequestDto, requester.getUserId());
+	// 		System.out.println(saleResponseDto);
+	// 		TransactionChatMessage getRentMessage = TransactionChatMessage.builder()
+	// 			.roomId(roomId)
+	// 			.senderId(userId)
+	// 			.messageType(MessageType.TRANSACTION)
+	// 			.content("거래 정보: " + saleResponseDto.toString())
+	// 			.build();
+	// 		transactionChatService.saveMessage(roomId, getRentMessage);
+	//
+	// 		return getRentMessage;
+	// 	} catch (Exception e) {
+	// 		TransactionChatMessage errorMessage = TransactionChatMessage.builder()
+	// 			.roomId(roomId)
+	// 			.senderId(userId)
+	// 			.content("거래 정보 조회 중 오류가 발생했습니다: " + e.getMessage())
+	// 			.build();
+	// 		return errorMessage;
+	// 	}
+	// }
+/*
 
-	@GetMapping("/transaction/{roomId}/{userId}/getSale")
-	public TransactionChatMessage getSale(
-		@PathVariable Long roomId,
-		@PathVariable Long userId,
-		@RequestBody SaleRequestDto saleRequestDto
+* */
+
+	@GetMapping("/getSale")
+	public Object getSale(
+		@RequestParam Long saleId
 	) {
 		try {
-			Users requester = userService.findByUserId(userId)
-				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			SaleResponseDto saleResponseDto = saleService.getSale(saleRequestDto, requester.getUserId());
-			System.out.println(saleResponseDto);
-			TransactionChatMessage getRentMessage = TransactionChatMessage.builder()
-				.roomId(roomId)
-				.senderId(userId)
-				.messageType(MessageType.TRANSACTION)
-				.content("거래 정보: " + saleResponseDto.toString())
-				.build();
-			transactionChatService.saveMessage(roomId, getRentMessage);
-
-			return getRentMessage;
+			Object transactionEntity= transactionChatService.getSaleTransactionEntity(saleId);
+			System.out.println(transactionEntity.toString());
+			return transactionEntity;
 		} catch (Exception e) {
-			TransactionChatMessage errorMessage = TransactionChatMessage.builder()
-				.roomId(roomId)
-				.senderId(userId)
-				.content("거래 정보 조회 중 오류가 발생했습니다: " + e.getMessage())
-				.build();
-			return errorMessage;
+			return e.getMessage();
 		}
 	}
+
 
 	@MessageMapping("/transaction/{roomId}/{userId}/updateSale")
 	@SendTo("/sub/transaction/{roomId}")
@@ -703,6 +693,7 @@ public class TransactionChatController {
 			TransactionChatMessage updateMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
+				.transactionId(saleId)
 				.messageType(MessageType.TRANSACTION)
 				.content(requester.getNickname() + "님이 거래 날짜를 업데이트하였습니다.")
 				.build();

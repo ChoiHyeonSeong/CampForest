@@ -20,5 +20,7 @@ public class RentRequestDto {
 	private Long deposit;
 	private Long requesterId;
 	private Long receiverId;
+	private Double longitude;
+	private Double latitude;
 
 }

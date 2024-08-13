@@ -34,7 +34,6 @@ public class SaleService {
 	public Map<String, Long> saleRequest(SaleRequestDto saleRequestDto) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
-		product.setProductPrice(saleRequestDto.getPrice());
 
 		Map<String, Long> result = new HashMap<>();
 		Long requesterId = saleRequestDto.getRequesterId();
@@ -211,7 +210,10 @@ public class SaleService {
 		sales[1].setMeetingTime(saleRequestDto.getMeetingTime());
 		sales[0].setMeetingPlace(saleRequestDto.getMeetingPlace());
 		sales[1].setMeetingPlace(saleRequestDto.getMeetingPlace());
-
+		sales[0].setLatitude(saleRequestDto.getLatitude());
+		sales[1].setLatitude(saleRequestDto.getLatitude());
+		sales[0].setLongitude(saleRequestDto.getLongitude());
+		sales[1].setLongitude(saleRequestDto.getLongitude());
 		Sale sale = saleRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(saleRequestDto.getProductId(),
 				requesterId, receiverId)
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
@@ -238,6 +240,8 @@ public class SaleService {
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.realPrice(saleRequestDto.getPrice())
+			.longitude(saleRequestDto.getLongitude())
+			.latitude(saleRequestDto.getLatitude())
 			.build();
 	}
 
@@ -255,6 +259,8 @@ public class SaleService {
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.realPrice(saleRequestDto.getPrice())
+			.longitude(saleRequestDto.getLongitude())
+			.latitude(saleRequestDto.getLatitude())
 			.build();
 	}
 
