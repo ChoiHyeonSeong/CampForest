@@ -126,7 +126,8 @@ const ChatTradePropser = ({ transactionEntity }: Props) => {
         <div className="font-semibold ms-[0.5rem]">
           거절된 거래입니다.
         </div>
-      ) : transactionEntity?.saleStatus === 'REQUESTED' &&
+      ) : 
+      transactionEntity?.saleStatus === 'REQUESTED' &&
         transactionEntity?.requesterId !== user.userId ? (
         <div className="flex gap-[0.5rem]">
           <button
@@ -172,46 +173,46 @@ const ChatTradePropser = ({ transactionEntity }: Props) => {
         </div>
       ) : (
         <div className='flex gap-[0.5rem]'>
-        <button
-          className="
-    items-center w-full py-[0.25rem] 
-    bg-light-black text-light-white
-    dark:bg-dark-black dark:text-dark-white
-    rounded
-  "
-        >
-          상세보기
-        </button>
-      {transactionEntity?.saleStatus === 'RESERVED' ? (
-        <button
+          <button
+            className="
+              items-center w-full py-[0.25rem] 
+              bg-light-black text-light-white
+              dark:bg-dark-black dark:text-dark-white
+              rounded
+            "
+          >
+            상세보기
+          </button>
+          {transactionEntity?.saleStatus === 'RESERVED' ? (
+            <button
+              className={`
+                items-center w-full py-[0.25rem] 
+                bg-light-black text-light-white
+                dark:bg-dark-black dark:text-dark-white
+                rounded 
+              `}
+              onClick={() => {
+                if(user.userId !== transactionEntity.receiverId) {
+                publishMessage(`/pub/transaction/${chatState.roomId}/${user.userId}/confirmSale`, {
+                  productId: product.productId,
+                    sellerId: transactionEntity.sellerId,
+                    buyerId: transactionEntity.buyerId,
+                  });
+                }
+              }}
+            >
+              거래완료
+            </button>
+        ) : transactionEntity?.saleStatus !== 'REQUESTED' && (<button
           className={`
             items-center w-full py-[0.25rem] 
-            bg-light-black text-light-white
-            dark:bg-dark-black dark:text-dark-white
-            rounded 
+            bg-light-signature text-light-white
+            dark:bg-dark-signature dark:text-dark-white
+            rounded cursor-default
           `}
-          onClick={() => {
-            if(user.userId !== transactionEntity.receiverId) {
-            publishMessage(`/pub/transaction/${chatState.roomId}/${user.userId}/confirmSale`, {
-              productId: product.productId,
-                sellerId: transactionEntity.sellerId,
-                buyerId: transactionEntity.buyerId,
-              });
-            }
-          }}
         >
           거래완료
-        </button>
-    ) : transactionEntity?.saleStatus !== 'REQUESTED' && (<button
-      className={`
-        items-center w-full py-[0.25rem] 
-        bg-light-signature text-light-white
-        dark:bg-dark-signature dark:text-dark-white
-        rounded cursor-default
-      `}
-    >
-      거래완료
-    </button>)}
+        </button>)}
       </div>)}
     </div>
   );

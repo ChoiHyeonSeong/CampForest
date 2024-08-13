@@ -13,7 +13,7 @@ import {
   updateMessageReadStatus,
   updateTransactionChatUserList,
 } from '@store/chatSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   communityChatList,
   transactionChatDetail,
@@ -32,6 +32,7 @@ export type UseWebSocketReturn = {
 };
 
 export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => {
+  const dispatch = useDispatch();
   const [connected, setConnected] = useState(false);
   const chatState = useSelector((state: RootState) => state.chatStore);
   const isLoggedIn = useSelector((state: RootState) => state.userStore.isLoggedIn);
@@ -44,14 +45,14 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
       const communityChatUserList = await communityChatList();
       let count = 0;
       if (communityChatUserList) {
-        communityChatUserList.map((chatUser: ChatUserType) => {
+        communityChatUserList.forEach((chatUser: ChatUserType) => {
           count += chatUser.unreadCount;
         });
         store.dispatch(setCommunityChatUserList(communityChatUserList));
       }
       const transactionChatUserList = await transactionChatList();
       if (transactionChatUserList) {
-        transactionChatUserList.map((chatUser: ChatUserType) => {
+        transactionChatUserList.forEach((chatUser: ChatUserType) => {
           count += chatUser.unreadCount;
         });
         store.dispatch(setTransactionChatUesrList(transactionChatUserList));
@@ -71,18 +72,18 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
           console.log('Received chat message:', response);
           const state: RootState = store.getState();
           if (response.type === 'READ') {
-            store.dispatch(
+            dispatch(
               updateMessageReadStatus({ roomId: chatRoom.roomId, readerId: response.senderId }),
             );
           }
           // 현재 열려 있는 채팅방 내용 갱신
           else if (state.chatStore.roomId === response.roomId) {
-            store.dispatch(updateCommunityChatUserList({ ...response, inProgress: true }));
+            dispatch(updateCommunityChatUserList({ ...response, inProgress: true }));
             publishMessage(`/pub/room/${response.roomId}/markAsRead`, state.userStore.userId);
-            store.dispatch(addMessageToChatInProgress(response));
+            dispatch(addMessageToChatInProgress(response));
           } else {
             // 채팅방 목록 업데이트
-            store.dispatch(updateCommunityChatUserList({ ...response, inProgress: false }));
+            dispatch(updateCommunityChatUserList({ ...response, inProgress: false }));
           }
         });
       });
@@ -92,43 +93,34 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
     if (transactionChatUserList) {
       transactionChatUserList.forEach((chatRoom: any) => {
         // 메시지를 받았을 때
-        client.subscribe(`/sub/transaction/${chatRoom.roomId}`, async (message) => {
-          const response = JSON.parse(message.body);
+        client.subscribe(`/sub/transaction/${chatRoom.roomId}`, async (data) => {
+          const response = JSON.parse(data.body);
           console.log('Received chat message: ', response);
           const state: RootState = store.getState();
 
-          if (response.messageType === 'READ') {
-            store.dispatch(
-              updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }),
-            );
-          } else if (response.messageType === 'TRANSACTION') {
-            console.log(response);
-            if (state.chatStore.roomId === response.roomId) {
-              store.dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
-              publishMessage(`/pub/transaction/${response.roomId}/read`, state.userStore.userId);
-              const fetchedMessages = await transactionChatDetail(response.roomId);
-              store.dispatch(setChatInProgress(fetchedMessages.messages));
-              let lastSaleState = '';
-              await fetchedMessages.messages.forEach((message: any) => {
-                if(message.transactionEntity) {
-                  lastSaleState = message.transactionEntity.saleStatus;
-                }
-              })
-              if(lastSaleState !== '') {
-                store.dispatch(setSaleStatus(lastSaleState));
-              }
+          if (response.message && response.message.messageType === 'TRANSACTION') {
+            if (state.chatStore.roomId === response.message.roomId) {
+              dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
+              publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
+              dispatch(addMessageToChatInProgress(response));
+              dispatch(setSaleStatus(response.transactionEntity.saleStatus));
             } else {
-              store.dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
+              dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
             }
           }
+          else if (response.messageType === 'READ') {
+            dispatch(
+              updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }),
+            );
+          } 
           // 현재 열려 있는 채팅방 내용 갱신
           else if (response.messageType === 'MESSAGE') {
             if (state.chatStore.roomId === response.roomId) {
-              store.dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
-              publishMessage(`/pub/transaction/${chatState.roomId}/read`, state.userStore.userId);
-              store.dispatch(addMessageToChatInProgress(response));
+              dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
+              publishMessage(`/pub/transaction/${chatRoom.roomId}/read`, state.userStore.userId);
+              dispatch(addMessageToChatInProgress(response));
             } else {
-              store.dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
+              dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
             }
           } else {
             console.log('타입이 없습니다');
@@ -136,7 +128,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         });
       });
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!jwt) {
@@ -148,7 +140,7 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         Authorization: `${jwt}`,
       },
       debug: (str) => {
-        console.log(str);
+        // console.log(str);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -175,26 +167,23 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
         newClient.deactivate();
       }
     };
-  }, [isLoggedIn, subscribeInitial]);
+  }, [isLoggedIn]);
 
-  const publishMessage = useCallback((destination: string, body: any) => {
-    console.log(body);
+  const publishMessage = (destination: string, body: any) => {
     if (clientRef.current && clientRef.current.active) {
       clientRef.current.publish({
         destination,
         body: JSON.stringify(body),
       });
     }
-  }, []);
+  }
 
-  const subscribe = useCallback(
+  const subscribe = 
     (destination: string, callback: (message: Message) => void) => {
       if (clientRef.current && clientRef.current.active) {
         clientRef.current.subscribe(destination, callback);
       }
-    },
-    [jwt],
-  );
+    }
 
   return { connected, publishMessage, subscribe };
 };

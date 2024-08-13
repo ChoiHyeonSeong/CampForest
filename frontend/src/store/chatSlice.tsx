@@ -158,8 +158,8 @@ const chatSlice = createSlice({
 
 export const {
   setIsChatOpen, 
-  selectCommnunity, 
-  selectTransaction, 
+  selectCommnunity,
+  selectTransaction,
   setRoomId, 
   setProduct,
   setChatInProgress,

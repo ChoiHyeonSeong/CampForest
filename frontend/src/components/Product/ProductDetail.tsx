@@ -24,6 +24,7 @@ import {
   setIsChatOpen,
   setOtherId,
   setRoomId,
+  setSaleStatus,
   setTotalUnreadCount,
   setTransactionChatUesrList,
   updateMessageReadStatus,
@@ -121,13 +122,13 @@ function Detail() {
       try {
         const roomId = await initTransactionChat(productId, product.userId);
         await fetchTransactionChatList();
+        subscribeToChat(roomId);
+
         dispatch(setChatInProgressType('거래'));
         dispatch(selectTransaction());
         dispatch(setOtherId(product.userId));
         dispatch(setIsChatOpen(true));
         dispatch(setRoomId(roomId));
-
-        subscribeToChat(roomId);
       } catch (error) {
         console.error('Error in handleChatButton: ', error);
       }
@@ -148,24 +149,26 @@ function Detail() {
 
   function subscribeToChat(roomId: number) {
     // 메세지를 받았을 때
-    subscribe(`/sub/transaction/${roomId}`, async (message: { body: string }) => {
-      const response = JSON.parse(message.body);
+    subscribe(`/sub/transaction/${roomId}`, async (data) => {
+      const response = JSON.parse(data.body);
+      console.log('Received chat message: ', response);
       const state: RootState = store.getState();
-      if (response.messageType === 'READ') {
+
+      if (response.message.messageType === 'TRANSACTION') {
+        if (state.chatStore.roomId === response.roomId) {
+          store.dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
+          publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
+          dispatch(addMessageToChatInProgress(response));
+          dispatch(setSaleStatus(response.transactionEntity.saleStatus));
+        } else {
+          store.dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
+        }
+      }
+      else if (response.messageType === 'READ') {
         store.dispatch(
           updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }),
         );
-      } else if (response.messageType === 'TRANSACTION') {
-        console.log(response);
-        if (state.chatStore.roomId === response.roomId) {
-          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
-          publishMessage(`/pub/transaction/${response.roomId}/read`, state.userStore.userId);
-          const fetchedMessages = await transactionChatDetail(response.roomId);
-          dispatch(setChatInProgress(fetchedMessages.messages));
-        } else {
-          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
-        }
-      }
+      } 
       // 현재 열려 있는 채팅방 내용 갱신
       else if (response.messageType === 'MESSAGE') {
         if (state.chatStore.roomId === response.roomId) {
