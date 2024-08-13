@@ -213,6 +213,9 @@ public class TransactionChatController {
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				"님이 대여예약을 요청하였습니다.");
 
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
+
 			TransactionChatMessage requesterMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
@@ -223,8 +226,6 @@ public class TransactionChatController {
 				.build();
 			transactionChatService.saveMessage(roomId, requesterMessage);
 
-			Object transactionEntity = null;
-			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(requesterMessage, transactionEntity);
 			return messages;
 		} catch (Exception e) {
@@ -260,6 +261,9 @@ public class TransactionChatController {
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				"님이 대여예약 요청을 수락하였습니다.");
 
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
+
 			TransactionChatMessage acceptMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
@@ -269,8 +273,7 @@ public class TransactionChatController {
 				.build();
 			transactionChatService.saveMessage(roomId, acceptMessage);
 
-			Object transactionEntity = null;
-			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
+
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(acceptMessage, transactionEntity);
 			return messages;
 		} catch (Exception e) {
@@ -304,6 +307,9 @@ public class TransactionChatController {
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				requester.getNickname() + "님이 대여 요청을 거절하였습니다.");
 
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
+
 			TransactionChatMessage denyMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
@@ -313,8 +319,6 @@ public class TransactionChatController {
 				.build();
 			transactionChatService.saveMessage(roomId, denyMessage);
 
-			Object transactionEntity = null;
-			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(denyMessage, transactionEntity);
 			return messages;
 		} catch (Exception e) {
@@ -349,6 +353,9 @@ public class TransactionChatController {
 			notificationService.createNotification(receiver, requester, NotificationType.RENT,
 				requester.getNickname() + "님이 대여 요청을 거절하였습니다.");
 
+			Object transactionEntity = null;
+			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
+
 			TransactionChatMessage confirmMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
@@ -358,8 +365,6 @@ public class TransactionChatController {
 				.build();
 			transactionChatService.saveMessage(roomId, confirmMessage);
 
-			Object transactionEntity = null;
-			transactionEntity = transactionChatService.getRentTransactionEntity(rentId);
 			MessageWithTransactionDTO messages = new MessageWithTransactionDTO(confirmMessage, transactionEntity);
 			return messages;
 		} catch (Exception e) {

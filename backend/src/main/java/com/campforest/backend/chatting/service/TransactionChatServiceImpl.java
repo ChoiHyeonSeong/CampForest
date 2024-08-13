@@ -1,5 +1,6 @@
 package com.campforest.backend.chatting.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,13 +103,15 @@ public class TransactionChatServiceImpl implements TransactionChatService {
             dto.setProductId(transactionChatRoomRepository.findProductIdByRoomId(room.getRoomId()));
             dto.setUnreadCount(transactionChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
             return dto;
-        }).collect(Collectors.toList());
+        }).sorted(Comparator.comparing(TransactionChatRoomListDto::getLastMessageTime).reversed())
+            .collect(Collectors.toList());
     }
     @Transactional
     @Override
     public Optional<TransactionChatRoom> getRoomById(Long roomId) {
         return transactionChatRoomRepository.findById(roomId);
     }
+
     @Transactional
     @Override
     public Object getSaleTransactionEntity(Long saleId) {
@@ -116,6 +119,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         return toSaleDTO(sale);
     }
 
+    @Transactional
     @Override
     public Object getRentTransactionEntity(Long rentId) {
         Rent rent = rentRepository.findById(rentId).orElseThrow();

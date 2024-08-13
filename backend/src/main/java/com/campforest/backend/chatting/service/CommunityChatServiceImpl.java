@@ -13,6 +13,7 @@ import com.campforest.backend.chatting.repository.communitychatroom.CommunityCha
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,7 +80,8 @@ public class CommunityChatServiceImpl implements CommunityChatService {
             CommunityChatRoomListDto dto = convertToListDto(room,userId);
             dto.setUnreadCount(communityChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
             return dto;
-        }).collect(Collectors.toList());
+        }) .sorted(Comparator.comparing(CommunityChatRoomListDto::getLastMessageTime).reversed())  // lastMessageTime 기준으로 내림차순 정렬
+            .collect(Collectors.toList());
     }
 
     @Transactional
