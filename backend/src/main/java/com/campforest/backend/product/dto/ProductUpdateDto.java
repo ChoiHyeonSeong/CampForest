@@ -20,5 +20,7 @@ public class ProductUpdateDto {
 	private Category category;
 	private List<String> productImageUrl;
 	private Long deposit;
+	private Double latitude;
+	private Double longitude;
 
 }
