@@ -218,16 +218,6 @@ public class TransactionChatController {
 				.build();
 			transactionChatService.saveMessage(roomId, requesterMessage);
 
-			TransactionChatMessage receiverMessage = TransactionChatMessage.builder()
-				.roomId(roomId)
-				.senderId(userId)
-				.messageType(MessageType.TRANSACTION)
-				.transactionId(reverseRentId)
-				.content("새로운 렌트 요청이 도착했습니다. 상품ID: " + productId + " 상품 이름: " + productService.getProduct(productId)
-					.getProductName())
-				.build();
-			transactionChatService.saveMessage(roomId, receiverMessage);
-
 			return requesterMessage;
 		} catch (Exception e) {
 			// 에러 처리
@@ -294,12 +284,21 @@ public class TransactionChatController {
 			Users requester = userService.findByUserId(userId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			rentService.denyRent(rentRequestDto, requester.getUserId());
+			Map<String, Long> map = rentService.denyRent(rentRequestDto, requester.getUserId());
+			Long receiverId = map.get("receiverId");
+			Long rentId = map.get("rentId");
+
+			Users receiver = userService.findByUserId(receiverId)
+				.orElseThrow(()-> new IllegalArgumentException("사용자 정보 없음"));
+
+			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+				requester.getNickname() + "님이 대여 요청을 거절하였습니다.");
 
 			TransactionChatMessage denyMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.messageType(MessageType.TRANSACTION)
+				.transactionId(rentId)
 				.content(requester.getNickname() + "님이 대여 요청을 거절하였습니다.")
 				.build();
 			transactionChatService.saveMessage(roomId, denyMessage);
@@ -327,12 +326,21 @@ public class TransactionChatController {
 			Users requester = userService.findByUserId(userId)
 				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
 
-			rentService.confirmRent(rentRequestDto, requester.getUserId());
+			Map<String, Long> map = rentService.confirmRent(rentRequestDto, requester.getUserId());
+			Long receiverId = map.get("receiverId");
+			Long rentId = map.get("rentId");
+
+			Users receiver = userService.findByUserId(receiverId)
+				.orElseThrow(()-> new IllegalArgumentException("사용자 정보 없음"));
+
+			notificationService.createNotification(receiver, requester, NotificationType.RENT,
+				requester.getNickname() + "님이 대여 요청을 거절하였습니다.");
 
 			TransactionChatMessage confirmMessage = TransactionChatMessage.builder()
 				.roomId(roomId)
 				.senderId(userId)
 				.messageType(MessageType.TRANSACTION)
+				.transactionId(rentId)
 				.content(requester.getNickname() + "님이 대여를 확정하였습니다.")
 				.build();
 			transactionChatService.saveMessage(roomId, confirmMessage);

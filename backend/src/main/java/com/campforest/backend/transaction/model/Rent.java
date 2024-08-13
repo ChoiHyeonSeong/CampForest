@@ -1,5 +1,6 @@
 package com.campforest.backend.transaction.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -94,6 +95,7 @@ public class Rent {
 	@Column(name = "confirmed_by_seller", columnDefinition = "boolean default false")
 	private boolean confirmedBySeller;
 
+
 	public void requestRent() {
 		this.rentStatus = TransactionStatus.REQUESTED;
 	}
@@ -105,6 +107,16 @@ public class Rent {
 
 	public void acceptRent() {
 		this.rentStatus = TransactionStatus.RESERVED;
+		this.modifiedAt = LocalDateTime.now();
+	}
+
+	public void denyRent() {
+		this.rentStatus = TransactionStatus.DENIED;
+		this.modifiedAt = LocalDateTime.now();
+	}
+
+	public void confirmRentStatus() {
+		this.rentStatus = TransactionStatus.CONFIRMED;
 		this.modifiedAt = LocalDateTime.now();
 	}
 

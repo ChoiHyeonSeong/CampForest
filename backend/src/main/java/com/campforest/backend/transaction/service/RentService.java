@@ -37,8 +37,10 @@ public class RentService {
 	public Map<String, Long> rentRequest(RentRequestDto rentRequestDto) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
+		product.setProductPrice(rentRequestDto.getPrice());
 
 		validateDuplicateRequest(rentRequestDto);
+
 		Map<String, Long> result = new HashMap<>();
 		Long requesterId = rentRequestDto.getRequesterId();
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
@@ -67,14 +69,21 @@ public class RentService {
 
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
-		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
+		Long rentId = 0L;
 
+		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
+		for(Rent rent : rents) {
+			if(rent.getRentStatus().equals(TransactionStatus.RECEIVED)) {
+				rentId = rent.getId();
+			}
+		}
 		rents[0].acceptRent();
 		rents[1].acceptRent();
 
 		Map<String, Long> result = new HashMap<>();
 		result.put("requesterId", requesterId);
 		result.put("receiverId", receiverId);
+		result.put("rentId", rentId);
 
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
@@ -83,40 +92,71 @@ public class RentService {
 	}
 
 	@Transactional
-	public void denyRent(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> denyRent(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
+		Long rentId = 0L;
 		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
 
-		rentRepository.delete(rents[0]);
-		rentRepository.delete(rents[1]);
+		for(Rent rent : rents) {
+			if(rent.getRentStatus().equals(TransactionStatus.RECEIVED)) {
+				rentId = rent.getId();
+			}
+		}
+		rents[0].denyRent();
+		rents[1].denyRent();
+
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+		result.put("rentId", rentId);
+
+		rentRepository.save(rents[0]);
+		rentRepository.save(rents[1]);
+
+		return result;
 	}
 
 	@Transactional
-	public void confirmRent(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> confirmRent(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
+		Long rentId = 0L;
 		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
+
+		for(Rent rent : rents) {
+			if(rent.getRentStatus().equals(TransactionStatus.RECEIVED)) {
+				rentId = rent.getId();
+			}
+		}
 
 		boolean isRequesterOwner = requesterId.equals(rentRequestDto.getOwnerId());
 		rents[0].confirmRent(isRequesterOwner); // 소유자가 요청자일 경우
 		rents[1].confirmRent(isRequesterOwner); // 소유자가 아닌 경우
 
-		if (rents[0].isFullyConfirmed() && rents[1].isFullyConfirmed()) {
-			rents[0].setRentStatus(TransactionStatus.CONFIRMED);
-			rents[1].setRentStatus(TransactionStatus.CONFIRMED);
+		Rent rent = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
+			requesterId,receiverId)
+			.orElseThrow(()-> new IllegalArgumentException("찾을 수 없는 대여요청입니다."));
+		rent.confirmRentStatus();
 
+		if (rents[0].isFullyConfirmed() && rents[1].isFullyConfirmed()) {
 			productRepository.save(product);
 		}
 
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+		result.put("rentId", rentId);
+
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
+		return result;
 	}
 
 	public RentResponseDto getRent(RentRequestDto rentRequestDto, Long requesterId) {
@@ -222,10 +262,10 @@ public class RentService {
 	}
 
 	private Rent[] getRents(RentRequestDto rentRequestDto, Long requesterId, Long receiverId) {
-		Rent rent1 = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(),
+		Rent rent1 = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
 				requesterId, receiverId)
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 대여 요청 입니다."));
-		Rent rent2 = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(),
+		Rent rent2 = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
 				receiverId, requesterId)
 			.orElseThrow(() -> new IllegalArgumentException("상대방 요청을 찾을 수 없습니다."));
 		return new Rent[] {rent1, rent2};
