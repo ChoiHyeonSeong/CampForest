@@ -35,70 +35,70 @@ const NavbarLeftExtendMobile = (props: Props) => {
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/all'
     },
     {
       title: "텐트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/tent'
     },
     {
       title: "의자",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/chair'
     },
     {
       title: "침낭/매트",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/sleeping'
     },
     {
       title: "테이블",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/table'
     },
     {
       title: "랜턴",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/lantern'
     },
     {
       title: "코펠/식기",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/cookware'
     },
     {
       title: "안전용품",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/safety'
     },
     {
       title: "버너/화로",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/burner'
     },
     {
       title: "기타",
       imgsrc: campfire,
       imgBgColor: "bg-green-500",
       imgWd: 'w-[10vw] h-[10vw]',
-      linkTo: 'product/list'
+      linkTo: 'product/list/etc'
     },
   ]
 

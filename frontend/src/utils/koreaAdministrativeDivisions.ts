@@ -124,6 +124,7 @@ export const koreaAdministrativeDivisions = [
   {
     city: "세종특별자치시",
     districts: [
+      { name: "전체", lat: 36.4800, lng: 127.2890 },
       { name: "세종시", lat: 36.4800, lng: 127.2890 }
     ]
   },

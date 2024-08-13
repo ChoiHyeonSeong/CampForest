@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useInView } from 'react-intersection-observer';
 import { setIsLoading } from '@store/modalSlice';
 import { productList } from '@services/productService';
 import ProductCard, { ProductType } from '@components/Product/ProductCard';
@@ -16,29 +15,20 @@ import Pagination from '@components/Public/Pagination';
 type Option = {
   id: number;
   name: string;
+  url?: string;
 };
 
 const CATEGORIES: Option[] = [
-  { id: 1, name: '분류 전체' },
-  { id: 2, name: '텐트' },
-  { id: 3, name: '의자' },
-  { id: 4, name: '침낭/매트' },
-  { id: 5, name: '테이블' },
-  { id: 6, name: '랜턴' },
-  { id: 7, name: '코펠/식기' },
-  { id: 8, name: '안전용품' },
-  { id: 9, name: '버너/화로' },
-  { id: 10, name: '기타' },
-];
-
-const LOCATIONS: Option[] = [
-  { id: 1, name: '지역 전체' },
-  { id: 2, name: '수도권' },
-  { id: 4, name: '강원' },
-  { id: 5, name: '충청' },
-  { id: 6, name: '전라' },
-  { id: 7, name: '경상' },
-  { id: 8, name: '제주' },
+  { id: 1, name: '분류 전체', url: 'all'},
+  { id: 2, name: '텐트', url: 'tent' },
+  { id: 3, name: '의자', url: 'chair' },
+  { id: 4, name: '침낭/매트', url: 'sleeping' },
+  { id: 5, name: '테이블', url: 'table' },
+  { id: 6, name: '랜턴', url: 'lantern' },
+  { id: 7, name: '코펠/식기', url: 'cookware' },
+  { id: 8, name: '안전용품', url: 'safety' },
+  { id: 9, name: '버너/화로', url: 'burner' },
+  { id: 10, name: '기타', url: 'etc' },
 ];
 
 type SelecetedLocType = {
@@ -54,12 +44,21 @@ type ProductListResponse = {
   totalCount: number;
 }
 
+type FilterCondition = {
+  selectedCategory: {id: number; name: string}
+  priceRange: number[]
+  selectedLocation: SelecetedLocType | null
+}
+
 const ProductList = () => {
   // Redux
   const dispatch = useDispatch();
 
+  // path 관리
+  const params = useParams();
+  const navigate = useNavigate();
+
   // 상태 관리
-  
   const [products, setProducts] = useState<ProductType[]>([]);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -68,17 +67,21 @@ const ProductList = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<SelecetedLocType | null>(null);
 
-  const [filterCondition, setFilterCondition] = useState({
+  const [filterCondition, setFilterCondition] = useState<FilterCondition>({
     selectedCategory: CATEGORIES[0],
     priceRange: [0, 500000],
+    selectedLocation: null
   });
+
   // 상태 추가
   const [totalElementsCnt, setTotalElementsCnt] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const maxVisitedPageRef = useRef<number>(0);
+
+  // 이벤트 핸들러
+  const [isStateReset, setIsStateReset] = useState(false)
 
   // Refs
   const productCursorRef = useRef<number | null>(null);
@@ -94,11 +97,27 @@ const ProductList = () => {
     maxVisitedPageRef.current = 0
   }
 
+  useEffect(() => {
+    const matchingCategory = CATEGORIES.find(category => category.url === params.category);
+    if (matchingCategory) {
+      setFilterCondition(prev => ({
+        ...prev,
+        selectedCategory: { id: matchingCategory.id, name: matchingCategory.name }
+      }));
+    } else {
+      // 만약 일치하는 카테고리가 없을 경우 기본값 설정 (예: '분류 전체')
+      setFilterCondition(prev => ({
+        ...prev,
+        selectedCategory: { id: 1, name: '분류 전체' }
+      }));
+    }
+  }, [params.category])
+
   const fetchProducts = useCallback(async (cursor: number | null = null): Promise<ProductListResponse> => {
     try {
       let category: string | null;
+      let locations: string | null;
 
-      
       if (filterCondition.selectedCategory.name === '침낭/매트') {
         category = '침낭'
       } else if (filterCondition.selectedCategory.name === '코펠/식기') {
@@ -111,7 +130,15 @@ const ProductList = () => {
         category = filterCondition.selectedCategory.name
       }
 
-      console.log(category, filterCondition.priceRange, filterCondition.selectedCategory)
+      if (filterCondition.selectedLocation !== null) {
+        const { city, district, town } = filterCondition.selectedLocation
+        locations = town.map((t) => `${district},${t}`).join('&');
+      } else {
+        locations = null
+      }
+
+      console.log(category, filterCondition.priceRange, filterCondition.selectedCategory, locations)
+      console.log(cursor)
       dispatch(setIsLoading(true));
       const result = await productList({
         productType: activeTab === 1 ? 'SALE' : 'RENT',
@@ -119,6 +146,7 @@ const ProductList = () => {
         category: category,
         minPrice: filterCondition.priceRange[0],
         maxPrice: filterCondition.priceRange[1],
+        locations: locations,
         size: 10,
       });
       console.log(result)
@@ -129,7 +157,7 @@ const ProductList = () => {
       console.error('판매/대여 게시글 불러오기 실패: ', error);
       throw error;
     }
-  }, [dispatch, activeTab, filterCondition.selectedCategory, filterCondition.priceRange]);
+  }, [dispatch, activeTab, filterCondition]);
 
   const fetchProductsForPage = useCallback(async (targetPage: number) => {
     if (targetPage <= maxVisitedPageRef.current) {
@@ -140,7 +168,7 @@ const ProductList = () => {
     let currentPageCount = maxVisitedPageRef.current + 1;
 
     while (currentPageCount <= targetPage && nextPageExist) {
-      const result = await fetchProducts(productCursorRef.current);
+      const result = await fetchProducts(currentCursor);
       if (result === null) return;
       setProducts(prevProducts => [...prevProducts, ...result.products]);
       console.log(result)
@@ -168,15 +196,12 @@ const ProductList = () => {
     fetchProductsForPage(newPage);
   }, [fetchProductsForPage, totalPages, currentPage]);
 
-  // 이벤트 핸들러
-  
-  const [isStateReset, setIsStateReset] = useState(false)
-
   const handleTabClick = useCallback((tabIndex: number) => {
     if (tabIndex !== activeTab) {
       setFilterCondition({
         selectedCategory: CATEGORIES[0],
         priceRange: [0, 500000],
+        selectedLocation: null
       })
       setActiveTab(tabIndex);
     }
@@ -186,7 +211,7 @@ const ProductList = () => {
     resetState()
     setIsStateReset(true)
     console.log(filterCondition.selectedCategory, filterCondition.priceRange)
-  }, [filterCondition.selectedCategory, filterCondition.priceRange])
+  }, [filterCondition])
 
   useEffect(() => {
     if (isStateReset) {
@@ -209,15 +234,15 @@ const ProductList = () => {
   }, []);
 
   const handleSelect = (selected: SelecetedLocType) => {
-    setSelectedLocation(selected);
+    setFilterCondition(prev => ({
+      ...prev,
+      selectedLocation: selected
+    }))
     console.log(selected)
   };
 
   const handleCategorySelect = (option: Option) => {
-    setFilterCondition(prev => ({
-      ...prev,
-      selectedCategory: option
-    }))
+    navigate(`/product/list/${option.url}`)
   }
 
   return (
@@ -321,7 +346,7 @@ const ProductList = () => {
             isOpen={isFilterOpen}
             onClose={() => setIsFilterOpen(false)}
             onSelect={handleSelect}
-            selectedLocation={selectedLocation}
+            selectedLocation={filterCondition.selectedLocation}
           />
               
 

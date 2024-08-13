@@ -8,7 +8,7 @@ import WriteReview from '@components/Product/WriteReview';
 const Product = () => {
   return (
     <Routes>
-      <Route path='/list' element={<ProductList />} />
+      <Route path='/list/:category' element={<ProductList />} />
       <Route path='/detail/:productId' element={<ProductDetail />} />
       <Route path='/write' element={<ProductWrite />} />
       <Route path='/write/review' element={<WriteReview  />} />

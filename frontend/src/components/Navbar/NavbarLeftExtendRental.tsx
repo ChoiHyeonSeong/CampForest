@@ -43,70 +43,70 @@ const NavbarLeftExtendRental = (props: Props) => {
       imgsrc: cateAll,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/all'
     },
     {
       title: "텐트",
       imgsrc: cateTent,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/tent'
     },
     {
       title: "의자",
       imgsrc: cateChair,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/chair'
     },
     {
       title: "침낭/매트",
       imgsrc: cateBed,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/sleeping'
     },
     {
       title: "테이블",
       imgsrc: cateTable,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/table'
     },
     {
       title: "랜턴",
       imgsrc: cateLantern,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/lantern'
     },
     {
       title: "코펠/식기",
       imgsrc: cateCook,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/cookware'
     },
     {
       title: "안전용품",
       imgsrc: cateSafety,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/safety'
     },
     {
       title: "버너/화로",
       imgsrc: cateBurner,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/burner'
     },
     {
       title: "기타",
       imgsrc: cateEtc,
       imgBgColor: "bg-green-500",
       imgWd: 'size-[5rem]',
-      linkUrl: 'product/list'
+      linkUrl: 'product/list/etc'
     },
   ]
 

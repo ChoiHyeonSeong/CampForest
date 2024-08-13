@@ -9,7 +9,7 @@ import UBoard from '@components/User/UBoard';
 import UProduct from '@components/User/UProduct';
 import UReview from '@components/User/UReview';
 
-type UserInfo = {
+export type UserInfo = {
   nickname: string;
   followingCount: number;
   followerCount: number;
