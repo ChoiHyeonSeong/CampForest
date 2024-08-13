@@ -41,6 +41,7 @@ public class ProductService {
 	private final SaveProductRepository saveProductRepository;
 	private final ProductImageRepository productImageRepository;
 
+	@Transactional
 	public void createProduct(ProductRegistDto productRegistDto) {
 
 		Product product = productRegistDto.toEntity();
