@@ -5,7 +5,7 @@ type FilterCategory = {
   name: string;
   options: string[];
 };
-const filterCategories: FilterCategory[] = [
+export const filterCategories: FilterCategory[] = [
   {
     name: "야영장 타입",
     options: ["전체", "카라반", "일반야영장", "자동차야영장", "글램핑"]
