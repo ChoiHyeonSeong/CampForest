@@ -91,25 +91,20 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
 
   function subscribeToChat(roomId: number) {
     // 메세지를 받았을 때
-    subscribe(`/sub/community/${roomId}`, (data) => {
-      const message = JSON.parse(data.body);
+    subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
+      const response = JSON.parse(message.body);
       const state: RootState = store.getState();
-      if(message.type === 'READ') {
-        if (state.userStore.userId !== message.senderId) {
-          store.dispatch(
-            updateMessageReadStatus({ 
-              roomId: message.roomId, 
-              readerId: message.senderId 
-            })
-          );
-        }
+      if(response.type === 'READ') {
+        if (state.userStore.userId !== response.senderId) {
+          store.dispatch(updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }));
+        }  
       }
-      else if (state.chatStore.roomId === message.roomId) {
-        dispatch(updateCommunityChatUserList({...message, inProgress: true}));
-        publishMessage(`/pub/room/${message.roomId}/markAsRead`, state.userStore.userId);
-        dispatch(addMessageToChatInProgress(message));
+      else if (state.chatStore.roomId === response.roomId) {
+        dispatch(updateCommunityChatUserList({...response, inProgress: true}));
+        publishMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
+        dispatch(addMessageToChatInProgress(response));
       } else {
-        dispatch(updateCommunityChatUserList({...message, inProgress: false}));
+        dispatch(updateCommunityChatUserList({...response, inProgress: false}));
       }
     });
 

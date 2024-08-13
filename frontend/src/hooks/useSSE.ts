@@ -1,7 +1,8 @@
+import { transactionChatDetail } from "@services/chatService";
 import { getNotificationList } from "@services/notificationService";
-import { addMessageToChatInProgress, updateCommunityChatUserList, updateMessageReadStatus } from "@store/chatSlice";
+import { addMessageToChatInProgress, setChatInProgress, setSaleStatus, updateCommunityChatUserList, updateMessageReadStatus, updateTransactionChatUserList } from "@store/chatSlice";
 import { addNewNotification, setNotificationList } from "@store/notificationSlice";
-import { RootState } from "@store/store";
+import { RootState, store } from "@store/store";
 import { useWebSocket } from "Context/WebSocketContext";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -18,25 +19,88 @@ const useSSE = () => {
   const { subscribe, publishMessage } = useWebSocket();
   const maxRetries = 5;
 
-  function subscribeToCommunityChat(roomId: number) {
-    // 읽음 처리를 받았을 때
-    subscribe(`/sub/community/${roomId}/readStatus`, (message) => {
-      const readerId = JSON.parse(message.body); // 읽은 사람 Id
-      if (userState.userId !== readerId) {
-        dispatch(updateMessageReadStatus({ roomId: roomId, readerId }));
-      }  
-    });
-  
+  const subscribeToCommunityChat = (roomId: number) => {
     // 메세지를 받았을 때
-    subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
-      const response = JSON.parse(message.body);
-      const currentRoomId = roomIdRef.current;
-      if (currentRoomId === response.roomId) {
-        dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-        publishMessage(`/pub/room/${response.roomId}/markAsRead`, userState.userId);
-        dispatch(addMessageToChatInProgress(response));
+    subscribe(`/sub/community/${roomId}`, (data) => {
+      const message = JSON.parse(data.body);
+      const state: RootState = store.getState();
+      if(message.type === 'READ') {
+        if (state.userStore.userId !== message.senderId) {
+          store.dispatch(
+            updateMessageReadStatus({ 
+              roomId: message.roomId, 
+              readerId: message.senderId 
+            })
+          );
+        }
+      }
+      else if (state.chatStore.roomId === message.roomId) {
+        dispatch(updateCommunityChatUserList({...message, inProgress: true}));
+        publishMessage(`/pub/room/${message.roomId}/markAsRead`, state.userStore.userId);
+        dispatch(addMessageToChatInProgress(message));
       } else {
-        dispatch(updateCommunityChatUserList({...response, inProgress: false}));
+        dispatch(updateCommunityChatUserList({...message, inProgress: false}));
+      }
+    });
+  }
+
+  const subscribeToTransactionChat = (roomId: number)  => {
+    // 메세지를 받았을 때
+    subscribe(`/sub/transaction/${roomId}`, async (data) => {
+      const response = JSON.parse(data.body);
+      console.log('Received chat message: ', response);
+      const state: RootState = store.getState();
+
+      if (response.message && response.message.messageType === 'TRANSACTION') {
+        if (state.chatStore.roomId === response.message.roomId) {
+          dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
+          
+          const fetchedMessages = await transactionChatDetail(response.message.roomId);
+          store.dispatch(setChatInProgress(fetchedMessages.messages));
+          let lastSaleState = '';
+          let confirmedCount = 0;
+          await fetchedMessages.messages.forEach((message: any) => {
+            if(message.transactionEntity) {
+              if(message.transactionEntity.saleStatus === 'CONFIRMED') {
+                ++confirmedCount;
+                if(confirmedCount === 2) {
+                  lastSaleState = message.transactionEntity.saleStatus;
+                }
+              } else {
+                lastSaleState = message.transactionEntity.saleStatus;
+              }
+            }
+          })
+        dispatch(setSaleStatus(lastSaleState));
+          publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
+        } else {
+          dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
+        }
+      }
+      else if (response.messageType === 'READ') {
+          dispatch(setChatInProgress([...store.getState().chatStore.chatInProgress.map((message: any) => 
+            message.message ? (
+              message.message.roomId === response.roomId && message.message.senderId !== response.senderId
+              ? { transactionEntity: message.transactionEntity, message: {...message.message, read: true } }
+              : message
+            ) : (
+              message.roomId === response.roomId && message.senderId !== response.senderId
+              ? { ...message, read: true }
+              : message
+            )
+          )]))
+        } 
+      // 현재 열려 있는 채팅방 내용 갱신
+      else if (response.messageType === 'MESSAGE') {
+        if (state.chatStore.roomId === response.roomId) {
+          dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
+          publishMessage(`/pub/transaction/${state.chatStore.roomId}/read`, state.userStore.userId);
+          dispatch(addMessageToChatInProgress(response));
+        } else {
+          dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
+        }
+      } else {
+        console.log('타입이 없습니다');
       }
     });
   }
@@ -87,7 +151,7 @@ const useSSE = () => {
         case 'SALE':
           break;
         case 'CHAT':
-          // subscribeToChat(eventData.)
+          
           break;
         default:
           dispatch(addNewNotification(eventData));

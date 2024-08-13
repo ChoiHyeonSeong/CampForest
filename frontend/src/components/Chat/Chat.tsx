@@ -207,10 +207,6 @@ const Chat = () => {
 
   const unifiedMessages = messages.map(unifyMessage);
 
-  useEffect(() => {
-    console.log('Updated chatInProgress:', chatState.chatInProgress);
-  }, [chatState.chatInProgress]);
-
   return (
     <div
       className={`

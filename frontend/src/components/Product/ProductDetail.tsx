@@ -201,29 +201,53 @@ function Detail() {
       console.log('Received chat message: ', response);
       const state: RootState = store.getState();
 
-      if (response.message.messageType === 'TRANSACTION') {
-        if (state.chatStore.roomId === response.roomId) {
-          store.dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
+      if (response.message && response.message.messageType === 'TRANSACTION') {
+        if (state.chatStore.roomId === response.message.roomId) {
+          dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
+          
+          const fetchedMessages = await transactionChatDetail(response.message.roomId);
+          store.dispatch(setChatInProgress(fetchedMessages.messages));
+          let lastSaleState = '';
+          let confirmedCount = 0;
+          await fetchedMessages.messages.forEach((message: any) => {
+            if(message.transactionEntity) {
+              if(message.transactionEntity.saleStatus === 'CONFIRMED') {
+                ++confirmedCount;
+                if(confirmedCount === 2) {
+                  lastSaleState = message.transactionEntity.saleStatus;
+                }
+              } else {
+                lastSaleState = message.transactionEntity.saleStatus;
+              }
+            }
+          })
+         dispatch(setSaleStatus(lastSaleState));
           publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
-          dispatch(addMessageToChatInProgress(response));
-          dispatch(setSaleStatus(response.transactionEntity.saleStatus));
         } else {
-          store.dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
+          dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
         }
       }
       else if (response.messageType === 'READ') {
-        store.dispatch(
-          updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }),
-        );
-      } 
+          dispatch(setChatInProgress([...store.getState().chatStore.chatInProgress.map((message: any) => 
+            message.message ? (
+              message.message.roomId === response.roomId && message.message.senderId !== response.senderId
+              ? { transactionEntity: message.transactionEntity, message: {...message.message, read: true } }
+              : message
+            ) : (
+              message.roomId === response.roomId && message.senderId !== response.senderId
+              ? { ...message, read: true }
+              : message
+            )
+          )]))
+        } 
       // 현재 열려 있는 채팅방 내용 갱신
       else if (response.messageType === 'MESSAGE') {
         if (state.chatStore.roomId === response.roomId) {
-          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
-          publishMessage(`/pub/transaction/${chatState.roomId}/read`, state.userStore.userId);
-          store.dispatch(addMessageToChatInProgress(response));
+          dispatch(updateTransactionChatUserList({ ...response, inProgress: true }));
+          publishMessage(`/pub/transaction/${state.chatStore.roomId}/read`, state.userStore.userId);
+          dispatch(addMessageToChatInProgress(response));
         } else {
-          store.dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
+          dispatch(updateTransactionChatUserList({ ...response, inProgress: false }));
         }
       } else {
         console.log('타입이 없습니다');

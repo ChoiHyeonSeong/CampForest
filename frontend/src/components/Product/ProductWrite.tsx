@@ -129,7 +129,7 @@ const ProductWrite = () => {
       console.log(submitData)
       await productWrite(submitData, productImages);
       dispatch(setIsLoading(false));
-      navigate('/product/list');
+      navigate('/product/list/all');
     } catch (error) {
       console.error('Failed to Product Write: ', error);
       dispatch(setIsLoading(false));
