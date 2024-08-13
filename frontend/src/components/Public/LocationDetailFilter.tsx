@@ -70,9 +70,9 @@ const LocationFilter = (props: Props) => {
     >
       <div 
         onClick={e => e.stopPropagation()}
-        className="flex flex-col w-[100%] max-w-[54rem] p-[1.5rem] bg-light-white dark:bg-dark-white rounded-lg"
+        className="flex flex-col w-[100%] max-w-[54rem] p-[1.5rem] bg-light-white dark:bg-dark-white rounded-lg max-md:h-[calc(100vh-6.4rem)] max-md:overflow-y-auto"
       >
-        <div className='flex justify-between'>
+        <div className='flex justify-between max-md:h-[10%]'>
           <h2 className="mb-[1rem] text-xl font-bold">지역 선택</h2>
           <CloseIcon 
             onClick={props.onClose} 
@@ -84,7 +84,9 @@ const LocationFilter = (props: Props) => {
             `}
           />
         </div>
-        <div className="flex flex-wrap h-[100vh-6.4rem] md:h-[30rem] md:mb-[3rem] max-md:overflow-y-auto">
+
+        <div className="flex flex-wrap md:h-[30rem] md:mb-[3rem] max-md:h-[82%] overflow-y-auto">
+          
           <div className="w-full md:w-[30%] pr-[0.5rem] mb-4">
             <h3 className="mb-[0.5rem] font-semibold">시/도</h3>
             <div className="grid grid-cols-3 gap-2">
@@ -100,23 +102,25 @@ const LocationFilter = (props: Props) => {
             </div>
           </div>
           
-          {selectedCity && (
-            <div className="w-full md:w-[40%] px-[0.5rem] mb-4">
-              <h3 className="font-semibold mb-2">구/군</h3>
-              <div className="grid grid-cols-2 gap-2 max-h-[30rem] overflow-y-auto">
-                {geoData.find(d => d.city === selectedCity)?.districts.map((district, index) => (
-                  <button
-                    key={index}
-                    className={`${selectedDistrict === district.name ? 'bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white' : 'bg-light-gray dark:bg-dark-gray'} p-[0.5rem] rounded text-sm`}
-                    onClick={() => handleDistrictSelection(district.name)}
-                  >
-                    {district.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          
+          <div className="w-full md:w-[40%] px-[0.5rem] mb-4">
+            {selectedCity && (
+              <>
+                <h3 className="font-semibold mb-2">구/군</h3>
+                <div className="grid grid-cols-2 gap-2 max-h-[30rem] overflow-y-auto">
+                  {geoData.find(d => d.city === selectedCity)?.districts.map((district, index) => (
+                    <button
+                      key={index}
+                      className={`${selectedDistrict === district.name ? 'bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white' : 'bg-light-gray dark:bg-dark-gray'} p-[0.5rem] rounded text-sm`}
+                      onClick={() => handleDistrictSelection(district.name)}
+                    >
+                      {district.name}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
           {selectedDistrict && (
             <div className="w-full md:w-[30%] pl-[0.5rem] mb-4">
               <h3 className="font-semibold mb-2">읍/면/동</h3>
@@ -134,7 +138,8 @@ const LocationFilter = (props: Props) => {
             </div>
           )}
         </div>
-        <div className='flex justify-center mt-[0.5rem]'>
+
+        <div className='flex justify-center mt-[0.5rem] max-md:h-[8%]'>
           <button
             onClick={() => {
               props.onSelect({
