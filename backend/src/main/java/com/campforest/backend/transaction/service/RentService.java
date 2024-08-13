@@ -106,7 +106,7 @@ public class RentService {
 
 		boolean isRequesterOwner = requesterId.equals(rentRequestDto.getOwnerId());
 		rents[0].confirmRent(isRequesterOwner); // 소유자가 요청자일 경우
-		rents[1].confirmRent(!isRequesterOwner); // 소유자가 아닌 경우
+		rents[1].confirmRent(isRequesterOwner); // 소유자가 아닌 경우
 
 		if (rents[0].isFullyConfirmed() && rents[1].isFullyConfirmed()) {
 			rents[0].setRentStatus(TransactionStatus.CONFIRMED);
@@ -216,7 +216,7 @@ public class RentService {
 	}
 
 	private Long determineReceiverId(Product product, Long requesterId, RentRequestDto rentRequestDto) {
-		return requesterId.equals(product.getUserId()) ? rentRequestDto.getOwnerId() : rentRequestDto.getRenterId();
+		return requesterId.equals(product.getUserId()) ? rentRequestDto.getRenterId(): rentRequestDto.getOwnerId() ;
 	}
 
 	private Rent[] getRents(RentRequestDto rentRequestDto, Long requesterId, Long receiverId) {

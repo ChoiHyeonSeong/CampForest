@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class SaleRequestDto {
 
 	private Long productId;
+	private Long price;
 	private Long sellerId;
 	private Long buyerId;
 	private Long requesterId;
