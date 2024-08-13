@@ -131,7 +131,7 @@ public class RentService {
 		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
 
 		for(Rent rent : rents) {
-			if(rent.getRentStatus().equals(TransactionStatus.RECEIVED)) {
+			if(rent.getRentStatus().equals(TransactionStatus.RESERVED)) {
 				rentId = rent.getId();
 			}
 		}
