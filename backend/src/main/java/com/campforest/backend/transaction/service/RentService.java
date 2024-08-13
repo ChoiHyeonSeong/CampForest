@@ -253,7 +253,7 @@ public class RentService {
 			.build();
 	}
 
-	private Rent reverseBuildRent(RentRequestDto rentRequestDto, Product product, Long requesterId, Long receiverId,
+	private Rent reverseBuildRent(RentRequestDto rentRequestDto, Product product, Long receiverId, Long requesterId,
 		TransactionStatus status) {
 		return Rent.builder()
 			.product(product)
