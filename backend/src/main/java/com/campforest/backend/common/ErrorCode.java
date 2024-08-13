@@ -27,6 +27,10 @@ public enum ErrorCode {
 	USER_UPDATE_FAILED("U010", HttpStatus.BAD_REQUEST, "사용자 정보 업데이트에 실패했습니다."),
 	EMAIL_ALREADY_EXIST("U011", HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
 
+	// Email Error
+	EMAIL_SEND_FAIL("E001", HttpStatus.BAD_REQUEST, "이메일 전송에 실패했습니다."),
+	PASSWORD_RESET_TOKEN_NOT_VALID("E002", HttpStatus.BAD_REQUEST, "비밀번호 재설정 토큰이 유효하지 않습니다."),
+
 	// SMS Error
 	SMS_SEND_FAIL("SM001", HttpStatus.BAD_REQUEST, "SMS 전송에 실패했습니다."),
 	SMS_CODE_NOT_MATCH("SM002", HttpStatus.BAD_REQUEST, "SMS 인증 코드가 일치하지 않습니다."),

@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.campforest.backend.user.dto.request.RequestPasswordDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
@@ -27,6 +28,8 @@ public interface UserService {
 	boolean isEmailExist(String email);
 
 	void deleteByEmail(String email);
+
+	void updateUserPassword(RequestPasswordDTO requestDTO);
 
 	void updateUserProfile(String email, RequestUpdateDTO requestDTO, MultipartFile profileImageFile) throws
 		IOException;

@@ -27,6 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.mail.model.PasswordAuth;
+import com.campforest.backend.mail.repository.PasswordAuthRepository;
+import com.campforest.backend.user.dto.request.RequestPasswordDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
@@ -53,6 +56,7 @@ public class UserServiceImpl implements UserService {
 	private final UserImageRepository userImageRepository;
 	private final InterestRepository interestRepository;
 	private final FollowRepository followRepository;
+	private final PasswordAuthRepository passwordAuthRepository;
 	private final TokenService tokenService;
 	private final AuthenticationManager authenticationManager;
 
@@ -124,6 +128,20 @@ public class UserServiceImpl implements UserService {
 
 		userRepository.delete(users);
 		tokenService.invalidateAllUserTokens(email);
+	}
+
+	@Override
+	@Transactional
+	public void updateUserPassword(RequestPasswordDTO requestDTO) {
+		PasswordAuth passwordAuth = passwordAuthRepository.findById(requestDTO.getToken())
+			.orElseThrow(() -> new IllegalArgumentException(ErrorCode.PASSWORD_RESET_TOKEN_NOT_VALID.getMessage()));
+
+		String email = passwordAuth.getEmail();
+		if(!isEmailExist(email)) {
+			throw new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage());
+		}
+
+		userRepository.updatePasswordByEmail(email, requestDTO.getPassword());
 	}
 
 	@Override
