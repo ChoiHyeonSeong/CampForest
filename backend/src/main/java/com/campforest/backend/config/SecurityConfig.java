@@ -62,7 +62,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/user/public/**", "/api/email/**", "/api/oauth/**",
 					"/api/board/public/**", "/api/product/public/**", "/api/rent/public/**",
 					"/api/communitychat/**", "/api/notification/**", "/api/sms/**",
-					"/ws/**", "/pub/", "/sub/").permitAll()
+					"/ws/**", "/pub/", "/sub/", "/api/campsite/public/**").permitAll()
 				.anyRequest().authenticated())
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
