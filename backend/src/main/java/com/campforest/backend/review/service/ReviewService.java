@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.review.dto.ReviewRequestDto;
@@ -95,13 +96,12 @@ public class ReviewService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Review> findAllWrittenReviews(Long userId) {
+	public List<Review> findAllWrittenReviews( Long userId) {
 		Users user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		List<Review> reviews = reviewRepository.findByReviewer(user);
-		reviews.forEach(this::initializeReviewImages);
-		return reviews;
+		return reviewRepository.findAllReceivedReviewsWithImages(user);
+
 	}
 
 	@Transactional(readOnly = true)
@@ -109,17 +109,11 @@ public class ReviewService {
 		Users user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		List<Review> reviews = reviewRepository.findByReviewer(user);
-		reviews.forEach(this::initializeReviewImages);
-		return reviews;
+		return reviewRepository.findAllReceivedReviewsWithImages(user);
 	}
 
 	public Optional<Review> findById(Long reviewId) {
 		return reviewRepository.findById(reviewId);
-	}
-
-	private void initializeReviewImages(Review review) {
-		review.getReviewImages().size(); // 실제 데이터 로드
 	}
 
 	private void adjustUserTemperature(Users reviewed, int rating) {
