@@ -130,6 +130,11 @@ public enum ErrorCode {
 
 	// Notification Error
 	NOTIFICATION_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
+
+	// Campsite Review Error
+	CAMPSITE_REVIEW_LOAD_FAILED("CR001", HttpStatus.BAD_REQUEST, "캠핑장 리뷰를 불러오는 데 실패하였습니다."),
+	CAMPSITE_REVIEW_SAVE_FAILED("CR002", HttpStatus.BAD_REQUEST, "캠핑장 리뷰를 저장하는 데 실패하였습니다."),
+	CAMPSITE_REVIEW_DELETE_FAILED("CR003", HttpStatus.BAD_REQUEST, "캠핑장 리뷰를 삭제하는 데 실패하였습니다."),
 	;
 
 	private final String code;

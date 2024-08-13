@@ -10,6 +10,7 @@ import java.util.Set;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.campforest.backend.campsite.model.CampsiteReview;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.SaveProduct;
 import com.campforest.backend.notification.model.Notification;
@@ -134,6 +135,10 @@ public class Users {
 	@OneToMany(mappedBy = "receiver")
 	@JsonManagedReference
 	private List<Notification> notifications;
+
+	@OneToMany(mappedBy = "reviewer")
+	@JsonManagedReference
+	private List<CampsiteReview> campsiteReviews;
 
 	@Setter
 	@Column(name = "temperature")
