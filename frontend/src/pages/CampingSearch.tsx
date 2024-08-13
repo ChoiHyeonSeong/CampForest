@@ -213,8 +213,8 @@ function CampingSearch() {
   return (
     <div className={`z-[30]`}>
       {/* 메인 화면 */}
-      <div className={`flex flex-col justify-center items-center min-h-screen`}>
-        <h2 className='w-[100%] md:max-w-[48rem] lg:max-w-[80rem] font-bold text-4xl mb-[1.8rem]'>캠핑장 검색</h2>
+      <div className={`flex flex-col justify-center items-center min-h-screen md:py-[2rem] lg:py-0 lg:px-[2rem]`}>
+        <h2 className='hidden md:block w-[100%] md:max-w-[48rem] lg:max-w-[80rem] font-bold text-4xl mb-[1.8rem]'>캠핑장 검색</h2>
         <div 
           className={`
             flex flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[42rem] p-[0.75rem] mx-[0.5rem]
@@ -225,7 +225,7 @@ function CampingSearch() {
         >
               
           {/* 캠핑지도 */}
-          <div className='relative w-full lg:min-w-[400px] lg:max-w-[50rem] h-[30rem] lg:h-full lg:aspect-auto'>
+          <div className='relative w-full lg:w-[40%] h-[20rem] sm:h-[24rem] lg:h-full'>
             <div 
               className={`
                z-[0] w-[100%] h-[100%]
@@ -245,7 +245,7 @@ function CampingSearch() {
           
           {/* 캠핑장리스트 */}
           <div
-            className={`flex flex-col w-full lg:min-w-[470px] lg:h-full lg:ms-[1rem] mt-[0.75rem] lg:mt-0`}>
+            className={`flex flex-col w-full lg:w-[60%] lg:h-full lg:ms-[1rem] mt-[0.75rem] lg:mt-0`}>
             
             {/* 검색창 */}
             <div className={`h-[3rem] mb-[0.75rem]`}>
@@ -320,7 +320,7 @@ function CampingSearch() {
             </div>
             
             {/* 선택한 태그를 띄우기 */}
-            <div className="flex flex-wrap gap-2 mt-2 mb-2">
+            <div className="flex flex-wrap gap-2 mt-2 mb-[1rem]">
               {selectedLocation && selectedLocation.city !== '전체' && (
                 selectedLocation.districts.includes('전체') ? (
                   <div className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
@@ -355,12 +355,12 @@ function CampingSearch() {
             {/* 캠핑리스트 목록 */}
             <div
               className={`
-                flex-grow
-                bg-light-white
-                dark:bg-dark-white
+                flex-grow p-[0.5rem]
+
                 overflow-y-auto
               `}
             >
+              <p className='mb-[0.75rem] font-medium text-lg'>캠핑장 목록</p>
               <CampingList modalOpen={modalOpen} />
             </div>
 

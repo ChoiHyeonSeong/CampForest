@@ -87,7 +87,7 @@ const UserInformation = () => {
 
   return (
     <form className={`flex justify-center items-center`}>
-      <div className={`w-full md:w-[40rem]`}>
+      <div className={`w-full md:w-[40rem] h-fit`}>
         {/* 프로필사진 */}
         <div className={`flex justify-center `}>
           <div 

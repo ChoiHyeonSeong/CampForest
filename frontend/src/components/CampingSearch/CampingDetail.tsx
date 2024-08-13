@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 
 import CampingReviewList from '@components/CampingSearch/CampingReviewList'
@@ -11,12 +11,33 @@ type Props = {
 
 const CampingDetail = (props: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   useEffect(() => {
     if (props.isModalOpen && modalRef.current) {
       modalRef.current.scrollTop = 0;
     }
   }, [props.isModalOpen]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isSwipeDown = distance < -50;
+    if (isSwipeDown) {
+      props.modalClose();
+    }
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
 
 
   return (
@@ -26,7 +47,7 @@ const CampingDetail = (props: Props) => {
       <div
         ref={modalRef}
         className={`
-          ${props.isModalOpen ? 'block bg-light-black bg-opacity-80 inset-0' : 'hidden'}
+          ${props.isModalOpen ? 'block bg-black bg-opacity-90 inset-0' : 'hidden'}
           fixed z-[20]
         `}
         onClick={props.modalClose}
@@ -38,18 +59,21 @@ const CampingDetail = (props: Props) => {
         className={`
           ${props.isModalOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'}
           ${props.isModalBlocked ? 'block' : 'hidden'}
-          fixed lg:top-0 bottom-0 lg:right-0 z-[30] w-full lg:w-[50rem] h-[80vh] lg:h-full sm:p-[3rem] lg:p-[4rem]
+          fixed lg:top-0 bottom-0 lg:right-0 z-[30] w-full lg:w-[50rem] h-[80vh] lg:h-full lg:p-[4rem] px-0 sm:px-[3rem]
           bg-light-white
           dark:bg-dark-white
-          overflow-y-auto transform transition-transform duration-300 ease-in-out lg:translate-y-0
+          scrollbar-hide2 overflow-y-auto transform transition-transform duration-300 ease-in-out lg:translate-y-0 overflow-hidden
         `}
         onTransitionEnd={props.handleTransitionEnd}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {/* 닫기 */}
         <CloseIcon
           onClick={props.modalClose}
           className='
-            absolute top-[0.75rem] right-[0.75rem] size-[1.8rem]
+            hidden lg:block absolute top-[0.75rem] right-[0.75rem] size-[1.8rem]
             fill-light-border-icon
             dark:fill-dark-border-icon
             cursor-pointer
@@ -62,9 +86,8 @@ const CampingDetail = (props: Props) => {
           {/* 이미지 */}
           <div 
             className={`
-              w-full mb-[1rem]
-              bg-light-gray
-              dark:bg-dark-gray
+              w-full  mb-[1rem]
+              bg-slate-100
               aspect-[3/2] overflow-hidden
             `} 
           >
@@ -76,12 +99,12 @@ const CampingDetail = (props: Props) => {
           </div>
 
           {/* 캠핑장 디테일 */}
-          <div className={`max-md:p-[1rem]`}>
+          <div className={`max-lg:px-[1rem] w-full`}>
             {/* 캠핑장 이름 */}
             <div 
               className={`
-                my-[1rem]
-                text-2xl font-semibold
+                mb-[1rem] md:my-[1rem]
+                text-xl md:text-2xl font-semibold
               `}
             >
               힐링피아 카라반 글램핑 풀 캠핑장
@@ -165,7 +188,7 @@ const CampingDetail = (props: Props) => {
                 <div className={`w-[5rem] font-semibold`}>
                   정보
                 </div>
-                <div className={`w-full break-all text-justify`}>
+                <div className={`w-full break-all text-justify px-[0.25rem]`}>
                 레저체험을 함께 즐길 수 있는 뇌운계곡 글램핑  뇌운계곡글램핑은 평창에 위치한 해발 600미터의 뇌운계곡에 있는 글램핑과 레저 체험을 함께 즐길 수 있는 캠핑장이다. 사이트는 총 7개인데, 4개는 글램핑 텐트, 3개는 몽골 텐트에 투명 돔 키친이 있다. 특히 몽골텐트는 천창이 투명하게 되어 있어 텐트 안에서도 하늘을 볼 수 있다. 텐트 내부의 집기들도 신경을 많이 써서 감성 캠핑을 즐기기 좋다. 또한 계곡에서의 래프팅, 패들 보드, 카약 강습은 물론 산악 오토바이, 숲속 서바이벌 게임 등 즐길 거리가 많다.
                 </div>
               </div>

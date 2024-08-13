@@ -175,7 +175,7 @@ const UBoard = (props: Props) => {
   }, [boards])
 
   return (
-    <div className={`px-[4rem]`}>
+    <div className={``}>
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
@@ -243,7 +243,7 @@ const UBoard = (props: Props) => {
           </div>
 
           {/* 필터 */}
-          <div className="flex justify-end absolute right-0">
+          {/* <div className="flex justify-end absolute right-0">
             <div className="flex items-center ms-auto px-[0.5rem] text-sm">
               <div
                 className={`
@@ -261,7 +261,7 @@ const UBoard = (props: Props) => {
               `}
               />
             </div>
-          </div>
+          </div> */}
 
         </div>
       </div>
