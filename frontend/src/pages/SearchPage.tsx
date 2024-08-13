@@ -89,7 +89,13 @@ const SearchPage = () => {
 
 
   return (
-    <div className='flex justify-center min-h-screen'>
+    <div
+      className='
+        flex justify-center w-full min-h-screen
+        bg-light-white
+        dark:bg-dark-white
+      '
+    >
       <div className='w-full lg:w-[65%] lg:min-w-[56rem] max-lg:p-[1.5rem] lg:py-[2.5rem]'>
         
         {/* 검색창  */}

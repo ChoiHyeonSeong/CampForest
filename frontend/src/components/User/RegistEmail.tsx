@@ -220,7 +220,7 @@ const RegistEmail: React.FC = () => {
         {/* 이름 */}
         <div 
           className={`
-            my-[3rem] lg:my-[1.5rem]
+            my-[2rem]
             border-light-border
             dark:border-dark-border
             border-b
@@ -250,7 +250,7 @@ const RegistEmail: React.FC = () => {
         </div>
         
         {/* 휴대폰 */}
-        <div className={`my-[3rem] lg:my-[1.5rem]`}>
+        <div className={`my-[2rem]`}>
           <div 
             className={`
               mb-[0.25rem]
@@ -287,7 +287,7 @@ const RegistEmail: React.FC = () => {
             </div>
             <div 
               className={`
-                flex justify-between items-center w-[45%] min-w-[20rem] 
+                flex justify-between items-center w-full md:w-[45%] min-w-[20rem] 
                 border-light-border
                 dark:border-dark-border
                 border-b
@@ -326,7 +326,7 @@ const RegistEmail: React.FC = () => {
                 }}
                 className={`
                   ${certificationBtnClass[phoneCertificationState]}
-                  w-[20%] h-[1.75rem] me-[1rem]
+                   px-[1rem] py-[0.5rem]
                   text-light-white
                   dark:text-dark-white
                   text-[0.75rem] transition-all duration-300 rounded-sm 
@@ -340,7 +340,7 @@ const RegistEmail: React.FC = () => {
         </div>
         
         {/* 이메일 */}
-        <div>
+        <div className={`my-[2rem]`}>
           <div 
             className={`
               mb-[0.25rem]
@@ -376,7 +376,7 @@ const RegistEmail: React.FC = () => {
             </div>
             <div 
               className={`
-                flex items-center justify-between w-[45%] min-w-[20rem] 
+                flex items-center justify-between w-full md:w-[45%] min-w-[20rem] 
                 border-light-border
                 dark:border-dark-border
                 border-b
@@ -386,7 +386,7 @@ const RegistEmail: React.FC = () => {
                 className={`
                   ${emailCertificationState === 1 ? '' : 'dark:placeholder-dark-gray-2 placeholder-light-gray-2'}
                   ${certificationInputTextClass[emailCertificationState]}
-                  w-[55%] p-[0.75rem]
+                  w-[55%] p-[0.5rem]
                   bg-transparent
                   focus:outline-none
                 `}
@@ -415,7 +415,7 @@ const RegistEmail: React.FC = () => {
                 }}
                 className={`
                   ${certificationBtnClass[emailCertificationState]}
-                  w-[20%] h-[1.75rem] me-[1rem]
+                  px-[1rem] py-[0.5rem]
                   text-light-white
                   dark:text-dark-white 
                   text-[0.75rem] transition-all duration-300 rounded-sm 
