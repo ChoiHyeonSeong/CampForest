@@ -46,7 +46,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 		if (locations != null && !locations.isEmpty()) whereClause.and(product.location.in(locations));
 		if (titleKeyword != null && !titleKeyword.isEmpty()) whereClause.and(product.productName.containsIgnoreCase(titleKeyword));
 		if (findUserId != null) whereClause.and(product.userId.eq(findUserId));
-		if (cursorId != null) whereClause.and(product.id.lt(cursorId));
+		if (cursorId != null) whereClause.and(product.id.loe(cursorId));
 
 		return queryFactory.selectFrom(product)
 			.where(whereClause)

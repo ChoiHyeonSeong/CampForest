@@ -106,6 +106,8 @@ public class Product {
 		this.productContent = productUpdateDto.getProductContent();
 		this.location = productUpdateDto.getLocation();
 		this.category = productUpdateDto.getCategory();
+		this.latitude = productUpdateDto.getLatitude();
+		this.longitude = productUpdateDto.getLongitude();
 	}
 
 	public void incrementHit() {
