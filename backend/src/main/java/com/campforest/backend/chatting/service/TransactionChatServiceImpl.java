@@ -58,7 +58,8 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         TransactionChatRoom room = transactionChatRoomRepository.findById(roomId)
             .orElseThrow(() -> new RuntimeException("채팅룸 없습니다요"));
         List<TransactionChatMessage> messages = transactionChatMessageRepository.findByChatRoom(roomId);
-        System.out.println(messages.toString());
+        for (TransactionChatMessage message : messages) {
+        }
         return messages.stream()
             .map(message -> {
                 if (message.getMessageType() == MessageType.MESSAGE) {
@@ -112,7 +113,6 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     @Override
     public Object getSaleTransactionEntity(Long saleId) {
         Sale sale = saleRepository.findById(saleId).orElseThrow();
-
         return toSaleDTO(sale);
     }
 
