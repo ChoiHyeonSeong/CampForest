@@ -21,6 +21,8 @@ public interface BoardService {
 
 	CursorResult<BoardResponseDto> getAllBoards(Long nowId, Long cursorId, int size);
 
+	CursorResult<BoardResponseDto> getFollowingBoards(Long nowId, Long cursorId,int size);
+
 	SearchResult<BoardResponseDto> getUserBoards(Long nowId,Long userId, Long cursorId, int size);
 
 	SearchResult<BoardResponseDto> getKeywordBoards(Long nowId,String title, Long cursorId, int size);
