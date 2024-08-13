@@ -210,12 +210,10 @@ const ProductList = () => {
   useEffect(() => {
     resetState()
     setIsStateReset(true)
-    console.log(filterCondition.selectedCategory, filterCondition.priceRange)
   }, [filterCondition])
 
   useEffect(() => {
     if (isStateReset) {
-      console.log(456)
       fetchProductsForPage(1);
       setIsStateReset(false)
     }

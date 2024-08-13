@@ -28,7 +28,11 @@ const LocationFilter = (props: Props) => {
   const [selectedTowns, setSelectedTowns] = useState<string[]>([]);
 
   useEffect(() => {
-    if (props.selectedLocation) {
+    if (props.selectedLocation === null) {
+      setSelectedCity('');
+      setSelectedDistrict('');
+      setSelectedTowns([]);
+    } else if (props.selectedLocation) {
       setSelectedCity(props.selectedLocation.city);
       setSelectedDistrict(props.selectedLocation.district);
       setSelectedTowns(props.selectedLocation.town);
