@@ -163,6 +163,7 @@ const Board = (props: Props) => {
           </div>
           <MoreOptionsMenu 
             isUserPost={user.userId === props.board.userId} 
+            updateFunction={() => console.log('test')}
             deleteFunction={deleteBoard} 
             deleteId={props.board.boardId}
           />

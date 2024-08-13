@@ -4,8 +4,8 @@ import { ReactComponent as LeftArrowIcon } from '@assets/icons/arrow-left.svg';
 import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu';
 import ProductCard from '@components/Product/ProductCard';
-import { productDetail, productList } from '@services/productService';
-import { useParams } from 'react-router-dom';
+import { productDetail, productList, productLike, productDislike, productDelete } from '@services/productService';
+import { useParams, useNavigate } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
 import defaultImage from '@assets/images/basic_profile.png';
 import { ProductType } from '@components/Product/ProductCard';
@@ -40,6 +40,8 @@ import {
 import { ChatUserType } from '@components/Chat/ChatUser';
 import { useWebSocket } from 'Context/WebSocketContext';
 
+import { setIsLoading } from '@store/modalSlice';
+
 type ImageType = {
   createdAt: string;
   imageUrl: string;
@@ -66,6 +68,7 @@ export type ProductDetailType = {
 };
 
 function Detail() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { subscribe, publishMessage } = useWebSocket();
   const loginUserId = Number(sessionStorage.getItem('userId'));
@@ -94,6 +97,8 @@ function Detail() {
 
   const [category, setCategory] = useState('');
 
+  const [resetTrigger, setResetTrigger] = useState(false)
+
   useEffect(() => {
     if (product.category === '침낭') {
       setCategory('침낭/매트');
@@ -108,6 +113,7 @@ function Detail() {
 
   const fetchProduct = async () => {
     try {
+      dispatch(setIsLoading(true))
       const result = await productDetail(productId);
       console.log(result);
 
@@ -116,9 +122,29 @@ function Detail() {
         size: 5,
         userId: result.userId
       });
+      
+      const isProductIdInRelated = relatedResult.products.some(
+        (product: ProductType) => product.productId === result.productId
+      );
+      
+      if (isProductIdInRelated) {
+        const filteredProducts = relatedResult.products.filter(
+          (product: ProductType) => product.productId !== result.productId
+        );  
 
-      setRelatedProducts(relatedResult.products)
+        const additionalResult = await productList({
+          productType: '',
+          size: 1,
+          userId: result.userId,
+          cursorId: relatedResult.nextCursorId
+        });
+  
+        setRelatedProducts([...filteredProducts, ...additionalResult.products])
+      } else {
+        setRelatedProducts(relatedResult.products)
+      } 
       setProduct(result);
+      dispatch(setIsLoading(false))
     } catch (error) {
       console.error('판매 상세 페이지 불러오기 실패: ', error);
     }
@@ -203,6 +229,72 @@ function Detail() {
         console.log('타입이 없습니다');
       }
     });
+  }
+
+  // 찜
+  const toggleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      if (product.saved) {
+        const response = await productDislike(product.productId)
+        console.log(response)
+        setProduct(prev => ({
+          ...prev,
+          saved: false,
+        }))
+
+        console.log(relatedProducts)
+        setRelatedProducts(prevProducts =>
+          prevProducts.map(eachProduct =>
+            eachProduct.productId === product.productId
+              ? { ...eachProduct, saved: false }
+              : eachProduct
+          )
+        );
+
+      } else {
+        const response = await productLike(product.productId)
+        console.log(response)
+        setProduct(prev => ({
+          ...prev,
+          saved: true,
+        }))
+
+        setRelatedProducts(prevProducts =>
+          prevProducts.map(eachProduct =>
+            eachProduct.productId === product.productId
+              ? { ...eachProduct, saved: true }
+              : eachProduct
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  useEffect(() => {
+    setRelatedProducts([])
+    setResetTrigger(true)
+  }, [productId])
+
+  useEffect(() => {
+    if (resetTrigger) {
+      fetchProduct()
+      setResetTrigger(false)
+    }
+  }, [resetTrigger])
+
+  // 삭제 함수
+  const deleteFunction = async () => {
+    try {
+      const result = await productDelete(product.productId)
+      console.log(result)
+      navigate('/product/list/all')
+    } catch (error) {
+      console.log(error)
+    };
   }
 
   // Swiper 크기 제어용
@@ -324,7 +416,8 @@ function Detail() {
               <MoreOptionsMenu
                 isUserPost={loginUserId === product.userId}
                 deleteId={0}
-                deleteFunction={() => {
+                deleteFunction={deleteFunction}
+                updateFunction={() => {
                   console.log('test');
                 }}
               />
@@ -486,12 +579,12 @@ function Detail() {
           {/* 거래버튼 */}
           <div className={`flex items-center md:justify-center`}>
             <button
+              onClick={toggleLike}
               className={`
                 ${
                   product.saved ? 
                   'bg-light-signature border-light-signature text-light-white dark:bg-dark-signature dark:border-dark-signature dark:text-dark-white' :
                   'bg-light-white border-light-signature text-light-signature dark:bg-dark-white dark:border-dark-signature dark:text-dark-signature'
-                  
                 }
                 flex flex-all-center w-1/2 md:max-w-[20rem] lg:w-[12rem] h-[2.5rem] me-[0.5rem] py-[0.5rem]
                 rounded-md border font-medium
@@ -530,7 +623,7 @@ function Detail() {
                 className='w-[20%]'
               >
                 <ProductCard 
-                  product={product} 
+                  product={product}
                 />
               </div>
             ))}
