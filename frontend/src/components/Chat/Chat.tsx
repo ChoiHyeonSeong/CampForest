@@ -11,6 +11,7 @@ import ProductInfoChat from './ProductInfoChat';
 import ChatTradeModal from './ChatTradeModal';
 import ChatTradePropser from './ChatTradePropser';
 import { productDetail } from '@services/productService';
+import TransactionDetail from './TransactionDetail';
 
 type UnifiedMessage = {
   content: string;
@@ -25,6 +26,7 @@ type UnifiedMessage = {
 };
 
 export type TransactionMessageType = {
+  [x: string]: any;
   content: string;
   createdAt: string;
   messageId: number;
@@ -56,6 +58,8 @@ export type TransactionEntityType = {
   sellerId: number;
   realPrice: number;
   price: number;
+  latitude: number;
+  longitude: number;
 };
 
 export type Message = {
@@ -98,16 +102,18 @@ function unifyMessage(message: Message): UnifiedMessage {
 }
 
 const Chat = () => {
-  const [modalOpen, setModalOpen] = useState(false);
   const { publishMessage } = useWebSocket();
   const dispatch = useDispatch();
   const chatState = useSelector((state: RootState) => state.chatStore);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const userId = useSelector((state: RootState) => state.userStore.userId);
+  const messages = useSelector((state: RootState) => state.chatStore.chatInProgress) || [];
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState('request');
   const [opponentNickname, setOpponentNickname] = useState('');
   const [opponentProfileImage, setOpponentProfileImage] = useState('');
-  const messages = useSelector((state: RootState) => state.chatStore.chatInProgress) || [];
   const [userInput, setUserInput] = useState('');
+  const [transactionEntity, setTransactionEntity] = useState<TransactionEntityType>();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   async function fetchProduct () {
     const result = await productDetail(chatState.product.productId);
@@ -125,14 +131,20 @@ const Chat = () => {
         dispatch(setProduct({...chatState.product, productId: fetchedMessages.productId}))
         dispatch(setChatInProgress(fetchedMessages.messages));
         let lastSaleState = '';
+        let confirmedCount = 0;
         await fetchedMessages.messages.forEach((message: any) => {
           if(message.transactionEntity) {
-            lastSaleState = message.transactionEntity.saleStatus;
+            if(message.transactionEntity.saleStatus === 'CONFIRMED') {
+              ++confirmedCount;
+              if(confirmedCount === 2) {
+                lastSaleState = message.transactionEntity.saleStatus;
+              }
+            } else {
+              lastSaleState = message.transactionEntity.saleStatus;
+            }
           }
         })
-        if(lastSaleState !== '') {
-          store.dispatch(setSaleStatus(lastSaleState));
-        }
+        dispatch(setSaleStatus(lastSaleState));
       }
     } catch (error) {
       console.error('Failed to fetch messages:', error);
@@ -195,6 +207,10 @@ const Chat = () => {
 
   const unifiedMessages = messages.map(unifyMessage);
 
+  useEffect(() => {
+    console.log('Updated chatInProgress:', chatState.chatInProgress);
+  }, [chatState.chatInProgress]);
+
   return (
     <div
       className={`
@@ -206,10 +222,22 @@ const Chat = () => {
     >
       {/* 모달 */}
       {modalOpen && (
+        modalType === 'request' ? (
         <div className={`${modalOpen ? '' : 'hidden'}`}>
           <ChatTradeModal setModalOpen={setModalOpen} />
         </div>
-      )}
+      ) : (
+        <div>
+          {transactionEntity && 
+            (
+              <TransactionDetail 
+                setModalOpen={setModalOpen}
+                transactionEntity={transactionEntity}
+              />
+            )
+          }
+        </div>
+      ))}
       {/* 상대 정보 */}
       <div
         className={`flex items-center shrink-0 p-[0.8rem]
@@ -237,7 +265,10 @@ const Chat = () => {
       {/* 상품 정보 */}
       {chatState.chatInProgressType === '거래' && (
         <div>
-          <ProductInfoChat setModalOpen={setModalOpen} />
+          <ProductInfoChat 
+            setModalType={setModalType}
+            setModalOpen={setModalOpen} 
+          />
         </div>
       )}
       {/* 메세지 부분 */}
@@ -257,7 +288,12 @@ const Chat = () => {
                 </div>
                 {message.messageType === 'TRANSACTION' ? (
                   <div>
-                    <ChatTradePropser transactionEntity={message.transactionEntity}/>
+                    <ChatTradePropser 
+                      setModalType={setModalType}
+                      setModalOpen={setModalOpen}
+                      setTransactionEntity={setTransactionEntity}
+                      transactionEntity={message.transactionEntity}
+                    />
                   </div>
                 ) : (
                   <div
@@ -287,7 +323,12 @@ const Chat = () => {
                 </div>
                 {message.messageType === 'TRANSACTION' ? (
                   <div>
-                    <ChatTradePropser transactionEntity={message.transactionEntity}/>
+                    <ChatTradePropser 
+                      setModalType={setModalType}
+                      setModalOpen={setModalOpen}
+                      setTransactionEntity={setTransactionEntity}
+                      transactionEntity={message.transactionEntity}
+                    />
                   </div>
                 ) : (
                 <div

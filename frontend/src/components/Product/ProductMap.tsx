@@ -3,12 +3,14 @@ import React, { SetStateAction, useEffect, useState } from 'react';
 type Props = {
   isPersonal: boolean;
   openMap: (value: boolean) => void;
-  handleLocation: (dongName: string) => void;
+  handleLocation: (dongName: string, latitude: number, longitude: number) => void;
 };
 
 let mapInstance: naver.maps.Map | null = null;
 let infoWindow: naver.maps.InfoWindow | null = null;
 let dongName = '';
+let latitude = 0;
+let longitude = 0;
 
 const loadScript = (src: string, callback: () => void) => {
   const script = document.createElement('script');
@@ -74,7 +76,9 @@ const MapInformation: React.FC<MapInformationProps> = ({ setChooseLocation, setB
               return alert('Something Wrong');
             }
             dongName = `${response.v2.results[0].region.area2.name} ${response.v2.results[0].region.area3.name}`;
-            contentString = `<div style='padding:10px;'><div>${response.v2.results[0].region.area2.name} ${response.v2.results[0].region.area3.name}</div></div>`;
+            latitude = event.coord.latitude;
+            longitude = event.coord.longitude;
+            contentString = `<div style='padding:10px;'><div>${dongName}</div></div>`;
             infoWindow = new naver.maps.InfoWindow({
               content: contentString,
               disableAnchor: true,
@@ -135,7 +139,7 @@ const ProductMap: React.FC<Props> = ({ handleLocation, openMap }) => {
   const [buttonText, setButtonText] = useState('장소를 선택해주세요.');
 
   const handleButtonClick = () => {
-    handleLocation(dongName);
+    handleLocation(dongName, latitude, longitude);
     openMap(false);
   };
 

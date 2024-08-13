@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 type Props = {
+  setModalType: React.Dispatch<React.SetStateAction<string>>;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -94,6 +95,7 @@ const ProductInfoChat = (props: Props) => {
         text-white rounded cursor-pointer
       "
           onClick={() => {
+            props.setModalType('request');
             props.setModalOpen(true);
           }}
         >

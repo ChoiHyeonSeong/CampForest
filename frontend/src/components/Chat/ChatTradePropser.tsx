@@ -6,10 +6,13 @@ import { useWebSocket } from 'Context/WebSocketContext';
 import { setSaleStatus } from '@store/chatSlice';
 
 type Props = {
+  setModalType: React.Dispatch<React.SetStateAction<string>>;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setTransactionEntity: React.Dispatch<React.SetStateAction<TransactionEntityType | undefined>>;
   transactionEntity: TransactionEntityType | undefined;
 };
 
-const ChatTradePropser = ({ transactionEntity }: Props) => {
+const ChatTradePropser = ({ setModalType, setModalOpen, setTransactionEntity, transactionEntity }: Props) => {
   const dispatch = useDispatch();
   const product = useSelector((state: RootState) => state.chatStore.product);
   const user = useSelector((state: RootState) => state.userStore);
@@ -180,6 +183,11 @@ const ChatTradePropser = ({ transactionEntity }: Props) => {
               dark:bg-dark-black dark:text-dark-white
               rounded
             "
+            onClick={() => {
+              setTransactionEntity(transactionEntity)
+              setModalType('detail')
+              setModalOpen(true)
+            }}
           >
             상세보기
           </button>

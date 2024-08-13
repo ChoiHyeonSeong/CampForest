@@ -20,7 +20,9 @@ type ProductRegistDto = {
   location: string,
   productType: string,
   category: string,
-  deposit: number | undefined
+  deposit: number | undefined,
+  latitude: number,
+  longitude: number
 }
 
 const categories: Option[] = [
@@ -57,6 +59,8 @@ const ProductWrite = () => {
     productType: '',
     category: '',
     deposit: undefined,
+    latitude: 0,
+    longitude: 0
   })
 
   const handleToggle = (dropdown: string) => {
@@ -80,10 +84,12 @@ const ProductWrite = () => {
     }));
   };
 
-  const handleLocation = (dongName: string) => {
+  const handleLocation = (dongName: string, latitude: number, longitude: number) => {
     setFormData(prevData => ({
       ...prevData,
-      location: dongName
+      location: dongName,
+      latitude: latitude,
+      longitude: longitude
     }));
   };
 

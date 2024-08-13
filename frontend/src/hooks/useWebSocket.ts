@@ -34,7 +34,6 @@ export type UseWebSocketReturn = {
 export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => {
   const dispatch = useDispatch();
   const [connected, setConnected] = useState(false);
-  const chatState = useSelector((state: RootState) => state.chatStore);
   const isLoggedIn = useSelector((state: RootState) => state.userStore.isLoggedIn);
   const clientRef = useRef<Client | null>(null);
 
@@ -101,18 +100,42 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
           if (response.message && response.message.messageType === 'TRANSACTION') {
             if (state.chatStore.roomId === response.message.roomId) {
               dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
+              
+              const fetchedMessages = await transactionChatDetail(response.message.roomId);
+              store.dispatch(setChatInProgress(fetchedMessages.messages));
+              let lastSaleState = '';
+              let confirmedCount = 0;
+              await fetchedMessages.messages.forEach((message: any) => {
+                if(message.transactionEntity) {
+                  if(message.transactionEntity.saleStatus === 'CONFIRMED') {
+                    ++confirmedCount;
+                    if(confirmedCount === 2) {
+                      lastSaleState = message.transactionEntity.saleStatus;
+                    }
+                  } else {
+                    lastSaleState = message.transactionEntity.saleStatus;
+                  }
+                }
+              })
+             dispatch(setSaleStatus(lastSaleState));
               publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
-              dispatch(addMessageToChatInProgress(response));
-              dispatch(setSaleStatus(response.transactionEntity.saleStatus));
             } else {
               dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
             }
           }
           else if (response.messageType === 'READ') {
-            dispatch(
-              updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }),
-            );
-          } 
+              dispatch(setChatInProgress([...store.getState().chatStore.chatInProgress.map((message: any) => 
+                message.message ? (
+                  message.message.roomId === response.roomId && message.message.senderId !== response.senderId
+                  ? { transactionEntity: message.transactionEntity, message: {...message.message, read: true } }
+                  : message
+                ) : (
+                  message.roomId === response.roomId && message.senderId !== response.senderId
+                  ? { ...message, read: true }
+                  : message
+                )
+              )]))
+            } 
           // 현재 열려 있는 채팅방 내용 갱신
           else if (response.messageType === 'MESSAGE') {
             if (state.chatStore.roomId === response.roomId) {

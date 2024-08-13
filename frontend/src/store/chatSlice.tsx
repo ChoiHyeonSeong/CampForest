@@ -1,4 +1,4 @@
-import { TransactionEntityType, TransactionMessageType } from '@components/Chat/Chat';
+import { TransactionMessageType } from '@components/Chat/Chat';
 import { ChatUserType } from '@components/Chat/ChatUser';
 import { ProductDetailType } from '@components/Product/ProductDetail';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
