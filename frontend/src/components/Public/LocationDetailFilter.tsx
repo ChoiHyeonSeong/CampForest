@@ -60,10 +60,10 @@ const LocationFilter = (props: Props) => {
 
   return (
     <div className="flex flex-all-center fixed inset-0 bg-light-black bg-opacity-80 dark:bg-dark-black dark:bg-opacity-80">
-      <div className="flex flex-col w-[100%] max-w-[48rem] p-[1.5rem] bg-light-white dark:bg-dark-white rounded-lg">
+      <div className="flex flex-col w-[100%] max-w-[54rem] p-[1.5rem] bg-light-white dark:bg-dark-white rounded-lg">
         <h2 className="mb-[1rem] text-xl font-bold">지역 선택</h2>
-        <div className="flex flex-wrap">
-          <div className="w-full md:w-1/3 pr-[0.5rem] mb-4">
+        <div className="flex flex-wrap h-[100vh-6.4rem] md:h-[30rem] md:mb-[3rem] max-md:overflow-y-auto">
+          <div className="w-full md:w-[30%] pr-[0.5rem] mb-4">
             <h3 className="mb-[0.5rem] font-semibold">시/도</h3>
             <div className="grid grid-cols-3 gap-2">
               {geoData.map((division, index) => (
@@ -79,9 +79,9 @@ const LocationFilter = (props: Props) => {
           </div>
           
           {selectedCity && (
-            <div className="w-full md:w-1/3 px-[0.5rem] mb-4">
+            <div className="w-full md:w-[40%] px-[0.5rem] mb-4">
               <h3 className="font-semibold mb-2">구/군</h3>
-              <div className="grid grid-cols-3 gap-2 max-h-[30rem] overflow-y-auto">
+              <div className="grid grid-cols-2 gap-2 max-h-[30rem] overflow-y-auto">
                 {geoData.find(d => d.city === selectedCity)?.districts.map((district, index) => (
                   <button
                     key={index}
@@ -96,9 +96,9 @@ const LocationFilter = (props: Props) => {
           )}
           
           {selectedDistrict && (
-            <div className="w-full md:w-1/3 pl-[0.5rem] mb-4">
+            <div className="w-full md:w-[30%] pl-[0.5rem] mb-4">
               <h3 className="font-semibold mb-2">읍/면/동</h3>
-              <div className="grid grid-cols-3 gap-2 max-h-[30rem] overflow-y-auto">
+              <div className="grid grid-cols-2 gap-2 max-h-[30rem] overflow-y-auto">
                 {geoData.find(d => d.city === selectedCity)?.districts.find(d => d.name === selectedDistrict)?.town.map((town, index) => (
                   <button
                     key={index}

@@ -17,7 +17,7 @@ type SearchParams = {
   productType: string,
   minPrice?: number | null,
   maxPrice?: number | null,
-  locations?: string[],
+  locations?: string | null,
   titleKeyword?: string,
   cursorId?: number | null,
   size?: number,
@@ -47,7 +47,7 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
 
 export const productList = async (searchParams: SearchParams) => {
   const response = await axiosInstance.get(`/product/public/search`, { params: searchParams});
-  console.log(response.data.data)
+  console.log(response)
   return response.data.data;
 }
 

@@ -4,9 +4,11 @@ import { ReactComponent as LeftArrowIcon } from '@assets/icons/arrow-left.svg';
 import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu';
 import ProductCard from '@components/Product/ProductCard';
-import { productDetail } from '@services/productService';
+import { productDetail, productList } from '@services/productService';
 import { useParams } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
+import defaultImage from '@assets/images/basic_profile.png';
+import { ProductType } from '@components/Product/ProductCard';
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -37,6 +39,13 @@ import {
 import { ChatUserType } from '@components/Chat/ChatUser';
 import { useWebSocket } from 'Context/WebSocketContext';
 
+type ImageType = {
+  createdAt: string;
+  imageUrl: string;
+  modefiedAt: string;
+  userImageId: number;
+};
+
 export type ProductDetailType = {
   category: string;
   deposit: number | null;
@@ -49,9 +58,10 @@ export type ProductDetailType = {
   productName: string;
   productPrice: number;
   productType: string;
+  saved: boolean;
   userId: number;
   nickname: string;
-  userImage: string;
+  userImage: ImageType | null;
 };
 
 function Detail() {
@@ -75,8 +85,11 @@ function Detail() {
     productType: '',
     userId: 0,
     nickname: '',
-    userImage: '',
+    userImage: null,
+    saved: false,
   });
+
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([])
 
   const [category, setCategory] = useState('');
 
@@ -96,6 +109,14 @@ function Detail() {
     try {
       const result = await productDetail(productId);
       console.log(result);
+
+      const relatedResult = await productList({
+        productType: '',
+        size: 5,
+        userId: result.userId
+      });
+
+      setRelatedProducts(relatedResult.products)
       setProduct(result);
     } catch (error) {
       console.error('판매 상세 페이지 불러오기 실패: ', error);
@@ -146,7 +167,7 @@ function Detail() {
     }
   };
 
-  function subscribeToChat(roomId: number) {
+  const subscribeToChat = (roomId: number) => {
     // 메세지를 받았을 때
     subscribe(`/sub/transaction/${roomId}`, async (message: { body: string }) => {
       const response = JSON.parse(message.body);
@@ -405,7 +426,13 @@ function Detail() {
                   rounded-full
                 `}
               >
-                <img src={product.userImage} alt={''} />
+                <img 
+                  src={product.userImage !== null ? product.userImage.imageUrl : defaultImage} 
+                  alt={''} 
+                  className={`
+                    rounded-full w-full h-full
+                  `}
+                />
               </div>
               <div className={`flex flex-col w-full`}>
                 <div className={`flex mb-[0.5rem]`}>
@@ -457,13 +484,17 @@ function Detail() {
           <div className={`flex items-center md:justify-center`}>
             <button
               className={`
+                ${
+                  product.saved ? 
+                  'bg-light-signature border-light-signature text-light-white dark:bg-dark-signature dark:border-dark-signature dark:text-dark-white' :
+                  'bg-light-white border-light-signature text-light-signature dark:bg-dark-white dark:border-dark-signature dark:text-dark-signature'
+                  
+                }
                 flex flex-all-center w-1/2 md:max-w-[20rem] lg:w-[12rem] h-[2.5rem] me-[0.5rem] py-[0.5rem]
-                bg-light-white border-light-signature text-light-signature
-                dark:bg-dark-white dark:border-dark-signature dark:text-dark-signature
                 rounded-md border font-medium
               `}
             >
-              찜하기
+              {product.saved ? '찜취소' : '찜하기'}
             </button>
             <button
               className={`
@@ -486,18 +517,21 @@ function Detail() {
               text-lg
             `}
           >
-            <span className={`font-medium`}>사용자1</span>의 다른 거래 상품 구경하기
+            <span className={`font-medium`}>{product.nickname}</span>의 다른 거래 상품 구경하기
           </div>
-          <div className={`w-full flex flex-wrap`} />
-          {/* <Swiper
-            spaceBetween={2}
-            slidesPerView={1}
-            freeMode={true}
-          >
-            <SwiperSlide>
-              <ProductCard />
-            </SwiperSlide>
-          </Swiper> */}
+          <div className={`w-full flex flex-wrap`}>
+            {/* <ProductCard /> */}
+            {relatedProducts.map((product) => (
+              <div
+                key={product.productId}
+                className='w-[20%]'
+              >
+                <ProductCard 
+                  product={product} 
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

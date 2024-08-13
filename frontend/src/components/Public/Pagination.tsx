@@ -27,7 +27,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }: Pag
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+        className="px-3 py-1 rounded bg-light-gray text-light-gray-3 dark:bg-dark-gray dark:text-dark-gray-3 disabled:opacity-50"
       >
         이전
       </button>
@@ -37,7 +37,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }: Pag
           key={pageNumber}
           onClick={() => onPageChange(pageNumber)}
           className={`px-3 py-1 rounded ${
-            currentPage === pageNumber ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+            currentPage === pageNumber ? 'bg-light-anchor text-light-white dark:bg-dark-anchor dark:text-dark-white' : 'bg-light-gray text-light-gray-3 dark:bg-dark-gray dark:text-dark-gray-3'
           }`}
         >
           {pageNumber}
@@ -47,7 +47,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }: Pag
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+        className="px-3 py-1 rounded bg-light-gray text-light-gray-3 dark:bg-dark-gray dark:text-dark-gray-3 disabled:opacity-50"
       >
         다음
       </button>
