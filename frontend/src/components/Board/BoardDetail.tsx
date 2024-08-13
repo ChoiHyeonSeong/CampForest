@@ -16,7 +16,7 @@ type Props = {
 
 const BoardDetail = (props: Props) => {
   // const boardId = props.selectedBoardId
-
+  const [show, setShow] = useState(false);
   const [comments, setComments] = useState<CommentType[]>([]);
 
   // const fetchBoard = async () => {
@@ -53,6 +53,10 @@ const BoardDetail = (props: Props) => {
     fetchComments();
   }, [props.selectedBoard.boardId]);
 
+  useEffect(() => {
+    setShow(true);
+  }, [])
+
   const handleAddComment = async (comment: string) => {
     try {
       await commentWrite(props.selectedBoard.boardId, comment);
@@ -79,14 +83,15 @@ const BoardDetail = (props: Props) => {
         flex justify-center fixed inset-0 z-[20] lg:z-[100] max-md:h-[calc(100vh-6.4rem)] max-lg:mt-[3.2rem]
         bg-light-black bg-opacity-80 max-lg:bg-light-white max-lg:bg-opacity-100
         dark:bg-opacity-80
-        overflow-y-auto
+        overflow-y-auto 
       `}
     >
       <div 
         onClick={(event) => event.stopPropagation()}
         className={`
+          ${show ? 'translate-y-0 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'}
           flex flex-col z-[110] w-full lg:w-[40rem] h-fit lg:mb-[3rem] lg:mt-[1rem]
-          bg-light-white dark:bg-dark-white overflow-hidden rounded-md
+          bg-light-white dark:bg-dark-white overflow-hidden rounded-md transition-all duration-500 ease-out
         `}
       >
         <div 
