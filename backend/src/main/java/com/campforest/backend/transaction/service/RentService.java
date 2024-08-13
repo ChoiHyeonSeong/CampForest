@@ -182,7 +182,7 @@ public class RentService {
 			.collect(Collectors.toList());
 	}
 
-	public void update(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> update(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템 없습니다."));
 
@@ -206,8 +206,16 @@ public class RentService {
 		rents[0].setMeetingPlace(rentRequestDto.getMeetingPlace());
 		rents[1].setMeetingPlace(rentRequestDto.getMeetingPlace());
 
+		Rent rent = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
+			requesterId, receiverId)
+				.orElseThrow(() -> new IllegalArgumentException("없습니다"));
+
+		Map<String, Long> result = new HashMap<>();
+		result.put("rentId", rent.getId());
+
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
+		return result;
 	}
 
 	private void validateDuplicateRequest(RentRequestDto rentRequestDto) {

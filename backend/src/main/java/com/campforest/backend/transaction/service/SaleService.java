@@ -193,7 +193,7 @@ public class SaleService {
 	}
 
 	@Transactional
-	public void updateMeeting(SaleRequestDto saleRequestDto, Long requesterId) {
+	public Map<String, Long> updateMeeting(SaleRequestDto saleRequestDto, Long requesterId) {
 		Product product = productRepository.findById(saleRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
@@ -212,8 +212,16 @@ public class SaleService {
 		sales[0].setMeetingPlace(saleRequestDto.getMeetingPlace());
 		sales[1].setMeetingPlace(saleRequestDto.getMeetingPlace());
 
+		Sale sale = saleRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(saleRequestDto.getProductId(),
+				requesterId, receiverId)
+			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 판매요청 입니다."));
+
+		Map<String, Long> result = new HashMap<>();
+		result.put("saleId", sale.getId());
+
 		saleRepository.save(sales[0]);
 		saleRepository.save(sales[1]);
+		return result;
 	}
 
 	private Sale buildSale(SaleRequestDto saleRequestDto, Product product, Long requesterId, Long receiverId,

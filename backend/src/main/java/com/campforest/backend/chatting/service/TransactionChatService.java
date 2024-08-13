@@ -24,5 +24,7 @@ public interface TransactionChatService {
 
 	Optional<TransactionChatRoom> getRoomById(Long roomId);
 
-	Object getTransactionEntity(Long saleId);
+	Object getSaleTransactionEntity(Long saleId);
+
+	Object getRentTransactionEntity(Long rentId);
 }
