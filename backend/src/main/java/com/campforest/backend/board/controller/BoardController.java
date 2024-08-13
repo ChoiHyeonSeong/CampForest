@@ -134,6 +134,33 @@ public class BoardController {
         }
     }
 
+    //팔로잉하고있는 유저 게시글만
+    @GetMapping("/following")
+    public ApiResponse<?> getFollowingBoard(
+        Authentication authentication,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        try {
+            if (size <= 0) {
+                return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
+            }
+            Long nowId=-1L;
+            if (authentication != null) {
+                Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+                nowId = user.getUserId();
+            }
+            CursorResult<BoardResponseDto> result = boardService.getFollowingBoards(nowId,cursorId,size);
+            String message = authentication == null ? "비로그인 게시글 목록 조회 성공하였습니다" : "팔로잉 게시글 목록 조회 성공하였습니다";
+
+            return ApiResponse.createSuccess(result, message);
+        } catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     //사용자별 게시글 조회
     @GetMapping("/public/user")
     public ApiResponse<?> getUserBoard(

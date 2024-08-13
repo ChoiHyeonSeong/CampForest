@@ -6,6 +6,7 @@ import com.campforest.backend.board.entity.QBoards;
 import com.campforest.backend.board.entity.QSave;
 import com.campforest.backend.product.model.QProduct;
 import com.campforest.backend.review.model.QReview;
+import com.campforest.backend.user.model.QFollow;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,7 +21,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
 	private final QBoards boards = QBoards.boards;
-
+	private final QFollow follow = QFollow.follow;
 	public BoardRepositoryImpl(JPAQueryFactory queryFactory) {
 		this.queryFactory = queryFactory;
 	}
@@ -89,81 +90,162 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 	}
 
 	@Override
-	public List<Boards> findTopN(int limit) {
+	public List<Boards> findTopN(Long nowId, int limit) {
 		return queryFactory
 			.selectFrom(boards)
+			.where(boards.isBoardOpen.isTrue().or(
+				boards.isBoardOpen.isFalse().and(
+					JPAExpressions
+						.selectOne()
+						.from(QFollow.follow)
+						.where(QFollow.follow.follower.userId.eq(boards.userId)
+							.and(QFollow.follow.followee.userId.eq(nowId)))
+						.exists()
+				)
+			))
 			.orderBy(boards.createdAt.desc())
 			.limit(limit)
 			.fetch();
 	}
 
 	@Override
-	public List<Boards> findNextN(Long cursorId, int limit) {
+	public List<Boards> findNextN(Long nowId, Long cursorId, int limit) {
 		return queryFactory
 			.selectFrom(boards)
-			.where(boards.boardId.lt(cursorId))
+			.where(
+				boards.boardId.lt(cursorId)
+					.and(
+						boards.isBoardOpen.isTrue().or(
+							boards.isBoardOpen.isFalse().and(
+								JPAExpressions
+									.selectOne()
+									.from(QFollow.follow)
+									.where(QFollow.follow.follower.userId.eq(boards.userId)
+										.and(QFollow.follow.followee.userId.eq(nowId)))
+									.exists()
+							)
+						)
+					)
+			)
 			.orderBy(boards.createdAt.desc())
 			.limit(limit)
 			.fetch();
 	}
-	public List<Boards> findByUserIdTopN(Long userId, int limit) {
-
-		return queryFactory
-			.selectFrom(boards)
-			.where(boards.userId.eq(userId))
-			.orderBy(boards.createdAt.desc())
-			.limit(limit)
-			.fetch();
-	}
-
-	public List<Boards> findByUserIdNextN(Long userId, Long cursorId, int limit) {
+	@Override
+	public List<Boards> findByUserIdTopN(Long nowId, Long userId, int limit) {
 
 		return queryFactory
 			.selectFrom(boards)
 			.where(boards.userId.eq(userId)
-				.and(boards.boardId.lt(cursorId)))
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
 			.orderBy(boards.createdAt.desc())
 			.limit(limit)
 			.fetch();
 	}
-	public List<Boards> findByCategoryTopN(String category, int limit) {
 
+	@Override
+	public  List<Boards> findByUserIdNextN(Long nowId, Long userId, Long cursorId, int limit) {
 		return queryFactory
 			.selectFrom(boards)
-			.where(boards.category.eq(category))
+			.where(boards.userId.eq(userId)
+				.and(boards.boardId.lt(cursorId))
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
 			.orderBy(boards.createdAt.desc())
 			.limit(limit)
 			.fetch();
 	}
-
-	public List<Boards> findByCategoryNextN(String category, Long cursorId, int limit) {
-
+	public List<Boards> findByCategoryTopN(Long nowId, String category, int limit) {
 		return queryFactory
 			.selectFrom(boards)
 			.where(boards.category.eq(category)
-				.and(boards.boardId.lt(cursorId)))
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
 			.orderBy(boards.createdAt.desc())
 			.limit(limit)
 			.fetch();
 	}
-	public List<Boards> findByTitleAndContentTopN(String keyword, int limit) {
 
+	public List<Boards> findByCategoryNextN(Long nowId, String category, Long cursorId, int limit) {
 		return queryFactory
 			.selectFrom(boards)
-			.where(boards.title.like("%" + keyword + "%")
-			.or(boards.content.like("%" + keyword + "%")))
+			.where(boards.category.eq(category)
+				.and(boards.boardId.lt(cursorId))
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
 			.orderBy(boards.createdAt.desc())
 			.limit(limit)
 			.fetch();
 	}
-
-	public List<Boards> findByTitleAndContentNextN(String keyword, Long cursorId, int limit) {
-
+	public List<Boards> findByTitleAndContentTopN(Long nowId, String keyword, int limit) {
 		return queryFactory
 			.selectFrom(boards)
 			.where((boards.title.like("%" + keyword + "%")
 				.or(boards.content.like("%" + keyword + "%")))
-				.and(boards.boardId.lt(cursorId)))
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	public List<Boards> findByTitleAndContentNextN(Long nowId, String keyword, Long cursorId, int limit) {
+		return queryFactory
+			.selectFrom(boards)
+			.where((boards.title.like("%" + keyword + "%")
+				.or(boards.content.like("%" + keyword + "%")))
+				.and(boards.boardId.lt(cursorId))
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
 			.orderBy(boards.createdAt.desc())
 			.limit(limit)
 			.fetch();
@@ -235,43 +317,87 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 			.fetchOne();
 	}
 
-	public long countAll() {
+
+	public Long countAll(Long nowId) {
 		Long count = queryFactory
 			.select(boards.count())
 			.from(boards)
+			.where(boards.isBoardOpen.isTrue().or(
+				boards.isBoardOpen.isFalse().and(
+					JPAExpressions
+						.selectOne()
+						.from(QFollow.follow)
+						.where(QFollow.follow.follower.userId.eq(boards.userId)
+							.and(QFollow.follow.followee.userId.eq(nowId)))
+						.exists()
+				)
+			))
 			.fetchOne();
 		return count != null ? count : 0;
 	}
 
-	public long countByUserId(Long userId) {
+
+	public Long countByUserId(Long nowId, Long userId) {
 		Long count = queryFactory
 			.select(boards.count())
 			.from(boards)
-			.where(boards.userId.eq(userId))
+			.where(boards.userId.eq(userId)
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
 			.fetchOne();
 		return count != null ? count : 0;
 	}
 
-	public long countByCategory(String category) {
+
+	public Long countByCategory(Long userId, String category) {
 		Long count = queryFactory
 			.select(boards.count())
 			.from(boards)
-			.where(boards.category.eq(category))
+			.where(boards.category.eq(category)
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(userId)))
+							.exists()
+					)
+				)))
 			.fetchOne();
 		return count != null ? count : 0;
 	}
 
-	public long countByKeyword(String keyword) {
+
+	public Long countByKeyword(Long nowId, String keyword) {
 		Long count = queryFactory
 			.select(boards.count())
 			.from(boards)
-			.where(boards.title.like("%" + keyword + "%")
+			.where((boards.title.like("%" + keyword + "%")
 				.or(boards.content.like("%" + keyword + "%")))
+				.and(boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(nowId)))
+							.exists()
+					)
+				)))
 			.fetchOne();
 		return count != null ? count : 0;
 	}
 
-	public long countSavedByUserId(Long userId) {
+	public Long countSavedByUserId(Long userId) {
 		QSave savedBoards = QSave.save;
 
 		Long count = queryFactory
@@ -283,5 +409,84 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 		return count != null ? count : 0;
 	}
 
+	public List<Boards> findFollowingTopN(Long currentUserId, int limit) {
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.userId.in(
+				JPAExpressions
+					.select(QFollow.follow.followee.userId)
+					.from(QFollow.follow)
+					.where(QFollow.follow.follower.userId.eq(currentUserId))
+			).and(
+				boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(currentUserId)))
+							.exists()
+					)
+				)
+			))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
 
-}
+	public List<Boards> findFollowingNextN(Long currentUserId, Long cursorId, int limit) {
+		return queryFactory
+			.selectFrom(boards)
+			.where(boards.userId.in(
+					JPAExpressions
+						.select(QFollow.follow.followee.userId)
+						.from(QFollow.follow)
+						.where(QFollow.follow.follower.userId.eq(currentUserId))
+				).and(boards.boardId.lt(cursorId))
+				.and(
+					boards.isBoardOpen.isTrue().or(
+						boards.isBoardOpen.isFalse().and(
+							JPAExpressions
+								.selectOne()
+								.from(QFollow.follow)
+								.where(QFollow.follow.follower.userId.eq(boards.userId)
+									.and(QFollow.follow.followee.userId.eq(currentUserId)))
+								.exists()
+						)
+					)
+				))
+			.orderBy(boards.createdAt.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public Long countByFollow(Long nowId) {
+		Long count =queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where(boards.userId.in(
+					JPAExpressions
+						.select(QFollow.follow.followee.userId)
+						.from(QFollow.follow)
+						.where(QFollow.follow.follower.userId.eq(nowId))
+				).and(
+					boards.isBoardOpen.isTrue().or(
+						boards.isBoardOpen.isFalse().and(
+							JPAExpressions
+								.selectOne()
+								.from(QFollow.follow)
+								.where(QFollow.follow.follower.userId.eq(boards.userId)
+									.and(QFollow.follow.followee.userId.eq(nowId)))
+								.exists()
+						)
+					)
+				))
+			.orderBy(boards.createdAt.desc())
+			.fetchOne();
+		return count != null ? count : 0;
+	}
+
+	}
+
+

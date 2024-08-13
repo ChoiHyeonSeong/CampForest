@@ -19,19 +19,19 @@ public interface BoardRepositoryCustom {
 
 	CountResponseDto countAllById(Long userId);
 
-	List<Boards> findTopN(int i);
+	List<Boards> findTopN(Long nowId, int i);
 
-	List<Boards> findNextN(Long cursorId, int i);
+	List<Boards> findNextN(Long nowId, Long cursorId, int i);
 
 
-	List<Boards> findByUserIdTopN(Long userId, int limit);
-	 List<Boards> findByUserIdNextN(Long userId, Long cursorId, int limit) ;
+	List<Boards> findByUserIdTopN(Long nowId, Long userId, int limit);
+	 List<Boards> findByUserIdNextN(Long nowId,Long userId, Long cursorId, int limit) ;
 
-	List<Boards> findByCategoryTopN(String category, int limit);
-	 List<Boards> findByCategoryNextN(String category, Long cursorId, int limit);
+	List<Boards> findByCategoryTopN(Long nowId, String category, int limit);
+	 List<Boards> findByCategoryNextN(Long nowId, String category, Long cursorId, int limit);
 
-	List<Boards> findByTitleAndContentTopN(String keyword, int limit);
-	List<Boards> findByTitleAndContentNextN(String keyword, Long cursorId, int limit);
+	List<Boards> findByTitleAndContentTopN(Long nowId, String keyword, int limit);
+	List<Boards> findByTitleAndContentNextN(Long nowId, String keyword, Long cursorId, int limit);
 
 	List<Boards> findSavedBoardsByUserIdTopN(Long nowId, int limit);
 	List<Boards> findSavedBoardsByUserIdNextN(Long nowId, Long cursorId, int limit);
@@ -43,9 +43,15 @@ public interface BoardRepositoryCustom {
 
 	Long getSavedBoardCount(Long nowId);
 
-	long countAll();
-	long countByUserId(Long userId);
-	long countByCategory(String category);
-	long countByKeyword(String keyword);
-	long countSavedByUserId(Long userId);
+	Long countAll(Long nowId);
+	Long countByUserId(Long nowId, Long userId);
+	Long countByCategory(Long nowId, String category);
+	Long countByKeyword(Long nowId, String keyword);
+	Long countSavedByUserId(Long userId);
+
+	List<Boards> findFollowingTopN(Long nowId, int i);
+
+	List<Boards> findFollowingNextN(Long nowId, Long cursorId, int i);
+
+	Long countByFollow(Long nowId);
 }
