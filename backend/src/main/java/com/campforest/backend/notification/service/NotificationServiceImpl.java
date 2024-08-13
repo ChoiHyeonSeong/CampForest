@@ -31,10 +31,15 @@ public class NotificationServiceImpl implements NotificationService {
 			.message(message)
 			.build();
 
-	  	Notification saved = notificationRepository.save(notification);
+		if(type != NotificationType.CHAT && type != NotificationType.TRANSACTIONCHAT) {
+			Notification saved = notificationRepository.save(notification);
 
-		// SSE를 통해 클라이언트로 알림 전송
-		sseEmitters.send(receiver.getUserId(), NotificationDTO.fromEntity(saved));
+			sseEmitters.send(receiver.getUserId(), NotificationDTO.fromEntity(saved));
+		}
+		else {
+			sseEmitters.send(receiver.getUserId(), NotificationDTO.fromEntity(notification));
+		}
+
 	}
 
 	@Override
@@ -48,9 +53,7 @@ public class NotificationServiceImpl implements NotificationService {
 			.message(message)
 			.build();
 
-		Notification saved = notificationRepository.save(notification);
-
-		NotificationDTO dto = NotificationDTO.fromEntity(saved);
+		NotificationDTO dto = NotificationDTO.fromEntity(notification);
 		dto.setRoomId(roomId);
 		// SSE를 통해 클라이언트로 알림 전송
 		sseEmitters.send(receiver.getUserId(), dto);
