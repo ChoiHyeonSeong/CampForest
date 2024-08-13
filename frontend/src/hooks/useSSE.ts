@@ -11,8 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 const useSSE = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state: RootState) => state.userStore);
-  const chatState = useSelector((state: RootState) => state.chatStore);
-  const roomIdRef = useRef(chatState.roomId);
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const lastConnectionTimeRef = useRef(0);
   const [retryCount, setRetryCount] = useState(0);
@@ -20,6 +18,7 @@ const useSSE = () => {
   const maxRetries = 5;
 
   const subscribeToCommunityChat = (roomId: number) => {
+    console.log('subscribeToCommunityChat', roomId);
     // 메세지를 받았을 때
     subscribe(`/sub/community/${roomId}`, (data) => {
       const message = JSON.parse(data.body);
@@ -148,10 +147,14 @@ const useSSE = () => {
       const eventData = JSON.parse(event.data);
       console.log('새 알림', eventData);
       switch (eventData.notificationType) {
-        case 'SALE':
-          break;
+        // case 'SALE':
+        //   break;
         case 'CHAT':
-          
+          console.log(eventData.roomId);
+          subscribeToCommunityChat(eventData.roomId);
+          break;
+        case 'TRANSACTIONCHAT':
+          subscribeToTransactionChat(eventData.roomId);
           break;
         default:
           dispatch(addNewNotification(eventData));
