@@ -87,9 +87,9 @@ const UserInformation = () => {
 
   return (
     <form className={`flex justify-center items-center`}>
-      <div className={`w-full md:max-w-3xl lg:w-[40rem] max-lg:p-[1.5rem]`}>
+      <div className={`w-full md:w-[40rem]`}>
         {/* 프로필사진 */}
-        <div className={`flex justify-center mb-[2.5rem]`}>
+        <div className={`flex justify-center `}>
           <div 
             className={`
               relative size-[5rem] md:size-[6rem]
@@ -130,7 +130,7 @@ const UserInformation = () => {
         </div>
 
         {/* 닉네임 */}
-        <div className={`relative mb-[1.5rem]`}>
+        <div className={`relative  my-[1.5rem]`}>
           <label 
             className={`
               block
@@ -188,7 +188,7 @@ const UserInformation = () => {
         {/* 생년월일 성별 */}
         <div 
           className={`
-            my-[3rem] lg:my-[1.5rem]
+            my-[1.5rem]
             border-light-border-1
             dark:border-dark-border-1
             border-b
@@ -236,13 +236,14 @@ const UserInformation = () => {
             />
             <div 
               className={`
-                md:hidden block mt-[3rem] mb-[0.75rem]
+                md:hidden block my-[1.5rem]
                 text-left font-medium text-lg
               `}
             >
               성별
               <span 
                 className={`
+                  ms-[0.25rem]
                   text-light-warning
                   dark:text-dark-warning
                   text-md

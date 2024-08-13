@@ -11,7 +11,7 @@ const NoResultSearch = (props: Props) => {
         className="
           text-light-text-secondary
           dark:text-dark-text-secondary
-          text-xl font-semibold
+          md:text-xl font-semibold
         "
       >
         {props.searchText}에 일치하는 검색결과가 없습니다.

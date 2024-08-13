@@ -118,21 +118,21 @@ const Regist: React.FC = () => {
   };
 
   return (
-    <div className={`flex justify-center items-center min-h-screen`}>
+    <div
+      className={`
+        flex justify-center items-center min-h-screen
+        bg-light-white
+        dark:bg-dark-white
+      `}
+    >
       <div
-        className={`
-            w-[100%] md:max-w-[42rem] p-[2.5rem] mx-auto
-            bg-light-white bg-opacity-80
-            dark:bg-dark-white dark:bg-opacity-80
-            rounded    
-        `}
-      >
+        className={`w-[100%] md:max-w-[42rem] h-fit max-md:p-[1.5rem]`}>
         <div 
           className={`
-            mb-[3rem] pb-[0.75rem]
-            border-light-border-2 text-light-text
-            dark:border-dark-border-2 dark:text-dark-text
-            border-b-2 text-[2rem] text-center
+            mb-[2rem] pb-[0.75rem]
+            border-light-border-3
+            dark:border-dark-border-3
+            border-b-2 text-[1.5rem] md:text-[2rem] text-center
           `}
         >
           회원가입
@@ -151,8 +151,8 @@ const Regist: React.FC = () => {
                 'border-light-black hover:bg-light-black hover:text-light-text-white dark:border-dark-black dark:hover:bg-dark-black dark:hover:text-dark-text-white' :
                 'border-light-gray bg-light-gray dark:border-dark-gray dark:bg-dark-gray'
               }
-              w-[20rem] md:w-[11rem] h-[2.5rem] md:mt-[3rem]
-              border-2 md:rounded-none rounded-md transition-all duration-300 font-bold
+              w-full md:w-[20rem] h-[2.5rem] mt-[2rem]
+              border-2 rounded transition-all duration-300 font-bold
             `}
             disabled={!isBtnActive}
           >
