@@ -2,6 +2,7 @@ package com.campforest.backend.product.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,7 +191,7 @@ public class ProductController {
 		@RequestParam(required = false) ProductType productType,
 		@RequestParam(required = false) Long minPrice,
 		@RequestParam(required = false) Long maxPrice,
-		@RequestParam(required = false) List<String> locations,
+		@RequestParam(required = false) String locations,
 		@RequestParam(required = false) String titleKeyword,
 		@RequestParam(required = false) Long findUserId,
 		@RequestParam(required = false) Long cursorId,
@@ -212,9 +213,16 @@ public class ProductController {
 			}
 		}
 
+		List<String> processedLocations = null;
+		if (locations != null && !locations.isEmpty()) {
+			processedLocations = Arrays.stream(locations.split("&"))
+				.map(location -> location.replace(",", " "))
+				.collect(Collectors.toList());
+		}
+
 		try {
 			CursorResult<ProductSearchDto> result = productService.findProductsByDynamicConditionsWithCursor(
-				categoryEnum, productType, minPrice, maxPrice, locations, titleKeyword, size, userId, findUserId, cursorId);
+				categoryEnum, productType, minPrice, maxPrice, processedLocations, titleKeyword, size, userId, findUserId, cursorId);
 
 			Map<String, Object> responseMap = new HashMap<>();
 			responseMap.put("products", result.getContent());

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.chatting.dto.MessageWithTransactionDTO;
+import com.campforest.backend.chatting.dto.RentDTO;
 import com.campforest.backend.chatting.dto.SaleDTO;
 import com.campforest.backend.chatting.dto.TransactionChatDto;
 import com.campforest.backend.chatting.dto.TransactionChatRoomListDto;
@@ -15,7 +16,10 @@ import com.campforest.backend.chatting.entity.TransactionChatMessage;
 import com.campforest.backend.chatting.entity.TransactionChatRoom;
 import com.campforest.backend.chatting.repository.transactionchatmessage.TransactionChatMessageRepository;
 import com.campforest.backend.chatting.repository.transactionchatroom.TransactionChatRoomRepository;
+import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductType;
+import com.campforest.backend.product.repository.ProductRepository;
+import com.campforest.backend.transaction.model.Rent;
 import com.campforest.backend.transaction.model.Sale;
 import com.campforest.backend.transaction.repository.RentRepository;
 import com.campforest.backend.transaction.repository.SaleRepository;
@@ -30,6 +34,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     private final TransactionChatMessageRepository transactionChatMessageRepository;
     private final RentRepository rentRepository;
     private final SaleRepository saleRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     @Override
@@ -105,9 +110,17 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     }
     @Transactional
     @Override
-    public Object getTransactionEntity(Long saleId) {
+    public Object getSaleTransactionEntity(Long saleId) {
         Sale sale = saleRepository.findById(saleId).orElseThrow();
-        return toDTO(sale);
+
+        return toSaleDTO(sale);
+    }
+
+    @Override
+    public Object getRentTransactionEntity(Long rentId) {
+        Rent rent = rentRepository.findById(rentId).orElseThrow();
+
+        return toRentDto(rent);
     }
 
     private TransactionChatDto convertToDto(TransactionChatRoom room) {
@@ -139,7 +152,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
 
     }
 
-    public SaleDTO toDTO(Sale sale) {
+    public SaleDTO toSaleDTO(Sale sale) {
         SaleDTO dto = new SaleDTO();
         dto.setId(sale.getId());
         dto.setProductId(sale.getProduct().getId());
@@ -156,7 +169,33 @@ public class TransactionChatServiceImpl implements TransactionChatService {
         dto.setConfirmedByBuyer(sale.isConfirmedByBuyer());
         dto.setConfirmedBySeller(sale.isConfirmedBySeller());
         dto.setRealPrice(sale.getRealPrice());
+        dto.setLatitude(sale.getProduct().getLatitude());
+        dto.setLongitude(sale.getProduct().getLongitude());
+        return dto;
+    }
 
+    private RentDTO toRentDto(Rent rent) {
+        RentDTO dto = new RentDTO();
+        dto.setId(rent.getId());
+        dto.setProductId(rent.getProduct().getId());
+        dto.setProductName(rent.getProduct().getProductName());
+        dto.setRenterId(rent.getRenterId());
+        dto.setOwnerId(rent.getOwnerId());
+        dto.setDeposit(rent.getDeposit());
+        dto.setRentStartDate(rent.getRentStartDate());
+        dto.setRentEndDate(rent.getRentEndDate());
+        dto.setRequesterId(rent.getRequesterId());
+        dto.setReceiverId(rent.getReceiverId());
+        dto.setRentStatus(rent.getRentStatus());
+        dto.setCreatedAt(rent.getCreatedAt());
+        dto.setModifiedAt(rent.getModifiedAt());
+        dto.setMeetingTime(rent.getMeetingTime());
+        dto.setMeetingPlace(rent.getMeetingPlace());
+        dto.setConfirmedByBuyer(rent.isConfirmedByBuyer());
+        dto.setConfirmedBySeller(rent.isConfirmedBySeller());
+        dto.setRealPrice(rent.getRealPrice());
+        dto.setLatitude(rent.getProduct().getLatitude());
+        dto.setLongitude(rent.getProduct().getLongitude());
         return dto;
     }
 }
