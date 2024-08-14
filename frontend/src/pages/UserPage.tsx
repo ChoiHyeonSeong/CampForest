@@ -109,7 +109,7 @@ const UserPage = () => {
               <Routes>
                 <Route path='/' element={<UBoard />} />
                 <Route path='/product' element={<UProduct />} />
-                <Route path='/review' element={<UReview />} />
+                <Route path='/review' element={<UReview userId={userId} />} />
               </Routes>
             </div>
 

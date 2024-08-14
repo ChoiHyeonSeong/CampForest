@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import UserReviewList from '@components/User/UserReviewList';
 
-type Props = {}
+type Props = {
+  userId: number
+}
 
 const UReview = (props: Props) => {
   return (
     <div>
-      {/* {reveiw?.content.map((reveiw: any) => ( */}
-        <UserReviewList />
-      {/* ))} */}
+      <UserReviewList userId={props.userId}/>
     </div>
   )
 }

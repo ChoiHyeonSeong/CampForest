@@ -40,7 +40,13 @@ export type TransactionMessageType = {
 };
 
 export type ReviewType = {
-
+  createdAt: string;
+  id: number;
+  modifiedAt: string;
+  productType: string;
+  rating: number;
+  reviewContent: string;
+  reviewImages: string[];
 }
 
 export type TransactionEntityType = {
