@@ -48,6 +48,12 @@ public class ReviewService {
 		Users reviewed = userRepository.findById(reviewRequestDto.getReviewedId())
 			.orElseThrow(() -> new IllegalArgumentException("리뷰 대상을 찾을 수 없습니다."));
 
+		if (reviewRepository.existsByReviewerIdAndReviewedId(
+			reviewRequestDto.getReviewerId(),
+			reviewRequestDto.getReviewedId())) {
+			throw new IllegalArgumentException("리뷰가 이미 존재합니다.");
+		}
+
 		TransactionChatRoom room = transactionChatRoomRepository.findById(reviewRequestDto.getRoomId())
 			.orElseThrow(() -> new IllegalArgumentException("없는 채팅 룸입니다."));
 
