@@ -502,8 +502,8 @@ function Detail() {
             >
               <div
                 className={`
-                  w-full min-h-[7rem]
-                  break-all
+                  w-full min-h-[7rem] max-h-[10rem]
+                  break-all whitespace-pre-wrap overflow-y-auto
                 `}
               >
                 {product.productContent}
