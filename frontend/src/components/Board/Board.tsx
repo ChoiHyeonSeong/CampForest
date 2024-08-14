@@ -127,6 +127,10 @@ const Board = (props: Props) => {
     }
   }
   
+  const updateFunction = () => {
+    
+  }
+
   return (
     <div 
       className={`

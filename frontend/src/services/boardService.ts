@@ -133,3 +133,25 @@ export const boardModifyImageUpload = async (images: File[]) => {
     throw error;
   }
 }
+
+export const boardModify = async (boardId:number, userId:number, title: string, content: string, category: string, boardOpen: boolean, imageUrls: string[]) => {
+  const body = {
+    userId: userId,
+    title: title,
+    content: content,
+    category: category,
+    boardOpen: boardOpen,
+    imageUrls: imageUrls
+  };
+
+  const params = { boardId }
+
+  try {
+    const response = await axiosInstance.put(`/board`, body, { params: params });
+    console.log(response);
+    return response
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

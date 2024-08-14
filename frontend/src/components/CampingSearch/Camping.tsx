@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 
 export type CampingDataType = {
-  campsiteId?: number;
+  campsiteId: number;
   facltNm?: string;
   lineIntro?: string;
   intro?: string;
