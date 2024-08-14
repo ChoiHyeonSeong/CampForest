@@ -157,7 +157,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
               <div 
                 className={`
                   me-[1.25rem]
-                  font-semibold text-[0.94rem] md:text-lg 
+                  font-semibold text-[1.1rem] md:text-lg 
                 `}
               >
                 {userinfo?.nickname}
@@ -168,12 +168,12 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
                   flex
                 `}
               > 
-                <div className='text-sm md:text-base'>
+                <div className='text-xs md:text-base'>
                   <FollowBtn targetUserId={userId} callbackFunction={fetchUserInfo}/>
                 </div>
                 <div 
                   className={`
-                    text-sm md:text-base
+                    text-xs md:text-base
                   `}
                 >
                   <ChatBtn handleChatButton={handleChatButton}/>
