@@ -6,7 +6,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "서울특별시",
+    city: "서울",
     districts: [
       { name: "전체", lat: 37.5665, lng: 126.9780 },
       { name: "종로구", lat: 37.5730, lng: 126.9794 },
@@ -37,7 +37,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "부산광역시",
+    city: "부산",
     districts: [
       { name: "전체", lat: 35.1796, lng: 129.0756 },
       { name: "중구", lat: 35.1060, lng: 129.0323 },
@@ -59,7 +59,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "대구광역시",
+    city: "대구",
     districts: [
       { name: "전체", lat: 35.8714, lng: 128.6014 },
       { name: "중구", lat: 35.8687, lng: 128.6064 },
@@ -73,7 +73,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "인천광역시",
+    city: "인천",
     districts: [
       { name: "전체", lat: 37.4563, lng: 126.7052 },
       { name: "중구", lat: 37.4737, lng: 126.6218 },
@@ -89,7 +89,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "광주광역시",
+    city: "광주",
     districts: [
       { name: "전체", lat: 35.1595, lng: 126.8526 },
       { name: "동구", lat: 35.1460, lng: 126.9231 },
@@ -100,7 +100,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "대전광역시",
+    city: "대전",
     districts: [
       { name: "전체", lat: 36.3504, lng: 127.3845 },
       { name: "동구", lat: 36.3120, lng: 127.4548 },
@@ -111,7 +111,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "울산광역시",
+    city: "울산",
     districts: [
       { name: "전체", lat: 35.5384, lng: 129.3114 },
       { name: "중구", lat: 35.5696, lng: 129.3324 },
@@ -122,7 +122,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "세종특별자치시",
+    city: "세종",
     districts: [
       { name: "전체", lat: 36.4800, lng: 127.2890 },
       { name: "세종시", lat: 36.4800, lng: 127.2890 }
@@ -329,7 +329,7 @@ export const koreaAdministrativeDivisions = [
     ]
   },
   {
-    city: "제주특별자치도",
+    city: "제주",
     districts: [
       { name: "전체", lat: 33.4890, lng: 126.4983 },
       { name: "제주시", lat: 33.4996, lng: 126.5312 },

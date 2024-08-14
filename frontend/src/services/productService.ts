@@ -47,12 +47,9 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
 }
 
 export const productDelete = async (productId: number) => {
-  const params = { productId: productId };
-  
-  const response = await axiosInstance.delete(`/product/public/search`, { params });
+  const response = await axiosInstance.delete(`/product/${productId}`);
   return response
 }
-
 
 export const productList = async (searchParams: SearchParams) => {
   const response = await axiosInstance.get(`/product/public/search`, { params: searchParams});

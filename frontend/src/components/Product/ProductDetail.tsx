@@ -65,6 +65,8 @@ export type ProductDetailType = {
   userId: number;
   nickname: string;
   userImage: ImageType | null;
+  latitude: number;
+  longitude: number;
 };
 
 function Detail() {
@@ -91,6 +93,8 @@ function Detail() {
     nickname: '',
     userImage: null,
     saved: false,
+    latitude: 0,
+    longitude: 0,
   });
 
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([])
@@ -209,19 +213,32 @@ function Detail() {
           store.dispatch(setChatInProgress(fetchedMessages.messages));
           let lastSaleState = '';
           let confirmedCount = 0;
-          await fetchedMessages.messages.forEach((message: any) => {
-            if(message.transactionEntity) {
-              if(message.transactionEntity.saleStatus === 'CONFIRMED') {
-                ++confirmedCount;
-                if(confirmedCount === 2) {
+          for (const message of fetchedMessages.messages) {
+            if (message.transactionEntity) {
+              if (message.transactionEntity.saleStatus) {
+                if (message.transactionEntity.saleStatus === 'CONFIRMED') {
+                  ++confirmedCount;
+                  if (confirmedCount === 2) {
+                    lastSaleState = message.transactionEntity.saleStatus;
+                  }
+                } else if (message.transactionEntity.saleStatus !== '') {
                   lastSaleState = message.transactionEntity.saleStatus;
                 }
               } else {
-                lastSaleState = message.transactionEntity.saleStatus;
+                if (message.transactionEntity.rentStatus === 'CONFIRMED') {
+                  ++confirmedCount;
+                  if (confirmedCount === 2) {
+                    lastSaleState = message.transactionEntity.rentStatus;
+                  }
+                } else {
+                  lastSaleState = message.transactionEntity.rentStatus;
+                }
               }
             }
-          })
-         dispatch(setSaleStatus(lastSaleState));
+          }
+    
+          console.log('lastSaleState', lastSaleState);
+          dispatch(setSaleStatus(lastSaleState));
           publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
         } else {
           dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));

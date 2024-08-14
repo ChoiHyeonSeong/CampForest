@@ -1,4 +1,4 @@
-import axiosInstance from '@services/authService'
+import axiosInstance from '@services/authService';
 
 export const communityChatList = async () => {
   try {
@@ -9,8 +9,7 @@ export const communityChatList = async () => {
   } catch (error) {
     throw error;
   }
-  
-}
+};
 
 export const communityChatDetail = async (roomId: number) => {
   try {
@@ -20,25 +19,25 @@ export const communityChatDetail = async (roomId: number) => {
     return response.data.data;
   } catch (err) {
     throw err;
-  }  
-}
+  }
+};
 
 export const initCommunityChat = async (userId: number): Promise<number> => {
   const response = await axiosInstance.post(`/communitychat/room`, userId, {
     headers: {
       'Content-Type': 'application/json',
-    }
+    },
   });
-  
+
   return response.data.data.roomId;
-}
+};
 
 export const transactionChatList = async () => {
-    const response = await axiosInstance.get(`/transactionchat/rooms`);
+  const response = await axiosInstance.get(`/transactionchat/rooms`);
 
-    console.log(response);
-    return response.data.data;
-}
+  console.log(response);
+  return response.data.data;
+};
 
 export const transactionChatDetail = async (roomId: number) => {
   console.log(roomId);
@@ -46,15 +45,19 @@ export const transactionChatDetail = async (roomId: number) => {
 
   console.log(response.data);
   return response.data.data;
-}
+};
 
 export const initTransactionChat = async (productId: number, userId: number): Promise<number> => {
-  const response = await axiosInstance.post(`/transactionchat/room`, { productId: productId, seller: userId }, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  });
-  
+  const response = await axiosInstance.post(
+    `/transactionchat/room`,
+    { productId: productId, seller: userId },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+
   console.log('initTransactionChat', response);
   return response.data.data.roomId;
-}
+};

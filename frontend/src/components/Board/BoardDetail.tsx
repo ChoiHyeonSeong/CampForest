@@ -66,11 +66,20 @@ const BoardDetail = (props: Props) => {
       console.error('댓글 작성 실패: ', error);
     }
   };
-
+  const handleDetailClose = (e: React.MouseEvent) => {
+    setShow(false);
+    setTimeout(() => {
+      props.detailClose();
+    }, 400);
+  };
+  
   const deleteFunction = () => {
-    props.pageReload()
-    props.detailClose()
-  }
+  props.pageReload();
+  setShow(false);
+  setTimeout(() => {
+    props.detailClose();
+  }, 400);
+};
 
   if (!props.selectedBoard) {
     return <div>게시글을 찾을 수 없습니다.</div>;
@@ -78,7 +87,7 @@ const BoardDetail = (props: Props) => {
 
   return (
     <div 
-      onClick={props.detailClose}
+      onClick={handleDetailClose}
       className={`
         flex justify-center fixed inset-0 z-[20] lg:z-[100] max-md:h-[calc(100vh-6.4rem)] max-lg:mt-[3.2rem]
         bg-light-black bg-opacity-80 max-lg:bg-light-white max-lg:bg-opacity-100
@@ -89,7 +98,7 @@ const BoardDetail = (props: Props) => {
       <div 
         onClick={(event) => event.stopPropagation()}
         className={`
-          ${show ? 'translate-y-0 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'}
+          ${show ? 'translate-y-0 pointer-events-auto' : 'translate-y-[50vh] opacity-0 pointer-events-none'}
           flex flex-col z-[110] w-full lg:w-[40rem] h-fit lg:mb-[3rem] lg:mt-[1rem]
           bg-light-white dark:bg-dark-white overflow-hidden rounded-md transition-all duration-500 ease-out
         `}

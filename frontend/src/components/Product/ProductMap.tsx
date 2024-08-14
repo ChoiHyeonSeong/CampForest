@@ -1,13 +1,17 @@
+import { LocationType } from '@components/Chat/ChatTradeModal';
 import React, { SetStateAction, useEffect, useState } from 'react';
 
 type Props = {
   isPersonal: boolean;
   openMap: (value: boolean) => void;
-  handleLocation: (dongName: string, latitude: number, longitude: number) => void;
+  handleLocation?: (dongName: string, latitude: number, longitude: number) => void;
+  setLocation?: React.Dispatch<SetStateAction<LocationType>>;
+  situation: string
 };
 
 let mapInstance: naver.maps.Map | null = null;
 let infoWindow: naver.maps.InfoWindow | null = null;
+let address = '';
 let dongName = '';
 let returnLatitude = 0;
 let returnLongitude = 0;
@@ -21,6 +25,7 @@ const loadScript = (src: string, callback: () => void) => {
 };
 
 type MapInformationProps = {
+  situation: string;
   setChooseLocation: React.Dispatch<React.SetStateAction<boolean>>;
   setButtonText: React.Dispatch<React.SetStateAction<string>>;
   options: PositionOptions;
@@ -28,7 +33,7 @@ type MapInformationProps = {
   longitude: number;
 };
 
-const MapInformation: React.FC<MapInformationProps> = ({ setChooseLocation, setButtonText, options, latitude, longitude }) => {
+const MapInformation: React.FC<MapInformationProps> = ({ situation, setChooseLocation, setButtonText, options, latitude, longitude }) => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   const handleSuccess = (position: GeolocationPosition) => {
@@ -76,10 +81,23 @@ const MapInformation: React.FC<MapInformationProps> = ({ setChooseLocation, setB
             if (status === naver.maps.Service.Status.ERROR) {
               return alert('Something Wrong');
             }
-            dongName = `${response.v2.results[0].region.area2.name} ${response.v2.results[0].region.area3.name}`;
+
+            if(response.v2.results[0]) {
+              address = `${response.v2.address.jibunAddress}`;
+              dongName = `${response.v2.results[0].region.area2.name} ${response.v2.results[0].region.area3.name}`;
+            } 
+            else {
+              address = `위치 정보가 없습니다.`
+              dongName = `위치 정보가 없습니다.`
+            }
             returnLatitude = event.coord.x;
             returnLongitude = event.coord.y;
-            contentString = `<div style='padding:10px;'><div>${dongName}</div></div>`;
+            if(situation === 'productWrite') {
+              contentString = `<div style='padding:10px;'><div>${dongName}</div></div>`;
+            }
+            else {
+              contentString = `<div style='padding:10px;'><div>${address}</div></div>`;
+            }
             infoWindow = new naver.maps.InfoWindow({
               content: contentString,
               disableAnchor: true,
@@ -131,7 +149,7 @@ const MapInformation: React.FC<MapInformationProps> = ({ setChooseLocation, setB
   );
 };
 
-const ProductMap: React.FC<Props> = ({ handleLocation, openMap }) => {
+const ProductMap: React.FC<Props> = ({ situation, setLocation, handleLocation, openMap }) => {
   const geolocationOptions = {
     enableHighAccuracy: true,
   };
@@ -140,7 +158,12 @@ const ProductMap: React.FC<Props> = ({ handleLocation, openMap }) => {
   const [buttonText, setButtonText] = useState('장소를 선택해주세요.');
 
   const handleButtonClick = () => {
-    handleLocation(dongName, returnLatitude, returnLongitude);
+    if(situation === 'productWrite' && handleLocation) {
+      handleLocation(dongName, returnLatitude, returnLongitude);
+    } 
+    else if(setLocation) {
+      setLocation({address, latitude: returnLatitude, longitude: returnLongitude});
+    }
     openMap(false);
   };
 
@@ -148,6 +171,7 @@ const ProductMap: React.FC<Props> = ({ handleLocation, openMap }) => {
     <div className={`relative`}>
       <div className={`w-[100%] h-[100%]`}>
         <MapInformation
+          situation={situation}
           setChooseLocation={setChooseLocation}
           setButtonText={setButtonText}
           options={geolocationOptions}

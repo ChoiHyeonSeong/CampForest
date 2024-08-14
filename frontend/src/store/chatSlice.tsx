@@ -37,6 +37,8 @@ const initialState: ChatState = {
     nickname: '',
     userImage: null,
     saved: false,
+    latitude: 0,
+    longitude: 0,
   },
   chatInProgressType: '일반',
   chatInProgress: [],

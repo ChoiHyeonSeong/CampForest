@@ -101,30 +101,6 @@ const Notification = ({notification}: Props) => {
             </div>
           </div>
           )
-        // 채팅 요청이 들어왔을 때(삭제 예정)
-        case 'CHAT':
-          return (
-            <div className={`flex w-full items-center`}>
-            <div className={`col-span-4 px-[0.75rem] text-sm`}>
-              <span className={`font-bold`}>
-                {notification.senderNickname}
-              </span>
-              <span>
-                님이 채팅을 시작하였습니다.
-              </span>
-              <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
-                {formatTime(notification.createdAt)}
-              </span>
-            </div>
-            <div className={`shrink-0 size-[2.75rem]`}>
-              <img 
-                src={userImage} 
-                alt="NoImg" 
-                className={`h-full border-light-border dark:border-dark-border border`}
-              />
-            </div>
-          </div>
-          )
       default:
         return null;
     }
