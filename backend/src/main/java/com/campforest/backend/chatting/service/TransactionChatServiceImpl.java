@@ -24,6 +24,8 @@ import com.campforest.backend.transaction.model.Rent;
 import com.campforest.backend.transaction.model.Sale;
 import com.campforest.backend.transaction.repository.RentRepository;
 import com.campforest.backend.transaction.repository.SaleRepository;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     private final ProductRepository productRepository;
     private final RentRepository rentRepository;
     private final SaleRepository saleRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -103,6 +106,22 @@ public class TransactionChatServiceImpl implements TransactionChatService {
             TransactionChatRoomListDto dto = convertToListDto(room,userId);
                 Long productId = transactionChatRoomRepository.findProductIdByRoomId(room.getRoomId());
                 Product product = productRepository.findById(productId).orElseThrow(()-> new IllegalArgumentException("없는 판매용품입니다"));
+
+                Users findUser = null;
+                if (room.getSellerId().equals(userId)) {
+                    findUser = userRepository.findByUserId(room.getBuyerId())
+                        .orElseThrow(() -> new IllegalArgumentException("찾는 사용자 없음"));
+                } else {
+                    findUser = userRepository.findByUserId(room.getSellerId())
+                        .orElseThrow(() -> new IllegalArgumentException("찾는 사용자 없음"));
+                }
+                dto.setUserNickName(findUser.getNickname());
+                if (findUser.getUserImage() != null) {
+                    dto.setUserProfileUrl(findUser.getUserImage().getImageUrl());
+                } else {
+                    dto.setUserProfileUrl(null);
+                }
+
                 dto.setProductId(productId);
                 dto.setProductWriter(product.getUserId());
                 dto.setUnreadCount(transactionChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
