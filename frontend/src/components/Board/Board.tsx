@@ -130,7 +130,7 @@ const Board = (props: Props) => {
   return (
     <div 
       className={`
-        flex flex-col w-full min-w-[22rem] lg:h-full lg:px-[1rem]
+        flex flex-col w-full sm:min-w-[22rem] lg:h-full lg:px-[1rem]
         bg-light-bgbasic border-light-border bg-opacity-80
         dark:bg-dark-white dark:border-dark-border dark:bg-opacity-80
         border-b rounded-md

@@ -126,7 +126,13 @@ const ProfileEdit = (props: Props) => {
   }, [optionalData])
 
   return (
-    <div className={`md:w-[40rem] md:mt-[1rem] lg:mt-[3rem] mb-[2.5rem] mx-auto p-[1.5rem] lg:p-0`}>
+    <div
+      className={`
+        md:w-[44rem] md:mt-[1rem] lg:mt-[3rem] mx-auto p-[1.5rem]
+        bg-light-white bg-opacity-80
+        sm:rounded 
+      `}
+    >
       <div 
         className={`
           flex items-center md:justify-center mb-[0.75rem] md:mb-[2.5rem] pb-[0.75rem] 
@@ -142,7 +148,7 @@ const ProfileEdit = (props: Props) => {
             cursor-pointer
           `}
         />
-        <div className={`max-md:text-[1.5rem]`}>프로필 수정</div>
+        <div className={`max-md:text-[1.5rem] hidden sm:block`}>프로필 수정</div>
       </div>
       <UserInformation />
 
@@ -161,7 +167,7 @@ const ProfileEdit = (props: Props) => {
               'border-light-black hover:bg-light-black hover:text-light-text-white dark:border-dark-black dark:hover:bg-dark-black dark:hover:text-dark-text-white' :
               'border-light-gray bg-light-gray dark:border-dark-gray dark:bg-dark-gray'
             }
-            w-[20rem] md:w-[11rem] h-[2.5rem] md:mt-[3rem]
+            w-[20rem] md:w-[11rem] h-[2.5rem] mt-[2rem]
             border-2 md:rounded-none rounded-md transition-all duration-300 font-bold 
           `}
           disabled={!isBtnActive}

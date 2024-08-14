@@ -326,7 +326,7 @@ const RegistEmail: React.FC = () => {
                 }}
                 className={`
                   ${certificationBtnClass[phoneCertificationState]}
-                   px-[1rem] py-[0.5rem]
+                  px-[1rem] py-[0.5rem]
                   text-light-white
                   dark:text-dark-white
                   text-[0.75rem] transition-all duration-300 rounded-sm 
@@ -353,7 +353,7 @@ const RegistEmail: React.FC = () => {
             <div 
               className={`
                 w-full md:w-[55%] max-md:mb-[1rem]
-                border-light-border
+                border-light-border bg-
                 dark:border-dark-border
                 border-b
               `}

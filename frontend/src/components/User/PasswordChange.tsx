@@ -39,6 +39,7 @@ const PasswordChange = () => {
               md:hidden me-[1rem]
               fill-light-border-icon
               dark:fill-dark-border-icon
+              cursor-pointer
             `}
           />
           <div className='hidden md:block'>비밀번호 변경</div>

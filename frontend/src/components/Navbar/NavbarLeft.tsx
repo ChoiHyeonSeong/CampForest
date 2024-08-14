@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { RootState, store } from '@store/store';
-import { Link } from 'react-router-dom';
-
-import NavbarLeftExtendMobile from './NavbarLeftExtendMobile';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { logout } from '@services/authService';
 
 import DarkmodeBtn from './DarkmodeBtn';
 
@@ -17,10 +17,34 @@ import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
 import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { useSelector } from 'react-redux';
-
+import { ReactComponent as LeftIcon } from '@assets/icons/arrow-right.svg'
 import ShortLogo from '@assets/logo/mini-logo.png'
 import { ReactComponent as LongLogo } from '@assets/logo/logo.svg'
+
+// 모바일 카테고리 사진
+import cateAll from '@assets/category/cate-all.png'
+import cateTent from '@assets/category/cate-tent.png'
+import cateChair from '@assets/category/cate-chair.png'
+import cateBed from '@assets/category/cate-bed.png'
+import cateTable from '@assets/category/cate-table.png'
+import cateLantern from '@assets/category/cate-lantern.png'
+import cateCook from '@assets/category/cate-cooking.png'
+import cateSafety from '@assets/category/cate-safety.png'
+import cateBurner from '@assets/category/cate-burner.png'
+import cateEtc from '@assets/category/cate-etc.png'
+
+type SubItem = {
+  title: string;
+  linkTo: string;
+  image?: string;
+};
+
+type MenuItem = {
+  title: string;
+  key: string;
+  linkTo?: string;
+  subItems?: SubItem[];
+};
 
 type Props = {
   isMenuOpen: boolean;
@@ -50,15 +74,103 @@ const NavbarLeft = (props: Props) => {
   const communityUnreadCount = useSelector((state: RootState) => state.chatStore.communityUnreadCount);
   const transactionUnreadCount = useSelector((state: RootState) => state.chatStore.transactionUnreadCount);
   const notificationState = useSelector((state: RootState) => state.notificationStore)
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.userStore);
+  const navbarRef = useRef<HTMLDivElement>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    if (isLeftSwipe) {
+      props.closeMenu();
+    }
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
+        props.closeMenu();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [props]);
+
+  const toggleMobileMenu = (menu: string) => {
+    setExpandedMenu(expandedMenu === menu ? null : menu);
+  }
+
+  const handleLogout = async () => {
+    await logout();
+    props.closeMenu();
+    window.location.reload();
+  };
+
+  const mobileMenuItems: MenuItem[] = [
+    {
+      title: '대여 / 판매',
+      key: 'rental',
+      subItems: [
+        { title: "전체", linkTo: 'product/list/all', image: cateAll },
+        { title: "텐트", linkTo: 'product/list/tent', image: cateTent },
+        { title: "의자", linkTo: 'product/list/chair', image: cateChair },
+        { title: "침낭/매트", linkTo: 'product/list/sleeping', image: cateBed },
+        { title: "테이블", linkTo: 'product/list/table', image: cateTable },
+        { title: "랜턴", linkTo: 'product/list/lantern', image: cateLantern },
+        { title: "코펠/식기", linkTo: 'product/list/cookware', image: cateCook },
+        { title: "안전용품", linkTo: 'product/list/safety', image: cateSafety },
+        { title: "버너/화로", linkTo: 'product/list/burner', image: cateBurner },
+        { title: "기타", linkTo: 'product/list/etc', image: cateEtc },
+      ]
+    },
+    {
+      title: '커뮤니티',
+      key: 'community',
+      subItems: [
+        { title: '전체보기', linkTo: 'community/all' },
+        { title: '자유게시판', linkTo: 'community/free' },
+        { title: '질문게시판', linkTo: 'community/question' },
+        { title: '캠핑장양도', linkTo: 'community/assign' },
+        { title: '레시피추천', linkTo: 'community/recipe' },
+        { title: '캠핑장비 후기', linkTo: 'community/equipment' },
+      ]
+    },
+    {
+      title: '캠핑장 찾기',
+      key: 'camping',
+      linkTo: '/camping'
+    }
+  ];
 
   return (
-    <div 
+    <div
+      ref={navbarRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       className={`
         ${isHovered && !isEitherOpen ? 'lg:w-[15rem]' : 'lg:w-[5rem]'}
         ${props.isMenuOpen ? 'translate-x-[0]' : '-translate-x-[100%] lg:translate-x-[0]'}
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
         ${props.isMenuBlocked ? 'block' : 'hidden lg:block'}
-        fixed z-[60] md:z-[40] w-[90vw] h-[100%] mb-[2.75rem] pt-[0] md:pt-[3.2rem]
+        fixed z-[60] md:z-[40] w-[82vw] h-[100%] mb-[2.75rem] pt-[0] md:pt-[3.2rem]
         bg-light-white border-light-border-1
         dark:bg-dark-white dark:border-dark-border-1
         border-r transition-all duration-300 ease-in-out
@@ -342,140 +454,139 @@ const NavbarLeft = (props: Props) => {
       {/* mobile */}
       <div 
         className={`
-          flex flex-col md:hidden  
+          flex flex-col justify-between md:hidden h-full
           bg-light-white
           dark:bg-dark-white
+          overflow-y-auto scrollbar-hide-mo
         `}
       >
-        {/* 상단 */}
-        <div className={`flex justify-between items-center h-[2.75rem]`}>
-          {/* 홈가는 로고 */}
-          <Link to='/' onClick={props.closeMenu}>
-            <BigLogoIcon 
-              className={`
-                w-[40vw] mt-[0.25rem] ps-[1.25rem]
-                fill-light-black
-                dark:fill-dark-black
-              `}
-            />
-          </Link>
-          
-          {/* 다크모드 버튼 */}
+        <div>
+          {/* 프로필부분 */}
+          <div
+            className={`
+              flex items-center justify-between h-[6.5rem] px-[1rem]
+              bg-light-bgbasic dark:bg-dark-bgbasic
+              rounded`}
+          >
+            <div className={`flex items-center w-full`}>
+              <div 
+                className={`
+                  shrink-0 flex flex-all-center size-[2.7rem] me-[1rem]
+                  border-light-border-2
+                  dark:border-dark-border-2
+                  overflow-hidden rounded-full border
+                `}
+              >
+                <img 
+                  src={user.profileImage || tempImage} 
+                  alt="Profile" 
+                  className={`size-full`}
+                />
+              </div>
+              {user.isLoggedIn ? (
+                <div className={`flex items-center justify-between w-full`}>
+                  <Link to={`/user/${user.userId}`} onClick={props.closeMenu} className={`cursor-pointer transition-all duration-100 flex items-center truncate font-medium`}>
+                    <p>{user.nickname}</p>
+                    <LeftIcon
+                      className='
+                        size-[1.1rem] ms-[0.25rem]
+                        fill-light-text
+                        dark:fill-dark-text
+                      '
+                    />
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="
+                      ml-4 text-sm text-light-text-secondary dark:text-dark-text-secondary"
+                  >
+                    로그아웃
+                  </button>
+                </div>
+              ) : (
+                <div className={`flex items-center transition-all duration-100 truncate`}>
+                  <Link to='/user/login' onClick={props.closeMenu}>
+                    로그인 해주세요
+                  </Link>
+                  <LeftIcon
+                    className='
+                      size-[1.1rem] ms-[0.25rem]
+                      fill-light-text
+                      dark:fill-dark-text
+                    '
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 하단 - 메뉴 */}
+          <div className={`w-full px-[1.5rem] mt-[1.25rem]`}>
+            {mobileMenuItems.map((item, index) => (
+              <div key={index} className="mb-[1rem]">
+                <div 
+                  className={`
+                    flex justify-between items-center h-[3.1rem] text-xl font-semibold cursor-pointer
+                    ${expandedMenu === item.key ? 'bg-light-gray dark:bg-dark-gray' : ''}
+                    rounded-md px-2 transition-colors duration-300
+                  `}
+                  onClick={() => item.subItems ? toggleMobileMenu(item.key) : (props.closeMenu(), item.linkTo && navigate(item.linkTo))}
+                >
+                  <span>{item.title}</span>
+                  {item.subItems && (
+                    <span className="text-2xl transition-transform duration-300 ease-in-out">
+                      {expandedMenu === item.key ? '-' : '+'}
+                    </span>
+                  )}
+                </div>
+                <div 
+                  className={`
+                    overflow-hidden transition-all duration-300 ease-in-out
+                    ${expandedMenu === item.key ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}
+                  `}
+                >
+                  {item.subItems && (
+                    <div className="ps-[0.75rem] mt-[0.5rem]">
+                      {item.key === 'rental' ? (
+                        <div className="grid grid-cols-2 gap-4">
+                          {item.subItems.map((subItem, subIndex) => (
+                            <Link 
+                              key={subIndex}
+                              to={subItem.linkTo}
+                              onClick={props.closeMenu}
+                              className="flex flex-col items-center"
+                            >
+                              <div className="size-[4.2rem] rounded flex items-center justify-center mb-2 overflow-hidden">
+                                {subItem.image && <img src={subItem.image} alt={subItem.title} className="size-full object-contain" />}
+                              </div>
+                              <span className="text-sm font-medium">{subItem.title}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        item.subItems.map((subItem, subIndex) => (
+                          <Link 
+                            key={subIndex}
+                            to={subItem.linkTo}
+                            onClick={props.closeMenu}
+                            className="block py-[0.5rem] text-lg px-[0.5rem] transition-colors"
+                          >
+                            {subItem.title}
+                          </Link>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* 다크모드 버튼 */}
+        <div className='flex flex-all-center mb-[1.5rem]'>
+          <p className='me-[1.5rem]'>다크모드설정</p>
           <DarkmodeBtn />
-
-          {/* 닫기 버튼 */}
-          <div className={`me-[0.75rem] cursor-pointer`} onClick={props.closeMenu}>
-            <CloseIcon 
-              className={`
-                ${props.isMenuOpen ? 'block' : 'hidden'}
-                size-[2rem]
-                fill-light-black
-                dark:fill-dark-black
-              `}
-            />
-          </div>
-        </div>
-
-        {/* 중단 */}
-        <div className={`flex justify-around items-center h-[6rem]`}>
-
-          {/* 프로필 및 로그인 로그아웃 */}
-          <div className={`flex flex-col items-center w-[46vw] text-start`}>
-            <div 
-              className={`
-                ${props.user.isLoggedIn ? 'flex' : 'hidden'}
-                flex-all-center w-[5rem]
-              `}
-            >
-              <img 
-                src={tempImage} 
-                alt={tempImage} 
-                className={`h-[2rem]`}
-              />
-            </div>
-            {props.user.isLoggedIn ? (
-              <div 
-                className={`
-                  ${isEitherOpen ? 'w-[0rem]' : 'w-[10rem]'}
-                  transition-all duration-100 flex items-center truncate
-                `}
-              >
-                {props.user.nickname}
-              </div>
-            ) : (
-              <div 
-                className={`
-                  ${isEitherOpen ? 'w-[0rem]' : 'w-[15rem]'} 
-                  flex items-center justify-center
-                  transition-all duration-100  truncate
-                `}
-              >
-                <Link to='/user/login' onClick={props.closeMenu}>
-                  로그인 해주세요
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* 채팅 아이콘 */}
-          <div className={`flex flex-all-center w-[22vw]`}>
-            <ChatIcon 
-              className={`
-                ${props.isMenuOpen ? 'block' : 'hidden'}
-                size-[2rem]
-                fill-light-black
-                dark:fill-dark-black
-              `}
-            />
-          </div>
-        </div>
-
-        {/* 하단 */}
-        <div className={`flex justify-between`}>
-          <div 
-            className={`
-              w-[50%]
-              bg-light-white
-              dark:bg-dark-white
-            `}
-          >
-            {/* 대여 판매 탭 */}
-            <div 
-              onClick={() => setSelectedExtendMenu('rental')}
-              className={`flex flex-all-center h-[2.5rem] mt-[1.5rem] mb-[2.5rem] text-xl cursor-pointer`} 
-            >
-              대여 / 판매
-            </div>
-
-            {/* 커뮤니티 탭 */}
-            <div 
-              onClick={() => setSelectedExtendMenu('community')}
-              className={`flex flex-all-center h-[2.5rem] mb-[2.5rem] text-xl cursor-pointer`}
-            >
-              커뮤니티
-            </div>
-
-            {/* 캠핑장 찾기 탭 */}
-            <Link to='/camping' onClick={props.closeMenu}>
-              <div 
-                className={`flex flex-all-center h-[2.5rem] mb-[2.5rem] text-xl cursor-pointer`}
-              >
-                캠핑장 찾기
-              </div>
-            </Link>
-          </div>
-
-          {/* navbar 확장 */}
-          <div 
-            className={`
-              w-[50%] h-[calc(100vh-7.75rem)]
-              bg-light-white
-              dark:bg-dark-white
-              overflow-y-auto scrollbar-hide
-            `}
-          >
-            <NavbarLeftExtendMobile selectedExtendMenu={selectedExtendMenu} closeMenu={props.closeMenu}/>
-          </div>
         </div>
       </div>
     </div>

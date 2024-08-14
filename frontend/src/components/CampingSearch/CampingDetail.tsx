@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 
 import { CampingDataType } from './Camping'
@@ -13,12 +13,33 @@ type Props = {
 
 const CampingDetail = (props: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   useEffect(() => {
     if (props.isModalOpen && modalRef.current) {
       modalRef.current.scrollTop = 0;
     }
   }, [props.isModalOpen]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isSwipeDown = distance < -50;
+    if (isSwipeDown) {
+      props.modalClose();
+    }
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
 
 
   const renderContent = () => {
@@ -184,18 +205,36 @@ const CampingDetail = (props: Props) => {
       {/* 모달 */}
       <div
         ref={modalRef}
-        className={`${props.isModalOpen ? 'block bg-light-black bg-opacity-80 inset-0' : 'hidden'} fixed z-[20]`}
+        className={`
+          ${props.isModalOpen ? 'block bg-black bg-opacity-90 inset-0' : 'hidden'}
+          fixed z-[20]
+        `}
         onClick={props.modalClose}
       ></div>
 
       <div
-        className={`${props.isModalOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'} ${props.isModalBlocked ? 'block' : 'hidden'} fixed lg:top-0 bottom-0 lg:right-0 z-[30] w-full lg:w-[50rem] h-[80vh] lg:h-full sm:p-[3rem] lg:p-[4rem] bg-light-white dark:bg-dark-white overflow-y-auto transform transition-transform duration-300 ease-in-out lg:translate-y-0`}
+        className={`
+          ${props.isModalOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'}
+          ${props.isModalBlocked ? 'block' : 'hidden'}
+          fixed lg:top-0 bottom-0 lg:right-0 z-[30] w-full lg:w-[50rem] h-[80vh] lg:h-full lg:p-[4rem] px-0 sm:px-[3rem]
+          bg-light-white
+          dark:bg-dark-white
+          overflow-y-auto transform transition-transform duration-300 ease-in-out lg:translate-y-0 overflow-hidden
+        `}
         onTransitionEnd={props.handleTransitionEnd}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {/* 닫기 */}
         <CloseIcon
           onClick={props.modalClose}
-          className='absolute top-[0.75rem] right-[0.75rem] size-[1.8rem] fill-light-border-icon dark:fill-dark-border-icon cursor-pointer'
+          className='
+            hidden lg:block absolute top-[0.75rem] right-[0.75rem] size-[1.8rem]
+            fill-light-border-icon
+            dark:fill-dark-border-icon
+            cursor-pointer
+          '
         />
 
         {/* 전체 내용 */}

@@ -279,9 +279,9 @@ const ProductWrite = () => {
               onChange={handleInputChange}
               className={`
                 w-full min-h-[10rem] p-[1rem]
-                bg-light-white border-light-border-3 placeholder:text-light-text-secondary
-                dark:bg-dark-white dark:border-dark-border-3 dark:placeholder:text-dark-text-secondary
-                resize-none border focus:outline-none
+                bg-light-white placeholder:text-light-text-secondary
+                dark:bg-dark-white dark:placeholder:text-dark-text-secondary
+                resize-none  focus:outline-none
               `}
               placeholder='상품에 대한 설명을 작성해주세요. &#13;&#10;상세한 설명과 사진은 판매 및 대여에 도움이 됩니다.'
             />
@@ -301,7 +301,7 @@ const ProductWrite = () => {
           <div className={`mb-[1.5rem]`}>
             <div 
               className={`
-                my-[0.25rem] 
+                my-[0.5rem] 
                 font-medium
               `}
             >
@@ -312,10 +312,10 @@ const ProductWrite = () => {
                 <div 
                   key={button} 
                   className={`
-                    ${selectedButton === button ? 'bg-light-signature dark:bg-dark-signature text-light-white dark:text-dark-white' : ''}
+                    ${selectedButton === button ? 'bg-light-signature dark:bg-dark-signature text-white' : ''}
                     me-[1rem] px-[2rem] py-[0.15rem]
-                    border-light-border
-                    dark:border-dark-border
+                    border-light-border-2 
+                    dark:border-dark-border-2
                     border cursor-pointer
                   `}
                   onClick={() => handleButtonClick(button)}>{button}</div>
@@ -410,9 +410,9 @@ const ProductWrite = () => {
               onClick={() => openMap(true)} 
               className={`
                 flex w-1/2 px-[0.5rem] py-[0.25rem] 
-                border-light-border
-                dark:border-dark-border
-                border
+                bg-light-white
+                dark:bg-dark-white
+                cursor-pointer
               `}
             >
               <LocationIcon

@@ -124,15 +124,15 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
   return (
     <div
       className={`
-        px-[1rem] py-[1.5rem]
+        w-full
         dark:bg-dark-white dark:bg-opacity-80
       `}
     >
-      <div className={`flex`}>
+      <div className={`flex items-center`}>
         {/* 프로필사진 */}
         <div 
           className={`
-            flex items-center justify-center relative size-[4rem] md:size-[5rem] me-[1.5rem]
+            flex items-center justify-center relative size-[3.6rem] sm:size-[5rem] me-[1rem]
             border-light-border
             dark:border-dark-border
             rounded-full border-[0.1rem] overflow-hidden
@@ -148,13 +148,13 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
         </div>
 
         {/* 닉네임, 팔로우, 프로필 수정 */}
-        <div className={`w-[calc(100%-6rem)] md:w-[calc(100%-7rem)] lg:w-[calc(100%-8rem)] py-[0.75rem]`}>
+        <div className={`w-[calc(100%-6rem)] md:w-[calc(100%-7rem)] lg:w-[calc(100%-8rem)] py-[0.5rem]`}>
           <div className={`flex justify-between`}>
             <div className={`flex items-center`}>
               <div 
                 className={`
                   me-[1.25rem]
-                  font-medium text-sm md:text-lg 
+                  font-semibold text-[0.94rem] md:text-lg 
                 `}
               >
                 {userinfo?.nickname}
@@ -239,7 +239,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
         {userinfo?.introduction}
       </div>
       {/* 거래불꽃온도 */}
-      <div className={`w-full mt-[1.5rem] mb-[0.75rem] ms-[0.5rem] px-[1rem]`}>
+      <div className={`w-full my-[1rem] px-[0.5rem]`}>
         <div className={`flex`}>
           <div 
             className={`

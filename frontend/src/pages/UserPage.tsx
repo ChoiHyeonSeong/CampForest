@@ -76,10 +76,10 @@ const UserPage = () => {
       </div>
 
       {/* 유저 메인 페이지 */}
-      <div className={`flex justify-center min-h-[100vh]`}>
+      <div className={`flex justify-center min-h-screen bg-light-white dark:bg-dark-text-white`}>
         <div
           className={`
-            w-[100%] lg:w-[50rem] mt-[1.5rem] p-[1.5rem] lg:p-0
+            w-[100%] lg:w-[50rem] lg:mt-[1.5rem] max-lg:px-[1.25rem] max-lg:py-[0.75rem]
           `}
         >
           <h3
@@ -104,7 +104,7 @@ const UserPage = () => {
             />
 
             {/* 목록 */}
-            <div className={`w-[100%] h-[14rem]`}>
+            <div className={`w-[100%]`}>
               <Routes>
                 <Route path='/' element={<UBoard />} />
                 <Route path='/product' element={<UProduct />} />
