@@ -571,9 +571,11 @@ function CampingSearch() {
   useEffect(() => {
     const contentBox = document.querySelector('#contentBox') as HTMLElement;
     if (isModalOpen) {
-      contentBox.classList.add('md:scrollbar-hide-mo')
+      contentBox.classList.add('md:scrollbar-hide')
+      contentBox.classList.add('lg:scrollbar-hide-mo')
     } else {
-      contentBox.classList.remove('md:scrollbar-hide-mo')
+      contentBox.classList.remove('md:scrollbar-hide')
+      contentBox.classList.remove('lg:scrollbar-hide-mo')
     }
   }, [isModalOpen])
 
@@ -592,7 +594,7 @@ function CampingSearch() {
         >
               
           {/* 캠핑지도 */}
-          <div className='relative w-full lg:min-w-[400px] lg:max-w-[50rem] h-[30rem] lg:h-full lg:aspect-auto'>
+          <div className='relative w-full lg:min-w-[400px] lg:max-w-[50rem] lg:h-full aspect-[16/9] lg:aspect-auto'>
             <div 
               className={`
                z-[0] w-[100%] h-[100%]
