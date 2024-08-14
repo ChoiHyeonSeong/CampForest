@@ -53,23 +53,6 @@ public class ReviewService {
 			.modifiedAt(LocalDateTime.now())
 			.build();
 
-		if (reviewRequestDto.getProductType() == ProductType.SALE) {
-			Sale sale = saleRepository.findById(reviewRequestDto.getTransactionId())
-				.orElseThrow(() -> new IllegalArgumentException("판매 거래를 찾을 수 없습니다."));
-			if (!sale.isFullyConfirmed()) {
-				throw new IllegalArgumentException("거래가 완료되지 않았습니다.");
-			}
-			review.setSale(sale);
-		} else if (reviewRequestDto.getProductType() == ProductType.RENT) {
-			Rent rent = rentRepository.findById(reviewRequestDto.getTransactionId())
-				.orElseThrow(() -> new IllegalArgumentException("대여 거래를 찾을 수 없습니다."));
-			if (!rent.isFullyConfirmed()) {
-				throw new IllegalArgumentException("거래가 완료되지 않았습니다.");
-			}
-			review.setRent(rent);
-		} else {
-			throw new IllegalArgumentException("유효하지 않은 ProductType입니다.");
-		}
 
 		Review savedReview = reviewRepository.save(review);
 
