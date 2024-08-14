@@ -1,4 +1,5 @@
-import { setIsChatOpen } from '@store/chatSlice';
+import { checkRentable } from '@services/chatService';
+import { setExcludeDates, setIsChatOpen } from '@store/chatSlice';
 import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
 import { RootState, store } from '@store/store';
 import React from 'react';
@@ -17,6 +18,11 @@ const ProductInfoChat = (props: Props) => {
   const product = useSelector((state: RootState) => state.chatStore.product);
   const saleStatus = useSelector((state: RootState) => state.chatStore.saleStatus);
   const reviewState = useSelector((state: RootState) => state.reviewStore);
+
+  async function fetchExcludeDates () {
+    const response = await checkRentable(product.productId);
+    dispatch(setExcludeDates(response));
+  }
 
   return (
     <div
@@ -108,6 +114,7 @@ const ProductInfoChat = (props: Props) => {
         text-white rounded cursor-pointer
       "
           onClick={() => {
+            fetchExcludeDates();
             props.setModalType('request');
             props.setModalOpen(true);
           }}

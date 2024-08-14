@@ -67,7 +67,9 @@ const UserReviewList = (props: Props) => {
           <div
             onClick={() => setWritten(true)}
             className={`
+              ${myPage ? '' : 'hidden'}
               ${written ? 'font-bold' : 'text-light-text-secondary'}
+              me-[2.5rem]
               flex items-center
             `}
           >
@@ -84,14 +86,12 @@ const UserReviewList = (props: Props) => {
           <div 
             onClick={() => setWritten(false)}
             className={`
-            ${!myPage ? 'hidden' : ''}
-              flex items-center ms-[2.5rem]
+              flex items-center
             `}
           >
             <span
               className={`
                 ${!written ? 'font-bold' : 'text-light-text-secondary'}
-                ms-[0.5rem]
                 text-[0.875rem]
               `}
             >
