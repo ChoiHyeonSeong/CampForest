@@ -268,7 +268,7 @@ public class BoardController {
         }
     }
 
-    //게시글 이미지 저장
+    //게시글 이미지 수정
     @PostMapping("/modifyImage")
     public List<String> modifyImage(
         @RequestPart(value = "files", required = false) MultipartFile[] files
@@ -294,7 +294,7 @@ public class BoardController {
     public ApiResponse<?> modifyBoard(
             Authentication authentication,
             @RequestParam Long boardId,
-            @RequestPart(value = "boardRequestDto") BoardRequestDto boardRequestDto) {
+            @RequestBody BoardRequestDto boardRequestDto) {
         try {
             Users user = userService.findByEmail(authentication.getName())
                     .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
