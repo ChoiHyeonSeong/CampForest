@@ -1,61 +1,79 @@
 import React, { useState, useRef, useEffect } from 'react'
 import CampingReview from './CampingReview'
 import { userGetProfile } from '@services/userService'
-import CampingReviewWrite, { User, Review } from './CampingReviewWrite'
+import CampingReviewWrite from './CampingReviewWrite'
 import { AxiosResponse } from 'axios'
 
-type UserProfileResponse = {
-  data: User;
-  message: string;
-  status: string;
+import { campingLoadReviews, campingReviewWrite, campingReviewDelete } from '@services/campingService'
+import { useSelector, useDispatch } from 'react-redux'
+import { RootState } from '@store/store'
+import { setIsLoading } from '@store/modalSlice'
+
+export type Review = {
+  reviewId: number;
+  content: string;
+  rate: number;
+  nickname: string;
+  profileImage: string;
+  userId: number;
+  createdAt: string;
 }
-type Props = {}
+
+type Props = {
+  isModalOpen: boolean;
+  campsiteId: number;
+  updateFunction: (campsiteId: number) => void;
+}
 
 const CampingReviewList = (props: Props) => {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.userStore)
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const reviewWriteRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response: AxiosResponse<UserProfileResponse> = await userGetProfile();
-        console.log("User data received:", response.data.data);  // 디버깅을 위한 로그
-        setCurrentUser(response.data.data);
-      } catch (error) {
-        console.error('Failed to get current user:', error);
-        setError('사용자 정보를 가져오는데 실패했습니다.');
-        setCurrentUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCurrentUser();
-  }, []);
-
-  const addReview = (newReview: Omit<Review, 'id' | 'author' | 'profileImage' | 'userId' | 'date'>) => {
-    if (!currentUser) {
-      alert('로그인 후 리뷰를 작성할 수 있습니다.');
-      return;
-    }
-    const review: Review = {
-      ...newReview,
-      id: Date.now(),
-      author: currentUser.nickname,
-      profileImage: currentUser.profileImage,
-      userId: currentUser.userId,
-      date: new Date().toLocaleDateString()
-    };
-    console.log("New review being added:", review);  // 디버깅을 위한 로그
-    setReviews(prevReviews => [review, ...prevReviews]);
+  const fetchCampingReviews = async () => {
+    try {
+      const response = await campingLoadReviews(props.campsiteId)
+      console.log(response)
+      setReviews(response.data.data)
+    } catch (error) {
+      console.log(error)
+    }   
   };
 
+  useEffect(() => {
+    if (props.isModalOpen) {
+      fetchCampingReviews()
+    }
+  }, [props.isModalOpen]);
+
+  const writeReview = async (content: string, rate: number) => {
+    try {
+      dispatch(setIsLoading(true))
+      const response = await campingReviewWrite(props.campsiteId, content, rate)
+      console.log(response)
+      await fetchCampingReviews()
+      props.updateFunction(props.campsiteId)
+      dispatch(setIsLoading(false))
+    } catch (error) {
+      dispatch(setIsLoading(false))
+      console.log(error) 
+    }
+  }
+
+  const deleteReview = async (reviewId: number) => {
+    try {
+      const response = await campingReviewDelete(reviewId)
+      console.log(response)
+      await fetchCampingReviews()
+      props.updateFunction(props.campsiteId)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleWriteClick = () => {
-    if (!currentUser) {
+    if (!user.isLoggedIn) {
       alert('로그인 후 리뷰를 작성할 수 있습니다.');
       return;
     }
@@ -67,14 +85,6 @@ const CampingReviewList = (props: Props) => {
       }
     }, 500);
   };
-
-  if (isLoading) {
-    return <p>로딩 중...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
 
   return (
     <div className=''>
@@ -109,7 +119,7 @@ const CampingReviewList = (props: Props) => {
           {reviews.length > 0 ? (
           <div>
             {reviews.map(review => (
-              <CampingReview key={review.id} review={review} />
+              <CampingReview key={review.reviewId} review={review} deleteFunction={deleteReview}/>
             ))}
           </div>
           ) : (
@@ -127,7 +137,7 @@ const CampingReviewList = (props: Props) => {
         dark:bg-dark-bgbasic
         '
         ref={reviewWriteRef}>
-        <CampingReviewWrite addReview={addReview} currentUser={currentUser} />
+        <CampingReviewWrite writeReview={writeReview} isLoggedin={user.isLoggedIn} />
       </div>
       
     </div>

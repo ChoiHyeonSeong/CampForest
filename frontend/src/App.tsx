@@ -27,6 +27,7 @@ import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
 import LandingPage from '@pages/LandingPage';
 import LightMode from '@components/Public/LightMode';
+import ForestBg from '@components/Public/ForestBg'
 import useSSE from '@hooks/useSSE';
 
 function App() {

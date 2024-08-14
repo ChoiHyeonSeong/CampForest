@@ -4,7 +4,7 @@ import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.sv
 import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsBoardWriteModal } from '@store/modalSlice'
-import { boardModifyImageUpload } from '@services/boardService'
+import { boardModifyImageUpload, boardModify } from '@services/boardService'
 import { RootState } from '@store/store'
 
 import MultiImageUpload from '@components/Public/MultiImageUpload'
@@ -31,6 +31,10 @@ const BoardModify = () => {
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
   const [boardImages, setBoardImages] = useState<File[]>([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
+  const [prevImages, setPrevImages] = useState<string[]>([
+    'https://s3.amazonaws.com/campforest/picture/1ed6e2f2-3a7b-4331-b4ef-c555582dfd3a_spring.PNG', 
+    'https://s3.amazonaws.com/campforest/picture/2fbe89d2-d16e-49dc-bf62-7cd3db3fecd4_spring.PNG',
+    'https://s3.amazonaws.com/campforest/picture/7832188e-71e8-4a0b-84c6-b61f3029cfc0_camp2.png'])
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,10 +44,13 @@ const BoardModify = () => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
-
+    console.log(title, content, category, boardOpen, boardImages)
     try {
-      const response = await boardModifyImageUpload(boardImages);
-      console.log(response)
+      const response1 = await boardModifyImageUpload(boardImages);
+      const newImagesUrls = [...prevImages, ...response1.data]
+      console.log(219, '타이틀수정테스트', '타이틀수정테스트', 'equipment', true, newImagesUrls)
+      const response2 = await boardModify(219, 947, '타이틀수정테스트', '타이틀수정테스트', 'equipment', true, newImagesUrls)
+      console.log(response2)
     } catch (error) {
       console.log(error)
     } finally {

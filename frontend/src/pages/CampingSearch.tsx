@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
 import { ReactComponent as FilterIcon } from '@assets/icons/filter3.svg';
@@ -25,7 +25,7 @@ type SelecetedLocType = {
 }
 
 type FilterCondition = {
-  type: 'location' | 'induty' | 'lctCl' | 'sbrsCl' | 'posblFcltyCl' | 'animalCmgCl';
+  type: 'location' | 'induty' | 'lctCl' | 'sbrsCl' | 'posblFcltyCl' | 'animalCmgCl' | 'facltNm';
   value: string;
 };
 
@@ -55,18 +55,44 @@ function CampingSearch() {
   const [map, setMap] = useState<naver.maps.Map | null>(null);
 
   const [isDetailFilterOpen, setIsDetailFilterOpen] = useState(false);
-
   const initialDetailFilters: DetailFilterType = {};
-  // filterCategories 배열을 순회하며 초기값을 설정
   filterCategories.forEach(category => {
-    initialDetailFilters[category.name] = ["전체"]; // 모든 카테고리의 초기값을 "전체"로 설정
+    initialDetailFilters[category.name] = ["전체"];
   });
   const [detailFilters, setDetailFilters] = useState<DetailFilterType>(initialDetailFilters);
+
+  const [inputText, setInputText] = useState('');
 
   const [campingData, setCampingData] = useState<CampingDataType[]>([]);
   const [filteredData, setFilteredData] = useState<CampingDataType[]>([]);
   const [visibleCount, setVisibleCount] = useState(10); // 처음에 보여줄 camping 개수
   const [selectedCampingData, setSelectedCampingData] = useState<CampingDataType | null>(null);
+
+
+  // 검색 text 필터에 추가
+  const setSearchText = () => {
+    setFilterCondition(prevConditions => {
+      // 이전의 Location 타입 조건을 제거
+      const updatedConditions = prevConditions.filter(condition => condition.type !== 'facltNm');
+      updatedConditions.push({
+        type: 'facltNm',
+        value: inputText
+      });
+      console.log(inputText)
+      return updatedConditions;
+    });
+  }
+
+  // 엔터키 처리
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setSearchText()
+    }
+  }
+  // 검색 버튼 클릭 처리
+  const handleSearchClick = () => {
+    setSearchText()
+  }
 
   const handleSelect = (city: string, districts: string[]) => {
     setSelectedLocation({ city, districts });
@@ -236,7 +262,7 @@ function CampingSearch() {
   useEffect(() => {
     setFilterCondition(prevConditions => {
       // 이전의 Filter 타입 조건을 제거
-      const updatedConditions = prevConditions.filter(condition => condition.type === 'location');
+      const updatedConditions = prevConditions.filter(condition => condition.type === 'location' || condition.type ==='facltNm');
 
       // 새로운 조건 추가
       Object.keys(detailFilters).forEach(key => {
@@ -286,6 +312,9 @@ function CampingSearch() {
             const doNmMatch = camping.doNm ? camping.doNm.includes(doNm) : false;
             const sigunguNmMatch = camping.sigunguNm ? camping.sigunguNm.includes(sigunguNm) : false;
             return doNmMatch && sigunguNmMatch; // 둘 다 만족해야 함
+          } else if (condition.type === 'facltNm') {
+            // facltNm 필터링
+            return camping.facltNm ? camping.facltNm.includes(condition.value) : false;
           } else {
             // 다른 조건 필터링
             const campingValue = camping[condition.type];
@@ -401,11 +430,33 @@ function CampingSearch() {
     console.log(filteredData)
   }, [filteredData])
 
+  const updateSingleCampingRating = async (campsiteId: number) => {
+    try {
+      const response = await campingLoadRating([campsiteId]);
+      const ratingData: Rating = response.data.data[0]; // 단일 캠핑장 데이터만 가져옴
+  
+      setFilteredData(prevData =>
+        prevData.map(camping => {
+          if (camping.campsiteId === campsiteId) {
+            return {
+              ...camping,
+              averageRate: ratingData ? ratingData.averageRate : 0,
+              reviewCount: ratingData ? ratingData.reviewCount : 0
+            };
+          }
+          return camping;
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className={`z-[30]`}>
       {/* 메인 화면 */}
-      <div className={`flex flex-col justify-center items-center min-h-screen md:py-[2rem] lg:py-0 lg:px-[2rem]`}>
-        <h2 className='hidden md:block w-[100%] md:max-w-[48rem] lg:max-w-[80rem] font-bold text-4xl mb-[1.8rem]'>캠핑장 검색</h2>
+      <div className={`flex flex-col justify-center items-center min-h-screen`}>
+        <h2 className='w-[100%] md:max-w-[48rem] lg:max-w-[80rem] font-bold text-4xl mb-[1.8rem]'>캠핑장 검색</h2>
         <div 
           className={`
             flex flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[42rem] p-[0.75rem] mx-[0.5rem]
@@ -416,7 +467,7 @@ function CampingSearch() {
         >
               
           {/* 캠핑지도 */}
-          <div className='relative w-full lg:w-[40%] h-[20rem] sm:h-[24rem] lg:h-full'>
+          <div className='relative w-full lg:min-w-[400px] lg:max-w-[50rem] h-[30rem] lg:h-full lg:aspect-auto'>
             <div 
               className={`
                z-[0] w-[100%] h-[100%]
@@ -436,39 +487,46 @@ function CampingSearch() {
           
           {/* 캠핑장리스트 */}
           <div
-            className={`flex flex-col w-full lg:w-[60%] lg:h-full lg:ms-[1rem] mt-[0.75rem] lg:mt-0`}>
+            className={`flex flex-col w-full lg:min-w-[470px] lg:h-full lg:ms-[1rem] mt-[0.75rem] lg:mt-0`}>
             
             {/* 검색창 */}
-            <div className={`h-[3rem] mb-[0.75rem]`}>
-              <div className={`relative w-[100%]`}>
-                <div className={`absolute left-[0.75rem] top-[0.9rem]`}>
-                  <SearchIcon
-                    className={`
-                      size-[1rem]
-                      stroke-light-border-icon
-                      dark:stroke-dark-border-icon
-                    `} 
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="검색어를 입력하세요."
-                  className={`
-                    w-[100%] px-[3rem] py-[0.75rem]
-                    bg-light-gray
-                    dark:bg-dark-gray
-                    text-sm focus:outline-0 rounded-md
-                  `}
+            <div
+              className='
+                flex justify-between items-center w-full h-fit mb-[0.5rem] px-[0.5rem] py-[0.5rem]
+                text-light-text bg-light-gray
+                dark:text-dark-text dark:bg-dark-gray
+                rounded
+              '
+            >
+              <div className='flex items-center w-full'>
+                <SearchIcon
+                  className='
+                    shrink-0 size-[1.2rem] md:size-[1.2rem] me-[1rem]
+                    stroke-light-border-icon
+                    dark:stroke-light-dark-icon
+                    cursor-pointer
+                  '
                 />
-                <div className={`absolute right-[0.75rem] top-[0.75rem]`}>
-                  <CloseIcon
-                    className={`
-                      size-[1.25rem]
-                      fill-light-gray
-                      dark:fill-dark-gray
-                    `}
-                  />
-                </div>
+                <input
+                  placeholder='두글자 이상 입력해주세요.'
+                  className='w-full outline-none bg-transparent'
+                  value={inputText}
+                  onChange={e => {
+                    setInputText(e.target.value);
+                  }} 
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <div
+                className='
+                  shrink-0 ps-[1.5rem] pe-[0.5rem]
+                  text-light-text-secondary
+                  dark:text-dark-text-secondary
+                  cursor-pointer font-semibold
+                '
+                onClick={handleSearchClick}
+              >
+                검색
               </div>
             </div>
 
@@ -511,7 +569,7 @@ function CampingSearch() {
             </div>
             
             {/* 선택한 태그를 띄우기 */}
-            <div className="flex flex-wrap gap-2 mt-2 mb-[1rem]">
+            <div className="flex flex-wrap gap-2 mt-2 mb-2">
               {selectedLocation && selectedLocation.city !== '전체' && (
                 selectedLocation.districts.includes('전체') ? (
                   <div className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
@@ -548,8 +606,9 @@ function CampingSearch() {
             {/* 캠핑리스트 목록 */}
             <div
               className={`
-                flex-grow p-[0.5rem]
-
+                flex-grow
+                bg-light-white
+                dark:bg-dark-white
                 overflow-y-auto
               `}
               id='campingList'
@@ -596,6 +655,7 @@ function CampingSearch() {
         modalClose={modalClose}
         handleTransitionEnd={handleTransitionEnd}
         selectedData={selectedCampingData}
+        updateFunction={updateSingleCampingRating}
       />
     </div>
   );

@@ -9,6 +9,7 @@ type Props = {
   modalClose: () => void;
   handleTransitionEnd: () => void;
   selectedData: CampingDataType | null;
+  updateFunction: (campsiteId: number) => void;
 }
 
 const CampingDetail = (props: Props) => {
@@ -193,7 +194,7 @@ const CampingDetail = (props: Props) => {
 
           {/* 캠핑장 후기 */}
           <div className='my-[2rem]'>
-            <CampingReviewList />
+            <CampingReviewList isModalOpen={props.isModalOpen} campsiteId={props.selectedData.campsiteId} updateFunction={props.updateFunction}/>
           </div>
         </div>
       </>
@@ -206,7 +207,7 @@ const CampingDetail = (props: Props) => {
       <div
         ref={modalRef}
         className={`
-          ${props.isModalOpen ? 'block bg-black bg-opacity-90 inset-0' : 'hidden'}
+          ${props.isModalOpen ? 'block bg-black bg-opacity-60 inset-0' : 'hidden'}
           fixed z-[20]
         `}
         onClick={props.modalClose}

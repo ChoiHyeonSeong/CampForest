@@ -105,8 +105,8 @@ const SearchPage = () => {
             text-light-text bg-light-gray
             dark:text-dark-text dark:bg-dark-gray
             font-medium text-lg rounded
-            '
-          >
+          '
+        >
           <div className='flex items-center w-full'>
             <SearchIcon
               className='
