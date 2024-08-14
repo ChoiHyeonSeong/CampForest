@@ -62,7 +62,7 @@ const ProductList = () => {
 
   // 상태 관리
   const [products, setProducts] = useState<ProductType[]>([]);
-  const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+  // const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [nextPageExist, setNextPageExist] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -415,7 +415,7 @@ const ProductList = () => {
           />
               
 
-          <button
+          {/* <button
             className={`px-[1rem] py-[0.5rem] text-sm font-medium duration-200 cursor-pointer rounded-md shadow-sm ${
               showAvailableOnly
                 ? 'bg-light-signature dark:bg-dark-signature text-light-white'
@@ -424,7 +424,7 @@ const ProductList = () => {
             onClick={() => setShowAvailableOnly(!showAvailableOnly)}
           >
             거래 가능
-          </button>
+          </button> */}
         </div>
 
 
