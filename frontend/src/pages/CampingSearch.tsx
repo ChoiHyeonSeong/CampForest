@@ -632,7 +632,6 @@ function CampingSearch() {
                     shrink-0 size-[1.2rem] md:size-[1.2rem] me-[1rem]
                     stroke-light-border-icon
                     dark:stroke-light-dark-icon
-                    cursor-pointer
                   '
                 />
                 <input

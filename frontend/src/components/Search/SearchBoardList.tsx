@@ -6,6 +6,9 @@ import NoResultSearch from '@components/Search/NoResultSearch'
 
 import { useInView } from 'react-intersection-observer';
 
+import BoardDetail from '@components/Board/BoardDetail';
+import BoardModify from '@components/Board/BoardModify';
+
 type Props = {
   searchText: string;
 }
@@ -18,6 +21,11 @@ const SearchBoardList = (props: Props) => {
   const [nextPageExist, setNextPageExist] = useState(true);
 
   const nextCursorRef = useRef<number | null>(null)
+
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isModifyOpen, setIsModyfyOpen] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
+  const [selectedModifyId, setSelectedModifyId] = useState<number | null>(null);
 
   const fetchBoardList = useCallback(async () => {
     if (props.searchText.length < 2) {
@@ -57,8 +65,111 @@ const SearchBoardList = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
 
+
+
+  // 보드 추가한 로직
+  const pageReload = () => {
+    nextCursorRef.current = null
+    setBoardList([]);
+    setNextPageExist(true);
+    
+    fetchBoardList()
+  }
+
+  const detailClose = () => {
+    setIsDetailOpen(false)
+  }
+
+  const detailOpen = (selectedId: number) => {
+    const selected = boardList.find(board => {
+      return Number(board.boardId) === selectedId
+    })
+    if (selected) {
+      setSelectedDetail(selected)
+      setIsDetailOpen(true)
+    }
+  }
+
+  const updateComment = async (boardId: number, commentCount: number) => {
+    setBoardList(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, commentCount: commentCount}
+          : board
+      )
+    );
+  }
+
+  const updateLike = async (boardId: number, isLiked: boolean, likedCount: number) => {
+    setBoardList(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, likeCount: likedCount, liked: isLiked } // 좋아요 수를 1 증가시킴
+          : board
+      )
+    );
+  };
+
+  const updateSaved = async (boardId: number, isSaved: boolean) => {
+    setBoardList(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, saved: isSaved }
+          : board
+      )
+    );
+  }
+
+  // 게시글 선택 시 detail 창 열기
+  useEffect(() => {
+    const selected = boardList.find(board => {
+      return Number(board.boardId) === selectedDetail?.boardId
+    })
+    if (selected) {
+      setSelectedDetail(selected)
+    }
+  }, [boardList])
+
+  // Detail 창이 열리면 바깥 스크롤 바 숨김
+  useEffect(() => {
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    if (isDetailOpen) {
+      contentBox.classList.add('md:scrollbar-hide')
+    } else {
+      contentBox.classList.remove('md:scrollbar-hide')
+    }
+  }, [isDetailOpen])
+
+  const handleModify = (boardId: number) => {
+    setSelectedModifyId(boardId)
+    setIsModyfyOpen(true)
+  }
+
+  const modifyClose = () => {
+    setIsModyfyOpen(false)
+  }
+
   return (
     <div>
+      {/* 디테일 모달 */}
+      {
+        isDetailOpen && selectedDetail !== null ? (
+          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved} modifyOpen={handleModify}/>
+        ) : (
+          <></>
+        )
+      }
+
+      {/* 수정하기 모달 */}
+      {
+        isModifyOpen && selectedModifyId !== null ? (
+          <BoardModify selectedModifyId={selectedModifyId} modifyClose={modifyClose} isModifyOpen={isModifyOpen}/>
+        ) : (
+          <></>
+        )
+      }
+
+
       <p className='font-medium text-lg md:text-xl'>
         커뮤니티
         <span className='ms-[0.5rem] font-bold'>
@@ -69,7 +180,7 @@ const SearchBoardList = (props: Props) => {
       {/* 검색결과 출력 */}
       {boardList.length > 0 ? 
         boardList.map((board) =>
-          <SearchBoard key={board.boardId} board={board}/>  
+          <SearchBoard key={board.boardId} board={board} detailOpen={detailOpen}/>  
         ) :
         <NoResultSearch searchText={props.searchText} />
       }

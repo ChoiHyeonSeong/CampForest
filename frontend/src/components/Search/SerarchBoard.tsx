@@ -15,6 +15,7 @@ export type BoardType = {
 
 type Props = {
   board: BoardType
+  detailOpen: (selectedId: number) => void;
 }
 
 const SerarchBoard = (props: Props) => {
@@ -29,13 +30,14 @@ const SerarchBoard = (props: Props) => {
 
   return (
     <div
+      onClick={() => props.detailOpen(props.board.boardId)}
       className='
         flex justify-between items-center w-full px-[0.5rem] md:px-[1rem] py-[1.5rem] mb-[0.5rem]
         border-light-border-1 bg-light-white bg-opacity-80
         dark:border-dark-border-1 dark:bg-dark-white dark:bg-opacity-80
-        border-b rounded
+        border-b rounded cursor-pointer
         '
-      >
+    >
       {/* 게시물 내용 */}
       <div>
         {/* 게시물 제목 */}

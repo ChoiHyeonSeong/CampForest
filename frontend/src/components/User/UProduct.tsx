@@ -233,26 +233,6 @@ const UProduct = (props: Props) => {
               관심 {totalLikedProductCnt}
             </span>
           </div>
-          {/* 필터 */}
-          <div className="flex justify-end absolute right-0">
-            <div className="flex items-center ms-auto me-[4rem] px-[0.5rem] text-sm">
-              <div
-                className={`
-                ms-[0.5rem]
-                text-[0.875rem]
-              `}
-              >
-                필터
-              </div>
-              <FilterIcon
-                className={`
-                size-[1.25rem] ms-[0.5rem] 
-                fill-light-border-icon 
-                dark:fill-dark-border-icon
-              `}
-              />
-            </div>
-          </div>
         </div>
       </div>
       <div 
