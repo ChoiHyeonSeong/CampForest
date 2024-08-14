@@ -206,7 +206,7 @@ const CampingDetail = (props: Props) => {
       <div
         ref={modalRef}
         className={`
-          ${props.isModalOpen ? 'block bg-black bg-opacity-90 inset-0' : 'hidden'}
+          ${props.isModalOpen ? 'block bg-black bg-opacity-60 inset-0' : 'hidden'}
           fixed z-[20]
         `}
         onClick={props.modalClose}
