@@ -69,13 +69,13 @@ public class ProductService {
 			.orElseThrow(() -> new IllegalArgumentException("유저 없음요 "));
 
 		findProduct.incrementHit(); // 조회수 증가
-
+		Long temperature =user.getTemperature();
 		productRepository.save(findProduct); // 변경 사항 저장
 
 		List<String> imageUrls = findProduct.getProductImages()
 			.stream().map(ProductImage::getImageUrl)
 			.collect(Collectors.toList());
-		return new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
+		return new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage(),temperature);
 	}
 
 	//게시물 조회기능
@@ -85,7 +85,7 @@ public class ProductService {
 
 		Users user = userRepository.findById(findProduct.getUserId())
 			.orElseThrow(() -> new IllegalArgumentException("유저 없음요 "));
-
+		Long temperature =user.getTemperature();
 		findProduct.incrementHit(); // 조회수 증가
 		productRepository.save(findProduct); // 변경 사항 저장
 
@@ -101,7 +101,7 @@ public class ProductService {
 			}
 		}
 		System.out.println(isSaved);
-		ProductDetailDto productDetailDto = new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage());
+		ProductDetailDto productDetailDto = new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage(),temperature);
 		productDetailDto.setSaved(isSaved);
 
 		return productDetailDto;
