@@ -38,14 +38,17 @@ type Props = {
 }
 
 const NavbarLeft = (props: Props) => {
-  const isEitherOpen: boolean = (props.isExtendRentalOpen ||
-                                 props.isExtendCommunityOpen || 
-                                 props.isExtendChatOpen ||
-                                 props.isExtendNotificationOpen ||
-                                 props.isExtendSearchOpen);
+  const isEitherOpen: boolean = (
+    props.isExtendRentalOpen ||
+    props.isExtendCommunityOpen || 
+    props.isExtendChatOpen ||
+    props.isExtendNotificationOpen ||
+    props.isExtendSearchOpen
+  );
   const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const totalUnreadCount = useSelector((state: RootState) => state.chatStore.totalUnreadCount);
+  const communityUnreadCount = useSelector((state: RootState) => state.chatStore.communityUnreadCount);
+  const transactionUnreadCount = useSelector((state: RootState) => state.chatStore.transactionUnreadCount);
   const notificationState = useSelector((state: RootState) => state.notificationStore)
 
   return (
@@ -223,14 +226,14 @@ const NavbarLeft = (props: Props) => {
                   dark:fill-dark-border-icon
                 `} 
                 />
-                {totalUnreadCount > 0 && 
+                {(transactionUnreadCount + communityUnreadCount) > 0 && 
                   <div 
                     className='flex items-center justify-center absolute right-[0.75rem] top-0 min-w-[1rem] 
                     bg-light-warning text-light-white
                     dark:bg-dark-warning dark:text-dark-white
                     text-sm rounded-full'
                   >
-                    {totalUnreadCount}
+                    {transactionUnreadCount + communityUnreadCount}
                 </div>
                 }
             </div>

@@ -1,6 +1,18 @@
-import { transactionChatDetail } from "@services/chatService";
+import { ChatUserType } from "@components/Chat/ChatUser";
+import { communityChatList, transactionChatDetail, transactionChatList } from "@services/chatService";
 import { getNotificationList } from "@services/notificationService";
-import { addMessageToChatInProgress, setChatInProgress, setSaleStatus, updateCommunityChatUserList, updateMessageReadStatus, updateTransactionChatUserList } from "@store/chatSlice";
+import { 
+  addMessageToChatInProgress, 
+  setChatInProgress, 
+  setCommunityChatUserList, 
+  setCommunityUnreadCount, 
+  setSaleStatus, 
+  setTransactionChatUserList, 
+  setTransactionUnreadCount, 
+  updateCommunityChatUserList, 
+  updateMessageReadStatus, 
+  updateTransactionChatUserList
+} from "@store/chatSlice";
 import { addNewNotification, setNotificationList } from "@store/notificationSlice";
 import { RootState, store } from "@store/store";
 import { useWebSocket } from "Context/WebSocketContext";
@@ -16,6 +28,19 @@ const useSSE = () => {
   const [retryCount, setRetryCount] = useState(0);
   const { subscribe, publishMessage } = useWebSocket();
   const maxRetries = 5;
+
+  async function fetchCommunityChatList () {
+    const userId = store.getState().userStore.userId;
+    if (userId) {
+      const response = await communityChatList();
+      let count = 0;
+      response.forEach((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setCommunityUnreadCount(count));
+      store.dispatch(setCommunityChatUserList(response));
+    }
+  }
 
   const subscribeToCommunityChat = (roomId: number) => {
     console.log('subscribeToCommunityChat', roomId);
@@ -41,6 +66,19 @@ const useSSE = () => {
         dispatch(updateCommunityChatUserList({...message, inProgress: false}));
       }
     });
+  }
+
+  async function fetchTransactionChatList() {
+    const userId = store.getState().userStore.userId;
+    if (userId) {
+      const response = await transactionChatList();
+      let count = 0;
+      response.forEach((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setTransactionUnreadCount(count))
+      store.dispatch(setTransactionChatUserList(response));
+    }
   }
 
   const subscribeToTransactionChat = (roomId: number)  => {
@@ -150,10 +188,11 @@ const useSSE = () => {
         // case 'SALE':
         //   break;
         case 'CHAT':
-          console.log(eventData.roomId);
+          fetchCommunityChatList();
           subscribeToCommunityChat(eventData.roomId);
           break;
         case 'TRANSACTIONCHAT':
+          fetchTransactionChatList();
           subscribeToTransactionChat(eventData.roomId);
           break;
         default:

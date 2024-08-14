@@ -7,7 +7,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
 import { RootState, store } from '@store/store';
-import { addMessageToChatInProgress, selectCommnunity, setChatInProgressType, setCommunityChatUserList, setIsChatOpen, setOtherId, setRoomId, setTotalUnreadCount, updateCommunityChatUserList, updateMessageReadStatus } from '@store/chatSlice';
+import { 
+  addMessageToChatInProgress, 
+  selectCommnunity,
+  setChatInProgressType, 
+  setCommunityChatUserList, 
+  setIsChatOpen, 
+  setOtherId, 
+  setRoomId, 
+  setCommunityUnreadCount, 
+  updateCommunityChatUserList, 
+  updateMessageReadStatus 
+} from '@store/chatSlice';
 import { communityChatList, initCommunityChat } from '@services/chatService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { ChatUserType } from '@components/Chat/ChatUser';
@@ -77,14 +88,14 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
 
   // 일반 채팅방 목록 가져오기
   const fetchCommunityChatList = async () => {
-    const userId = sessionStorage.getItem('userId');
+    const userId = store.getState().userStore.userId;
     if (userId) {
       const response = await communityChatList();
       let count = 0;
-      response.map((chatUser: ChatUserType) => {
+      response.forEach((chatUser: ChatUserType) => {
         count += chatUser.unreadCount;
       })
-      store.dispatch(setTotalUnreadCount(count));
+      store.dispatch(setCommunityUnreadCount(count));
       store.dispatch(setCommunityChatUserList(response));
     }
   }
