@@ -27,9 +27,8 @@ import {
   setOtherId,
   setRoomId,
   setSaleStatus,
-  setTotalUnreadCount,
-  setTransactionChatUesrList,
-  updateMessageReadStatus,
+  setTransactionUnreadCount,
+  setTransactionChatUserList,
   updateTransactionChatUserList,
 } from '@store/chatSlice';
 import {
@@ -193,8 +192,8 @@ function Detail() {
       response.map((chatUser: ChatUserType) => {
         count += chatUser.unreadCount;
       });
-      store.dispatch(setTotalUnreadCount(count));
-      store.dispatch(setTransactionChatUesrList(response));
+      store.dispatch(setTransactionUnreadCount(count));
+      store.dispatch(setTransactionChatUserList(response));
     }
   };
 

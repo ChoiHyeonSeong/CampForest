@@ -116,10 +116,11 @@ const Community = () => {
   }
 
   useEffect(() => {
+    let indexRef = visibleBoards.length
     boards.forEach((board, index) => {
       setTimeout(() => {
         setVisibleBoards(prev => [...prev, board.boardId]);
-      }, index * 100); // 각 게시물마다 100ms 지연
+      }, index * 100 - indexRef * 100); // 각 게시물마다 100ms 지연
     });
   }, [boards])
 

@@ -6,9 +6,10 @@ import {
   addMessageToChatInProgress,
   setChatInProgress,
   setCommunityChatUserList,
+  setCommunityUnreadCount,
   setSaleStatus,
-  setTotalUnreadCount,
-  setTransactionChatUesrList,
+  setTransactionChatUserList,
+  setTransactionUnreadCount,
   updateCommunityChatUserList,
   updateMessageReadStatus,
   updateTransactionChatUserList,
@@ -42,21 +43,23 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
     const userId = sessionStorage.getItem('userId');
     if (userId) {
       const communityChatUserList = await communityChatList();
-      let count = 0;
+      let coummunityUnreadCount = 0;
       if (communityChatUserList) {
         communityChatUserList.forEach((chatUser: ChatUserType) => {
-          count += chatUser.unreadCount;
+          coummunityUnreadCount += chatUser.unreadCount;
         });
         store.dispatch(setCommunityChatUserList(communityChatUserList));
       }
       const transactionChatUserList = await transactionChatList();
+      let transactionUnreadCount = 0;
       if (transactionChatUserList) {
         transactionChatUserList.forEach((chatUser: ChatUserType) => {
-          count += chatUser.unreadCount;
+          transactionUnreadCount += chatUser.unreadCount;
         });
-        store.dispatch(setTransactionChatUesrList(transactionChatUserList));
+        store.dispatch(setTransactionChatUserList(transactionChatUserList));
       }
-      store.dispatch(setTotalUnreadCount(count));
+      store.dispatch(setCommunityUnreadCount(coummunityUnreadCount));
+      store.dispatch(setTransactionUnreadCount(transactionUnreadCount));
     }
   };
 

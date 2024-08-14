@@ -16,14 +16,6 @@ let dongName = '';
 let returnLatitude = 0;
 let returnLongitude = 0;
 
-const loadScript = (src: string, callback: () => void) => {
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = src;
-  script.onload = () => callback();
-  document.head.appendChild(script);
-};
-
 type MapInformationProps = {
   situation: string;
   setChooseLocation: React.Dispatch<React.SetStateAction<boolean>>;
@@ -90,8 +82,8 @@ const MapInformation: React.FC<MapInformationProps> = ({ situation, setChooseLoc
               address = `위치 정보가 없습니다.`
               dongName = `위치 정보가 없습니다.`
             }
-            returnLatitude = event.coord.x;
-            returnLongitude = event.coord.y;
+            returnLatitude = event.coord.y;
+            returnLongitude = event.coord.x;
             if(situation === 'productWrite') {
               contentString = `<div style='padding:10px;'><div>${dongName}</div></div>`;
             }
@@ -116,19 +108,11 @@ const MapInformation: React.FC<MapInformationProps> = ({ situation, setChooseLoc
 
   useEffect(() => {
     const { geolocation } = navigator;
-
     if (geolocation) {
       geolocation.getCurrentPosition(handleSuccess, null, options);
     }
 
-    if (typeof naver === 'undefined' || !naver.maps) {
-      loadScript(
-        'https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=52k7jcq0yh&callback=initMap&submodules=geocoder',
-        initMap,
-      );
-    } else {
-      initMap();
-    }
+    initMap();
   }, []);
 
   useEffect(() => {

@@ -2,7 +2,6 @@ import '@styles/App.css';
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation } from "react-router-dom";
 
-
 import Navbar from '@components/Navbar/Navbar';
 import Login from '@pages/Login';
 import Regist from '@pages/Regist';
