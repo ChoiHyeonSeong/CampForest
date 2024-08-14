@@ -4,11 +4,14 @@ import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
 import com.campforest.backend.chatting.entity.CommunityChatMessage;
 import com.campforest.backend.chatting.repository.communitymessage.CommunityChatMessageRepository;
 import org.apache.catalina.User;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.chatting.dto.CommunityChatDto;
 import com.campforest.backend.chatting.entity.CommunityChatRoom;
 import com.campforest.backend.chatting.repository.communitychatroom.CommunityChatRoomRepository;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class CommunityChatServiceImpl implements CommunityChatService {
     private final CommunityChatRoomRepository communityChatRoomRepository;
     private final CommunityChatMessageRepository communityChatMessageRepository;
+    private final UserRepository userRepository;
     @Transactional
     @Override
     public CommunityChatDto createOrGetChatRoom(Long user1Id, Long user2Id) {
@@ -78,6 +82,17 @@ public class CommunityChatServiceImpl implements CommunityChatService {
         List<CommunityChatRoom> rooms = communityChatRoomRepository.findByUser1IdOrUser2Id(userId, userId);
         return rooms.stream().map(room -> {
             CommunityChatRoomListDto dto = convertToListDto(room,userId);
+            Users findUser = null;
+            if(room.getUser1().equals(userId)) {
+                findUser = userRepository.findByUserId(room.getUser2())
+                    .orElseThrow(() -> new IllegalArgumentException("찾는 사용자 없음"));
+            }
+            else {
+                findUser = userRepository.findByUserId(room.getUser1())
+                    .orElseThrow(() -> new IllegalArgumentException("찾는 사용자 없음"));
+            }
+            dto.setUserNickName(findUser.getNickname());
+            dto.setUserProfileUrl(findUser.getUserImage().getImageUrl());
             dto.setUnreadCount(communityChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
             return dto;
         }) .sorted(Comparator.comparing(CommunityChatRoomListDto::getLastMessageTime).reversed())  // lastMessageTime 기준으로 내림차순 정렬

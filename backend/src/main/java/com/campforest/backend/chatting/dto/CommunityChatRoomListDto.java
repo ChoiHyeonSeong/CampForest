@@ -9,6 +9,8 @@ import lombok.Setter;
 public class CommunityChatRoomListDto {
 	private Long roomId;
 	private Long otherUserId;
+	private String userProfileUrl;
+	private String userNickName;
 	private String lastMessage;
 	private LocalDateTime lastMessageTime;
 	private Long unreadCount;
