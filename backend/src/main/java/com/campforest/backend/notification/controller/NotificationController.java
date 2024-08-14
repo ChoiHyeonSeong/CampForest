@@ -8,7 +8,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.notification.dto.NotificationDTO;
+import com.campforest.backend.notification.model.Notification;
 import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.notification.service.SseEmitters;
 import com.campforest.backend.user.model.Users;
@@ -75,5 +78,26 @@ public class NotificationController {
 			return ApiResponse.createError(ErrorCode.NOTIFICATION_NOT_FOUND);
 		}
 
+	}
+
+	@DeleteMapping("/{notificationId}")
+	public ApiResponse<?> deleteNotification(
+		@AuthenticationPrincipal UserDetails userDetails,
+		@PathVariable Long notificationId) {
+		try {
+			Users user = userService.findByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+			Notification notification = notificationService.findById(notificationId);
+
+			if(!notification.getReceiver().equals(user)) {
+				return ApiResponse.createError(ErrorCode.NOTIFICATION_NOT_MATCH_WITH_RECEIVER);
+			}
+
+			notificationService.deleteNotification(notification);
+			return ApiResponse.createSuccess(null, "알림 삭제 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.NOTIFICATION_DELETE_FAILED);
+		}
 	}
 }

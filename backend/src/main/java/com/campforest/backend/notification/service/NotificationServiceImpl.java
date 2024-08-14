@@ -71,7 +71,14 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void deleteNotification(Long notificationId) {
-		notificationRepository.deleteById(notificationId);
+	public Notification findById(Long notificationId) {
+		return notificationRepository.findById(notificationId)
+			.orElseThrow(() -> new IllegalArgumentException(ErrorCode.NOTIFICATION_NOT_FOUND.getMessage()));
+	}
+
+	@Override
+	@Transactional
+	public void deleteNotification(Notification notification) {
+		notificationRepository.delete(notification);
 	}
 }
