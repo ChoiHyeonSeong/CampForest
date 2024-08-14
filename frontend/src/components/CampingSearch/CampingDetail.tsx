@@ -162,8 +162,8 @@ const CampingDetail = (props: Props) => {
           {/* 추가 링크 */}
           <div className='flex'>
             {props.selectedData.homepage ? (
-              <a href={props.selectedData.homepage} target="_blank" rel="noopener noreferrer">
-                <button className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] py-[0.5rem] bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300'>
+              <a href={props.selectedData.homepage} target="_blank" rel="noopener noreferrer" className='max-md:w-1/2 me-[0.5rem]'>
+                <button className='w-full h-full bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300'>
                   홈페이지
                 </button>
               </a>
@@ -177,14 +177,14 @@ const CampingDetail = (props: Props) => {
             )}
 
             {props.selectedData.resveUrl ? (
-              <a href={props.selectedData.resveUrl} target="_blank" rel="noopener noreferrer">
-                <button className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] md:py-[0.5rem] bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300'>
+              <a href={props.selectedData.resveUrl} target="_blank" rel="noopener noreferrer" className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] md:py-[0.5rem]'>
+                <button className='w-full h-full bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300'>
                   예약하기
                 </button>
               </a>
             ) : (
               <button
-                className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] md:py-[0.5rem] bg-light-gray text-light-gray-2 cursor-not-allowed dark:bg-dark-gray dark:text-dark-gray-2'
+                className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] py-[0.5rem] bg-light-gray text-light-gray-2 cursor-not-allowed dark:bg-dark-gray dark:text-dark-gray-2'
                 disabled
               >
                 예약하기
@@ -215,7 +215,7 @@ const CampingDetail = (props: Props) => {
 
       <div
         className={`
-          ${props.isModalOpen ? 'translate-y-0 lg:translate-x-0 pr-[140px]' : 'translate-y-full lg:translate-x-full'}
+          ${props.isModalOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'}
           ${props.isModalBlocked ? 'block' : 'hidden'}
           fixed lg:top-0 bottom-0 lg:right-0 z-[30] w-full lg:w-[50rem] h-[80vh] lg:h-full lg:p-[4rem] px-0 sm:px-[3rem]
           bg-light-white
