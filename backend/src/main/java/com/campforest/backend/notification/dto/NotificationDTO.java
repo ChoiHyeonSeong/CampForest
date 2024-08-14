@@ -1,5 +1,6 @@
 package com.campforest.backend.notification.dto;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.campforest.backend.notification.model.Notification;
@@ -20,7 +21,7 @@ public class NotificationDTO {
 	private NotificationType notificationType;
 	private boolean isRead;
 	private String message;
-	private Date createdAt;
+	private LocalDateTime createdAt;
 	@Setter
 	private Long roomId;
 
@@ -36,7 +37,7 @@ public class NotificationDTO {
 			.notificationType(notification.getNotificationType())
 			.isRead(notification.isRead())
 			.message(notification.getMessage())
-			.createdAt(new Date())
+			.createdAt(notification.getCreatedAt())
 			.build();
 	}
 }
