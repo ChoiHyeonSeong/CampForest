@@ -64,6 +64,7 @@ const MoreOptionsMenu = (props: Props) => {
                   dark:border-dark-border
                   border-b 
                 `}
+                onClick={() => props.updateFunction()}
               >
                 <button 
                   className={`

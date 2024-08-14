@@ -1,26 +1,9 @@
 import React, { useState } from 'react'
 import { ReactComponent as StarIcon } from '@assets/icons/star.svg'
 
-
-export type User = {
-  nickname: string;
-  profileImage: string;
-  userId: number;
-}
-
-export type Review = {
-  id: number;
-  text: string;
-  rating: number;
-  author: string;
-  profileImage: string;
-  userId: number;
-  date: string;
-}
-
 type Props = {
-  currentUser: User | null;
-  addReview: (review: Omit<Review, 'id' | 'author' | 'profileImage' | 'userId' | 'date'>) => void;
+  isLoggedin: boolean,
+  writeReview: (content: string, rate: number) => void;
 }
 
 const CampingReviewWrite = (props: Props) => {
@@ -40,7 +23,7 @@ const CampingReviewWrite = (props: Props) => {
   };
 
   const handleSubmit = () => {
-    if (!props.currentUser) {
+    if (!props.isLoggedin) {
       setError('로그인 후 리뷰를 작성할 수 있습니다.');
       return;
     }
@@ -52,13 +35,13 @@ const CampingReviewWrite = (props: Props) => {
       setError('후기 내용을 입력해주세요.');
       return;
     }
-    props.addReview({ text: review, rating });
+    props.writeReview(review, rating);
     setReview('');
     setRating(0);
     setError('');
   };
 
-  if (!props.currentUser) {
+  if (!props.isLoggedin) {
     return <p>리뷰를 작성하려면 로그인이 필요합니다.</p>;
   }
 
