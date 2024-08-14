@@ -33,9 +33,9 @@ import lombok.RequiredArgsConstructor;
 public class TransactionChatServiceImpl implements TransactionChatService {
     private final TransactionChatRoomRepository transactionChatRoomRepository;
     private final TransactionChatMessageRepository transactionChatMessageRepository;
+    private final ProductRepository productRepository;
     private final RentRepository rentRepository;
     private final SaleRepository saleRepository;
-    private final ProductRepository productRepository;
 
     @Transactional
     @Override
@@ -98,11 +98,15 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     @Override
     public List<TransactionChatRoomListDto> getChatRoomsForUser(Long userId) {
         List<TransactionChatRoom> rooms = transactionChatRoomRepository.findByUser1IdOrUser2Id(userId, userId);
+
         return rooms.stream().map(room -> {
             TransactionChatRoomListDto dto = convertToListDto(room,userId);
-            dto.setProductId(transactionChatRoomRepository.findProductIdByRoomId(room.getRoomId()));
-            dto.setUnreadCount(transactionChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
-            return dto;
+                Long productId = transactionChatRoomRepository.findProductIdByRoomId(room.getRoomId());
+                Product product = productRepository.findById(productId).orElseThrow(()-> new IllegalArgumentException("없는 판매용품입니다"));
+                dto.setProductId(productId);
+                dto.setProductWriter(product.getUserId());
+                dto.setUnreadCount(transactionChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
+                return dto;
         }).sorted(Comparator.comparing(TransactionChatRoomListDto::getLastMessageTime).reversed())
             .collect(Collectors.toList());
     }

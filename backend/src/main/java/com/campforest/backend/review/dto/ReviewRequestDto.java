@@ -15,6 +15,7 @@ public class ReviewRequestDto {
 
 	private Long reviewerId; // Sale에서 Requester
 	private Long reviewedId;
+	private Long roomId;
 	private String content;
 	private int rating;
 	private ProductType productType; // SALE 또는 RENT

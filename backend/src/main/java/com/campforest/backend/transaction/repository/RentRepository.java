@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.campforest.backend.transaction.model.Rent;
 import com.campforest.backend.transaction.model.Sale;
+import com.campforest.backend.transaction.model.TransactionStatus;
 
 public interface RentRepository extends JpaRepository<Rent, Long> {
 
@@ -25,5 +26,7 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
 	Optional<Rent> findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(
 		Long productId, Long requesterId, Long receiverId);
+
+	List<Rent> findByProductIdAndRentStatusAndRentEndDateAfter(Long productId, TransactionStatus rentStatus, LocalDateTime newStartDate);
 
 }
