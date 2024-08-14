@@ -15,7 +15,7 @@ import com.campforest.backend.transaction.model.TransactionStatus;
 
 public interface RentRepository extends JpaRepository<Rent, Long> {
 
-	Optional<Rent> findByProductIdAndRequesterId(Long productId, Long requesterId);
+	List<Rent> findByProductIdAndRequesterId(Long productId, Long requesterId);
 
 	Optional<Rent> findByRequesterIdAndReceiverId(Long requesterId, Long receiverId);
 

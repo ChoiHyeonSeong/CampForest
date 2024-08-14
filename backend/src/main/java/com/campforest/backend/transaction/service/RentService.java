@@ -4,17 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.campforest.backend.notification.model.NotificationType;
 import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.repository.ProductRepository;
@@ -43,12 +40,14 @@ public class RentService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 
-		// validateDuplicateRequest(rentRequestDto);
 
 		Map<String, Long> result = new HashMap<>();
 		Long requesterId = rentRequestDto.getRequesterId();
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
+		if(!validateDuplicateRequest(rentRequestDto,receiverId)){
+			return null;
+		}
 		result.put("requesterId", requesterId);
 		result.put("receiverId", receiverId);
 
@@ -258,11 +257,21 @@ public class RentService {
 		return result;
 	}
 
-	private void validateDuplicateRequest(RentRequestDto rentRequestDto) {
-		rentRepository.findByProductIdAndRequesterId(rentRequestDto.getProductId(), rentRequestDto.getRequesterId())
-			.ifPresent(rent -> {
-				throw new RuntimeException("이미 대여 요청을 보냈습니다.");
-			});
+	private boolean validateDuplicateRequest(RentRequestDto rentRequestDto, Long receiverId) {
+		List<Rent> rentList= rentRepository.findByProductIdAndRequesterId(rentRequestDto.getProductId(), rentRequestDto.getRequesterId());
+
+		for (Rent rent : rentList) {
+			if(!rent.getRentStatus().equals(TransactionStatus.REQUESTED)&&(!rent.getRentStatus().equals(TransactionStatus.RECEIVED))) {
+				return false;
+			}
+		}
+		List<Rent> rentList2= rentRepository.findByProductIdAndRequesterId(rentRequestDto.getProductId(),receiverId);
+		for (Rent rent : rentList2) {
+			if(!rent.getRentStatus().equals(TransactionStatus.REQUESTED)&&(!rent.getRentStatus().equals(TransactionStatus.RECEIVED))) {
+				return false;
+			}
+		}
+			return true;
 	}
 
 	private Rent buildRent(RentRequestDto rentRequestDto, Product product, Long requesterId, Long receiverId,
