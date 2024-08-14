@@ -74,10 +74,6 @@ public class Sale {
 	@Column(name = "meeting_place")
 	private String meetingPlace;
 
-	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonManagedReference
-	private List<Review> reviews;
-
 	@Column(columnDefinition = "boolean default false")
 	private boolean confirmedByBuyer;
 

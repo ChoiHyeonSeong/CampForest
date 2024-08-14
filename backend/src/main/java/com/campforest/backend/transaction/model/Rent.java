@@ -85,10 +85,6 @@ public class Rent {
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
 
-	@OneToMany(mappedBy = "rent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonManagedReference
-	private List<Review> reviews;
-
 	@Column(name = "confirmed_by_buyer", columnDefinition = "boolean default false")
 	private boolean confirmedByBuyer;
 
