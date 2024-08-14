@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect, MouseEvent, WheelEvent } from 'react';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
 
-type MultiImageUploadProps = {
+type Props = {
   onImagesChange: (images: File[]) => void;
+  prevImages?: string[];
+  handleOriginalImages?: (urls: string[]) => void;
 }
 
-const MultiImageUpload: React.FC<MultiImageUploadProps> = ({ onImagesChange }) => {
+const MultiImageUpload = (props: Props) => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -14,6 +16,16 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({ onImagesChange }) =
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  const [initializedPrevImages, setInitializedPrevImages] = useState(false);
+
+  useEffect(() => {
+    if (!initializedPrevImages && props.prevImages && props.prevImages.length > 0) {
+      setPreviewUrls(props.prevImages);
+      setImages(props.prevImages.map(() => new File([], "tempImage")));
+      setInitializedPrevImages(true)
+    }
+  }, [props.prevImages, initializedPrevImages]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -27,14 +39,27 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({ onImagesChange }) =
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
     }
-    onImagesChange(images);
+    props.onImagesChange(images);
   }, [images])
 
   const handleRemoveImage = (index: number) => {
     setPreviewUrls(prev => prev.filter((_, i) => i !== index));
     setImages(prev => prev.filter((_, i) => i !== index));
-    onImagesChange(images.filter((_, i) => i !== index));
+
+    // prevImages에서 온 이미지인 경우 handleOriginalImages 호출
+    if (props.prevImages && index < props.prevImages.length && props.handleOriginalImages) {
+      const removedUrl = props.prevImages[index];
+      const updatedPrevImages = props.prevImages.filter(url => url !== removedUrl);
+      props.handleOriginalImages(updatedPrevImages);
+    }
+
+    props.onImagesChange(images.filter((_, i) => i !== index));
   };
+
+  useEffect(() => {
+    console.log(images, previewUrls)
+  }, [images, previewUrls])
+
 
   const handleMouseDown = (e: MouseEvent) => {
     e.preventDefault();

@@ -6,6 +6,7 @@ import { useInView } from 'react-intersection-observer';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
 import BoardDetail from '@components/Board/BoardDetail';
+import BoardModify from '@components/Board/BoardModify';
 
 const Community = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,9 @@ const Community = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isModifyOpen, setIsModyfyOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
+  const [selectedModifyId, setSelectedModifyId] = useState<number | null>(null);
   const boardCursorIdRef = useRef<number | null>(null);
   const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
 
@@ -124,12 +127,30 @@ const Community = () => {
     });
   }, [boards])
 
+  const handleModify = (boardId: number) => {
+    setSelectedModifyId(boardId)
+    setIsModyfyOpen(true)
+  }
+
+  const modifyClose = () => {
+    setIsModyfyOpen(false)
+  }
+
   return (
     <div>
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
-          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved}/>
+          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved} modifyOpen={handleModify}/>
+        ) : (
+          <></>
+        )
+      }
+
+      {/* 수정하기 모달 */}
+      {
+        isModifyOpen && selectedModifyId !== null ? (
+          <BoardModify selectedModifyId={selectedModifyId} modifyClose={modifyClose} isModifyOpen={isModifyOpen}/>
         ) : (
           <></>
         )
@@ -164,6 +185,7 @@ const Community = () => {
                   updateComment={updateComment}
                   updateLike={updateLike} 
                   updateSaved={updateSaved}
+                  modifyOpen={handleModify}
                 />
               </div>
             ))}

@@ -368,10 +368,14 @@ function Detail() {
     };
   }, []);
 
+  const updateFunction = () => {
+    navigate('modify')
+  };
+
   let percentage: number = 50;
   if (product.temperature) {
     percentage = Math.min(Math.max(Math.round((product.temperature / 1400) * 100), 0), 100);
-  }
+  };
 
   return (
     <div className={`flex justify-center mb-[5rem] `}>
@@ -484,9 +488,7 @@ function Detail() {
                 isUserPost={loginUserId === product.userId}
                 deleteId={0}
                 deleteFunction={deleteFunction}
-                updateFunction={() => {
-                  console.log('test');
-                }}
+                updateFunction={updateFunction}
               />
             </div>
             <div className={`text-2xl font-medium`}>{product.productName}</div>

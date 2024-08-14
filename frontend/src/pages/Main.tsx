@@ -10,6 +10,7 @@ import { setUser } from '@store/userSlice';
 import { getOAuthAccessToken } from '@services/authService';
 
 import BoardDetail from '@components/Board/BoardDetail';
+import BoardModify from '@components/Board/BoardModify';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -23,7 +24,9 @@ function Main() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isModifyOpen, setIsModyfyOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
+  const [selectedModifyId, setSelectedModifyId] = useState<number | null>(null);
   const boardCursorIdRef = useRef<number | null>(null);
 
   const fetchBoards = async () => {
@@ -154,12 +157,30 @@ function Main() {
     });
   }, [boards])
 
+  const handleModify = (boardId: number) => {
+    setSelectedModifyId(boardId)
+    setIsModyfyOpen(true)
+  }
+
+  const modifyClose = () => {
+    setIsModyfyOpen(false)
+  }
+
   return (
     <div>
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
-          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved}/>
+          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved} modifyOpen={handleModify}/>
+        ) : (
+          <></>
+        )
+      }
+
+      {/* 수정하기 모달 */}
+      {
+        isModifyOpen && selectedModifyId !== null ? (
+          <BoardModify selectedModifyId={selectedModifyId} modifyClose={modifyClose} isModifyOpen={isModifyOpen}/>
         ) : (
           <></>
         )
@@ -181,6 +202,7 @@ function Main() {
                 updateComment={updateComment}
                 updateLike={updateLike} 
                 updateSaved={updateSaved}
+                modifyOpen={handleModify}
               />
             </div>
           ))}
