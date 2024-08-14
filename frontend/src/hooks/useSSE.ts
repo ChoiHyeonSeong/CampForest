@@ -14,6 +14,7 @@ import {
   updateTransactionChatUserList
 } from "@store/chatSlice";
 import { addNewNotification, setNotificationList } from "@store/notificationSlice";
+import { setOpponentInfo, setTransactionInfo } from "@store/reviewSlice";
 import { RootState, store } from "@store/store";
 import { useWebSocket } from "Context/WebSocketContext";
 import { EventSourcePolyfill } from "event-source-polyfill";
@@ -103,6 +104,13 @@ const useSSE = () => {
                   ++confirmedCount;
                   if (confirmedCount === 2) {
                     lastSaleState = message.transactionEntity.saleStatus;
+                    dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
+                    dispatch(setTransactionInfo({
+                      ...state.reviewStore,
+                      productType: 'SALE',
+                      price: message.transactionEntity.realPrice,
+                      deposit: 0
+                    }))
                   }
                 } else if (message.transactionEntity.saleStatus !== '') {
                   lastSaleState = message.transactionEntity.saleStatus;
@@ -112,6 +120,13 @@ const useSSE = () => {
                   ++confirmedCount;
                   if (confirmedCount === 2) {
                     lastSaleState = message.transactionEntity.rentStatus;
+                    dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
+                    dispatch(setTransactionInfo({
+                      ...state.reviewStore,
+                      productType: 'RENT',
+                      price: message.transactionEntity.realPrice,
+                      deposit: message.transactionEntity.deposit
+                    }))
                   }
                 } else {
                   lastSaleState = message.transactionEntity.rentStatus;

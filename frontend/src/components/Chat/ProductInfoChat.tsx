@@ -1,16 +1,22 @@
-import { setSaleStatus } from '@store/chatSlice';
-import { RootState } from '@store/store';
-import React, { useEffect, useState } from 'react';
+import { setIsChatOpen } from '@store/chatSlice';
+import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
+import { RootState, store } from '@store/store';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
+  opponentNickname: string;
   setModalType: React.Dispatch<React.SetStateAction<string>>;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ProductInfoChat = (props: Props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const product = useSelector((state: RootState) => state.chatStore.product);
   const saleStatus = useSelector((state: RootState) => state.chatStore.saleStatus);
+  const reviewState = useSelector((state: RootState) => state.reviewStore);
 
   return (
     <div
@@ -81,7 +87,14 @@ const ProductInfoChat = (props: Props) => {
             text-white rounded cursor-pointer
           "
           onClick={() => {
+            dispatch(setOpponentInfo({...reviewState, opponentNickname: props.opponentNickname}))
+            dispatch(setTransactionInfo({
+              ...reviewState, productImgUrl: product.imageUrls[0], productName: product.productName, roomId: store.getState().chatStore.roomId
+            }))
+            dispatch(setIsChatOpen(false));
+            sessionStorage.setItem('reviewState', JSON.stringify(store.getState().reviewStore));
 
+            navigate('/review')
           }}
         >
           후기작성

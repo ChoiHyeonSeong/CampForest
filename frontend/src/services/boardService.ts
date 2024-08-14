@@ -17,9 +17,6 @@ export const boardWrite = async (userId: number, title: string, content: string,
     formData.append(`files`, file);
   });
 
-  console.log(formData)
-  console.log(images)
-
   try {
     console.log('write', axiosInstance.defaults.headers['Authorization'] );
     const response = await axiosInstance.post(`/board`, formData, {

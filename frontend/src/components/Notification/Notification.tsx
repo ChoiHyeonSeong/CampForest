@@ -40,18 +40,11 @@ const Notification = ({notification}: Props) => {
                 {notification.senderNickname}
               </span>
               <span>
-                님 외 여러 명이 회원님의 게시글을 좋아합니다.
+                님이 회원님의 게시글을 좋아합니다.
               </span>
               <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
                 {formatTime(notification.createdAt)}
               </span>
-            </div>
-            <div className={`shrink-0 size-[2.75rem]`}>
-              <img 
-                src={userImage} 
-                alt="NoImg" 
-                className={`h-full border-light-border dark:border-dark-border border`}
-              />
             </div>
           </div>
         );
@@ -69,13 +62,6 @@ const Notification = ({notification}: Props) => {
                 {formatTime(notification.createdAt)}
               </span>
             </div>
-            <div className={`shrink-0 size-[2.75rem]`}>
-              <img 
-                src={userImage} 
-                alt="NoImg" 
-                className={`h-full border-light-border dark:border-dark-border border`}
-              />
-            </div>
           </div>
         )
         case 'SALE':
@@ -92,17 +78,22 @@ const Notification = ({notification}: Props) => {
                 {formatTime(notification.createdAt)}
               </span>
             </div>
-            <div className={`shrink-0 size-[2.75rem]`}>
-              <img 
-                src={userImage} 
-                alt="NoImg" 
-                className={`h-full border-light-border dark:border-dark-border border`}
-              />
-            </div>
           </div>
           )
       default:
-        return <div>{notification.message}</div>;
+        return <div className={`flex w-full items-center`}>
+        <div className={`col-span-4 px-[0.75rem] text-sm`}>
+          <span className={`font-bold`}>
+            {notification.senderNickname}
+          </span>
+          <span>
+            {notification.message}
+          </span>
+          <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
+            {formatTime(notification.createdAt)}
+          </span>
+        </div>  
+      </div>
     }
   };
 

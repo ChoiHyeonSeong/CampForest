@@ -4,6 +4,7 @@ import noImg from '@assets/images/basic_profile.png'
 import { userPage } from '@services/userService';
 import { store } from '@store/store';
 import { formatTime } from '@utils/formatTime';
+import { setOpponentInfo } from '@store/reviewSlice';
 
 export type ChatUserType = {
   roomId: number;
@@ -27,6 +28,7 @@ const ChatUser = (props: Props) => {
     const result = await userPage(chatUser.otherUserId);
     if(result) {
       setNickname(result.nickname);
+      store.dispatch(setOpponentInfo({opponentId: store.getState().reviewStore.opponentId, opponentNickname: result.nickname}))
       setProfileImage(result.profileImage);
     } else {
       setNickname('찾을 수 없는 사용자')

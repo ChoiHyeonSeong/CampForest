@@ -12,6 +12,7 @@ import ChatTradeModal from './ChatTradeModal';
 import ChatTradePropser from './ChatTradePropser';
 import { productDetail } from '@services/productService';
 import TransactionDetail from './TransactionDetail';
+import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
 
 type UnifiedMessage = {
   [x: string]: any;
@@ -111,6 +112,7 @@ const Chat = () => {
   const { publishMessage } = useWebSocket();
   const dispatch = useDispatch();
   const chatState = useSelector((state: RootState) => state.chatStore);
+  const reviewState = useSelector((state: RootState) => state.reviewStore);
   const userId = useSelector((state: RootState) => state.userStore.userId);
   const messages = useSelector((state: RootState) => state.chatStore.chatInProgress) || [];
   const [modalOpen, setModalOpen] = useState(false);
@@ -147,6 +149,13 @@ const fetchMessages = async () => {
               ++confirmedCount;
               if (confirmedCount === 2) {
                 lastSaleState = message.transactionEntity.saleStatus;
+                dispatch(setOpponentInfo({opponentId: chatState.otherId, opponentNickname: reviewState.opponentNickname}))
+                dispatch(setTransactionInfo({
+                  ...reviewState,
+                  productType: 'SALE',
+                  price: message.transactionEntity.realPrice,
+                  deposit: 0
+                }))
               }
             } else if (message.transactionEntity.saleStatus !== '') {
               lastSaleState = message.transactionEntity.saleStatus;
@@ -155,7 +164,15 @@ const fetchMessages = async () => {
             if (message.transactionEntity.rentStatus === 'CONFIRMED') {
               ++confirmedCount;
               if (confirmedCount === 2) {
+                console.log('setTransactionInfo', message.transactionEntity);
                 lastSaleState = message.transactionEntity.rentStatus;
+                dispatch(setOpponentInfo({...reviewState, opponentId: chatState.otherId}))
+                dispatch(setTransactionInfo({
+                  ...reviewState,
+                  productType: 'RENT',
+                  price: message.transactionEntity.realPrice,
+                  deposit: message.transactionEntity.deposit
+                }))
               }
             } else {
               lastSaleState = message.transactionEntity.rentStatus;
@@ -285,6 +302,7 @@ const fetchMessages = async () => {
       {chatState.chatInProgressType === '거래' && (
         <div>
           <ProductInfoChat 
+            opponentNickname={opponentNickname}
             setModalType={setModalType}
             setModalOpen={setModalOpen} 
           />

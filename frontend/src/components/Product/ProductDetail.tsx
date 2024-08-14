@@ -40,6 +40,7 @@ import { ChatUserType } from '@components/Chat/ChatUser';
 import { useWebSocket } from 'Context/WebSocketContext';
 
 import { setIsLoading } from '@store/modalSlice';
+import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
 
 type ImageType = {
   createdAt: string;
@@ -219,6 +220,13 @@ function Detail() {
                   ++confirmedCount;
                   if (confirmedCount === 2) {
                     lastSaleState = message.transactionEntity.saleStatus;
+                    dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
+                    dispatch(setTransactionInfo({
+                      ...state.reviewStore,
+                      productType: 'SALE',
+                      price: message.transactionEntity.realPrice,
+                      deposit: 0
+                    }))
                   }
                 } else if (message.transactionEntity.saleStatus !== '') {
                   lastSaleState = message.transactionEntity.saleStatus;
@@ -228,6 +236,13 @@ function Detail() {
                   ++confirmedCount;
                   if (confirmedCount === 2) {
                     lastSaleState = message.transactionEntity.rentStatus;
+                    dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
+                    dispatch(setTransactionInfo({
+                      ...state.reviewStore,
+                      productType: 'RENT',
+                      price: message.transactionEntity.realPrice,
+                      deposit: message.transactionEntity.deposit
+                    }))
                   }
                 } else {
                   lastSaleState = message.transactionEntity.rentStatus;

@@ -5,6 +5,7 @@ import modalReducer from './modalSlice';
 import themeReducer from './themeSlice';
 import chatReducer from './chatSlice';
 import notificationReducer from './notificationSlice';
+import reviewReducer from './reviewSlice'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     themeStore: themeReducer,
     chatStore: chatReducer,
     notificationStore: notificationReducer,
+    reviewStore: reviewReducer,
   },
 });
 

@@ -21,6 +21,7 @@ import {
   transactionChatList,
 } from '@services/chatService';
 import { ChatUserType } from '@components/Chat/ChatUser';
+import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
 
 type UseWebSocketProps = {
   jwt: string | null;
@@ -115,6 +116,13 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
                       ++confirmedCount;
                       if (confirmedCount === 2) {
                         lastSaleState = message.transactionEntity.saleStatus;
+                        dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
+                        dispatch(setTransactionInfo({
+                          ...state.reviewStore,
+                          productType: 'SALE',
+                          price: message.transactionEntity.realPrice,
+                          deposit: 0
+                        }))
                       }
                     } else if (message.transactionEntity.saleStatus !== '') {
                       lastSaleState = message.transactionEntity.saleStatus;
@@ -123,7 +131,15 @@ export const useWebSocket = ({ jwt }: UseWebSocketProps): UseWebSocketReturn => 
                     if (message.transactionEntity.rentStatus === 'CONFIRMED') {
                       ++confirmedCount;
                       if (confirmedCount === 2) {
+                        console.log('setTransactionInfo', message.transactionEntity);
                         lastSaleState = message.transactionEntity.rentStatus;
+                        dispatch(setOpponentInfo({...state.reviewStore, opponentId: state.chatStore.otherId}))
+                        dispatch(setTransactionInfo({
+                          ...state.reviewStore,
+                          productType: 'RENT',
+                          price: message.transactionEntity.realPrice,
+                          deposit: message.transactionEntity.deposit
+                        }))
                       }
                     } else {
                       lastSaleState = message.transactionEntity.rentStatus;

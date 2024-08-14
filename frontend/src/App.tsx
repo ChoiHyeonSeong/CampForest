@@ -15,6 +15,7 @@ import Community from '@pages/Community';
 import BoardWrite from '@components/Board/BoardWrite';
 import LoadingModal from '@components/Public/LoadingModal';
 import StarLight from '@components/Public/StarLight';
+import ReviewPage from '@components/Product/WriteReview'
 
 import BoardModify from '@components/Board/BoardModify';
 
@@ -75,6 +76,7 @@ function App() {
               <Route path="/community/:category" element={<Community />} />
               <Route path="/search/*" element={<SearchPage />} />
               <Route path="/landing" element={<LandingPage />} />
+              <Route path='/review' element={<ReviewPage />} />
             </Routes>
             {/* 여기까지 컨텐츠 */}
           </div>

@@ -1,15 +1,38 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as StarIcon } from '@assets/icons/star.svg'
 import MultiImageUpload from '@components/Public/MultiImageUpload'
+import { ReviewState } from '@store/reviewSlice'
+import { reviewWrite } from '@services/reviewService'
 
 type Props = {
 }
 const WriteReview = (props: Props) => {
-
   const [productImages, setProductImages] = useState<File[]>([]);
+  const [content, setContent] = useState('');
   const [rating, setRating] = useState<number>(0);
+  const [reviewState, setReviewState] = useState<ReviewState>({
+    productImgUrl: '',
+    productType: '',
+    productName: '',
+    price: 0,
+    deposit: 0,
+    opponentId: 0,
+    opponentNickname: '',
+    roomId: 0,
+  })
+  
+  const loadReviewState = () => {
+    const savedState = sessionStorage.getItem('reviewState');
+    return savedState ? JSON.parse(savedState) : null;
+  };
 
+  useEffect(() => {
+    const savedState = loadReviewState();
+    if (savedState) {
+      setReviewState(savedState)
+    }
+  }, []);
 
   const handleImagesChange = (images: File[]) => {
     setProductImages(images);
@@ -88,12 +111,12 @@ const WriteReview = (props: Props) => {
                 `}
               >
                 <img
-                  src=''
+                  src={reviewState.productImgUrl}
                   alt='상품이미지'
                   className={`
                     size-full   
                   `}
-                ></img>
+                />
               </div>
 
               <div>
@@ -105,7 +128,9 @@ const WriteReview = (props: Props) => {
                     dark:text-dark-text
                     font-medium
                   `}
-                >20,000원</div>
+                >
+                  {reviewState.price}원
+                </div>
                 {/* 상품이름 */}
                 <div
                   className={`
@@ -114,11 +139,10 @@ const WriteReview = (props: Props) => {
                     font-medium
                   `}
                 >
-                상품이름이야</div>
+                {reviewState.productName}</div>
               </div>
 
             </div>
-            
             {/* 별점남기기 */}
             <div
               className={`
@@ -137,7 +161,7 @@ const WriteReview = (props: Props) => {
                     font-medium  
                   `}
                 >
-                  사용자1
+                  {reviewState.opponentNickname}
                 </span>
               님과 거래가 어떠셨나요?
               </div>
@@ -161,7 +185,6 @@ const WriteReview = (props: Props) => {
                 ))}
               </div>
             </div>
-
             {/* 후기 작성칸 */}
             <div className='flex-grow'>
             <textarea 
@@ -172,14 +195,18 @@ const WriteReview = (props: Props) => {
                   resize-none focus:outline-none border rounded break-all
                 `}
                 placeholder='자세한 후기를 남겨주시면 다른 사용자들에게 도움이 됩니다.'
+                value={content}
+                onChange={(event) => {
+                  setContent(event.target.value)
+                }}
               />
-
             </div>
             
             {/* 상품사진 추가 */}
             <div>
               <MultiImageUpload onImagesChange={handleImagesChange} />
             </div>
+            
           </div>
 
           {/* 작성하기 */}
@@ -190,6 +217,9 @@ const WriteReview = (props: Props) => {
               dark:bg-dark-signature hover:dark:bg-dark-signature-hover
               rounded text-center cursor-pointer
             `}
+            onClick={() => {
+              reviewWrite(reviewState.opponentId, content, rating, reviewState.productType, productImages, );
+            }}
           >
             <div>
             작성하기
