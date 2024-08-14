@@ -16,6 +16,7 @@ export type ChatUserType = {
   productImage?: string;
   productName?: string;
   productPrice?: number;
+  hidden: boolean;
 }
 
 type Props = {
