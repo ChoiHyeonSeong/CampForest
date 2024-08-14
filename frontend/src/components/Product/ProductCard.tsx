@@ -33,10 +33,6 @@ type Props = {
 const ProductCard = (props: Props) => {
   const [liked, setLiked] = useState(props.product.saved);
 
-  useEffect(() => {
-    setLiked(props.product.saved)
-  }, [props])
-
   const toggleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();

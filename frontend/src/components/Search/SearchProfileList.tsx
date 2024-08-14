@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import SearchProfile, { profileType } from '@components/Search/SearchProfile'
-import { nicknameSearch } from '@services/userService';
+import { nicknameSearch, userPage } from '@services/userService';
 import NoResultSearch from '@components/Search/NoResultSearch'
 import { useInView } from 'react-intersection-observer';
 
@@ -51,6 +51,24 @@ const SearchProfileList = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
 
+
+
+  // 유저 추가한 로직 (좋아요 실시간 갱신)
+  const renewalUser = async (userId: number) => {
+    try {
+      const response = await userPage(userId)
+      setProfileList((prevProfiles) =>
+        prevProfiles.map((profile) =>
+          profile.userId === response.userId
+            ? { ...profile, ...response } // response의 정보를 profile에 덮어씌움
+            : profile // 조건이 맞지 않는 경우 기존의 profile 유지
+        )
+      );
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div>
       <p className='mb-[1rem] font-medium text-lg md:text-xl'>
@@ -62,7 +80,7 @@ const SearchProfileList = (props: Props) => {
 
       {profileList.length > 0 ? 
         profileList.map((profile) => (
-          <SearchProfile profile={profile} />  
+          <SearchProfile key={profile.userId} profile={profile} callbackFunction={renewalUser}/>  
         )) :
       <NoResultSearch searchText={props.searchText} />
       }

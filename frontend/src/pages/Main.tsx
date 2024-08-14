@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from "react-router-dom";
 import Board, { BoardType } from '@components/Board/Board';
-import { boardDetail, boardList } from '@services/boardService';
+import { boardList, mixedBoardList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
 import { setUser } from '@store/userSlice';
 
@@ -11,6 +11,7 @@ import { getOAuthAccessToken } from '@services/authService';
 
 import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
+import { RootState, store } from '@store/store';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -32,13 +33,24 @@ function Main() {
   const fetchBoards = async () => {
     try {
       dispatch(setIsLoading(true))
-      const response = await boardList(boardCursorIdRef.current, 10);
-      dispatch(setIsLoading(false))
-      boardCursorIdRef.current = response.data.data.nextCursor
-      if (!response.data.data.hasNext) {
-        setNextPageExist(false);
+      if(sessionStorage.getItem('isLoggedIn')) {
+        const userIds: number[] = Object.keys(JSON.parse(sessionStorage.getItem('similarUsers')!)).map(Number);
+        const response = await mixedBoardList(userIds, boardCursorIdRef.current, 10);
+        dispatch(setIsLoading(false))
+        boardCursorIdRef.current = response.data.data.nextCursor
+        if (!response.data.data.hasNext) {
+          setNextPageExist(false);
+        }
+        setBoards((prevBoards) => [...prevBoards, ...response.data.data.content]);
+      } else {
+        const response = await boardList(boardCursorIdRef.current, 10);
+        dispatch(setIsLoading(false))
+        boardCursorIdRef.current = response.data.data.nextCursor
+        if (!response.data.data.hasNext) {
+          setNextPageExist(false);
+        }
+        setBoards((prevBoards) => [...prevBoards, ...response.data.data.content]);
       }
-      setBoards((prevBoards) => [...prevBoards, ...response.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);
@@ -49,7 +61,6 @@ function Main() {
     boardCursorIdRef.current = null
     setBoards([]);
     setNextPageExist(true);
-    
     fetchBoards()
   }
   

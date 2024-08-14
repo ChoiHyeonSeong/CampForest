@@ -113,7 +113,6 @@ const SearchPage = () => {
                 shrink-0 size-[1.4rem] md:size-[1.6rem] me-[1rem]
                 stroke-light-border-icon
                 dark:stroke-light-dark-icon
-                cursor-pointer
               '
             />
             <input

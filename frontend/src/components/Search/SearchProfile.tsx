@@ -1,16 +1,30 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
+
+import defaultImage from '@assets/images/basic_profile.png';
+
+import FollowBtn from '@components/User/FollowBtn';
+
 export type profileType = {
-  id: number;
+  userId: number;
   nickname: string;
   followerCount : number;
   followingCount : number;
+  profileImage: string;
 }
 
 type Props = {
   profile: profileType
+  callbackFunction: (userId: number) => void;
 }
 
 const SearchProfile = (props: Props) => {
+  const navigate = useNavigate();
+
+  const callbackFunc = () => {
+    props.callbackFunction(props.profile.userId)
+  }
+
   return (
     <div
       className='
@@ -20,10 +34,13 @@ const SearchProfile = (props: Props) => {
         border-b rounded
       '
     >
-      <div className='flex items-center'>
+      <div 
+        onClick={() => navigate(`/user/${props.profile.userId}`)}
+        className='flex items-center cursor-pointer'
+      >
         {/* 프로필 이미지 */}
         <div className='size-[2.9rem] md:size-[3.1rem] me-[0.5rem] rounded-full overflow-hidden border border-light-border-1'>
-          <img src='' alt='프로필 이미지' className='size-full'></img>
+          <img src={props.profile.profileImage ? props.profile.profileImage : defaultImage} alt='프로필 이미지' className='size-full'></img>
         </div>
 
         {/* 프로필 상세 */}
@@ -57,17 +74,8 @@ const SearchProfile = (props: Props) => {
       </div>
       
       {/* 버튼 */}
-      <div className='flex'>
-        <button
-          className='
-            me-[0.3rem] md:me-[0.5rem] px-[0.5rem] py-[0.2rem] md:px-[0.8rem]  md:py-[0.4rem]
-            bg-light-signature hover:bg-light-signature-hover text-light-white
-            dark:bg-dark-signature dark:hover:bg-dark-signature-hover
-            rounded-md text-sm md:text-base
-            '
-          >
-            팔로우
-        </button>
+      <div className='flex flex-all-center'>
+        <FollowBtn targetUserId={props.profile.userId} callbackFunction={callbackFunc}/>
         <button
           className='
             px-[0.5rem] py-[0.2rem] md:px-[0.8rem]  md:py-[0.4rem]
