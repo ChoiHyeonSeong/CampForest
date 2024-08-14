@@ -1,14 +1,88 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 
+import { passwordChange } from '@services/authService';
+
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+}
+
 const PasswordChange = () => {
+  const query = useQuery();
   const navigate = useNavigate();
+
+  const [token, setToken] = useState<string | null>(null)
+  const [firstPassword, setFirstPassword] = useState<string>('');
+  const [repeatPassword, setRepeatPassword] = useState<string>('');
+  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
+  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(false);
 
   const handleGoBack = () => {
     navigate(-1); // 이전 페이지로 이동
   };
   
+  useEffect(() => {
+    const token = query.get('token')
+    console.log(token)
+    setToken(token)
+  }, [])
+
+  // 비밃번호 확인 로직
+  useEffect(() => {
+    // 비밀번호 유효성 검사
+    const validatePassword = (password: string): boolean => {
+      const lengthRegex = /^.{8,16}$/;
+      const uppercaseRegex = /[A-Z]/;
+      const lowercaseRegex = /[a-z]/;
+      const numberRegex = /[0-9]/;
+      const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
+      const conditions = [
+        uppercaseRegex.test(password),
+        lowercaseRegex.test(password),
+        numberRegex.test(password),
+        specialCharRegex.test(password)
+      ];
+
+      const validConditionsCount = conditions.filter(Boolean).length;
+
+      return lengthRegex.test(password) && validConditionsCount >= 3;
+    };
+
+    if (validatePassword(firstPassword)) {
+      setIsPasswordValid(true);
+    } else {
+      setIsPasswordValid(false);
+    }
+  }, [firstPassword]);
+
+  useEffect(() => {
+    // 비밀번호 일치 여부 확인
+    if (repeatPassword === firstPassword) {
+      setIsPasswordMatch(true)
+    } else {
+      setIsPasswordMatch(false)
+    };
+  }, [firstPassword, repeatPassword])
+
+  const changePassword = async () => {
+    if (isPasswordValid && isPasswordMatch && token) {
+      try {
+        const result = await passwordChange(token, firstPassword)
+        console.log(result)
+        if (result?.data.status === 'C000') {
+          alert('비밀번호가 변경되었습니다.');
+          navigate('/')
+        } else {
+          alert('비밀번호 변경에 실패하였습니다. 다시 시도해주세요.')
+        };
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
   return (
     <div
       className='
@@ -68,6 +142,10 @@ const PasswordChange = () => {
                 dark:bg-dark-white 
                 rounded-md focus:outline-none text-sm
               `}
+              value={firstPassword}
+              onChange={(event) => {
+                setFirstPassword(event.target.value)
+              }}
             />
             <input
               type='password'
@@ -78,6 +156,11 @@ const PasswordChange = () => {
                 dark:bg-dark-white
                 rounded-md focus:outline-none text-sm
               `}
+              value={repeatPassword}
+              onChange={(event) => {
+                setRepeatPassword(event.target.value);
+              }}
+              disabled={!isPasswordValid}
             />
 
             <div
@@ -121,11 +204,42 @@ const PasswordChange = () => {
                     dark:text-dark-text-secondary
                   `}
                 >
-                  영대소문자, 숫자, 특수문자 중 2종류 이상 포함
+                  영대소문자, 숫자, 특수문자 중 3종류 이상 포함
                 </div>
               </div>            
             </div>
+            <div 
+              className={`
+                my-[0.5rem] ps-[0.75rem]
+                text-light-warning
+                dark:text-dark-warning
+                text-xs 
+              `}
+            >
+              {isPasswordValid ? (
+                  ''
+                ) : (
+                  '비밀번호는 8~16자 사이로, 영문 대소문자, 숫자, 특수문자 중 3종류 이상을 포함해야 합니다.'
+                )
+              }
+            </div>
+            <div 
+              className={`
+                my-[0.25rem]
+                text-light-warning
+                dark:text-dark-warning
+                text-xs 
+              `}
+            >
+              {isPasswordValid && !isPasswordMatch && firstPassword.length <= repeatPassword.length ? (
+                  '비밀번호가 일치하지 않습니다.'
+                ) : (
+                  ''
+                )
+              }
+            </div>
             <div
+              onClick={changePassword}
               className={`
                 w-full max-w-[23rem] mt-[3.25rem] mx-auto py-[0.75rem] 
                 bg-light-signature text-white

@@ -153,11 +153,15 @@ const ProfileEdit = (props: Props) => {
       <UserInformation />
 
       {/* 비밀번호 변경하기 */}
-      <Link to='/user/password'>
-        <div className={`text-light-anchor dark:text-dark-anchor font-md font-medium cursor-pointer`}>비밀번호 변경하기</div>
-      </Link>
+      <div className='flex justify-between'>
+        <Link to='/user/password'>
+          <div className={`text-light-anchor dark:text-dark-anchor font-md font-medium cursor-pointer`}>비밀번호 변경하기</div>
+        </Link>
+        <Link to='/user/delete'>
+          <div className={`text-light-anchor dark:text-dark-anchor font-md font-medium cursor-pointer`}>회원탈퇴</div>
+        </Link>
+      </div>
       
-
       {/* 완료 버튼 */}
       <div className={`text-center`}>
         <button 

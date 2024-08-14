@@ -8,12 +8,15 @@ import Regist from '@pages/Regist';
 import Main from '@pages/Main';
 import UserPage from '@pages/UserPage';
 import ProfileEdit from '@pages/ProfileEdit';
+import UserDelete from '@pages/UserDelete';
 import CampingSearch from '@pages/CampingSearch';
 import FindPassword from '@pages/FindPassword';
 import Community from '@pages/Community';
 import BoardWrite from '@components/Board/BoardWrite';
 import LoadingModal from '@components/Public/LoadingModal';
 import StarLight from '@components/Public/StarLight';
+
+import BoardModify from '@components/Board/BoardModify';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
@@ -65,6 +68,7 @@ function App() {
               <Route path="/user/regist/*" element={<Regist />} />
               <Route path="/user/:userId/*" element={<UserPage />} />
               <Route path="/user/profile/edit" element={<ProfileEdit />} />
+              <Route path="/user/delete" element={<UserDelete />} />
               <Route path='/product/*' element={<Product />} /> 
               <Route path='/camping' element={<CampingSearch />} />
               <Route path='/user/password/*' element={<FindPassword />} />
@@ -78,6 +82,8 @@ function App() {
         {/* 모달은 이 아래부터 */}
         {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
         {modals.isLoading ? <LoadingModal /> : <></>}
+        {/* <BoardModify /> */}
+
 
         {/* 라이트 모드 배경  */}
         {!isDark && <LightMode />}

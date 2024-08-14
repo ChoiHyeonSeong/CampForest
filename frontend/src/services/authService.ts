@@ -323,4 +323,24 @@ export const validatePhone = async (phoneNumber: string, authCode: string) => {
   }
 };
 
+export const passwordChangeRequest = async (email: string) => {
+  const params = {email}
+  const response = await axios.get(`/email/password/change`, {params});
+  console.log(response);
+  return response
+};
+
+export const passwordChange = async (token: string, password: string) => {
+  const body = {token, password}
+  const response = await axios.post(`/user/public/password/reset`, body);
+  console.log(response);
+  return response
+};
+
+export const userDelete = async () => {
+  const response = await axiosInstance.delete('/user');
+  console.log(response)
+  return response
+};
+
 export default axiosInstance;

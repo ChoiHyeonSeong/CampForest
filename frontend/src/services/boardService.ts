@@ -17,6 +17,9 @@ export const boardWrite = async (userId: number, title: string, content: string,
     formData.append(`files`, file);
   });
 
+  console.log(formData)
+  console.log(images)
+
   try {
     console.log('write', axiosInstance.defaults.headers['Authorization'] );
     const response = await axiosInstance.post(`/board`, formData, {
@@ -108,4 +111,25 @@ export const savedList = async (cursorId: number | null, size: number) => {
   const response = await axiosInstance.get(`/board/saved`, { params: params });
 
   return response;
+}
+
+export const boardModifyImageUpload = async (images: File[]) => {
+  const formData = new FormData();
+  images.forEach((file, index) => {
+    formData.append(`files`, file);
+  });
+
+  try {
+    const response = await axiosInstance.post(`/board/modifyImage`, formData, {
+      headers: {
+        'Content-Type': `multipart/form-data`,
+      },
+    });
+    console.log(response);
+    
+    return response
+  } catch (error) {
+    console.error('Board Write failed:', error);
+    throw error;
+  }
 }
