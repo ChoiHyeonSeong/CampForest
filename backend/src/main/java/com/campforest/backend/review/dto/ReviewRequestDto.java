@@ -13,7 +13,6 @@ import lombok.Setter;
 @Builder
 public class ReviewRequestDto {
 
-	private Long transactionId; // Sale 또는 Rent의 ID
 	private Long reviewerId; // Sale에서 Requester
 	private Long reviewedId;
 	private String content;

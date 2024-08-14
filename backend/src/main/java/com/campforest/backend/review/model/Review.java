@@ -45,16 +45,6 @@ public class Review {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "sale_id", nullable = true)
-	@JsonIgnore
-	private Sale sale;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "rent_id", nullable = true)
-	@JsonIgnore
-	private Rent rent;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reviewer_id", nullable = false)
 	@JsonBackReference
 	private Users reviewer;
