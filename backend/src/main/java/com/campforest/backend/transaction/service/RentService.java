@@ -174,8 +174,13 @@ public class RentService {
 
 	public List<LocalDate> getRentAvailability(Long productId, LocalDate currentDate) {
 		List<Rent> reservedRent = rentRepository.findByProductIdAndRentStartDateAfter(productId, currentDate);
-
-		return reservedRent.stream()
+		List<Rent> finalReservedRent = new ArrayList<>();
+		for(Rent rent : reservedRent) {
+			if(rent.getRentStatus().equals(TransactionStatus.RESERVED)) {
+				finalReservedRent.add(rent);
+			}
+		}
+		return finalReservedRent.stream()
 			.flatMap(rent -> rent.getRentStartDate()
 				.toLocalDate()
 				.datesUntil(rent.getRentEndDate().toLocalDate().plusDays(1)))
