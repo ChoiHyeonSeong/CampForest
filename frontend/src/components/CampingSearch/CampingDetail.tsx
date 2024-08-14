@@ -215,7 +215,7 @@ const CampingDetail = (props: Props) => {
 
       <div
         className={`
-          ${props.isModalOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'}
+          ${props.isModalOpen ? 'translate-y-0 lg:translate-x-0 pr-[140px]' : 'translate-y-full lg:translate-x-full'}
           ${props.isModalBlocked ? 'block' : 'hidden'}
           fixed lg:top-0 bottom-0 lg:right-0 z-[30] w-full lg:w-[50rem] h-[80vh] lg:h-full lg:p-[4rem] px-0 sm:px-[3rem]
           bg-light-white
