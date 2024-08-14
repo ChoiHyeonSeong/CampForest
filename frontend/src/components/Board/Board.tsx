@@ -46,6 +46,7 @@ type Props = {
   updateComment: (boardId: number, commentCount: number) => void;
   updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
   updateSaved: (boardId: number, isSaved: boolean) => void;
+  modifyOpen? : (param: number) => void;
 }
 
 const Board = (props: Props) => {
@@ -128,7 +129,9 @@ const Board = (props: Props) => {
   }
   
   const updateFunction = () => {
-    
+    if (props.modifyOpen) {
+      props.modifyOpen(props.board.boardId)
+    }
   }
 
   return (
@@ -167,7 +170,7 @@ const Board = (props: Props) => {
           </div>
           <MoreOptionsMenu 
             isUserPost={user.userId === props.board.userId} 
-            updateFunction={() => console.log('test')}
+            updateFunction={updateFunction}
             deleteFunction={deleteBoard} 
             deleteId={props.board.boardId}
           />
@@ -180,9 +183,8 @@ const Board = (props: Props) => {
             className={`
               ${props.board.imageUrls.length > 0 ? 'bg-black' : 'hidden'}
               flex flex-all-center relative w-full max-w-full
-              cursor-pointer overflow-hidden aspect-1
+              overflow-hidden aspect-1
             `} 
-            onClick={handleDetailClick}
           >
             {props.board.imageUrls.length > 0 && (
               <Swiper
@@ -267,8 +269,9 @@ const Board = (props: Props) => {
             {/* 제목 */}
             <div 
               className={`
+                ${props.detailOpen ? 'cursor-pointer' : ''}
                 mb-[0.5rem]
-                text-lg md:text-xl cursor-pointer break-all
+                text-lg md:text-xl break-all
               `}
               onClick={handleDetailClick}
             >
@@ -277,9 +280,10 @@ const Board = (props: Props) => {
             {/* 내용 */}
             <div 
               className={`
+                ${props.detailOpen ? 'cursor-pointer' : ''}
                 ${props.isDetail ? '' : 'line-clamp-3'}
                 text-xl md:text-base
-                cursor-pointer break-all
+                break-all
               `} 
               onClick={handleDetailClick}
             >
@@ -346,12 +350,13 @@ const Board = (props: Props) => {
         >
           <CommentIcon 
             className={`
+              ${props.detailOpen ? 'cursor-pointer' : ''}
               size-[1.25rem]
-              cursor-pointer 
             `}
           />
           <div 
             className={`
+              ${props.detailOpen ? 'cursor-pointer' : ''}
               mx-[0.5rem]
               text-start md:text-sm
             `}

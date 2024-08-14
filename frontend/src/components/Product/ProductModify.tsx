@@ -1,10 +1,10 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import Dropdown from '../Public/Dropdown';
 import { ReactComponent as LocationIcon } from '@assets/icons/location.svg';
-import { productWrite } from '@services/productService';
+import { productDetail, productModifyImageUpload, productModify } from '@services/productService';
 import MultiImageUpload from '@components/Public/MultiImageUpload';
 import ProductMap from './ProductMap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { setIsLoading } from '@store/modalSlice';
 import { useDispatch } from 'react-redux';
 
@@ -14,12 +14,13 @@ type Option = {
 };
 
 type ProductRegistDto = {
+  productId: number;
   productName: string,
   productPrice: number | undefined,
   productContent: string,
   location: string,
-  productType: string,
   category: string,
+  productImageUrl?: string[],
   deposit: number | undefined,
   latitude: number,
   longitude: number
@@ -38,30 +39,85 @@ const categories: Option[] = [
   { id: 10, name: '기타' },
 ];
 
+const categoriesData: Option[] = [
+  { id: 1, name: '분류 전체' },
+  { id: 2, name: '텐트' },
+  { id: 3, name: '의자' },
+  { id: 4, name: '침낭' },
+  { id: 5, name: '테이블' },
+  { id: 6, name: '랜턴' },
+  { id: 7, name: '코펠' },
+  { id: 8, name: '안전용품' },
+  { id: 9, name: '버너' },
+  { id: 10, name: '기타' },
+];
 
-const ProductWrite = () => {
+
+const ProductModify = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const productId = Number(useParams().productId);
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Option>(categories[0]);
   const [selectedButton, setSelectedButton] = useState<string>('대여');
+
+  const [originalImages, setOriginalImages] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [loadMap, setLoadMap] = useState(false);
   const buttons = ['대여', '판매'];
 
   const [formData, setFormData]= useState<ProductRegistDto>({
+    productId: 0,
     productName: '',
     productPrice: undefined,
     productContent: '',
     location: '장소를 선택하세요.',
-    productType: '',
     category: '',
     deposit: undefined,
     latitude: 0,
     longitude: 0
   })
+
+  const fetchOriginalData = async () => {
+    try {
+      const response = await productDetail(productId)
+
+      console.log(response)
+
+      setFormData({
+        productId: response.productId,
+        productName: response.productName,
+        productPrice: response.productPrice,
+        productContent: response.productContent,
+        location: response.location,
+        category: response.category,
+        deposit: response.deposit,
+        latitude: response.latitude,
+        longitude: response.longitude
+      })
+
+      const category = categoriesData.find(category => category.name === response.category)
+      if (category) {
+        setSelectedCategory(category)
+      }
+      
+      if (response.productType === "SALE") {
+        setSelectedButton('판매')
+      } else {
+        setSelectedButton('대여')
+      }
+
+      setOriginalImages(response.imageUrls)
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  useEffect(() => {
+    fetchOriginalData()
+  }, [])
 
   const handleToggle = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
@@ -97,13 +153,17 @@ const ProductWrite = () => {
     setProductImages(images);
   };
 
+  const handleOriginalImages = (urls: string[]) => {
+    setOriginalImages(urls)
+  };
+
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); 
 
     if (!validateForm()) {
       return;
     }
-    
+
     let category: string;
 
     if (selectedCategory.name === '침낭/매트') {
@@ -116,22 +176,24 @@ const ProductWrite = () => {
       category = selectedCategory.name
     }
 
-    const submitData = {
-      ...formData,
-      productType: selectedButton === '대여' ? 'RENT' : 'SALE',
-      category: category,
-    };
+    const newImages = productImages.filter(file => file.name !== 'tempImage');
 
-    console.log(submitData);
-    
-    try { 
+    try {
       dispatch(setIsLoading(true));
-      console.log(submitData)
-      await productWrite(submitData, productImages);
+      const response1 = await productModifyImageUpload(newImages);
+      console.log(response1)
+      const newImagesUrls = [...originalImages, ...response1.data]
+      const submitData = {
+        ...formData,
+        category: category,
+        productImageUrl: newImagesUrls
+      };
+      const response2 = await productModify(submitData)
+      console.log(response2)
       dispatch(setIsLoading(false));
       navigate('/product/list/all');
     } catch (error) {
-      console.error('Failed to Product Write: ', error);
+      console.log(error)
       dispatch(setIsLoading(false));
     }
   }
@@ -183,7 +245,7 @@ const ProductWrite = () => {
       >
         <h4
           className='text-2xl font-bold'
-        >거래 글쓰기</h4>
+        >거래 글 수정하기</h4>
         <form 
           className={`mt-[2rem]`} 
           onSubmit={handleSubmit}
@@ -250,7 +312,7 @@ const ProductWrite = () => {
             >
               상품 사진
             </div>
-            <MultiImageUpload onImagesChange={handleImagesChange} />
+            <MultiImageUpload onImagesChange={handleImagesChange} prevImages={originalImages} handleOriginalImages={handleOriginalImages}/>
             {errors.productImages &&
               <p 
                 className={`
@@ -312,7 +374,7 @@ const ProductWrite = () => {
                 <div 
                   key={button} 
                   className={`
-                    ${selectedButton === button ? 'bg-light-signature dark:bg-dark-signature text-white' : ''}
+                    ${selectedButton === button ? 'bg-light-signature dark:bg-dark-signature text-white' : 'hidden'}
                     me-[1rem] px-[2rem] py-[0.15rem]
                     border-light-border-2 
                     dark:border-dark-border-2
@@ -469,4 +531,4 @@ const ProductWrite = () => {
   )
 }
 
-export default ProductWrite;
+export default ProductModify;

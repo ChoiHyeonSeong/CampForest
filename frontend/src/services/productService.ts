@@ -88,3 +88,51 @@ export const likedList = async (likedParams: LikedParams) => {
   console.log('관심', response);
   return response.data.data
 }
+
+
+export const productModifyImageUpload = async (images: File[]) => {
+  const formData = new FormData();
+  images.forEach((file, index) => {
+    formData.append(`files`, file);
+  });
+
+  try {
+    const response = await axiosInstance.post(`/product/modifyImage`, formData, {
+      headers: {
+        'Content-Type': `multipart/form-data`,
+      },
+    });
+    console.log(response);
+    
+    return response
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+type ModifyFormType = {
+  productId: number;
+  productName: string;
+  productPrice: number | undefined;
+  productContent: string;
+  location: string;
+  category: string;
+  productImageUrl: string[];
+  deposit: number | undefined;
+  latitude: number;
+  longitude: number;
+}
+
+export const productModify = async (bodyForm: ModifyFormType) => {
+  const body = bodyForm;
+
+  try {
+    const response = await axiosInstance.put(`/product`, body);
+    console.log(response);
+    return response
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

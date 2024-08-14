@@ -13,6 +13,7 @@ import { boardUserList, savedList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
 import { RootState } from '@store/store';
 import BoardDetail from '@components/Board/BoardDetail';
+import BoardModify from '@components/Board/BoardModify';
 
 type Props = {};
 
@@ -26,7 +27,9 @@ const UBoard = (props: Props) => {
   const [nextPageExist, setNextPageExist] = useState(true);
   const boardCursorIdRef = useRef<number | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isModifyOpen, setIsModyfyOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
+  const [selectedModifyId, setSelectedModifyId] = useState<number | null>(null);
   const [totalBoardCnt, setTotalBoardCnt] = useState(0);
   const [totalSavedBoardCnt, setTotalSavedBoardCnt] = useState(0);
   const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
@@ -174,12 +177,30 @@ const UBoard = (props: Props) => {
     });
   }, [boards])
 
+  const handleModify = (boardId: number) => {
+    setSelectedModifyId(boardId)
+    setIsModyfyOpen(true)
+  }
+
+  const modifyClose = () => {
+    setIsModyfyOpen(false)
+  }
+
   return (
     <div className={``}>
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
-          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved}/>
+          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved} modifyOpen={handleModify}/>
+        ) : (
+          <></>
+        )
+      }
+
+      {/* 수정하기 모달 */}
+      {
+        isModifyOpen && selectedModifyId !== null ? (
+          <BoardModify selectedModifyId={selectedModifyId} modifyClose={modifyClose} isModifyOpen={isModifyOpen}/>
         ) : (
           <></>
         )
@@ -280,6 +301,7 @@ const UBoard = (props: Props) => {
               updateComment={updateComment}
               updateLike={updateLike}
               updateSaved={updateSaved}
+              modifyOpen={handleModify}
             />
           </div>
         ))}

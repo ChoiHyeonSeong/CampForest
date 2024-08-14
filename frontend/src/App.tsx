@@ -17,8 +17,6 @@ import LoadingModal from '@components/Public/LoadingModal';
 import StarLight from '@components/Public/StarLight';
 import ReviewPage from '@components/Product/WriteReview'
 
-import BoardModify from '@components/Board/BoardModify';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
@@ -85,7 +83,6 @@ function App() {
         {/* 모달은 이 아래부터 */}
         {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
         {modals.isLoading ? <LoadingModal /> : <></>}
-        {/* <BoardModify /> */}
 
 
         {/* 라이트 모드 배경  */}
