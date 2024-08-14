@@ -110,10 +110,10 @@ const InterestSetting = () => {
 
       <div 
         className={`
-          w-full h-fit px-[0.75rem] py-[0.5rem] 
-          bg-slate-50
-          dark:bg-dark-white
-          shadow-lg rounded
+          w-full h-fit px-[0.75rem] pb-[1rem] 
+          border-light-border
+          dark:border-dark-border
+          border-b
         `}
       >
         <div className='mb-[1rem]'>
