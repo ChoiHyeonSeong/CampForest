@@ -137,7 +137,7 @@ const Board = (props: Props) => {
         flex flex-col w-full sm:min-w-[22rem] lg:h-full lg:px-[1rem]
         bg-light-bgbasic border-light-border bg-opacity-80
         dark:bg-dark-white dark:border-dark-border dark:bg-opacity-80
-        border-b  sm:rounded-md
+        border-b  md:rounded-md
       `}
     >
       <div>
@@ -174,7 +174,7 @@ const Board = (props: Props) => {
         </div>
 
         {/* 사진 및 내용 */}
-        <div className={`w-full mb-[0.5rem]`}>
+        <div className={`w-full mb-[0.5rem] px-[0.75rem]`}>
           {/* 사진 */}
           <div 
             className={`
@@ -211,20 +211,30 @@ const Board = (props: Props) => {
                     my-next-button 
                     absolute top-1/2 right-[0.5rem] z-[10] p-[0.5rem]
                     transform -translate-y-1/2 rounded-full
-                    bg-white bg-opacity-50
+                    bg-black bg-opacity-50
                   `}
                 >
-                  <RightArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+                  <RightArrowIcon
+                    className="
+                    size-[1.5rem]
+                    fill-white
+                    "
+                  />
                 </button>
                 <button 
                   className={`
                     my-prev-button
                     absolute top-1/2 left-2 z-10 p-2
                     transform -translate-y-1/2 rounded-full
-                    bg-white bg-opacity-50
+                    bg-black bg-opacity-50
                   `}
                 >
-                  <LeftArrowIcon className="w-[1.5rem] h-[1.5rem]" />
+                  <LeftArrowIcon
+                    className="
+                    size-[1.5rem]
+                    fill-white
+                    "
+                  />
                 </button>
                 <style
                   dangerouslySetInnerHTML={{
