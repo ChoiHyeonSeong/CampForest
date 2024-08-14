@@ -11,8 +11,8 @@ public class TransactionChatRoomListDto {
 	private Long roomId;
 	private Long otherUserId;
 	private String productImage;
-	private String userProfileUrl;
-	private String userNickName;
+	private Long productPrice;
+	private String productName;
 	private Long productId;
 	private Long productWriter;
 	private String lastMessage;

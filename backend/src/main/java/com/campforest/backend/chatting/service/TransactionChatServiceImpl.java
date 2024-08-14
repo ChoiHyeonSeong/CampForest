@@ -18,6 +18,7 @@ import com.campforest.backend.chatting.entity.TransactionChatRoom;
 import com.campforest.backend.chatting.repository.transactionchatmessage.TransactionChatMessageRepository;
 import com.campforest.backend.chatting.repository.transactionchatroom.TransactionChatRoomRepository;
 import com.campforest.backend.product.model.Product;
+import com.campforest.backend.product.model.ProductImage;
 import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.repository.ProductRepository;
 import com.campforest.backend.transaction.model.Rent;
@@ -107,19 +108,12 @@ public class TransactionChatServiceImpl implements TransactionChatService {
                 Long productId = transactionChatRoomRepository.findProductIdByRoomId(room.getRoomId());
                 Product product = productRepository.findById(productId).orElseThrow(()-> new IllegalArgumentException("없는 판매용품입니다"));
 
-                Users findUser = null;
-                if (room.getSellerId().equals(userId)) {
-                    findUser = userRepository.findByUserId(room.getBuyerId())
-                        .orElseThrow(() -> new IllegalArgumentException("찾는 사용자 없음"));
-                } else {
-                    findUser = userRepository.findByUserId(room.getSellerId())
-                        .orElseThrow(() -> new IllegalArgumentException("찾는 사용자 없음"));
-                }
-                dto.setUserNickName(findUser.getNickname());
-                if (findUser.getUserImage() != null) {
-                    dto.setUserProfileUrl(findUser.getUserImage().getImageUrl());
-                } else {
-                    dto.setUserProfileUrl(null);
+                dto.setProductPrice(product.getProductPrice());
+                dto.setProductName(product.getProductName());
+                if(product.getProductImages().isEmpty()) {
+                    dto.setProductImage(null);
+                }else {
+                    dto.setProductImage(product.getProductImages().get(0).getImageUrl());
                 }
 
                 dto.setProductId(productId);
