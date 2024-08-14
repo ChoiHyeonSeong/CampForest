@@ -6,6 +6,7 @@ import com.campforest.backend.board.entity.Boards;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public interface BoardRepositoryCustom {
@@ -54,4 +55,12 @@ public interface BoardRepositoryCustom {
 	List<Boards> findFollowingNextN(Long nowId, Long cursorId, int i);
 
 	Long countByFollow(Long nowId);
+
+	Long countByUserIdIn(List<Long> userIds,Long currentUserId);
+
+	List<Boards> findByUserIdInTopN(List<Long> userIds,  Long currentUserId, int limit);
+
+	 List<Boards> findByUserIdInNextN(List<Long> userIds, Long currentUserId, Long cursorId, int limit) ;
+
+	boolean checkFollow(Long nowId, Long boardId);
 }

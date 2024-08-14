@@ -21,13 +21,13 @@ public interface BoardService {
 
 	CursorResult<BoardResponseDto> getAllBoards(Long nowId, Long cursorId, int size);
 
-	CursorResult<BoardResponseDto> getFollowingBoards(Long nowId, Long cursorId,int size);
+	CursorResult<BoardResponseDto> getFollowingBoards(Long nowId, Long cursorId, int size);
 
-	SearchResult<BoardResponseDto> getUserBoards(Long nowId,Long userId, Long cursorId, int size);
+	SearchResult<BoardResponseDto> getUserBoards(Long nowId, Long userId, Long cursorId, int size);
 
-	SearchResult<BoardResponseDto> getKeywordBoards(Long nowId,String title, Long cursorId, int size);
+	SearchResult<BoardResponseDto> getKeywordBoards(Long nowId, String title, Long cursorId, int size);
 
-	SearchResult<BoardResponseDto> getCategoryBoards(Long nowId,String category, Long cursorId, int size);
+	SearchResult<BoardResponseDto> getCategoryBoards(Long nowId, String category, Long cursorId, int size);
 
 	SearchResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size);
 
@@ -53,7 +53,7 @@ public interface BoardService {
 
 	void writeComment(Long boardId, CommentRequestDto commentRequestDto);
 
-	Page<CommentResponseDto> getComments(Long nowId,Long boardId, int page, int size);
+	Page<CommentResponseDto> getComments(Long nowId, Long boardId, int page, int size);
 
 	List<CommentResponseDto> getUserComment(Long commentWriterId);
 
@@ -72,4 +72,8 @@ public interface BoardService {
 	Comment getCommentById(Long commentId);
 
 	CountResponseDto countAll(Long userId);
+
+	CursorResult<BoardResponseDto> getMixedBoards(List<Long> userIds, Long nowId, Long cursorId, int size);
 }
+
+

@@ -189,6 +189,52 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public CursorResult<BoardResponseDto> getMixedBoards(List<Long> userIds, Long nowId, Long cursorId, int size) {
+        Long totalCount = boardRepository.countByUserIdIn(userIds,nowId);
+        List<Boards> boards;
+        if (cursorId == null) {
+            boards = boardRepository.findByUserIdInTopN(userIds,nowId, size + 1);
+        } else {
+            boards = boardRepository.findByUserIdInNextN(userIds,nowId, cursorId, size + 1);
+        }
+        List<Long> likeBoardsId = likeRepository.findBoardIdsByUserId(nowId);
+        List<Long> saveBoardsId = saveRepository.findBoardIdsByUserId(nowId);
+
+
+        List<BoardResponseDto> dtos = new ArrayList<>();
+        boolean hasNext = false;
+
+
+        if (boards.size() > size) {
+            hasNext = true;
+            boards = boards.subList(0, size);
+        }
+
+        for (Boards board : boards) {
+            BoardResponseDto dto = convertToDto(board);
+            Users user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            UserImage userImage = user.getUserImage();
+            String imageUrl = userImage != null ? userImage.getImageUrl() : null;
+            if (imageUrl != null) {
+                dto.setUserImage(imageUrl);
+            }
+            if (boardRepository.checkFollow(nowId, board.getUserId())){
+                dto.setRecommended(false);
+            }
+            else dto.setRecommended(true);
+            dto.setNickname(user.getNickname());
+            dto.setLiked(likeBoardsId.contains(board.getBoardId()));
+            dto.setSaved(saveBoardsId.contains(board.getBoardId()));
+            dtos.add(dto);
+        }
+
+        Long nextCursorId = hasNext ? boards.get(boards.size() - 1).getBoardId() : null;
+        return new CursorResult<>(dtos, nextCursorId, hasNext, totalCount);
+    }
+
+
+    @Override
     public SearchResult<BoardResponseDto> getUserBoards(Long nowId, Long userId, Long cursorId, int size) {
         List<Boards> boards;
         if (cursorId == null) {
@@ -549,6 +595,7 @@ public class BoardServiceImpl implements BoardService {
         return boardRepository.countAllById(userId);
     }
 
+
     private BoardResponseDto convertToDto(Boards boards) {
         BoardResponseDto dto = new BoardResponseDto();
         dto.setBoardId(boards.getBoardId());
@@ -580,5 +627,7 @@ public class BoardServiceImpl implements BoardService {
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }
+
+
 }
 

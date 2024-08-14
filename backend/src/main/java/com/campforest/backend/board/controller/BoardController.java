@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +25,6 @@ import com.campforest.backend.board.dto.CommentResponseDto;
 import com.campforest.backend.board.dto.SearchResult;
 import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
-import com.campforest.backend.board.repository.comment.CommentRepository;
 import com.campforest.backend.board.service.BoardService;
 import com.campforest.backend.board.service.CommentService;
 import com.campforest.backend.common.ApiResponse;
@@ -134,6 +131,9 @@ public class BoardController {
         }
     }
 
+
+
+
     //팔로잉하고있는 유저 게시글만
     @GetMapping("/following")
     public ApiResponse<?> getFollowingBoard(
@@ -159,6 +159,35 @@ public class BoardController {
             return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //팔로워+추천사용자
+    @GetMapping("/mixed")
+    public ApiResponse<?> getMixedBoard(
+        Authentication authentication,
+        @RequestParam List <Long> userIds,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        try {
+            if (size <= 0) {
+                return ApiResponse.createError(ErrorCode.INVALID_PAGE_NUMBER);
+            }
+            Long nowId=-1L;
+            if (authentication != null) {
+                Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+                nowId = user.getUserId();
+            }
+            CursorResult<BoardResponseDto> result = boardService.getMixedBoards(userIds, nowId,cursorId,size);
+            return ApiResponse.createSuccess(result, "팔로워와 추천사용자 게시글");
+        } catch (Exception e) {
+            return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
 
 
     //사용자별 게시글 조회

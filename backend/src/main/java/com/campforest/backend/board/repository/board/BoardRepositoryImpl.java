@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public class BoardRepositoryImpl implements BoardRepositoryCustom {
@@ -486,7 +487,97 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 			.fetchOne();
 		return count != null ? count : 0;
 	}
-
+	@Override
+	public Long countByUserIdIn(List<Long> userIds,Long currentUserId) {
+		Long count = queryFactory
+			.select(boards.count())
+			.from(boards)
+			.where((boards.userId.in(
+				JPAExpressions
+					.select(QFollow.follow.followee.userId)
+					.from(QFollow.follow)
+					.where(QFollow.follow.follower.userId.eq(currentUserId))
+			).or(boards.userId.in(userIds))).and(
+				boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(currentUserId)))
+							.exists()
+					)
+				)
+			))
+			.orderBy(boards.boardId.desc())
+			.fetchOne();
+		return count != null ? count : 0;
 	}
+	@Override
+	public List<Boards> findByUserIdInTopN(List<Long> userIds,  Long currentUserId, int limit) {
+		return queryFactory
+			.selectFrom(boards)
+			.where((boards.userId.in(
+				JPAExpressions
+					.select(QFollow.follow.followee.userId)
+					.from(QFollow.follow)
+					.where(QFollow.follow.follower.userId.eq(currentUserId))
+			).or(boards.userId.in(userIds))).and(
+				boards.isBoardOpen.isTrue().or(
+					boards.isBoardOpen.isFalse().and(
+						JPAExpressions
+							.selectOne()
+							.from(QFollow.follow)
+							.where(QFollow.follow.follower.userId.eq(boards.userId)
+								.and(QFollow.follow.followee.userId.eq(currentUserId)))
+							.exists()
+					)
+				)
+			))
+			.orderBy(boards.boardId.desc())
+			.limit(limit)
+			.fetch();
+	}
+	@Override
+	public List<Boards> findByUserIdInNextN(List<Long> userIds ,Long currentUserId, Long cursorId, int limit) {
+		return queryFactory
+			.selectFrom(boards)
+			.where((boards.userId.in(
+					JPAExpressions
+						.select(QFollow.follow.followee.userId)
+						.from(QFollow.follow)
+						.where(QFollow.follow.follower.userId.eq(currentUserId))
+				)
+				.or(boards.userId.in(userIds)))
+				.and(boards.boardId.lt(cursorId))
+				.and(
+					boards.isBoardOpen.isTrue().or(
+						boards.isBoardOpen.isFalse().and(
+							JPAExpressions
+								.selectOne()
+								.from(QFollow.follow)
+								.where(QFollow.follow.follower.userId.eq(boards.userId)
+									.and(QFollow.follow.followee.userId.eq(currentUserId)))
+								.exists()
+						)
+					)
+				))
+			.orderBy(boards.boardId.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public boolean checkFollow(Long nowId, Long userId) {
+		Long count = queryFactory
+				.select(follow.count())
+				.from(follow)
+				.where((follow.follower.userId.eq(nowId)
+					.and(follow.followee.userId.eq(userId))))
+				.fetchOne();
+		return count != null && count > 0;
+	}
+
+}
 
 
