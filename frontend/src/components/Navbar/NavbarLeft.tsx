@@ -97,18 +97,6 @@ const NavbarLeft = (props: Props) => {
     setTouchEnd(null);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
-        props.closeMenu();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [props]);
 
   const toggleMobileMenu = (menu: string) => {
     setExpandedMenu(expandedMenu === menu ? null : menu);
