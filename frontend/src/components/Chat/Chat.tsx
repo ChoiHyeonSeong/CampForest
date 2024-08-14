@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
+import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
 import noImg from '@assets/images/basic_profile.png'
 import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatDetail, transactionChatDetail } from '@services/chatService';
+import { communityChatDetail, exitCommunityChat, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
 import { setChatInProgress, setIsChatOpen, setProduct, setSaleStatus } from '@store/chatSlice';
@@ -288,21 +288,21 @@ const fetchMessages = async () => {
         dark:border-dark-border-1
         border-b`}
       >
-        <div
-          className={`size-[2.7rem] me-[1rem]
-          border-light-border
-          dark:border-dark-border
-          rounded-full border overflow-hidden`}
-        >
-          <img src={opponentProfileImage ? opponentProfileImage : noImg} alt="NoImg" className={`fit`} />
-        </div>
-        <div className={`text-lg font-medium`}>{opponentNickname}</div>
-        <div className={`ms-auto cursor-pointer`} onClick={() => dispatch(setIsChatOpen(false))}>
-          <CloseIcon
+        <div className={`me-[0.75rem] cursor-pointer`} onClick={() => dispatch(setIsChatOpen(false))}>
+          <LeftIcon
             className={`hidden md:block md:size-[1.8rem]
             fill-light-border-icon
             dark:fill-dark-border-icon`}
           />
+        </div>
+        <div className={`text-lg font-medium`}>{opponentNickname}</div>
+        <div 
+          className='ms-auto text-light-warning dark:text-dark-warning cursor-pointer'
+          onClick={() => {
+            exitCommunityChat(chatState.roomId);
+          }}
+        >
+          채팅방 나가기
         </div>
       </div>
       {/* 상품 정보 */}

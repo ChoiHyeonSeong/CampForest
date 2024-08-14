@@ -36,6 +36,7 @@ export type BoardType = {
   title: string;
   userId: number;
   userImage: string;
+  recommended: boolean;
 }
 
 type Props = {
@@ -143,6 +144,9 @@ const Board = (props: Props) => {
         border-b  md:rounded-md
       `}
     >
+      {props.board.recommended && (
+        <div className='mt-[1rem] ms-[0.5rem] text-sm text-light-text-secondary dark:text-dark-text-secondary'>추천 게시물</div>
+      )}
       <div>
         {/* 포스팅 상단바 */}
         <div className={`flex justify-between h-[5rem] px-[0.5rem] py-[1rem]`}>

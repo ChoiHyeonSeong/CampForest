@@ -41,6 +41,19 @@ export const boardList = (cursorId: number | null, size: number) => {
   return response;
 }
 
+export const mixedBoardList = async (userIds: number[], cursorId: number | null, size: number) => {
+  const params = { userIds: userIds.join(','), cursorId, size };
+  try {
+    const response = await axiosInstance.get(`/board/mixed`, { params });
+    console.log(response);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
 export const boardUserList = async (userId: number, cursorId: number | null, size: number) => {
   const params = { userId: userId, cursorId: cursorId, size: size };
 
