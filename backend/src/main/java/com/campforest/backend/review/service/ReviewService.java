@@ -105,12 +105,11 @@ public class ReviewService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Review> findAllWrittenReviews( Long userId) {
+	public List<Review> findAllWrittenReviews(Long userId) {
 		Users user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		return reviewRepository.findAllReceivedReviewsWithImages(user);
-
+		return reviewRepository.findAllWrittenReviewsWithImages(user);
 	}
 
 	@Transactional(readOnly = true)

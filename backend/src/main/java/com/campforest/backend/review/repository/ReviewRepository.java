@@ -15,8 +15,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	List<Review> findByReviewer(Users reviewer);
 	List<Review> findByReviewed(Users reviewed);
 
-	@Query("SELECT r FROM Review r LEFT JOIN FETCH r.reviewImages WHERE r.reviewer = :user")
+	@Query("SELECT r FROM Review r LEFT JOIN FETCH r.reviewImages WHERE r.reviewed = :user")
 	List<Review> findAllReceivedReviewsWithImages(@Param("user") Users user);
+
+	@Query("SELECT r FROM Review r LEFT JOIN FETCH r.reviewImages WHERE r.reviewer = :user")
+	List<Review> findAllWrittenReviewsWithImages(@Param("user") Users user);
 
 	boolean existsByReviewerAndReviewed(Users reviewer, Users reviewed);
 
