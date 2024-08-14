@@ -48,6 +48,10 @@ public class CommunityChatServiceImpl implements CommunityChatService {
 			.receiverId(room.getUser1().equals(message.getSenderId()) ? room.getUser2() : room.getUser1())
 			.build();
 
+		if(room.isHidden()) {
+			room.setHidden(false);
+			communityChatRoomRepository.save(room);
+		}
 		return communityChatMessageRepository.save(newMessage);
 	}
 
