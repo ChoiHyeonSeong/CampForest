@@ -103,7 +103,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 						.exists()
 				)
 			))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -127,7 +127,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 						)
 					)
 			)
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -147,7 +147,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 							.exists()
 					)
 				)))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -168,7 +168,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 							.exists()
 					)
 				)))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -186,7 +186,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 							.exists()
 					)
 				)))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -206,7 +206,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 							.exists()
 					)
 				)))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -225,7 +225,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 							.exists()
 					)
 				)))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -246,7 +246,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 							.exists()
 					)
 				)))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -429,7 +429,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 					)
 				)
 			))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}
@@ -455,7 +455,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 						)
 					)
 				))
-			.orderBy(boards.createdAt.desc())
+			.orderBy(boards.boardId.desc())
 			.limit(limit)
 			.fetch();
 	}

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.campforest.backend.board.dto.BoardImageDto;
 import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
@@ -268,12 +269,32 @@ public class BoardController {
         }
     }
 
+    //게시글 이미지 저장
+    @PostMapping("/modifyImage")
+    public List<String> modifyImage(
+        @RequestPart(value = "files", required = false) MultipartFile[] files
+    ){
+        try {
+            List<String> imageUrls = new ArrayList<>();
+            if (files != null) {
+                for (MultipartFile file : files) {
+                    String extension = file.getOriginalFilename()
+                        .substring(file.getOriginalFilename().lastIndexOf("."));
+                    String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
+                    imageUrls.add(fileUrl);
+                }
+            }
+            return imageUrls;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
     //게시물 수정
     @PutMapping
     public ApiResponse<?> modifyBoard(
             Authentication authentication,
             @RequestParam Long boardId,
-            @RequestPart(value = "files", required = false) MultipartFile[] files,
             @RequestPart(value = "boardRequestDto") BoardRequestDto boardRequestDto) {
         try {
             Users user = userService.findByEmail(authentication.getName())
@@ -281,17 +302,7 @@ public class BoardController {
             if (!boardRequestDto.getUserId().equals(user.getUserId())) {
                 return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
             }
-            List<String> imageUrls = new ArrayList<>();
-            if (files != null) {
-                for (MultipartFile file : files) {
-                    String extension = file.getOriginalFilename()
-                            .substring(file.getOriginalFilename().lastIndexOf("."));
-                    String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
-                    imageUrls.add(fileUrl);
-                }
-            }
             boardRequestDto.setUserId(user.getUserId());
-            boardRequestDto.setImageUrls(imageUrls);
             boardService.modifyBoard(boardId, boardRequestDto);
             return ApiResponse.createSuccessWithNoContent("게시물 수정에 성공하였습니다.");
         } catch (Exception e) {
