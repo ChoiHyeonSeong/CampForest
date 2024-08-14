@@ -70,8 +70,7 @@ const LocationFilter = (props: Props) => {
       onClick={closeFilter}
       className="
         flex flex-all-center fixed inset-0 
-        bg-light-black bg-opacity-80
-        dark:bg-dark-black dark:bg-opacity-80
+        bg-black bg-opacity-80
       "
     >
       <div
@@ -150,8 +149,10 @@ const LocationFilter = (props: Props) => {
           onClick={resetFilters}
           className="
             w-1/2 py-[0.5rem] me-[0.75rem]
-            bg-gray-200
-            rounded"
+            bg-light-gray-1 text-light-text hover:bg-light-gray-2
+            dark:bg-dark-gray-1 dark:text-dark-text dark:hover:bg-dark-gray-2
+            rounded transition-all duration-150
+          "
           >
             필터 초기화
           </button>
@@ -163,8 +164,8 @@ const LocationFilter = (props: Props) => {
             className={`
               w-1/2 py-[0.5rem] me-[0.75rem]
               bg-light-signature text-light-white hover:bg-light-signature-hover 
-              dark:bg-dark-signature dark:text-dark-white dark:hover:bg-dark-signature-hover
-              rounded
+              dark:bg-dark-signature dark:hover:bg-dark-signature-hover
+              rounded transition-all duration-150
             `}
           >
             선택 완료

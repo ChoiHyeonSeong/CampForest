@@ -54,7 +54,12 @@ const Camping = (props: Props) => {
   return (
     <div 
       onClick={() => props.modalOpen(props.camping)} 
-      className={`flex items-center w-full border-b border-light-border-1`}
+      className={`
+        flex items-center w-full 
+        border-light-border-1 bg-light-gray
+        dark:border-dark-border-1 dark:bg-dark-gray
+        border-b mb-[0.5rem]
+      `}
     >
       {/* 캠핑이미지 */}
       <div 

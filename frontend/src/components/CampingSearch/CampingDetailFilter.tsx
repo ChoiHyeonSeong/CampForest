@@ -92,7 +92,7 @@ const CampingDetailFilter = (props: Props) => {
     >
       <div
         className="
-          w-[90%] md:w-[45rem] max-h-[75vh] p-6
+          w-[90%] md:w-[45rem] max-h-[75vh] p-[0.75rem]
           bg-light-white
           dark:bg-dark-white
           rounded-lg overflow-y-auto
@@ -112,7 +112,7 @@ const CampingDetailFilter = (props: Props) => {
         </div>
         
         {/* 필터 선택 */}
-        <div className="flex-grow overflow-y-auto px-6">
+        <div className="flex-grow overflow-y-auto px-[0.5rem]">
           {filterCategories.map((category) => (
             <div key={category.name} className="mb-[1rem]">
               <h3 className="font-semibold mb-[0.5rem]">{category.name}</h3>
@@ -151,9 +151,9 @@ const CampingDetailFilter = (props: Props) => {
           <button
             className="
               w-1/2 py-[0.5rem]
-              bg-light-signature text-white
-              dark:bg-dark-signature  
-              rounded
+              bg-light-signature text-white hover:bg-light-signature-hover
+              dark:bg-dark-signature dark:hover:bg-dark-signature-hover
+              rounded transition-all duration-200
             "
             onClick={applyFilters}
           >

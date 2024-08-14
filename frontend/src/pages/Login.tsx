@@ -34,13 +34,19 @@ function Login() {
   }, [email, password])
 
   return (
-    <div className={`flex justify-center items-center w-full min-h-screen`}>
+    <div
+      className='
+        flex justify-center md:items-center w-full h-[calc(100vh-6.4rem)] sm:h-[calc(100vh-3.2rem)] lg:h-screen
+        bg-light-white bg-opacity-80 md:bg-transparent md:bg-opacity-0
+        dark:bg-dark-white dark:bg-opacity-80 md:dark:bg-transparent md:dark:bg-opacity-0        
+      '
+    >
       <div
         className={`
-          w-[100%] h-screen md:h-fit md:max-w-[42rem] p-[2rem]
-          bg-light-white bg-opacity-80
-          dark:bg-dark-white dark:bg-opacity-80
-          md:rounded
+          w-[100%] h-fit md:max-w-[42rem] p-[2rem]
+          md:bg-light-white md:bg-opacity-80
+          md:dark:bg-dark-white md:dark:bg-opacity-80
+          rounded
         `}
       >
         <h3
