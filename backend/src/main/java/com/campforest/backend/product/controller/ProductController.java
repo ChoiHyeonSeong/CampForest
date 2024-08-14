@@ -59,14 +59,15 @@ public class ProductController {
 
 		List<String> imageUrls = new ArrayList<>();
 		if (files != null) {
-			try {
-				for (MultipartFile file : files) {
+			for (MultipartFile file : files) {
+				try {
 					String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
 					imageUrls.add(fileUrl);
+				} catch (IOException e) {
+					log.error("Failed to upload file: {}", file.getOriginalFilename(), e);
+					continue;  // 해당 파일 업로드 실패 시, 다음 파일로 넘어감
 				}
-			} catch (IOException e) {
-				return ApiResponse.createError(ErrorCode.PRODUCT_CREATION_FAILED);
 			}
 		}
 
