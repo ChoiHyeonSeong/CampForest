@@ -161,7 +161,7 @@ const NavbarLeft = (props: Props) => {
         fixed z-[80] md:z-[40] w-[82vw] h-[100%] mb-[2.75rem] pt-[0] md:pt-[3.2rem]
         bg-light-white border-light-border-1
         dark:bg-dark-white dark:border-dark-border-1
-        border-r transition-all duration-300 ease-in-out
+        md:border-r transition-all duration-300 ease-in-out
       `} 
       onTransitionEnd={props.handleTransitionEnd}
     >
@@ -459,10 +459,8 @@ const NavbarLeft = (props: Props) => {
             <div className={`flex items-center w-full`}>
               <div 
                 className={`
-                  shrink-0 flex flex-all-center size-[2.7rem] me-[1rem]
-                  border-light-border-2
-                  dark:border-dark-border-2
-                  overflow-hidden rounded-full border
+                  shrink-0 flex flex-all-center size-[2.7rem] me-[0.75rem]
+                  overflow-hidden rounded-full
                 `}
               >
                 <img 

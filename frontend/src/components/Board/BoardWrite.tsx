@@ -32,19 +32,30 @@ const BoardWrite = () => {
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
   const [boardImages, setBoardImages] = useState<File[]>([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const dispatch = useDispatch()
+
+  // 안드로이드 뒤로가기 버튼 이벤트 핸들러
+  const handleBackButton = (event: PopStateEvent) => {
+    event.preventDefault();
+    dispatch(setIsBoardWriteModal(false));
+  };
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 이벤트 리스너 추가
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handleBackButton);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, []);
+
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
-
     if (isSubmitting) return;
-
     setIsSubmitting(true);
-
-    
-
     try {
       dispatch(setIsLoading(true))
       const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
@@ -145,7 +156,7 @@ const BoardWrite = () => {
   return (
     <div 
       className={`
-        fixed z-[10] md:z-[100] w-full h-[calc(100vh-5.95rem)] md:h-full mt-[3.2rem] md:mt-0
+        fixed z-[100] w-full h-[calc(100vh-3.2rem)] md:h-full
         bg-light-black bg-opacity-80
         inset-0
       `}
@@ -157,7 +168,7 @@ const BoardWrite = () => {
       >
         <div 
           className={`
-            flex flex-col justify-between md:w-[45rem] h-[calc(100vh-5.95rem)] md:h-[90%] mt-0 md:mt-[8%] md:mx-auto p-[1rem] md:p-[1.5rem]
+            flex flex-col justify-between md:w-[45rem] h-full md:h-[90%] mt-0 md:mt-[8%] md:mx-auto p-[1rem] md:p-[1.5rem]
             bg-light-white
             dark:bg-dark-white
             overflow-auto md:rounded-md
@@ -169,9 +180,9 @@ const BoardWrite = () => {
                 <ArrowLeftIcon 
                   onClick={() => dispatch(setIsBoardWriteModal(false))} 
                   className={`
-                    md:hidden size-[1.5rem]
-                    fill-light-border-icon
-                    dark:fill-dark-border-icon
+                    md:hidden size-[1.4rem]
+                    fill-light-border-3
+                    dark:fill-dark-border-3
                     cursor-pointer
                   `}
                 />
@@ -179,7 +190,7 @@ const BoardWrite = () => {
               <div 
                 className={`
                   ms-[1rem] md:ms-0
-                  font-bold text-2xl
+                  font-semibold text-xl md:text-2xl
                 `}
               >
                   커뮤니티 글쓰기

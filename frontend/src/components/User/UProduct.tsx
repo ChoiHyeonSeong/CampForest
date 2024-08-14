@@ -234,7 +234,7 @@ const UProduct = (props: Props) => {
             </span>
           </div>
           {/* 필터 */}
-          <div className="flex justify-end absolute right-0">
+          {/* <div className="flex justify-end absolute right-0">
             <div className="flex items-center ms-auto me-[4rem] px-[0.5rem] text-sm">
               <div
                 className={`
@@ -252,7 +252,7 @@ const UProduct = (props: Props) => {
               `}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div 

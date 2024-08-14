@@ -16,6 +16,7 @@ module.exports = {
         'shake': 'shake 0.5s 3',
         'clouds1': 'clouds1 110s linear infinite',
         'clouds2': 'clouds2 100s linear infinite',
+        'slideIn': 'slide-in 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
       },
       keyframes: {
         shake: {
@@ -29,6 +30,10 @@ module.exports = {
         clouds2: {
           'to': { backgroundPosition: '-200%' },
         },
+        slideIn: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        }
       },
       colors: {
         light: {

@@ -9,6 +9,9 @@ import UBoard from '@components/User/UBoard';
 import UProduct from '@components/User/UProduct';
 import UReview from '@components/User/UReview';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 export type UserInfo = {
   nickname: string;
   followingCount: number;
@@ -27,6 +30,7 @@ const UserPage = () => {
  
   const params = useParams()
   const userId = Number(params.userId);
+  const userState = useSelector((state: RootState) => state.userStore);
 
   const [userinfo, setUserInfo] = useState<UserInfo>();
 
@@ -41,6 +45,11 @@ const UserPage = () => {
   }
 
   useEffect(() => {
+    fetchUserInfo();
+  }, [userId]);
+
+
+  useEffect(() => {
     if (currentLoc.pathname.endsWith('/product')) {
       setSelectedMenu('판매/대여')
     } else if (currentLoc.pathname.endsWith('/review')) {
@@ -50,6 +59,8 @@ const UserPage = () => {
     }
   }, [currentLoc.pathname])
 
+  const isCurrentUser = userState.userId === userId;
+  
   return (
     <>
       {/* 팔로잉 모달 */}
@@ -80,24 +91,33 @@ const UserPage = () => {
       <div className={`flex justify-center min-h-screen bg-light-white dark:bg-dark-text-white`}>
         <div
           className={`
-            w-[100%] lg:w-[50rem] lg:mt-[1.5rem] max-lg:px-[1.25rem] max-lg:py-[0.75rem]
+            w-[100%] lg:w-[50rem] lg:mt-[2rem] max-sm:py-0 max-lg:px-[1.25rem] max-lg:py-[0.75rem]
           `}
         >
           <h3
             className={`
-              hidden lg:block pb-[0.75rem] text-lg md:text-[1.5rem] ps-[1rem] pt-[1rem]
+              hidden md:block pb-[0.75rem] text-lg md:text-[1.5rem] ps-[1rem] pt-[1rem]
               dark:bg-dark-white dark:bg-opacity-80
               rounded-t-lg
             `}
           >
-            유저 프로필
+            {isCurrentUser ? (
+              <span className='font-medium'>마이프로필</span>
+            ) : (
+              <>
+                <span className='font-medium'>{userinfo?.nickname}</span>님의 프로필
+              </>
+            )}
           </h3>
-          <ProfileTop
-            setIsModalOpen={setIsModalOpen} 
-            setIsFollowing={setIsFollowing}
-            userinfo={userinfo}
-            fetchUserInfo={fetchUserInfo}
-          />
+
+          <div className='px-[0.5rem] py-[1rem] mb-[0.75rem] rounded'>
+            <ProfileTop
+              setIsModalOpen={setIsModalOpen} 
+              setIsFollowing={setIsFollowing}
+              userinfo={userinfo}
+              fetchUserInfo={fetchUserInfo}
+            />
+          </div>
           <div>
             {/* 목록전환박스 */}
             <MenuBar

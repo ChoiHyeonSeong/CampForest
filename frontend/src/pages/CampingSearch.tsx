@@ -722,7 +722,7 @@ function CampingSearch() {
                   .filter(option => option !== "전체")  // "전체"가 아닌 옵션만 필터링
                   .map(option => (
                     <div key={`${category}-${option}`} className="flex items-center bg-light-gray dark:bg-dark-gray px-2 py-1 rounded-full text-sm">
-                      <span>{`${category}: ${option}`}</span>
+                      <span>{category === "반려동물" ? `${category}: ${option}` : option}</span>
                       <button onClick={() => removeDetailFilter(category, option)} className="ml-1">
                         <CloseIcon className="w-4 h-4 fill-light-border-icon dark:fill-dark-border-icon" />
                       </button>
