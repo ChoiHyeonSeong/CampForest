@@ -11,7 +11,8 @@ import Camping, {CampingDataType} from '@components/CampingSearch/Camping';
 import { filterCategories } from '@components/CampingSearch/CampingDetailFilter';
 import { campingLoadRating } from '@services/campingService';
 import { useInView } from 'react-intersection-observer';
-import { set } from 'react-datepicker/dist/date_utils';
+
+import { ReactComponent as LocationIcon } from '@assets/icons/current-location.svg';
 
 const geolocationOptions = {
   enableHighAccuracy: true,
@@ -68,6 +69,7 @@ function CampingSearch() {
   const [visibleCount, setVisibleCount] = useState(10); // 처음에 보여줄 camping 개수
   const [selectedCampingData, setSelectedCampingData] = useState<CampingDataType | null>(null);
 
+  const markers = useRef<any[]>([]);
 
   // 검색 text 필터에 추가
   const setSearchText = () => {
@@ -173,7 +175,7 @@ function CampingSearch() {
     loadNaverMap().then((naver) => {
       const mapOptions = {
         center: new window.naver.maps.LatLng(currentLat.current, currentLng.current),
-        zoom: 8,
+        zoom: 7,
       };
       const mapInstance = new window.naver.maps.Map('map', mapOptions);
       setMap(mapInstance); // map 객체를 상태에 저장
@@ -224,7 +226,6 @@ function CampingSearch() {
     setCurrentPos()
     moveMapCenter(currentLat.current, currentLng.current)
   }
-
 
   useEffect(() => {
     setFilterCondition(prevConditions => {
@@ -294,9 +295,34 @@ function CampingSearch() {
     });
   }, [detailFilters])
 
+  // 도시 중심좌표로 이동
+  const cityPosMove = () => {
+    const locationFilter = filterCondition.find(condition => condition.type === 'location');
+  
+    if (!locationFilter) return null;
+
+    // 도시 이름 추출 (첫 번째 단어)
+    const cityName = locationFilter.value.split(' ')[0];
+
+    // koreaAdministrativeDivisions에서 해당 도시 찾기
+    const cityData = koreaAdministrativeDivisions.find(city => city.city === cityName);
+
+    if (!cityData) return null;
+
+    // 도시의 '전체' 지역 좌표 찾기
+    const centerCoordinates = cityData.districts.find(district => district.name === '전체');
+
+    if (!centerCoordinates) return null;
+
+    return { lat: centerCoordinates.lat, lng: centerCoordinates.lng };
+  }
+
   // 필터링 로직
   useEffect(() => {
-    console.log(123)
+    const centerCoordinates = cityPosMove()
+    if (centerCoordinates !== null) {
+      moveMapCenter(centerCoordinates.lat, centerCoordinates.lng, 8)
+    }
 
     const campingListDiv = document.querySelector('#campingList'); // contentBox의 ID로 선택
     if (campingListDiv) {
@@ -305,24 +331,58 @@ function CampingSearch() {
 
     const applyFilters = () => {
       return campingData.filter(camping => {
-        return filterCondition.every(condition => {
-          if (condition.type === 'location') {
-            // location 필터링
-            const [doNm, sigunguNm] = condition.value.split(' '); // 시도와 시군구로 분리
-            const doNmMatch = camping.doNm ? camping.doNm.includes(doNm) : false;
+        // 조건을 세 가지로 나눕니다: location, facltNm, 그리고 기타 조건들
+        const locationConditions = filterCondition.filter(condition => condition.type === 'location');
+        const facltNmConditions = filterCondition.filter(condition => condition.type === 'facltNm');
+        const otherConditions = filterCondition.filter(
+          (condition): condition is FilterCondition & { type: keyof CampingDataType } =>
+            condition.type !== 'location' && condition.type !== 'facltNm'
+        );
+    
+        // location 조건 검사
+        const locationMatch = locationConditions.some(condition => {
+          const locationParts = condition.value.split(' ');
+          const doNm = locationParts[0];
+          const sigunguNm = locationParts.length > 1 ? locationParts[1] : null;
+    
+          const doNmMatch = camping.doNm ? camping.doNm.includes(doNm) : false;
+    
+          if (sigunguNm) {
             const sigunguNmMatch = camping.sigunguNm ? camping.sigunguNm.includes(sigunguNm) : false;
-            return doNmMatch && sigunguNmMatch; // 둘 다 만족해야 함
-          } else if (condition.type === 'facltNm') {
-            // facltNm 필터링
-            return camping.facltNm ? camping.facltNm.includes(condition.value) : false;
+            return doNmMatch && sigunguNmMatch;
           } else {
-            // 다른 조건 필터링
-            const campingValue = camping[condition.type];
-            return campingValue ? campingValue.split(',').includes(condition.value) : false;
+            return doNmMatch;
           }
         });
+    
+        // location 조건이 있을 경우, 하나라도 맞지 않으면 제외
+        if (locationConditions.length > 0 && !locationMatch) {
+          return false;
+        }
+    
+        // facltNm 조건 검사
+        const facltNmMatch = facltNmConditions.every(condition => {
+          return camping.facltNm ? camping.facltNm.includes(condition.value) : false;
+        });
+    
+        // facltNm 조건이 있고, 하나라도 맞지 않으면 제외
+        if (facltNmConditions.length > 0 && !facltNmMatch) {
+          return false;
+        }
+    
+        // 기타 조건 검사
+        const otherMatch = otherConditions.every(condition => {
+          const campingValue = camping[condition.type];
+          return campingValue ? campingValue.split(',').includes(condition.value) : false;
+        });
+    
+        // 모든 조건이 충족되면 true, 아니면 false
+        return otherMatch;
       });
     };
+    
+    
+    
 
     const filtered = applyFilters();
     const initialIds = filtered.slice(0, 10)
@@ -331,9 +391,14 @@ function CampingSearch() {
 
     if (filtered.length === 0) {
       setFilteredData([]);
+      if (map) {
+        markers.current.forEach(marker => marker.setMap(null));
+        markers.current = [];
+      }
       return; // 이후 코드 실행을 중지
     }
 
+    // 첫 로드
     const firstLoad = async () => {
       try {
         if (initialIds.length > 0) {
@@ -362,18 +427,42 @@ function CampingSearch() {
       }
     };
 
+    // 마커 생성 및 표시 함수
+    const displayFirstMarkers = () => {
+      if (map) {
+        markers.current.forEach(marker => marker.setMap(null));
+        markers.current = [];
+
+        filtered.slice(0, 10).forEach((campsite) => {
+          // X와 Y 좌표가 모두 존재하는 경우에만 마커 생성
+          if (typeof campsite.mapX === 'number' && typeof campsite.mapY === 'number') {
+            const position = new window.naver.maps.LatLng(campsite.mapY, campsite.mapX);
+            const marker = new window.naver.maps.Marker({
+              position: position,
+              map: map,
+              title: campsite.facltNm
+            });
+
+            window.naver.maps.Event.addListener(marker, 'click', () => {
+              modalOpen(campsite)
+              console.log(`Clicked: ${campsite.facltNm}`);
+            });
+
+            markers.current.push(marker);
+          } else {
+            console.warn(`Missing coordinates for campsite: ${campsite.facltNm}`);
+          }
+        });
+      }
+    };
+
+    if (map && filtered.length > 0) {
+      displayFirstMarkers();
+    }
+
     firstLoad()
     setVisibleCount(10)
   }, [filterCondition, campingData]);
-
-  useEffect(() => {
-    const contentBox = document.querySelector('#contentBox') as HTMLElement;
-    if (isModalOpen) {
-      contentBox.classList.add('md:scrollbar-hide')
-    } else {
-      contentBox.classList.remove('md:scrollbar-hide')
-    }
-  }, [isModalOpen])
 
   useEffect(() => {
     if (inView) {
@@ -414,6 +503,32 @@ function CampingSearch() {
     }
   };
 
+
+  const displayMarkers = (newlyLoadedData: CampingDataType[]) => {
+    if (map) {
+      // 새로 추가된 데이터에 대해서만 마커 생성
+      newlyLoadedData.forEach((campsite) => {
+        if (typeof campsite.mapX === 'number' && typeof campsite.mapY === 'number') {
+          const position = new window.naver.maps.LatLng(campsite.mapY, campsite.mapX);
+          const marker = new window.naver.maps.Marker({
+            position: position,
+            map: map,
+            title: campsite.facltNm
+          });
+  
+          window.naver.maps.Event.addListener(marker, 'click', () => {
+            modalOpen(campsite)
+            console.log(`Clicked: ${campsite.facltNm}`);
+          });
+  
+          markers.current.push(marker);
+        } else {
+          console.warn(`Missing coordinates for campsite: ${campsite.facltNm}`);
+        }
+      });
+    }
+  };
+
   useEffect(() => {
     const newlyLoadedData = filteredData.slice(visibleCount - 10, visibleCount);
     if (newlyLoadedData.length > 0) {
@@ -423,12 +538,13 @@ function CampingSearch() {
       if (newIds.length > 0) {
         sendLoadRatingRequest(newIds);
       }
+      displayMarkers(newlyLoadedData)
     }
   }, [visibleCount]);
 
-  useEffect(() => {
-    console.log(filteredData)
-  }, [filteredData])
+
+
+
 
   const updateSingleCampingRating = async (campsiteId: number) => {
     try {
@@ -451,6 +567,15 @@ function CampingSearch() {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    if (isModalOpen) {
+      contentBox.classList.add('md:scrollbar-hide-mo')
+    } else {
+      contentBox.classList.remove('md:scrollbar-hide-mo')
+    }
+  }, [isModalOpen])
 
   return (
     <div className={`z-[30]`}>
@@ -479,9 +604,10 @@ function CampingSearch() {
             <div 
               onClick={moveMapCurrent}
               className='
-                absolute top-0 right-0 z-[0] w-[4rem] h-[4rem] bg-black
+                flex flex-all-center absolute top-2 right-2 z-[0] size-[2.3rem] bg-light-white border-light-black border cursor-pointer rounded-full
               '
             >
+              <LocationIcon className='fill-light-black size-[2rem]'/>
             </div>
           </div>
           

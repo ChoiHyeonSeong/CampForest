@@ -29,6 +29,7 @@ type UserInfo = {
   followerCount: number;
   introduction: string;
   profileImage: string;
+  temperature: number;
   isOpen: boolean;
 }
 
@@ -47,8 +48,6 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
   const loginUserId = Number(sessionStorage.getItem('userId'));
   const { subscribe, publishMessage } = useWebSocket();
 
-  const [fireTemperature, setFireTemperature] = useState(400);
-
   useEffect(() => {
     if (userId === loginUserId) {
       setMyPage(true);
@@ -58,7 +57,11 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
     fetchUserInfo();
   }, [userId])
   
-  const percentage = Math.min(Math.max(Math.round((fireTemperature / 1400) * 100), 0), 100);
+  let percentage: number = 50;
+  if (userinfo) {
+    percentage = Math.min(Math.max(Math.round((userinfo.temperature / 1400) * 100), 0), 100);
+  }
+  
   
   async function handleChatButton() {
     const matchedUser = chatState.communityChatUserList.find((chatUser) => chatUser.otherUserId === userId);
@@ -258,7 +261,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
             `}
           >
             <span>
-              {fireTemperature}
+              {userinfo?.temperature}
             </span>
             ℃
           </div>

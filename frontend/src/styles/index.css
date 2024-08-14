@@ -26,6 +26,9 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  .scrollbar-hide-mo::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @font-face {
