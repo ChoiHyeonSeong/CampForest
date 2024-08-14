@@ -142,7 +142,7 @@ public class ProductController {
 	}
 
 	//게시물 삭제
-	@DeleteMapping()
+	@DeleteMapping("/{productId}")
 	public ApiResponse<?> deleteProduct(Authentication authentication, @PathVariable Long productId) throws Exception {
 
 		Users user = userService.findByEmail(authentication.getName())
