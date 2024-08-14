@@ -134,6 +134,8 @@ public enum ErrorCode {
 
 	// Notification Error
 	NOTIFICATION_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
+	NOTIFICATION_DELETE_FAILED("N002", HttpStatus.BAD_REQUEST, "알림 삭제에 실패했습니다."),
+	NOTIFICATION_NOT_MATCH_WITH_RECEIVER("N003", HttpStatus.BAD_REQUEST, "알림의 수신자가 일치하지 않습니다."),
 
 	// Campsite Review Error
 	CAMPSITE_REVIEW_LOAD_FAILED("CR001", HttpStatus.BAD_REQUEST, "캠핑장 리뷰를 불러오는 데 실패하였습니다."),
