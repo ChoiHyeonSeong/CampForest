@@ -15,6 +15,7 @@ export type UserInfo = {
   followerCount: number;
   introduction: string;
   profileImage: string;
+  temperature: number;
   isOpen: boolean;
 }
 

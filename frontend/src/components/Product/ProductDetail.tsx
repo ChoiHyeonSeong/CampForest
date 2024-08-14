@@ -66,6 +66,7 @@ export type ProductDetailType = {
   userImage: ImageType | null;
   latitude: number;
   longitude: number;
+  temperature?: number;
 };
 
 function Detail() {
@@ -94,6 +95,7 @@ function Detail() {
     saved: false,
     latitude: 0,
     longitude: 0,
+    temperature: 500,
   });
 
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([])
@@ -351,6 +353,11 @@ function Detail() {
     };
   }, []);
 
+  let percentage: number = 50;
+  if (product.temperature) {
+    percentage = Math.min(Math.max(Math.round((product.temperature / 1400) * 100), 0), 100);
+  }
+
   return (
     <div className={`flex justify-center mb-[5rem] `}>
       <div
@@ -592,7 +599,7 @@ function Detail() {
                       font-medium
                     `}
                   >
-                    573°C
+                    {product.temperature}
                   </div>
                 </div>
                 <div
@@ -610,11 +617,14 @@ function Detail() {
                       dark:from-dark-warning dark:to-dark-signature
                       rounded-full
                     `}
+                    style={{ 
+                      width: `${percentage}%` 
+                    }}
                   >
-                    <img
-                      src={FireGif}
-                      alt="불꽃"
-                      className={`absolute -right-[4rem] -top-[3.5rem] size-[8rem]`}
+                    <img 
+                      src={FireGif} 
+                      alt="불꽃" 
+                      className={`absolute -right-[4rem] -top-[4.5rem] z-[0] w-[128px] min-w-[128px] h-[160px] min-h-[160px]`}
                     />
                   </div>
                 </div>
