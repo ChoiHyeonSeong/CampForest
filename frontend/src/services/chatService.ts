@@ -32,6 +32,15 @@ export const initCommunityChat = async (userId: number): Promise<number> => {
   return response.data.data.roomId;
 };
 
+export const exitCommunityChat = async (roomId: number) => {
+  try {
+  const response = await axiosInstance.post(`/communitychat/room/${roomId}/exit`);
+  console.log(response);
+  } catch (error) {
+    throw error
+  }
+}
+
 export const transactionChatList = async () => {
   const response = await axiosInstance.get(`/transactionchat/rooms`);
 

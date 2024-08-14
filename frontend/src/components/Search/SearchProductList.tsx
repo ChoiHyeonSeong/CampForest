@@ -21,7 +21,7 @@ const SearchProductList = (props : Props) => {
 
   const nextCursorRef = useRef<number | null>(null)
   
-  const fetchProductList = useCallback(async () => {
+  const fetchProductList = async () => {
     if (props.searchText.length < 2) {
       setProducts([]);
       setSearchCount(0);
@@ -48,23 +48,25 @@ const SearchProductList = (props : Props) => {
       setProducts([]);
       setSearchCount(0);
     }
-  }, [props.searchText, selectedFilter]);
-
-
-  useEffect(() => {
-    fetchProductList();
-  }, [fetchProductList]);
+  }
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleFilterChange = (filter: string) => {
+    nextCursorRef.current = null
+    setProducts([]);
+    setSearchCount(0);
+    setNextPageExist(true);
     setSelectedFilter(filter);
     setIsDropdownOpen(false);
-    fetchProductList();
   };
  
+  useEffect(() => {
+    fetchProductList();
+  }, [selectedFilter])
+
   useEffect(() => {
     if (inView && nextPageExist) {
       console.log(inView, '무한 스크롤 요청');
