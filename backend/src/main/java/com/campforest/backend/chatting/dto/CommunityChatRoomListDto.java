@@ -14,4 +14,5 @@ public class CommunityChatRoomListDto {
 	private String lastMessage;
 	private LocalDateTime lastMessageTime;
 	private Long unreadCount;
+	private boolean isHidden;
 }

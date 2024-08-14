@@ -54,7 +54,22 @@ public class CommunityChatServiceImpl implements CommunityChatService {
 	@Transactional
 	@Override
 	public List<CommunityChatMessage> getChatHistory(Long roomId, Long userId) {
-		return communityChatMessageRepository.findByRoomIdAndNotDeletedForUser(roomId, userId);
+		List<CommunityChatMessage> messages = communityChatMessageRepository.findByRoomIdAndNotDeletedForUser(
+			roomId, userId);
+
+		List<CommunityChatMessage> filteredMessages = messages.stream()
+			.filter(message -> {
+
+				if (userId.equals(message.getSenderId())) {
+					return !message.isDeletedForSender();
+				} else if (userId.equals(message.getReceiverId())) {
+					return !message.isDeletedForReceiver();
+				}
+				return false;
+			})
+			.collect(Collectors.toList());
+
+		return filteredMessages;
 	}
 
 	@Transactional
@@ -101,6 +116,7 @@ public class CommunityChatServiceImpl implements CommunityChatService {
 				} else {
 					dto.setUserProfileUrl(null);
 				}
+				dto.setHidden(room.isHidden());
 				dto.setUnreadCount(communityChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
 				return dto;
 			})
@@ -113,7 +129,6 @@ public class CommunityChatServiceImpl implements CommunityChatService {
 	@Override
 	public void exitChatRoom(Long roomId, Long userId) {
 		List<CommunityChatMessage> messages = communityChatMessageRepository.findByChatRoom(roomId);
-
 		for (CommunityChatMessage message : messages) {
 			if (message.getSenderId().equals(userId)) {
 				message.setDeletedForSender(true);
@@ -121,7 +136,12 @@ public class CommunityChatServiceImpl implements CommunityChatService {
 				message.setDeletedForReceiver(true);
 			}
 		}
+		CommunityChatRoom room = communityChatRoomRepository.findById(roomId)
+			.orElseThrow(() -> new RuntimeException("Chat room not found"));
 
+		room.setHidden(true);
+
+		communityChatRoomRepository.save(room);
 		communityChatMessageRepository.saveAll(messages);
 	}
 

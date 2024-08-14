@@ -34,6 +34,9 @@ public class CommunityChatRoom {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
+	@Column(name = "is_hidden")
+	private boolean isHidden;
+
 	@PrePersist
 	protected void onCreate() {
 		createdAt = LocalDateTime.now();
