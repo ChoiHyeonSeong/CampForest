@@ -99,13 +99,33 @@ public class ProductController {
 
 		return ApiResponse.createSuccess(findProduct, "게시물 조회 성공하였습니다.");
 	}
+	//대여 이미지 수정
+	@PostMapping("/modifyImage")
+	public List<String> modifyImage(
+		@RequestPart(value = "files", required = false) MultipartFile[] files
+	){
+		try {
+			List<String> imageUrls = new ArrayList<>();
+			if (files != null) {
+				for (MultipartFile file : files) {
+					String extension = file.getOriginalFilename()
+						.substring(file.getOriginalFilename().lastIndexOf("."));
+					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
+					imageUrls.add(fileUrl);
+				}
+			}
+			return imageUrls;
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
 
 	//게시물 수정
 	@PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ApiResponse<?> updateProduct(
 		Authentication authentication,
-		@RequestPart(value = "files", required = false) MultipartFile[] files,
-		@RequestPart(value = "productUpdateDto") ProductUpdateDto productUpdateDto
+		@RequestBody ProductUpdateDto productUpdateDto
 	) throws Exception {
 
 		Users user = userService.findByEmail(authentication.getName())
@@ -118,20 +138,7 @@ public class ProductController {
 			return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
 		}
 
-		List<String> imageUrls = new ArrayList<>();
-		if (files != null) {
-			try {
-				for (MultipartFile file : files) {
-					String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
-					imageUrls.add(fileUrl);
-				}
-			} catch (IOException e) {
-				return ApiResponse.createError(ErrorCode.PRODUCT_UPDATE_FAILED);
-			}
-		}
 		productUpdateDto.setUserId(user.getUserId());
-		productUpdateDto.setProductImageUrl(imageUrls);
 		try {
 			productService.updateProduct(productUpdateDto.getProductId(), productUpdateDto);
 		} catch (Exception e) {
