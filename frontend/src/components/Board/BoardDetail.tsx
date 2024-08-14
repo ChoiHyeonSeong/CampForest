@@ -9,45 +9,6 @@ import { commentList, commentWrite } from '@services/commentService';
 import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
 import { RootState } from '@store/store';
 
-const useSwipe = ({ onSwipeLeft, onSwipeRight, minSwipeDistance = 50 }: {
-  onSwipeLeft?: () => void;
-  onSwipeRight?: () => void;
-  minSwipeDistance?: number;
-}) => {
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-
-  useEffect(() => {
-    const onTouchStart = (e: TouchEvent) => {
-      setTouchEnd(null);
-      setTouchStart(e.targetTouches[0].clientX);
-    };
-
-    const onTouchMove = (e: TouchEvent) => setTouchEnd(e.targetTouches[0].clientX);
-
-    const onTouchEnd = () => {
-      if (!touchStart || !touchEnd) return;
-      const distance = touchStart - touchEnd;
-      const isLeftSwipe = distance > minSwipeDistance;
-      const isRightSwipe = distance < -minSwipeDistance;
-      if (isLeftSwipe && onSwipeLeft) onSwipeLeft();
-      if (isRightSwipe && onSwipeRight) onSwipeRight();
-    };
-
-    document.addEventListener('touchstart', onTouchStart);
-    document.addEventListener('touchmove', onTouchMove);
-    document.addEventListener('touchend', onTouchEnd);
-
-    return () => {
-      document.removeEventListener('touchstart', onTouchStart);
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
-    };
-  }, [onSwipeLeft, onSwipeRight, touchStart, touchEnd, minSwipeDistance]);
-
-  return {};
-};
-
 type Props = {
   selectedBoard: BoardType;
   detailClose: () => void;
@@ -149,15 +110,6 @@ const BoardDetail = (props: Props) => {
       props.detailClose();
     }, 300);
   };
-
-  useSwipe({
-    onSwipeRight: () => {
-      if (screenSize === 'mobile') {
-        handleDetailClose();
-      }
-    },
-    minSwipeDistance: 50,
-  });
 
   if (!props.selectedBoard) {
     return <div>게시글을 찾을 수 없습니다.</div>;
