@@ -48,9 +48,9 @@ public class ReviewService {
 		Users reviewed = userRepository.findById(reviewRequestDto.getReviewedId())
 			.orElseThrow(() -> new IllegalArgumentException("리뷰 대상을 찾을 수 없습니다."));
 
-		if (reviewRepository.existsByReviewerIdAndReviewedId(
-			reviewRequestDto.getReviewerId(),
-			reviewRequestDto.getReviewedId())) {
+		if (reviewRepository.existsByReviewerAndReviewed(
+			reviewer,
+			reviewed)) {
 			throw new IllegalArgumentException("리뷰가 이미 존재합니다.");
 		}
 

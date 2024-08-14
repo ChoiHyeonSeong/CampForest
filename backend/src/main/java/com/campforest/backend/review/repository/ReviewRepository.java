@@ -18,6 +18,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	@Query("SELECT r FROM Review r LEFT JOIN FETCH r.reviewImages WHERE r.reviewer = :user")
 	List<Review> findAllReceivedReviewsWithImages(@Param("user") Users user);
 
-	boolean existsByReviewerIdAndReviewedId(Long reviewerId, Long reviewedId);
+	boolean existsByReviewerAndReviewed(Users reviewer, Users reviewed);
 
 }
