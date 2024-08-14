@@ -91,7 +91,7 @@ function App() {
         {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
         {isDark && <StarLight />}
         
-        <ForestBg />
+        {/* <ForestBg /> */}
       </div>
     </div>
   );
