@@ -16,6 +16,7 @@ type ChatState = {
   communityUnreadCount: number;
   transactionUnreadCount: number;
   saleStatus: string;
+  excludeDates: Date[];
 }
 
 const initialState: ChatState = {
@@ -49,6 +50,7 @@ const initialState: ChatState = {
   communityUnreadCount: 0,
   transactionUnreadCount: 0,
   saleStatus: '',
+  excludeDates: [],
 };
 
 const chatSlice = createSlice({
@@ -161,6 +163,9 @@ const chatSlice = createSlice({
     setSaleStatus: (state, action: PayloadAction<string>) => {
       state.saleStatus = action.payload;
     },
+    setExcludeDates: (state, action: PayloadAction<Date[]>) => {
+      state.excludeDates = action.payload;
+    }
   }
 })
 
@@ -182,5 +187,6 @@ export const {
   setCommunityUnreadCount,
   setTransactionUnreadCount,
   setSaleStatus,
+  setExcludeDates
 } = chatSlice.actions;
 export default chatSlice.reducer;

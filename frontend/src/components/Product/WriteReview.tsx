@@ -4,10 +4,12 @@ import { ReactComponent as StarIcon } from '@assets/icons/star.svg'
 import MultiImageUpload from '@components/Public/MultiImageUpload'
 import { ReviewState } from '@store/reviewSlice'
 import { reviewWrite } from '@services/reviewService'
+import { useNavigate } from 'react-router-dom'
 
 type Props = {
 }
 const WriteReview = (props: Props) => {
+  const navigate = useNavigate();
   const [productImages, setProductImages] = useState<File[]>([]);
   const [content, setContent] = useState('');
   const [rating, setRating] = useState<number>(0);
@@ -217,8 +219,9 @@ const WriteReview = (props: Props) => {
               dark:bg-dark-signature hover:dark:bg-dark-signature-hover
               rounded text-center cursor-pointer
             `}
-            onClick={() => {
-              reviewWrite(reviewState.opponentId, content, rating, reviewState.productType, reviewState.roomId, productImages, );
+            onClick={async () => {
+              await reviewWrite(reviewState.opponentId, content, rating, reviewState.productType, reviewState.roomId, productImages, );
+              navigate(`/user/${reviewState.opponentId}`);
             }}
           >
             <div>

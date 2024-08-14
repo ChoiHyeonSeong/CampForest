@@ -2,12 +2,15 @@ import React from 'react';
 import userImage from '@assets/images/basic_profile.png'
 import { NotificationType } from '@store/notificationSlice';
 import { formatTime } from '@utils/formatTime';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   notification: NotificationType;
 }
 
 const Notification = ({notification}: Props) => {
+  const navigate = useNavigate();
+
   const renderNotificationContent = () => {
     switch(notification.notificationType) {
       case 'FOLLOW':
@@ -95,6 +98,9 @@ const Notification = ({notification}: Props) => {
           src={notification.senderProfileImage || userImage} 
           alt="User" 
           className={`fit cursor-pointer`}
+          onClick={() => {
+           navigate(`/user/${notification.senderId}`) 
+          }}
         />
       </div>
 

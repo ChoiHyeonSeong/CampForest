@@ -61,3 +61,21 @@ export const initTransactionChat = async (productId: number, userId: number): Pr
   console.log('initTransactionChat', response);
   return response.data.data.roomId;
 };
+
+export const checkRentable = async (productId: number) => {
+  try {
+    let dateString = '';
+    let currentDate = new Date();
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth() < 10 ? ('0' + currentDate.getMonth()) : currentDate.getMonth();
+    let day = currentDate.getDay() < 10 ? ('0' + currentDate.getDay()) : currentDate.getDay();
+    dateString = year + '-' + month + '-' + day;
+
+    const params = { productId: productId, currentDate: dateString }
+    const response = await axiosInstance.get(`rent/public/rentable`, { params });
+    console.log(response);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+}

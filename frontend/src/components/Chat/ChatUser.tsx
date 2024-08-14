@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
 import noImg from '@assets/images/basic_profile.png'
-import { userPage } from '@services/userService';
 import { store } from '@store/store';
 import { formatTime } from '@utils/formatTime';
-import { setOpponentInfo } from '@store/reviewSlice';
 
 export type ChatUserType = {
   roomId: number;
   otherUserId: number;
+  userNickName?: string;
+  userProfileUrl?: string;
   lastMessage: string;
   lastMessageTime: string;
   unreadCount: number;
   productId?: number;
+  productImage?: string;
+  productName?: string;
+  productPrice?: number;
 }
 
 type Props = {
@@ -21,24 +24,7 @@ type Props = {
 
 const ChatUser = (props: Props) => {
   const chatUser = store.getState().chatStore.communityChatUserList[props.index];
-  const [nickname, setNickname] = useState('');
-  const [profileImage, setProfileImage] = useState('');
   const [lastMessageTime, setLastMessageTime] = useState('');
-  const fetchOtherUser = async () => {
-    const result = await userPage(chatUser.otherUserId);
-    if(result) {
-      setNickname(result.nickname);
-      store.dispatch(setOpponentInfo({opponentId: store.getState().reviewStore.opponentId, opponentNickname: result.nickname}))
-      setProfileImage(result.profileImage);
-    } else {
-      setNickname('찾을 수 없는 사용자')
-      setProfileImage('');
-    }
-  }
-
-  useEffect(() => {
-    fetchOtherUser();
-  }, [chatUser.otherUserId])
   
   useEffect(() => {
     setLastMessageTime(formatTime(chatUser.lastMessageTime));
@@ -64,7 +50,7 @@ const ChatUser = (props: Props) => {
           `}
         >
           <img 
-            src={profileImage ? profileImage : noImg}
+            src={chatUser.userProfileUrl ? chatUser.userProfileUrl : noImg}
             alt={noImg}
             className={`fit`}
           />
@@ -79,7 +65,7 @@ const ChatUser = (props: Props) => {
               font-semibold
             `}
           >
-            {nickname}
+            {chatUser.userNickName}
           </div>
 
            {/* 마지막 메세지 */}

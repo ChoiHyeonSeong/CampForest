@@ -130,6 +130,7 @@ const ProfileEdit = (props: Props) => {
       className={`
         md:w-[44rem] md:mt-[1rem] lg:mt-[3rem] mx-auto p-[1.5rem]
         bg-light-white bg-opacity-80
+        dark:bg-dark-white dark:bg-opacity-80
         sm:rounded 
       `}
     >
@@ -153,12 +154,12 @@ const ProfileEdit = (props: Props) => {
       <UserInformation />
 
       {/* 비밀번호 변경하기 */}
-      <div className='flex justify-between'>
+      <div>
         <Link to='/user/password'>
-          <div className={`text-light-anchor dark:text-dark-anchor font-md font-medium cursor-pointer`}>비밀번호 변경하기</div>
+          <div className={`block mb-[0.5rem] text-light-anchor dark:text-dark-anchor font-md font-medium cursor-pointer`}>비밀번호 변경하기</div>
         </Link>
         <Link to='/user/delete'>
-          <div className={`text-light-anchor dark:text-dark-anchor font-md font-medium cursor-pointer`}>회원탈퇴</div>
+          <div className={`block text-light-anchor dark:text-dark-anchor font-md font-medium cursor-pointer`}>회원탈퇴</div>
         </Link>
       </div>
       

@@ -152,7 +152,7 @@ const UProduct = (props: Props) => {
       productType: '',
       findUserId: userId,
       size: 1,
-    });;
+    });
     console.log(userState.userId , userId)
     if (userState.userId === userId) {
       const response2 = await likedList({

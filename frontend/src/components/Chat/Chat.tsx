@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
-import { RootState, store } from '@store/store';
+import noImg from '@assets/images/basic_profile.png'
+import { RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { communityChatDetail, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
@@ -40,7 +41,13 @@ export type TransactionMessageType = {
 };
 
 export type ReviewType = {
-
+  createdAt: string;
+  id: number;
+  modifiedAt: string;
+  productType: string;
+  rating: number;
+  reviewContent: string;
+  reviewImages: string[];
 }
 
 export type TransactionEntityType = {
@@ -287,7 +294,7 @@ const fetchMessages = async () => {
           dark:border-dark-border
           rounded-full border overflow-hidden`}
         >
-          <img src={opponentProfileImage} alt="NoImg" className={`fit`} />
+          <img src={opponentProfileImage ? opponentProfileImage : noImg} alt="NoImg" className={`fit`} />
         </div>
         <div className={`text-lg font-medium`}>{opponentNickname}</div>
         <div className={`ms-auto cursor-pointer`} onClick={() => dispatch(setIsChatOpen(false))}>
@@ -319,9 +326,9 @@ const fetchMessages = async () => {
               >
                 <div
                   className="border-light-border size-[2.5rem] me-[0.5rem]
-                  border rounded-full shadow-md"
+                  border rounded-full shadow-md overflow-hidden"
                 >
-                  <img src={opponentProfileImage} alt="NoImg" />
+                  <img src={opponentProfileImage ? opponentProfileImage : noImg} alt="NoImg" />
                 </div>
                 {message.messageType === 'TRANSACTION' ? (
                   <div>

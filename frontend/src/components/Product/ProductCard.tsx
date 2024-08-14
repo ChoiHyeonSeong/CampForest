@@ -65,9 +65,9 @@ const ProductCard = (props: Props) => {
     <div 
       className={`
         pt-[0.75rem] pb-[1.5rem] px-[0.75rem] 
-        bg-light-white bg-opacity-80
-        dark:bg-dark-white dark:bg-opacity-80
-        cursor-pointer hover:shadow-md transition-all duration-30
+        bg-light-white bg-opacity-60
+        dark:bg-dark-white dark:bg-opacity-60
+        rounded cursor-pointer hover:shadow-md transition-all duration-30
       `}
     >
       <Link to={`/product/detail/${props.product.productId}`}>

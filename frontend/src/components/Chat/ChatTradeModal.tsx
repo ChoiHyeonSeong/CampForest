@@ -30,18 +30,35 @@ const ChatTradeModal = (props: Props) => {
   });
   const [firstDate, setFirstDate] = useState<Date>(new Date());
   const [secondDate, setSecondDate] = useState<Date>(new Date());
+  const [secondMaxDate, setSecondMaxDate] = useState<Date>(new Date('2100-01-01'));
   const [loadMap, setLoadMap] = useState(false);
   const { publishMessage } = useWebSocket();
   const userState = useSelector((state: RootState) => state.userStore);
 
   const handleFirstDateChange = (date: Date | null) => {
-    if(date) {
+    if (date) {
       setFirstDate(date);
-      if(firstDate > secondDate) {
+      
+      // 다음 사용 가능한 날짜를 찾아 secondMaxDate로 설정
+      const nextAvailableDate = store.getState().chatStore.excludeDates
+        .map(d => new Date(d))
+        .sort((a, b) => a.getTime() - b.getTime())
+        .find(d => d.getTime() > date.getTime());
+  
+      if (nextAvailableDate) {
+        setSecondMaxDate(new Date(nextAvailableDate.getTime() - 24 * 60 * 60 * 1000)); // 1일 전으로 설정
+      } else {
+        setSecondMaxDate(new Date('2100-01-01')); // 기본값으로 설정
+      }
+  
+      // secondDate 조정
+      if (secondDate.getTime() <= date.getTime()) {
         setSecondDate(date);
+      } else if (nextAvailableDate && secondDate.getTime() >= nextAvailableDate.getTime()) {
+        setSecondDate(new Date(nextAvailableDate.getTime() - 24 * 60 * 60 * 1000));
       }
     }
-  }
+  };
 
   const handleSecondDateChange = (date: Date | null) => {
     if(date) {
@@ -211,6 +228,7 @@ const ChatTradeModal = (props: Props) => {
                   minDate={new Date()}
                   maxDate={new Date('2100-01-01')}
                   selected={firstDate}
+                  excludeDates={store.getState().chatStore.excludeDates.map((date) => new Date(date))}
                   onChange={handleFirstDateChange}
                 />
               </div>
@@ -240,8 +258,9 @@ const ChatTradeModal = (props: Props) => {
                       shouldCloseOnSelect
                       yearDropdownItemNumber={3}
                       minDate={firstDate}
-                      maxDate={new Date('2100-01-01')}
+                      maxDate={secondMaxDate}
                       selected={secondDate}
+                      excludeDates={store.getState().chatStore.excludeDates.map((date) => new Date(date))}
                       onChange={handleSecondDateChange}
                     />
                 </div>
