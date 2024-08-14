@@ -4,8 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -173,18 +176,25 @@ public class RentService {
 	}
 
 	public List<LocalDate> getRentAvailability(Long productId, LocalDate currentDate) {
-		List<Rent> reservedRent = rentRepository.findByProductIdAndRentStartDateAfter(productId, currentDate);
-		List<Rent> finalReservedRent = new ArrayList<>();
+
+		LocalDateTime startOfDay = currentDate.atStartOfDay();
+
+		List<Rent> reservedRent = rentRepository.findReservedRents(productId, startOfDay);
+
+		Set<LocalDate> uniqueDates = new TreeSet<>();// TreeSet을 사용하여 날짜를 정렬된 상태로 유지
+
 		for(Rent rent : reservedRent) {
 			if(rent.getRentStatus().equals(TransactionStatus.RESERVED)) {
-				finalReservedRent.add(rent);
+				LocalDate start = rent.getRentStartDate().toLocalDate();
+				LocalDate end = rent.getRentEndDate().toLocalDate();
+
+				// start부터 end까지의 모든 날짜를 Set에 추가
+				start.datesUntil(end.plusDays(1)).forEach(uniqueDates::add);
 			}
 		}
-		return finalReservedRent.stream()
-			.flatMap(rent -> rent.getRentStartDate()
-				.toLocalDate()
-				.datesUntil(rent.getRentEndDate().toLocalDate().plusDays(1)))
-			.collect(Collectors.toList());
+
+		// Set을 List로 변환하여 반환
+		return new ArrayList<>(uniqueDates);
 	}
 
 	public Map<String, Long> update(RentRequestDto rentRequestDto, Long requesterId) {
