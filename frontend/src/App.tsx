@@ -1,6 +1,10 @@
 import '@styles/App.css';
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+import { setIsBoardWriteModal } from '@store/modalSlice';
+import { useThemeEffect } from '@hooks/useThemeEffect';
 
 import Navbar from '@components/Navbar/Navbar';
 import Login from '@pages/Login';
@@ -16,14 +20,7 @@ import BoardWrite from '@components/Board/BoardWrite';
 import LoadingModal from '@components/Public/LoadingModal';
 import StarLight from '@components/Public/StarLight';
 import ReviewPage from '@components/Product/WriteReview'
-
-import BoardModify from '@components/Board/BoardModify';
-
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@store/store';
-import { setIsBoardWriteModal } from '@store/modalSlice';
 import Product from '@pages/Product';
-import { useThemeEffect } from '@hooks/useThemeEffect';
 import SearchPage from '@pages/SearchPage';
 import LandingPage from '@pages/LandingPage';
 import LightMode from '@components/Public/LightMode';
@@ -89,12 +86,12 @@ function App() {
 
 
         {/* 라이트 모드 배경  */}
-        {!isDark && <LightMode />}
+        {/* {!isDark && <LightMode />} */}
 
         {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
         {isDark && <StarLight />}
         
-        {/* <ForestBg /> */}
+        <ForestBg />
       </div>
     </div>
   );
