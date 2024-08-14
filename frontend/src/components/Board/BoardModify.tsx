@@ -4,7 +4,7 @@ import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.sv
 import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsBoardWriteModal } from '@store/modalSlice'
-import { boardWrite } from '@services/boardService'
+import { boardModifyImageUpload } from '@services/boardService'
 import { RootState } from '@store/store'
 
 import MultiImageUpload from '@components/Public/MultiImageUpload'
@@ -21,9 +21,8 @@ type BoardOpenType = {
   bool: boolean;
 }
 
-const BoardWrite = () => {
+const BoardModify = () => {
   const user = useSelector((state: RootState) => state.userStore);
-  const isBoardWriteModal = useSelector((state: RootState) => state.modalStore.isBoardWriteModal)
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [category, setCategory] = useState<CategoryType>({text: '장비 후기', value: 'equipment'});
@@ -31,23 +30,20 @@ const BoardWrite = () => {
   const [boardOpen, setBoardOpen] = useState<boolean>(true);
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
   const [boardImages, setBoardImages] = useState<File[]>([]);
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const dispatch = useDispatch()
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
 
-    console.log(123123)
     if (isSubmitting) return;
 
     setIsSubmitting(true);
 
     try {
-      const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
-      dispatch(setIsBoardWriteModal(false));
-      window.location.reload();
+      const response = await boardModifyImageUpload(boardImages);
+      console.log(response)
     } catch (error) {
       console.log(error)
     } finally {
@@ -112,7 +108,6 @@ const BoardWrite = () => {
   } 
 
   const handleImagesChange = (images: File[]) => {
-    console.log(images)
     setBoardImages(images);
   };
 
@@ -126,17 +121,6 @@ const BoardWrite = () => {
     setBoardImages([]);
   }
 
-  useEffect(() => {
-    formClear()
-  }, [isBoardWriteModal]);
-
-  useEffect(() => {
-    if (title.length > 0 && content.length > 0) {
-      setIsSubmitDisabled(false);
-    } else {
-      setIsSubmitDisabled(true);
-    }
-  }, [title, content])
 
   return (
     <div 
@@ -145,7 +129,6 @@ const BoardWrite = () => {
         bg-light-black bg-opacity-80
         inset-0
       `}
-      onClick={() => dispatch(setIsBoardWriteModal(false))} 
     >
       <div 
         className={`md:w-[50rem] h-full md:h-[95%] md:mx-auto`} 
@@ -163,7 +146,6 @@ const BoardWrite = () => {
             <div className={`flex items-center mb-[1.5rem]`}>
               <div>
                 <ArrowLeftIcon 
-                  onClick={() => dispatch(setIsBoardWriteModal(false))} 
                   className={`
                     md:hidden size-[1.5rem]
                     fill-light-border-icon
@@ -182,7 +164,6 @@ const BoardWrite = () => {
               </div>
               <div className={`ms-auto`}>
                 <CloseIcon 
-                  onClick={() => dispatch(setIsBoardWriteModal(false))} 
                   className={`
                     hidden md:block md:size-[1.5rem]
                     fill-light-border-icon
@@ -335,4 +316,4 @@ const BoardWrite = () => {
   )
 }
 
-export default BoardWrite;
+export default BoardModify;
