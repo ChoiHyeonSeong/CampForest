@@ -20,7 +20,7 @@ const TransactionMap: React.FC<Props> = ( props ) => {
   }, [props.latitude, props.longitude]);
 
   return (
-    <div ref={mapElement} className='w-[40rem] h-[40rem]' />
+    <div ref={mapElement} className='w-full h-2/3' />
   );
 }
 

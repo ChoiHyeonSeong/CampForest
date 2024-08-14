@@ -102,7 +102,7 @@ const Notification = ({notification}: Props) => {
           </div>
           )
       default:
-        return null;
+        return <div>{notification.message}</div>;
     }
   };
 
