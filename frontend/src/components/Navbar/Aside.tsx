@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect  } from 'react'
 
 // icon import
 import { ReactComponent as WriteIcon } from '@assets/icons/write.svg'
@@ -17,20 +17,46 @@ type Props = {
 
 const Aside = (props: Props) => {
   const dispatch = useDispatch();
-
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 
-  const toggleExpand = (): void => {
-    setIsExpanded(!isExpanded);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const scrollToTop = (): void => {
+  const toggleExpand = useCallback((): void => {
+    setIsExpanded(prev => !prev);
+  }, []);
+
+  const scrollToTop = useCallback((): void => {
     const contentBox = document.getElementById('contentBox');
     contentBox?.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-  };
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (isMobile) {
+      e.currentTarget.classList.add('active-touch');
+    }
+  }, [isMobile]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (isMobile) {
+      e.currentTarget.classList.remove('active-touch');
+    }
+  }, [isMobile]);
+
+  const getButtonClassNames = (baseClasses: string) => `
+    ${baseClasses}
+    ${isMobile ? 'touch-action-manipulation' : 'hover:bg-light-signature dark:hover:bg-dark-signature'}
+    transition-all duration-200
+  `;
 
   return (
     <aside className={`fixed bottom-[4rem] md:bottom-[2rem] right-[1.25rem] md:right-[1.25rem] z-[10]`}>
@@ -41,14 +67,15 @@ const Aside = (props: Props) => {
         <Link 
             onClick={toggleExpand} 
             to='product/write' 
-            className={`
-              ${isExpanded ? 'hover:bg-light-signature dark:hover:bg-dark-signature opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
+            className={getButtonClassNames(`
+              ${isExpanded ? 'opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
               flex flex-all-center w-[2.75rem] h-[2.75rem] 
-              bg-light-black 
-              dark:bg-dark-black 
+              bg-light-black dark:bg-dark-black 
               rounded-full transition-all duration-300 ease-in-out delay-100
               group
-            `}
+            `)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <RentalIcon 
               className={`
@@ -75,14 +102,15 @@ const Aside = (props: Props) => {
               dispatch(setIsBoardWriteModal(true))
               toggleExpand()
             }}
-            className={`
-              ${isExpanded ? 'hover:bg-light-signature dark:hover:bg-dark-signature opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
+            className={getButtonClassNames(`
+              ${isExpanded ? 'opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
               flex flex-all-center w-[2.75rem] h-[2.75rem] ml-[0.5rem]
-              bg-light-black
-              dark:bg-dark-black
+              bg-light-black dark:bg-dark-black
               rounded-full transition-all duration-300 ease-in-out
               group
-            `}
+            `)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <CommunityIcon 
               className={`
@@ -109,29 +137,27 @@ const Aside = (props: Props) => {
         {/* 글쓰기 확장 토글 버튼 */}
         <div 
           onClick={toggleExpand}
-          className={`
+          className={getButtonClassNames(`
             flex flex-all-center z-[10] w-[2.75rem] h-[2.75rem] 
-            bg-light-black hover:bg-light-signature
-            dark:bg-dark-black dark:hover:bg-dark-signature
-            rounded-full duration-200 transition-all 
-          `}
+            bg-light-black dark:bg-dark-black
+            rounded-full
+          `)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           {isExpanded ? (
             <DotIcon 
-              className={`
-                fill-light-white
-                dark:fill-dark-white
-                rotate-90
-                cursor-pointer
-              `}
+              className="
+                fill-light-white dark:fill-dark-white
+                rotate-90 cursor-pointer
+              "
             /> 
           ) : (
             <WriteIcon 
-              className={`
-                stroke-light-white 
-                dark:stroke-dark-white
+              className="
+                stroke-light-white dark:stroke-dark-white
                 cursor-pointer
-              `}
+              "
             />
           )}
         </div>
@@ -140,12 +166,13 @@ const Aside = (props: Props) => {
       {/* 최상단 이동 버튼 */}
       <div
         onClick={scrollToTop} 
-        className={`
+        className={getButtonClassNames(`
           flex flex-all-center w-[2.75rem] h-[2.75rem] 
-          bg-light-black hover:bg-light-signature
-          dark:bg-dark-black dark:hover:bg-dark-signature
-          rounded-full duration-200 cursor-pointer
-        `}
+          bg-light-black dark:bg-dark-black
+          rounded-full cursor-pointer
+        `)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
           <TopBtnIcon className={`stroke-light-white dark:stroke-dark-white`}/>
       </div>

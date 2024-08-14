@@ -28,6 +28,12 @@ const NavbarBottom = (props: Props) => {
     }
   };
 
+  const handleHomeClick = () => {
+    props.closeMenu();
+    navigate('/');
+  };
+
+
   return (
     <div 
       className={`
@@ -68,7 +74,8 @@ const NavbarBottom = (props: Props) => {
       </div>  
       
       {/* 홈 */}
-      <div 
+      <div
+        onClick={handleHomeClick}
         className={`flex flex-all-center w-[3.2rem] cursor-pointer`}
       >
         <Link to='/' onClick={props.closeMenu}>
