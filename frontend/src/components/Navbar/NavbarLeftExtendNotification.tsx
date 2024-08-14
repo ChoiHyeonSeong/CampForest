@@ -25,6 +25,22 @@ const NavbarLeftExtendCommunity = (props: Props) => {
   }
 
   useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (!props.isExtendMenuOpen && notificationState.newNotificationList.length > 0) {
+        readAllNotifications();
+      }
+    };
+
+    if (!props.isExtendMenuOpen && notificationState.newNotificationList.length > 0) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [props.isExtendMenuOpen]);
+
+  useEffect(() => {
     if (!props.isExtendMenuOpen && notificationState.newNotificationList.length > 0) {
       readAllNotifications();
     }

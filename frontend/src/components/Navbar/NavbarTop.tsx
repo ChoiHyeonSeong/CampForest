@@ -35,6 +35,22 @@ const NavbarTop = (props: Props) => {
     }
   }
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (isPushModalOpen) {
+        readAllNotifications();
+      }
+    };
+
+    if (isPushModalOpen) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isPushModalOpen]);
+
   const togglePushModal = () => {
     setIsPushModalOpen(!isPushModalOpen);
     if (!isPushModalOpen) {
