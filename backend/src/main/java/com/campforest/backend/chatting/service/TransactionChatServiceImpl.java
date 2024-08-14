@@ -18,12 +18,15 @@ import com.campforest.backend.chatting.entity.TransactionChatRoom;
 import com.campforest.backend.chatting.repository.transactionchatmessage.TransactionChatMessageRepository;
 import com.campforest.backend.chatting.repository.transactionchatroom.TransactionChatRoomRepository;
 import com.campforest.backend.product.model.Product;
+import com.campforest.backend.product.model.ProductImage;
 import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.repository.ProductRepository;
 import com.campforest.backend.transaction.model.Rent;
 import com.campforest.backend.transaction.model.Sale;
 import com.campforest.backend.transaction.repository.RentRepository;
 import com.campforest.backend.transaction.repository.SaleRepository;
+import com.campforest.backend.user.model.Users;
+import com.campforest.backend.user.repository.jpa.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     private final ProductRepository productRepository;
     private final RentRepository rentRepository;
     private final SaleRepository saleRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -103,6 +107,15 @@ public class TransactionChatServiceImpl implements TransactionChatService {
             TransactionChatRoomListDto dto = convertToListDto(room,userId);
                 Long productId = transactionChatRoomRepository.findProductIdByRoomId(room.getRoomId());
                 Product product = productRepository.findById(productId).orElseThrow(()-> new IllegalArgumentException("없는 판매용품입니다"));
+
+                dto.setProductPrice(product.getProductPrice());
+                dto.setProductName(product.getProductName());
+                if(product.getProductImages().isEmpty()) {
+                    dto.setProductImage(null);
+                }else {
+                    dto.setProductImage(product.getProductImages().get(0).getImageUrl());
+                }
+
                 dto.setProductId(productId);
                 dto.setProductWriter(product.getUserId());
                 dto.setUnreadCount(transactionChatMessageRepository.countUnreadMessagesForUser(room.getRoomId(), userId));
