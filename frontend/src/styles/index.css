@@ -23,6 +23,7 @@
     width: 100%;
   }
   .scrollbar-hide-mo {
+    padding-right: 0px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
