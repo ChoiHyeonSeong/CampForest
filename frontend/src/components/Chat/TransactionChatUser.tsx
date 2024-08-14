@@ -1,17 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import noImg from '@assets/images/basic_profile.png'
-import { userPage } from '@services/userService';
 import { store } from '@store/store';
 import { formatTime } from '@utils/formatTime';
-
-export type ChatUserType = {
-  roomId: number;
-  otherUserId: number;
-  lastMessage: string;
-  lastMessageTime: string;
-  unreadCount: number;
-}
 
 type Props = {
   index: number;
@@ -19,23 +10,7 @@ type Props = {
 
 const ChatUser = (props: Props) => {
   const chatUser = store.getState().chatStore.transactionChatUserList[props.index];
-  const [nickname, setNickname] = useState('');
-  const [profileImage, setProfileImage] = useState('');
   const [lastMessageTime, setLastMessageTime] = useState('');
-  const fetchOtherUser = async () => {
-    const result = await userPage(chatUser.otherUserId);
-    if(result) {
-      setNickname(result.nickname);
-      setProfileImage(result.profileImage);
-    } else {
-      setNickname('찾을 수 없는 사용자')
-      setProfileImage('');
-    }
-  }
-
-  useEffect(() => {
-    fetchOtherUser();
-  }, [chatUser.otherUserId])
   
   useEffect(() => {
     setLastMessageTime(formatTime(chatUser.lastMessageTime));
@@ -51,7 +26,7 @@ const ChatUser = (props: Props) => {
       `}
     >
       <div className='flex w-2/3'>
-        {/* 프로필 */}
+        {/* 상품 사진 */}
         <div 
           className={`
             shrink-0 size-[2.6rem] me-[0.75rem]
@@ -61,28 +36,29 @@ const ChatUser = (props: Props) => {
           `}
         >
           <img 
-            src={profileImage ? profileImage : noImg}
+            src={chatUser.productImage ? chatUser.productImage : noImg}
             alt={noImg}
             className={`fit`}
           />
         </div>
 
         <div className=''>
-          {/* 닉네임 */}
+          {/* 상품 제목 */}
           <div
             className={`
+              max-w-[10rem]
               text-light-text
               dark:text-dark-text
-              font-semibold
+              font-semibold truncate
             `}
           >
-            {nickname}
+            {chatUser.productName}
           </div>
 
            {/* 마지막 메세지 */}
           <div
             className={`
-              max-w-[8rem]
+              max-w-[11rem]
               text-light-text-secondary
               dark:text-dark-text-secondary
               text-sm truncate
