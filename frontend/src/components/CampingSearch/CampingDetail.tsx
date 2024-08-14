@@ -161,35 +161,54 @@ const CampingDetail = (props: Props) => {
 
           {/* 추가 링크 */}
           <div className='flex'>
-            {props.selectedData.homepage ? (
-              <a href={props.selectedData.homepage} target="_blank" rel="noopener noreferrer" className='max-md:w-1/2 me-[0.5rem]'>
-                <button className='w-full h-full bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300'>
+            <div 
+              className={`
+                ${props.selectedData.homepage ? 
+                  'bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300' : 
+                  'bg-light-gray text-gray-500 dark:bg-dark-gray dark:text-gray-500'
+                }
+                max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] py-[0.5rem] text-center
+                `}
+            >
+              {props.selectedData.homepage ? (
+                <a href={props.selectedData.homepage} target="_blank" rel="noopener noreferrer" className='block w-full h-full'>
+                  <button>
+                    홈페이지
+                  </button>
+                </a>
+              ) : (
+                <button
+                  disabled
+                >
                   홈페이지
                 </button>
-              </a>
-            ) : (
-              <button
-                className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] py-[0.5rem] bg-light-gray text-gray-500 cursor-not-allowed dark:bg-dark-gray dark:text-gray-500'
-                disabled
-              >
-                홈페이지
-              </button>
-            )}
-
-            {props.selectedData.resveUrl ? (
-              <a href={props.selectedData.resveUrl} target="_blank" rel="noopener noreferrer" className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] md:py-[0.5rem]'>
-                <button className='w-full h-full bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300'>
+              )}
+            </div>
+            
+            <div 
+              className={`
+                ${props.selectedData.resveUrl ? 
+                  'bg-light-gray hover:bg-light-signature hover:text-light-white dark:bg-dark-gray dark:hover:bg-dark-signature transition duration-300' : 
+                  'bg-light-gray text-light-gray-2 dark:bg-dark-gray dark:text-dark-gray-2'
+                }
+                max-md:w-1/2 ms-[0.5rem] md:px-[1.5rem] py-[0.5rem] text-center
+              `}
+            >
+              {props.selectedData.resveUrl ? (
+                <a href={props.selectedData.resveUrl} target="_blank" rel="noopener noreferrer" className='block w-full h-full'>
+                  <button>
+                    예약하기
+                  </button>
+                </a>
+              ) : (
+                <button
+                  disabled
+                >
                   예약하기
                 </button>
-              </a>
-            ) : (
-              <button
-                className='max-md:w-1/2 me-[0.5rem] md:px-[1.5rem] py-[0.5rem] bg-light-gray text-light-gray-2 cursor-not-allowed dark:bg-dark-gray dark:text-dark-gray-2'
-                disabled
-              >
-                예약하기
-              </button>
-            )}
+              )}
+            </div>
+            
           </div>
 
           {/* 캠핑장 후기 */}

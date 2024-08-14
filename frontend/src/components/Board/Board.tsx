@@ -287,7 +287,7 @@ const Board = (props: Props) => {
                 ${props.detailOpen ? 'cursor-pointer' : ''}
                 ${props.isDetail ? '' : 'line-clamp-3'}
                 text-xl md:text-base
-                break-all
+                break-all whitespace-pre-wrap
               `} 
               onClick={handleDetailClick}
             >
