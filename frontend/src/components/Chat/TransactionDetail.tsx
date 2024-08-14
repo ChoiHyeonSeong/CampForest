@@ -178,7 +178,7 @@ const ChatTradeModal = (props: Props) => {
             <div>
               <div className='flex'>
                 <div className='me-[0.5rem] font-semibold'>판매자</div>
-                {product.productName}
+                {product.nickname}
               </div>
             </div>
           </div>) : (
@@ -209,7 +209,7 @@ const ChatTradeModal = (props: Props) => {
                   <div className='me-[0.5rem] font-semibold'>
                     판매자
                   </div>
-                  {product.productName}
+                  {product.nickname}
                 </div>
               </div>
             </div>

@@ -218,7 +218,7 @@ const WriteReview = (props: Props) => {
               rounded text-center cursor-pointer
             `}
             onClick={() => {
-              reviewWrite(reviewState.opponentId, content, rating, reviewState.productType, productImages, );
+              reviewWrite(reviewState.opponentId, content, rating, reviewState.productType, reviewState.roomId, productImages, );
             }}
           >
             <div>

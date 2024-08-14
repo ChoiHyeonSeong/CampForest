@@ -1,12 +1,13 @@
 import axiosInstance from "./authService";
 
-export const reviewWrite = async (reviewedId: number, content: string, rating: number, productType: string, images: File[]) => {
+export const reviewWrite = async (reviewedId: number, content: string, rating: number, productType: string, roomId: number, images: File[]) => {
   const formData = new FormData();
   const value = {
     reviewedId: reviewedId,
     content: content,
     rating: rating,
-    productType: productType
+    productType: productType,
+    roomId: roomId
   }
   const blob = new Blob([JSON.stringify(value)], { type: "application/json" })
   formData.append('reviewRequestDto', blob);

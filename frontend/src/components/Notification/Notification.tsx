@@ -64,22 +64,6 @@ const Notification = ({notification}: Props) => {
             </div>
           </div>
         )
-        case 'SALE':
-          return (
-            <div className={`flex w-full items-center`}>
-            <div className={`col-span-4 px-[0.75rem] text-sm`}>
-              <span className={`font-bold`}>
-                {notification.senderNickname}
-              </span>
-              <span>
-                님이 판매를 요청하였습니다.
-              </span>
-              <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
-                {formatTime(notification.createdAt)}
-              </span>
-            </div>
-          </div>
-          )
       default:
         return <div className={`flex w-full items-center`}>
         <div className={`col-span-4 px-[0.75rem] text-sm`}>

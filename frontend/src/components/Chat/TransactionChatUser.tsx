@@ -35,7 +35,7 @@ const ChatUser = (props: Props) => {
 
   useEffect(() => {
     fetchOtherUser();
-  }, [])
+  }, [chatUser])
   
   useEffect(() => {
     setLastMessageTime(formatTime(chatUser.lastMessageTime));
