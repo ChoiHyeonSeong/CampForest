@@ -21,13 +21,13 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({ onImagesChange }) =
     
     setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
     setImages(prev => [...prev, ...files]);
-    onImagesChange(files);
   };
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
     }
+    onImagesChange(images);
   }, [images])
 
   const handleRemoveImage = (index: number) => {

@@ -2,11 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 
-import { passwordChangeRequest } from '@services/authService';
+import { userDelete, logout } from '@services/authService';
 
-const PasswordRequest = () => {
-  const [email, setEmail] = useState('')
-  const [isEmailValid, setIsEmailValid] = useState(true);
+const UserDelete = () => {
+  const [isNicknameMatched, setIsNicknameMatched] = useState(true)
+  const [currentNickname, setCurrentNickname] = useState('');
+  const [inputNickname, setInputNickname] = useState('');
+
+  useEffect(() => {
+    const nickname = sessionStorage.getItem('nickname')
+    if (nickname !== null) {
+      setCurrentNickname(nickname)
+    } else {
+      setCurrentNickname('닉네임 조회 불가')
+    }
+  }, [])
 
   const navigate = useNavigate();
 
@@ -14,34 +24,26 @@ const PasswordRequest = () => {
     navigate(-1); // 이전 페이지로 이동
   };
 
-  const requestChange = async () => {
-    const isValidEmail = (email: string): boolean => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    };
-    if (isValidEmail(email)) {
-      try {
-        const result = await passwordChangeRequest(email)
-        console.log(result)
-        if (result?.data.status === 'C000') {
-          alert('비밀번호 변경 URL이 이메일로 발송되었습니다.');
-        } else {
-          alert('URL 발송이 실패했습니다. 다시 시도해주세요.')
-        };
-      } catch (error) {
-        console.log(error)
+  const requestDelete = async () => {
+    if (currentNickname === inputNickname) {
+      const result = await userDelete()
+      if (result.data.status === 'C000') {
+        await logout()
+        alert('회원탈퇴가 완료되었습니다.')
+        navigate('/')
+      } else {
+        alert('회원탈퇴를 실패했습니다. 다시 시도해주세요.')
       }
     } else {
-      setIsEmailValid(false)
+      setIsNicknameMatched(false)
     }
   }
 
   useEffect(() => {
-    setIsEmailValid(true)
-  }, [email])
+    setIsNicknameMatched(true)
+  }, [inputNickname])
 
   return (
-
     <div
     className='
       flex justify-center md:items-center w-full h-[calc(100vh-6.4rem)] sm:h-[calc(100vh-3.2rem)] lg:h-screen
@@ -73,7 +75,7 @@ const PasswordRequest = () => {
               dark:fill-dark-border-icon
             `} 
           />
-          <div className='hidden md:block'>비밀번호 재설정</div>
+          <div className='hidden md:block'>회원 탈퇴</div>
         </div>
 
         {/* 비밀번호 설정부모 */}
@@ -92,31 +94,31 @@ const PasswordRequest = () => {
           <div className={`text-center`}>
             <input 
               type='email' 
-              placeholder='test@test.com' 
+              placeholder={currentNickname}
               className={`
                 w-[100%] max-w-[30rem] py-[0.75rem] px-[1rem]
                 bg-light-gray
                 dark:bg-dark-gray
                 rounded-md focus:outline-none text-sm 
               `}
-              value={email}
+              value={inputNickname}
               onChange={(event) => {
-                setEmail(event.target.value);
+                setInputNickname(event.target.value);
               }}
             />
             <div 
               className={`
-                ${isEmailValid ? 'hidden' : 'block'}
+                ${isNicknameMatched ? 'hidden' : 'block'}
                 my-[0.25rem]
                 text-light-warning
                 dark:text-dark-warning
                 text-xs 
               `}
             >
-              이메일이 유효하지 않습니다.
+              닉네임이 다릅니다. 다시 입력해주세요.
             </div>
             <div 
-              onClick={requestChange}
+              onClick={requestDelete}
               className={`
                 w-[100%] max-w-[30rem] mt-[1.5rem] mx-auto py-[0.75rem]
                 bg-light-black text-light-text-white
@@ -124,14 +126,13 @@ const PasswordRequest = () => {
                 text-sm cursor-pointer
               `}
             >
-              비밀번호 재설정 메일 요청
+              회원 탈퇴
             </div>
           </div>
         </div>
       </div>
     </div>
-    
   )
 }
 
-export default PasswordRequest;
+export default UserDelete

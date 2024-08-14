@@ -30,6 +30,8 @@ export const productWrite = async (productRegistDto: ProductRegistDto, productIm
   const blob = new Blob([JSON.stringify(productRegistDto)], {type: 'application/json'});
   formData.append('productRegistDto', blob);
 
+  console.log(productImages)
+
   productImages.forEach((file, index) => {
     formData.append(`files`, file);
   });
