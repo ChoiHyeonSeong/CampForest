@@ -3,13 +3,14 @@ import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
 import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
 import { useDispatch, useSelector } from 'react-redux'
-import { setIsBoardWriteModal } from '@store/modalSlice'
-import { boardModifyImageUpload, boardModify } from '@services/boardService'
+import { setIsLoading } from '@store/modalSlice'
 import { RootState } from '@store/store'
 
 import MultiImageUpload from '@components/Public/MultiImageUpload'
 
 import { throttle } from '@utils/throttle'
+
+import { boardDetail, boardModifyImageUpload, boardModify } from '@services/boardService'
 
 type CategoryType = {
   text: string;
@@ -21,7 +22,13 @@ type BoardOpenType = {
   bool: boolean;
 }
 
-const BoardModify = () => {
+type Props = {
+  selectedModifyId: number;
+  modifyClose: () => void;
+  isModifyOpen: boolean;
+}
+
+const BoardModify = (props: Props) => {
   const user = useSelector((state: RootState) => state.userStore);
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -29,29 +36,47 @@ const BoardModify = () => {
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState<boolean>(false);
   const [boardOpen, setBoardOpen] = useState<boolean>(true);
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
+  
+  const [originalImages, setOriginalImages] = useState<string[]>([]);
   const [boardImages, setBoardImages] = useState<File[]>([]);
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
-  const [prevImages, setPrevImages] = useState<string[]>([
-    'https://s3.amazonaws.com/campforest/picture/1ed6e2f2-3a7b-4331-b4ef-c555582dfd3a_spring.PNG', 
-    'https://s3.amazonaws.com/campforest/picture/2fbe89d2-d16e-49dc-bf62-7cd3db3fecd4_spring.PNG',
-    'https://s3.amazonaws.com/campforest/picture/7832188e-71e8-4a0b-84c6-b61f3029cfc0_camp2.png'])
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleWrite = async (e: React.FormEvent) => {
+  useEffect(() => {
+    console.log(originalImages)
+  }, [originalImages])
+
+  const dispatch = useDispatch()
+  const handleModify = async (e: React.FormEvent) => {
     e.preventDefault(); 
 
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     console.log(title, content, category, boardOpen, boardImages)
+
+    const newImages = boardImages.filter(file => file.name !== 'tempImage');
+
     try {
-      const response1 = await boardModifyImageUpload(boardImages);
-      const newImagesUrls = [...prevImages, ...response1.data]
-      console.log(219, '타이틀수정테스트', '타이틀수정테스트', 'equipment', true, newImagesUrls)
-      const response2 = await boardModify(219, 947, '타이틀수정테스트', '타이틀수정테스트', 'equipment', true, newImagesUrls)
+      dispatch(setIsLoading(true))
+      const response1 = await boardModifyImageUpload(newImages);
+      const newImagesUrls = [...originalImages, ...response1.data]
+      const response2 = await boardModify(
+        props.selectedModifyId, 
+        user.userId, 
+        title, 
+        content,
+        category.value,
+        boardOpen, 
+        newImagesUrls
+      )
       console.log(response2)
+      props.modifyClose()
+      dispatch(setIsLoading(false))
+      window.location.reload();
     } catch (error) {
+      dispatch(setIsLoading(false))
       console.log(error)
     } finally {
       setIsSubmitting(false);
@@ -59,7 +84,7 @@ const BoardModify = () => {
   }
 
   // 3초 쓰로틀링
-  const throttledHandleWrite = throttle(handleWrite, 3000)
+  const throttledHandleWrite = throttle(handleModify, 3000)
 
   const categories: CategoryType[] = [
     {
@@ -118,16 +143,41 @@ const BoardModify = () => {
     setBoardImages(images);
   };
 
-  const formClear = () => {
-    setTitle('');
-    setContent('');
-    setCategory({text: '장비 후기', value: 'equipment'});
-    setIsCategoryDropdownOpen(false);
-    setBoardOpen(true);
-    setIsBoardOpenDropdownOpen(false);
-    setBoardImages([]);
+  const handleOriginalImages = (urls: string[]) => {
+    setOriginalImages(urls)
+  };
+
+  const fetchOriginalData = async () => {
+    try {
+      const response = await boardDetail(props.selectedModifyId)
+      const originalData = response.data.data
+      setTitle(originalData.title)
+      setContent(originalData.content)
+      setBoardOpen(originalData.boardOpen)
+      setOriginalImages(originalData.imageUrls)
+
+      const category = categories.find(category => category.value === originalData.category)
+      if (category) {
+        setCategory(category)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
+  useEffect(() => {
+    if (props.isModifyOpen) {
+      fetchOriginalData()
+    } 
+  }, [props.isModifyOpen]);
+
+  useEffect(() => {
+    if (title.length > 0 && content.length > 0) {
+      setIsSubmitDisabled(false);
+    } else {
+      setIsSubmitDisabled(true);
+    }
+  }, [title, content])
 
   return (
     <div 
@@ -136,6 +186,7 @@ const BoardModify = () => {
         bg-light-black bg-opacity-80
         inset-0
       `}
+      onClick={() => props.modifyClose()} 
     >
       <div 
         className={`md:w-[50rem] h-full md:h-[95%] md:mx-auto`} 
@@ -153,6 +204,7 @@ const BoardModify = () => {
             <div className={`flex items-center mb-[1.5rem]`}>
               <div>
                 <ArrowLeftIcon 
+                  onClick={() => props.modifyClose()} 
                   className={`
                     md:hidden size-[1.5rem]
                     fill-light-border-icon
@@ -167,10 +219,11 @@ const BoardModify = () => {
                   font-bold text-2xl
                 `}
               >
-                  커뮤니티 글쓰기
+                  커뮤니티 글 수정
               </div>
               <div className={`ms-auto`}>
                 <CloseIcon 
+                  onClick={() => props.modifyClose()} 
                   className={`
                     hidden md:block md:size-[1.5rem]
                     fill-light-border-icon
@@ -288,7 +341,7 @@ const BoardModify = () => {
             </div>
           </div>
           <div className={`flex flex-col`}>
-            <MultiImageUpload onImagesChange={handleImagesChange}/>
+            <MultiImageUpload onImagesChange={handleImagesChange} prevImages={originalImages} handleOriginalImages={handleOriginalImages}/>
             <div 
               className={`
                 md:static w-full mt-[1rem]

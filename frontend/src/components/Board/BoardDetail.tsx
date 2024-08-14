@@ -16,6 +16,7 @@ type Props = {
   updateComment: (boardId: number, commentCount: number) => void;
   updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
   updateSaved: (boardId: number, isSaved: boolean) => void;
+  modifyOpen? : (param: number) => void;
 }
 
 const BoardDetail = (props: Props) => {
@@ -48,7 +49,7 @@ const BoardDetail = (props: Props) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const fetchComments = useCallback(async () => {
+  const fetchComments = async () => {
     setIsLoading(true);
     try {
       const result = await commentList(props.selectedBoard.boardId);
@@ -61,11 +62,11 @@ const BoardDetail = (props: Props) => {
     } finally {
       setIsLoading(false);
     }
-  }, [props.selectedBoard.boardId, props.updateComment]);
+  }
 
   useEffect(() => {
     fetchComments();
-  }, [fetchComments]);
+  }, []);
 
   useEffect(() => {
     if (show) {
@@ -157,6 +158,7 @@ const BoardDetail = (props: Props) => {
               updateComment={props.updateComment}
               updateLike={props.updateLike}
               updateSaved={props.updateSaved}
+              modifyOpen={props.modifyOpen}
             />
           </div>
           

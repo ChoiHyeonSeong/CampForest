@@ -429,7 +429,7 @@ const ProductList = () => {
 
 
         {/* 상품 목록 */}
-        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 w-full gap-[1rem]">
+        <div className="grid lg:grid-cols-5 md:grid-cols-5 grid-cols-2 w-full">
           {/* {products.map((product) => (
             <ProductCard 
               key={product.productId} 

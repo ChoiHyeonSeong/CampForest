@@ -3,7 +3,7 @@ import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
 import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
 import { useDispatch, useSelector } from 'react-redux'
-import { setIsBoardWriteModal } from '@store/modalSlice'
+import { setIsBoardWriteModal, setIsLoading } from '@store/modalSlice'
 import { boardWrite } from '@services/boardService'
 import { RootState } from '@store/store'
 
@@ -39,16 +39,20 @@ const BoardWrite = () => {
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
 
-    console.log(123123)
     if (isSubmitting) return;
 
     setIsSubmitting(true);
 
+    
+
     try {
+      dispatch(setIsLoading(true))
       const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
       dispatch(setIsBoardWriteModal(false));
+      dispatch(setIsLoading(false))
       window.location.reload();
     } catch (error) {
+      dispatch(setIsLoading(false))
       console.log(error)
     } finally {
       setIsSubmitting(false);

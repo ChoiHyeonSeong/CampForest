@@ -82,7 +82,6 @@ function App() {
         {/* 모달은 이 아래부터 */}
         {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
         {modals.isLoading ? <LoadingModal /> : <></>}
-        {/* <BoardModify /> */}
 
 
         {/* 라이트 모드 배경  */}
