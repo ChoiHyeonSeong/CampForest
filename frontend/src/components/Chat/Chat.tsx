@@ -65,6 +65,7 @@ export type TransactionEntityType = {
   longitude: number;
   rentEndDate: string;
   rentStartDate: string;
+  deposit: number;
 };
 
 export type Message = {
