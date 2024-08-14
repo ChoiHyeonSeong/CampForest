@@ -1,5 +1,6 @@
 package com.campforest.backend.notification.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -67,5 +68,5 @@ public class Notification {
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	private LocalDateTime createdAt;
 }
