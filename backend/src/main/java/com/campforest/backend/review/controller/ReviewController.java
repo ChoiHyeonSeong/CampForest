@@ -23,6 +23,7 @@ import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.notification.model.NotificationType;
 import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.review.dto.ReviewRequestDto;
+import com.campforest.backend.review.dto.ReviewResponseDto;
 import com.campforest.backend.review.model.Review;
 import com.campforest.backend.review.service.ReviewService;
 import com.campforest.backend.user.model.Users;
@@ -65,11 +66,11 @@ public class ReviewController {
 			}
 
 			reviewRequestDto.setReviewImageUrl(imageUrls);
-			Review review = reviewService.writeReview(reviewRequestDto);
+			ReviewResponseDto reviewResponseDto = reviewService.writeReview(reviewRequestDto);
 
-			notificationService.createNotification(review.getReviewed(), review.getReviewer(), NotificationType.REVIEW, "님이 리뷰를 남기셨습니다.");
+			notificationService.createNotification(reviewResponseDto.getReview().getReviewed(), reviewResponseDto.getReview().getReviewer(), NotificationType.REVIEW, "님이 리뷰를 남기셨습니다.");
 
-			return ApiResponse.createSuccess(review, "리뷰 작성이 완료되었습니다.");
+			return ApiResponse.createSuccess(reviewResponseDto, "리뷰 작성이 완료되었습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.REVIEW_CREATION_FAILED);
 		}

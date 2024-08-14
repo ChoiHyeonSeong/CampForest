@@ -9,8 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.campforest.backend.chatting.entity.TransactionChatRoom;
+import com.campforest.backend.chatting.repository.transactionchatroom.TransactionChatRoomRepository;
+import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.model.ProductType;
+import com.campforest.backend.product.repository.ProductRepository;
 import com.campforest.backend.review.dto.ReviewRequestDto;
+import com.campforest.backend.review.dto.ReviewResponseDto;
 import com.campforest.backend.review.model.Review;
 import com.campforest.backend.review.model.ReviewImage;
 import com.campforest.backend.review.repository.ReviewRepository;
@@ -33,15 +38,31 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final ReviewImageRepository reviewImageRepository;
 	private final UserRepository userRepository;
-	private final SaleRepository saleRepository;
-	private final RentRepository rentRepository;
+	private final TransactionChatRoomRepository transactionChatRoomRepository;
+	private final ProductRepository productRepository;
 
 	@Transactional
-	public Review writeReview(ReviewRequestDto reviewRequestDto) {
+	public ReviewResponseDto writeReview(ReviewRequestDto reviewRequestDto) {
 		Users reviewer = userRepository.findById(reviewRequestDto.getReviewerId())
 			.orElseThrow(() -> new IllegalArgumentException("리뷰어를 찾을 수 없습니다."));
 		Users reviewed = userRepository.findById(reviewRequestDto.getReviewedId())
 			.orElseThrow(() -> new IllegalArgumentException("리뷰 대상을 찾을 수 없습니다."));
+
+		TransactionChatRoom room = transactionChatRoomRepository.findById(reviewRequestDto.getRoomId())
+			.orElseThrow(() -> new IllegalArgumentException("없는 채팅 룸입니다."));
+
+		Long productId = transactionChatRoomRepository.findProductIdByRoomId(reviewRequestDto.getRoomId());
+
+		Long productWriterId = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("없는 판매입니다."))
+			.getUserId();
+
+		if(reviewer.getUserId().equals(productWriterId)) {
+			room.setWriteSeller(true);
+		}
+		else {
+			room.setWriteBuyer(true);
+		}
+		transactionChatRoomRepository.save(room);
 
 		Review review = Review.builder()
 			.reviewer(reviewer)
@@ -52,7 +73,6 @@ public class ReviewService {
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
 			.build();
-
 
 		Review savedReview = reviewRepository.save(review);
 
@@ -68,7 +88,7 @@ public class ReviewService {
 		}
 		reviewImageRepository.saveAll(reviewImages);
 
-		return savedReview;
+		return new ReviewResponseDto(savedReview, room.isWriteSeller(), room.isWriteBuyer());
 	}
 
 	@Transactional

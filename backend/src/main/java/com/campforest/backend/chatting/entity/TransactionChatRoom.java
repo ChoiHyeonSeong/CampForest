@@ -47,6 +47,12 @@ public class TransactionChatRoom {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "write_review_buyer")
+    private boolean writeBuyer;
+
+    @Column(name = "write_review_seller")
+    private boolean writeSeller;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

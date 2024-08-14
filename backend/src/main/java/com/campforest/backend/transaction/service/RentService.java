@@ -33,6 +33,7 @@ public class RentService {
 	private final ProductRepository productRepository;
 	private final NotificationService notificationService;
 
+
 	@Transactional
 	public Map<String, Long> rentRequest(RentRequestDto rentRequestDto) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
@@ -71,6 +72,15 @@ public class RentService {
 
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
+		List<Rent> reservedRents = rentRepository.findByProductIdAndRentStatusAndRentEndDateAfter(
+			product.getId(), TransactionStatus.RESERVED, rentRequestDto.getRentStartDate());
+
+		for (Rent reservedRent : reservedRents) {
+			if (isOverlapping(rentRequestDto.getRentStartDate(), rentRequestDto.getRentEndDate(), reservedRent.getRentStartDate(), reservedRent.getRentEndDate())) {
+				throw new RuntimeException("이미 예약 차있습니다..");
+			}
+		}
+
 		Long rentId = 0L;
 
 		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
@@ -91,6 +101,15 @@ public class RentService {
 		rentRepository.save(rents[1]);
 
 		return result;
+	}
+
+	private boolean isOverlapping(LocalDateTime rentStartDate, LocalDateTime rentEndDate, LocalDateTime reservedStartDate, LocalDateTime reservedEndDate) {
+		LocalDate date1 = rentStartDate.toLocalDate();
+		LocalDate date2 = rentEndDate.toLocalDate();
+		LocalDate date3 = reservedStartDate.toLocalDate();
+		LocalDate date4 = reservedEndDate.toLocalDate();
+
+		return !date2.isBefore(date3) && !date4.isBefore(date1);
 	}
 
 	@Transactional
