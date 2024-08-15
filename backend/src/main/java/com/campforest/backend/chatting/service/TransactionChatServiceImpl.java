@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.chatting.dto.MessageWithTransactionDTO;
@@ -23,8 +24,11 @@ import com.campforest.backend.product.model.ProductType;
 import com.campforest.backend.product.repository.ProductRepository;
 import com.campforest.backend.transaction.model.Rent;
 import com.campforest.backend.transaction.model.Sale;
+import com.campforest.backend.transaction.model.TransactionStatus;
 import com.campforest.backend.transaction.repository.RentRepository;
 import com.campforest.backend.transaction.repository.SaleRepository;
+import com.campforest.backend.transaction.service.RentService;
+import com.campforest.backend.transaction.service.SaleService;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.repository.jpa.UserRepository;
 
@@ -40,6 +44,8 @@ public class TransactionChatServiceImpl implements TransactionChatService {
 	private final RentRepository rentRepository;
 	private final SaleRepository saleRepository;
 	private final UserRepository userRepository;
+	private final RentService rentService;
+	private final SaleService saleService;
 
 	@Transactional
 	@Override
@@ -154,6 +160,34 @@ public class TransactionChatServiceImpl implements TransactionChatService {
 	@Transactional
 	@Override
 	public void exitChatRoom(Long roomId, Long userId) {
+
+		//만약 룸의 sale이나 렌트일떄
+		TransactionChatRoom chatRoom = transactionChatRoomRepository.findById(roomId).orElseThrow();
+
+		Long productId = chatRoom.getProductId();
+		Long otherUserId = (userId.equals(chatRoom.getSellerId())) ? chatRoom.getBuyerId() : chatRoom.getSellerId();
+
+		if (chatRoom.getProductType().equals(ProductType.RENT)) {
+			Rent rent1 = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(
+				productId, userId, otherUserId).orElseThrow();
+
+			if (rent1.getRentStatus() == TransactionStatus.REQUESTED ||
+					rent1.getRentStatus() == TransactionStatus.RESERVED ||
+				rent1.getRentStatus() == TransactionStatus.RECEIVED)
+			{
+				throw new IllegalStateException("채팅방 나가기 금지");
+			}
+		} else {
+			Sale activeSale = saleRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(
+				productId, userId, otherUserId).orElseThrow();
+
+			if (activeSale.getSaleStatus() == TransactionStatus.REQUESTED ||
+					activeSale.getSaleStatus() == TransactionStatus.RESERVED ||
+				activeSale.getSaleStatus() == TransactionStatus.RECEIVED ) {
+				throw new IllegalStateException("채팅방 나가기 금지");
+			}
+		}
+
 		List<TransactionChatMessage> messages = transactionChatMessageRepository.findByChatRoom(roomId);
 		for (TransactionChatMessage message : messages) {
 			if(message.getSenderId().equals(userId)) {
@@ -162,7 +196,6 @@ public class TransactionChatServiceImpl implements TransactionChatService {
 				message.setDeletedForReceiver(true);
 			}
 		}
-		TransactionChatRoom chatRoom = transactionChatRoomRepository.findById(roomId).orElseThrow();
 		chatRoom.setHidden(true);
 		transactionChatRoomRepository.save(chatRoom);
 		transactionChatMessageRepository.saveAll(messages);
