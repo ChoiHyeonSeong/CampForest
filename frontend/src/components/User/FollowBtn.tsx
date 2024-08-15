@@ -8,51 +8,46 @@ type Props = {
 }
 
 const FollowBtn = (props: Props) => {
-  const [isFollowingState, setIsFollowingState] = useState(false);
-  const isFollowingRef = useRef(false);
+  const [isFollowingState, setIsFollowingState] = useState<boolean | null>(null);
+  const isFollowingRef = useRef<boolean | null>(null);
 
-  const fetchFollowing = async (first = false) => {
+  const checkUserId = async () => {
     try {
-      const checkUserId = () => {
-        try {
-          const result = checkFollowing(props.targetUserId);
-          return Boolean(result);
-        } catch (error) {
-          console.error('checkFollowing failed: ', error);
-        } finally {
-          return false;
-        }
-      };
+      const result = await checkFollowing(props.targetUserId);
+      setIsFollowingState(result.data)
+    } catch (error) {
+      console.error('checkFollowing failed: ', error);
+    } finally {
+      return false;
+    }
+  };
 
-      isFollowingRef.current = checkUserId()
-
-      if (first) {
-        setIsFollowingState(isFollowingRef.current)
+  const fetchFollowing = async () => {
+    try {
+      if (isFollowingState) {
+        const response = await userUnfollow(props.targetUserId)
+        console.log(response)
       } else {
-        if (isFollowingState) {
-          const response = await userUnfollow(props.targetUserId)
-          console.log(response)
-        } else {
-          const response = await userFollow(props.targetUserId)
-          console.log(response)
-        }
-
-        if (props.callbackFunction) {
-          props.callbackFunction()
-        }
-        setIsFollowingState(!isFollowingState)
+        const response = await userFollow(props.targetUserId)
+        console.log(response)
       }
+
+      if (props.callbackFunction) {
+        props.callbackFunction()
+      }
+      setIsFollowingState(!isFollowingState)
     } catch (error) {
       console.error("Failed to fetch Followings: ", error);
     }
   }
 
   useEffect(() => {
-    fetchFollowing(true)
+    checkUserId()
   }, [])
-  
+
   return (
     <div 
+      id="searchuser-4"
       onClick={() => fetchFollowing()}
       className={`
         ${

@@ -129,6 +129,7 @@ const NavbarLeftExtendSearch = (props: Props) => {
               value={searchText}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
+              id="searchuser-2"
             />
         </div>
         <div
@@ -139,6 +140,7 @@ const NavbarLeftExtendSearch = (props: Props) => {
             cursor-pointer font-semibold text-[0.92rem]
           '
           onClick={() => handleSearch()}
+          id="searchuser-3"
         >
           검색
         </div>

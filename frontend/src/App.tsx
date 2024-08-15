@@ -46,10 +46,16 @@ function App() {
   const [showBanner, setShowBanner] = useState(false);
   const [hideBanner, setHideBanner] = useState(true);
 
+
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       // 브라우저 기본 설치 프롬프트 방지
       e.preventDefault();
+
+      if (localStorage.getItem('isPWAClosed') === 'true') {
+        return;
+      }
+
       // 이벤트 저장
       setInstallPrompt(e);
       // 배너 표시
@@ -85,6 +91,7 @@ function App() {
 
   const handleCloseBanner = () => {
     setHideBanner(true);
+    localStorage.setItem('isPWAClosed', 'true');
   };
 
   const handleTransitionEnd = () => {

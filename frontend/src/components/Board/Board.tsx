@@ -338,6 +338,7 @@ const Board = (props: Props) => {
         <div>
           <div className={`flex items-center me-[1rem]`}>
               <HeartIcon 
+                data-testid="e2e-boardheart"
                 onClick={toggleLike}
                 className={`
                   ${props.board.liked ? 'fill-light-heart stroke-light-heart dark:fill-dark-heart dark:stroke-dark-heart'
@@ -358,6 +359,7 @@ const Board = (props: Props) => {
         </div>
 
         <div
+          data-testid="e2e-boardcomment-1"
           onClick={handleDetailClick}
           className='flex items-center'
         >
@@ -378,7 +380,7 @@ const Board = (props: Props) => {
           </div>
         </div>
 
-        <div className='flex items-center ms-auto'>
+        <div className='flex items-center ms-auto' data-testid="e2e-boardsave">
           {props.board.saved ? 
             (<BookmarkIcon
               onClick={() => handleBookmark()}

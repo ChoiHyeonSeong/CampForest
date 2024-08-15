@@ -132,6 +132,7 @@ const BoardComment = (props: Props) => {
             </div>
             {props.comment.commentWriterId === userstate.userId &&
             <div 
+              data-testid="e2e-boardcomment-5"
               className='
                 ms-[0.5rem]
                 text-light-warning
@@ -162,6 +163,7 @@ const BoardComment = (props: Props) => {
       </div>
       {/* 좋아요 */}
       <div 
+        data-testid="e2e-boardcomment-4"
         className={`
           ms-[1rem] space-y-[0.5rem]
           text-center
