@@ -253,10 +253,6 @@ const UProduct = (props: Props) => {
               />
             </div>
           </div> */}
-<<<<<<< HEAD
-
-=======
->>>>>>> c3b4e75b0e71a56e46a9866ad20b1d6d2db56879
         </div>
       </div>
       <div 
