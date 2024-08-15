@@ -67,15 +67,15 @@ const NavTopPushModal = (props: Props) => {
     >
       <div 
         className={`
-          ${isMobile ? 'h-[calc(100vh-3.2rem)]' : 'max-h-[40rem]'}
-          bg-light-gray dark:bg-dark-gray rounded scrollbar-hide-mo
+          ${isMobile ? 'h-[calc(100vh-3.2rem)] bg-light-white dark:bg-dark-white' : 'max-h-[40rem] bg-light-gray dark:bg-dark-gray'}
+          rounded scrollbar-hide-mo
           overflow-scroll
           ${isMobile ? 'animate-slideIn' : ''}
         `}
         onClick={(e) => e.stopPropagation()}
       >
         {isMobile ? (
-          <div className="flex items-center p-4 border-b fixed top-0 w-full bg-light-white dark:bg-dark-white">
+          <div className="flex items-center p-4 md:border-b fixed top-0 w-full bg-light-white dark:bg-dark-white">
             <ArrowLeftIcon onClick={props.onClose} className="w-6 h-6 mr-2 cursor-pointer fill-light-text dark:fill-dark-text" />
             <h2 className="text-lg font-semibold">알림</h2>
           </div>
