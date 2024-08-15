@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import defaultImage from '@assets/images/basic_profile.png';
 
 import FollowBtn from '@components/User/FollowBtn';
+import ChatBtn from '@components/User/ChatBtn';
 
 export type profileType = {
   userId: number;
@@ -76,16 +77,7 @@ const SearchProfile = (props: Props) => {
       {/* 버튼 */}
       <div className='flex flex-all-center'>
         <FollowBtn targetUserId={props.profile.userId} callbackFunction={callbackFunc}/>
-        <button
-          className='
-            px-[0.5rem] py-[0.2rem] md:px-[0.8rem]  md:py-[0.4rem]
-            bg-light-gray-1 hover:bg-light-gray-2 text-light-text
-            dark:bg-dark-gray-1 dark:hover:bg-dark-gray-2 dark:text-dark-text
-            rounded-md text-sm md:text-base
-            '
-          >
-            채팅
-        </button>
+        <ChatBtn userId={props.profile.userId}/>
       </div>
     </div>
   )
