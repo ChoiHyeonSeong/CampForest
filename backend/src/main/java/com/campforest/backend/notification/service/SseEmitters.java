@@ -57,17 +57,17 @@ public class SseEmitters {
 		}
 	}
 
-	@Scheduled(fixedRate = 300000) // 5분마다
-	public void sendKeepAlive() {
-		emitters.forEach((userId, info) -> {
-			try {
-				info.emitter.send(SseEmitter.event().name("keepAlive").data(""));
-			} catch (IOException e) {
-				log.warn("Failed to send keep-alive to user: {}", userId, e);
-				removeEmitter(userId);
-			}
-		});
-	}
+	// @Scheduled(fixedRate = 300000) // 5분마다
+	// public void sendKeepAlive() {
+	// 	emitters.forEach((userId, info) -> {
+	// 		try {
+	// 			info.emitter.send(SseEmitter.event().name("keepAlive").data(""));
+	// 		} catch (IOException e) {
+	// 			log.warn("Failed to send keep-alive to user: {}", userId, e);
+	// 			removeEmitter(userId);
+	// 		}
+	// 	});
+	// }
 
 	@Scheduled(fixedRate = 3600000) // 1시간마다
 	public void cleanupOldEmitters() {
