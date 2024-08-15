@@ -124,7 +124,7 @@ function App() {
   return (
     <div>
       <div className="App h-screen overflow-hidden bg-light-background dark:bg-dark-background">
-        
+
         {/* 이 아래가 PWA 설치 배너 */}
         {showBanner && (
           <div 
@@ -154,12 +154,15 @@ function App() {
             />
           </div>
         )} 
+
         <Navbar />
+
         <div className='flex h-full'>
           {/* padding은 Navigation bar용 공간 */}
           <div className='flex-grow w-screen md:w-[calc(100vh-28px)] lg:w-[calc(100vh-5rem-28px)] h-[100vh-6.4rem] md:h-[100vh-3.2rem] lg:h-screen mt-[3.2rem] lg:mt-0 mb-[3.2rem] md:mb-0 lg:ms-[5rem] overflow-y-auto' id='contentBox'>
             {/* 여기서 부터 */}
             <Routes>
+              <Route path="/landing" element={<LandingPage />} />
               <Route path='/' element={<Main />} />
               <Route path='/user/login' element={<Login />} />
               <Route path="/user/regist/*" element={<Regist />} />
@@ -171,7 +174,6 @@ function App() {
               <Route path='/user/password/*' element={<FindPassword />} />
               <Route path="/community/:category" element={<Community />} />
               <Route path="/search/*" element={<SearchPage />} />
-              <Route path="/landing" element={<LandingPage />} />
               <Route path='/review' element={<ReviewPage />} />
             </Routes>
             {/* 여기까지 컨텐츠 */}
