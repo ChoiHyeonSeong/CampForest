@@ -17,7 +17,7 @@ const Notification = ({notification}: Props) => {
       case 'FOLLOW':
         return (
           <div className={`flex w-full items-center`}>
-            <div className={`px-[0.75rem] text-sm`}>
+            <div className={`w-[70%] px-[0.5rem] text-sm`}>
               <span className={`font-bold`}>
                 {notification.senderNickname}
               </span>
@@ -28,20 +28,22 @@ const Notification = ({notification}: Props) => {
                 {formatTime(notification.createdAt)}
               </span>
             </div>
-            <FollowBtn targetUserId={notification.senderId}/>
+            <div className='w-[30%] text-sm text-center'>
+              <FollowBtn targetUserId={notification.senderId}/>
+            </div>
           </div>
         );
       case 'LIKE':
         return (
           <div className={`flex w-full items-center`}>
-            <div className={`col-span-4 px-[0.75rem] text-sm`}>
+            <div className={`col-span-4 px-[0.5rem] text-sm`}>
               <span className={`font-bold`}>
                 {notification.senderNickname}
               </span>
               <span>
                 님이 회원님의 게시글을 좋아합니다.
               </span>
-              <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
+              <span className={`ms-[0.5rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
                 {formatTime(notification.createdAt)}
               </span>
             </div>
@@ -50,14 +52,14 @@ const Notification = ({notification}: Props) => {
         case 'COMMENT':
           return (
             <div className={`flex w-full items-center`}>
-            <div className={`col-span-4 px-[0.75rem] text-sm`}>
+            <div className={`col-span-4 px-[0.5rem] text-sm`}>
               <span className={`font-bold`}>
                 {notification.senderNickname}
               </span>
               <span>
                 님이 회원님의 게시물에 댓글을 남겼습니다.
               </span>
-              <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
+              <span className={`ms-[0.5rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
                 {formatTime(notification.createdAt)}
               </span>
             </div>
@@ -65,14 +67,14 @@ const Notification = ({notification}: Props) => {
         )
       default:
         return <div className={`flex w-full items-center`}>
-        <div className={`col-span-4 px-[0.75rem] text-sm`}>
+        <div className={`col-span-4 px-[0.5rem] text-sm`}>
           <span className={`font-bold`}>
             {notification.senderNickname}
           </span>
           <span>
             {notification.message}
           </span>
-          <span className={`ms-[0.75rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
+          <span className={`ms-[0.5rem] text-light-text-secondary dark:text-dark-text-secondary text-xs`}>
             {formatTime(notification.createdAt)}
           </span>
         </div>  
@@ -83,7 +85,7 @@ const Notification = ({notification}: Props) => {
   return (
     <div 
       className={`
-        flex items-center p-[0.75rem] 
+        flex items-center px-[0.5rem] py-[0.75rem]
       bg-light-white border-light-border dark:bg-dark-white dark:border-dark-border 
         border-b overflow-hidden
       `}

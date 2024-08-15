@@ -27,7 +27,7 @@ export const followingList = async (userId: number) => {
 export const checkFollowing = async (followeeId: number) => {
   try {
     const response = await axiosInstance.get(`/user/isFollowing/${followeeId}`);
-    console.log(response);
+    // console.log(response);
 
     return response.data;
   } catch (error) {

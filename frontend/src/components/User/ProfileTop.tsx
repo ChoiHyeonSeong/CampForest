@@ -86,7 +86,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
                   flex
                 `}
               > 
-                <div className='text-xs md:text-base'>
+                <div className='me-[0.5rem] text-xs md:text-base'>
                   <FollowBtn targetUserId={userId} callbackFunction={fetchUserInfo}/>
                 </div>
                 <div 

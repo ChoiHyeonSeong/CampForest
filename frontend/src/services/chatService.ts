@@ -71,6 +71,15 @@ export const initTransactionChat = async (productId: number, userId: number): Pr
   return response.data.data.roomId;
 };
 
+export const exitTransactionChat = async (roomId: number) => {
+  try {
+    const response = await axiosInstance.post(`/transactionchat/room/${roomId}/exit`);
+    console.log(response);
+    } catch (error) {
+      throw error
+    }
+}
+
 export const checkRentable = async (productId: number) => {
   try {
     let dateString = '';

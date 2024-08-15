@@ -76,7 +76,9 @@ const SearchProfile = (props: Props) => {
       
       {/* 버튼 */}
       <div className='flex flex-all-center'>
-        <FollowBtn targetUserId={props.profile.userId} callbackFunction={callbackFunc}/>
+        <div className='me-[0.5rem]'>
+          <FollowBtn targetUserId={props.profile.userId} callbackFunction={callbackFunc}/>
+        </div>
         <ChatBtn userId={props.profile.userId}/>
       </div>
     </div>

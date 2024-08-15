@@ -167,11 +167,22 @@ const chatSlice = createSlice({
     setExcludeDates: (state, action: PayloadAction<Date[]>) => {
       state.excludeDates = action.payload;
     },
-    deleteChatUser: (state, action: PayloadAction<number>) => {
+    deleteCommunityChatUser: (state, action: PayloadAction<number>) => {
       state.communityChatUserList = state.communityChatUserList.map(chatRoom => {
         if (chatRoom.roomId === action.payload) {
           return { 
             ...chatRoom, 
+            hidden: true,
+          };
+        }
+        return chatRoom;
+      });
+    },
+    deleteTransactionChatUser: (state, action: PayloadAction<number>) => {
+      state.transactionChatUserList = state.transactionChatUserList.map(chatRoom => {
+        if (chatRoom.roomId === action.payload) {
+          return {
+            ...chatRoom,
             hidden: true,
           };
         }
@@ -200,6 +211,7 @@ export const {
   setTransactionUnreadCount,
   setSaleStatus,
   setExcludeDates,
-  deleteChatUser
+  deleteCommunityChatUser,
+  deleteTransactionChatUser,
 } = chatSlice.actions;
 export default chatSlice.reducer;

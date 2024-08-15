@@ -7,14 +7,10 @@ const NotificationList = () => {
   const notificationState = useSelector((state: RootState) => state.notificationStore);
   
   return (
-    <div className={`px-[0.75rem] overflow-auto max-h-[92vh]`}>
+    <div className={`overflow-auto max-h-[92vh]`}>
       {notificationState.newNotificationList.length !== 0 &&
-      <div 
-        className='
-          p-[0.5rem]
-        '
-      >
-        <div>
+      <div className='p-[0.5rem]'>
+        <div className='ms-[0.5rem]'>
           새로운 알림
           <span 
             className='
@@ -36,7 +32,7 @@ const NotificationList = () => {
       </div>
       }
       <div className='p-[0.5rem]'>
-        <div>
+        <div className='ms-[0.5rem]'>
           지난 알림
           <span 
             className='

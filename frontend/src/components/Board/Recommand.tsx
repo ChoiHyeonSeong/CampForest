@@ -25,8 +25,8 @@ const Recommand = () => {
         </div>
         <div className={`grid grid-cols-4 gap-[0.5rem]`}>
           {similarUsers.map((similarUser: SimilarUserType, index: number) => (
-            <div>
-              <RecommandUser userInfo={similarUser} key={index} />
+            <div key={index}>
+              <RecommandUser userInfo={similarUser} />
             </div>
           ))}
         </div>
