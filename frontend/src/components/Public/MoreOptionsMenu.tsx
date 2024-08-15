@@ -23,7 +23,7 @@ const MoreOptionsMenu = (props: Props) => {
         cursor-pointer
       `}
     >
-      <div onClick={toggleMenu} id="delete-1">
+      <div onClick={toggleMenu} data-testid="delete-1">
         <MoreDotIcon className={`absolute top-0 right-0 size-[2rem]`}/>
       </div>
       {isMenuOpen && (
@@ -66,7 +66,7 @@ const MoreOptionsMenu = (props: Props) => {
                   border-b
                 `}
                 onClick={() => props.deleteFunction()}
-                id="delete-2"
+                data-testid="delete-2"
               >
                 <button 
                   className={`
