@@ -25,16 +25,21 @@ type Props = {
 
 const ChatUser = (props: Props) => {
   const chatUser = store.getState().chatStore.communityChatUserList[props.index];
+  const [show, setShow] = useState(!chatUser.hidden);
   const [lastMessageTime, setLastMessageTime] = useState('');
   
   useEffect(() => {
     setLastMessageTime(formatTime(chatUser.lastMessageTime));
   }, [chatUser.lastMessageTime]) 
 
-  return (
-    <div 
+  useEffect(() => {
+    setShow(chatUser.hidden);
+  },[chatUser.hidden])
+
+  return (<div 
       className={`
-        flex items-center px-[0.8rem] py-[1.25rem] 
+        ${show ? 'hidden' : 'flex'}
+        items-center px-[0.8rem] py-[1.25rem] 
         border-light-border
         dark:border-dark-border
         border-b
@@ -109,9 +114,7 @@ const ChatUser = (props: Props) => {
 
       </div>
 
-
-    </div>
-  )
+      </div>)
 }
 
 export default ChatUser;

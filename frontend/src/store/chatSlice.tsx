@@ -97,7 +97,7 @@ const chatSlice = createSlice({
     setTransactionChatUserList: (state, action: PayloadAction<ChatUserType[]>) => {
       state.transactionChatUserList = action.payload;
     },
-    updateCommunityChatUserList: (state, action: PayloadAction<{roomId: number; content: string; createdAt: string; inProgress: boolean}>) => {
+    updateCommunityChatUserList: (state, action: PayloadAction<{roomId: number; content: string; createdAt: string; inProgress: boolean;}>) => {
       let communityUnreadCountDiff = 0;
     
       state.communityChatUserList = state.communityChatUserList.map(chatRoom => {
@@ -114,7 +114,8 @@ const chatSlice = createSlice({
             ...chatRoom, 
             createdAt: action.payload.createdAt, 
             unreadCount: newUnreadCount, 
-            lastMessage: action.payload.content 
+            lastMessage: action.payload.content,
+            hidden: false,
           };
         }
         return chatRoom;
@@ -165,6 +166,17 @@ const chatSlice = createSlice({
     },
     setExcludeDates: (state, action: PayloadAction<Date[]>) => {
       state.excludeDates = action.payload;
+    },
+    deleteChatUser: (state, action: PayloadAction<number>) => {
+      state.communityChatUserList = state.communityChatUserList.map(chatRoom => {
+        if (chatRoom.roomId === action.payload) {
+          return { 
+            ...chatRoom, 
+            hidden: true,
+          };
+        }
+        return chatRoom;
+      });
     }
   }
 })
@@ -187,6 +199,7 @@ export const {
   setCommunityUnreadCount,
   setTransactionUnreadCount,
   setSaleStatus,
-  setExcludeDates
+  setExcludeDates,
+  deleteChatUser
 } = chatSlice.actions;
 export default chatSlice.reducer;

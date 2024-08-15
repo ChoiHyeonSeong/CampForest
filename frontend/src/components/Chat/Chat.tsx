@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
 import noImg from '@assets/images/basic_profile.png'
-import { RootState } from '@store/store';
+import { RootState, store } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatDetail, exitCommunityChat, transactionChatDetail } from '@services/chatService';
+import { communityChatDetail, communityChatList, exitCommunityChat, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { setChatInProgress, setIsChatOpen, setProduct, setSaleStatus } from '@store/chatSlice';
+import { deleteChatUser, setChatInProgress, setCommunityChatUserList, setCommunityUnreadCount, setIsChatOpen, setProduct, setSaleStatus, updateCommunityChatUserList } from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 import ProductInfoChat from './ProductInfoChat';
 import ChatTradeModal from './ChatTradeModal';
@@ -14,6 +14,7 @@ import ChatTradePropser from './ChatTradePropser';
 import { productDetail } from '@services/productService';
 import TransactionDetail from './TransactionDetail';
 import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
+import { ChatUserType } from './ChatUser';
 
 type UnifiedMessage = {
   [x: string]: any;
@@ -253,6 +254,20 @@ const fetchMessages = async () => {
 
   const unifiedMessages = messages.map(unifyMessage);
 
+  // 일반 채팅방 목록 가져오기
+  const fetchCommunityChatList = async () => {
+    const userId = store.getState().userStore.userId;
+    if (userId) {
+      const response = await communityChatList();
+      let count = 0;
+      response.forEach((chatUser: ChatUserType) => {
+        count += chatUser.unreadCount;
+      })
+      store.dispatch(setCommunityUnreadCount(count));
+      store.dispatch(setCommunityChatUserList(response));
+    }
+  }
+
   return (
     <div
       className={`
@@ -300,6 +315,8 @@ const fetchMessages = async () => {
           className='ms-auto text-light-warning dark:text-dark-warning cursor-pointer'
           onClick={() => {
             exitCommunityChat(chatState.roomId);
+            dispatch(deleteChatUser(chatState.roomId));
+            dispatch(setIsChatOpen(false));
           }}
         >
           채팅방 나가기
