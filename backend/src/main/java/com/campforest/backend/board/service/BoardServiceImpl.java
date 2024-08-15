@@ -2,6 +2,7 @@ package com.campforest.backend.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -219,10 +220,7 @@ public class BoardServiceImpl implements BoardService {
             if (imageUrl != null) {
                 dto.setUserImage(imageUrl);
             }
-            if (boardRepository.checkFollow(nowId, board.getUserId())){
-                dto.setRecommended(false);
-            }
-            else if(board.getUserId()==nowId){
+            if (boardRepository.checkFollow(nowId, board.getUserId())|| Objects.equals(board.getUserId(), nowId)){
                 dto.setRecommended(false);
             }
             else dto.setRecommended(true);
