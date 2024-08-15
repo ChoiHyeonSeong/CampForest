@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { gsap } from 'gsap';
 import { RootState } from '@store/store';
@@ -7,7 +7,7 @@ import './DayNightToggle.css';
 const DayNightToggle: React.FC = () => {
   const isDark = useSelector((state: RootState) => state.themeStore.isDark);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const loadSVG = async (url: string) => {
       const response = await fetch(url);
       return await response.text();
@@ -23,22 +23,37 @@ const DayNightToggle: React.FC = () => {
     ];
 
     Promise.all(svgUrls.map(loadSVG)).then(svgs => {
-      document.querySelector('.forest-top')!.innerHTML = svgs[0];
-      document.querySelector('.forest-bot')!.innerHTML = svgs[1];
-      document.querySelector('.sun')!.innerHTML = svgs[2];
-      document.querySelector('.moon')!.innerHTML = svgs[3];
-      document.querySelectorAll('.cloud.top, .cloud.top-backup').forEach(el => el.innerHTML = svgs[4]);
-      document.querySelectorAll('.cloud.mid, .cloud.mid-backup').forEach(el => el.innerHTML = svgs[5]);
-      document.querySelectorAll('.cloud.bot, .cloud.bot-backup').forEach(el => el.innerHTML = svgs[4]);
+      const setInnerHTML = (selector: string, content: string) => {
+        const element = document.querySelector(selector);
+        if (element) {
+          element.innerHTML = content;
+        }
+      };
 
-      gsap.set('.moon', { bottom: '-200px', scale: 1.5 });
-      gsap.set('.sun', { bottom: '-200px', scale: 1.5 });
-      document.querySelectorAll('.cloud').forEach(tweenCloud);
+      setInnerHTML('.forest-top', svgs[0]);
+      setInnerHTML('.forest-bot', svgs[1]);
+      setInnerHTML('.sun', svgs[2]);
+      setInnerHTML('.moon', svgs[3]);
+      document.querySelectorAll('.cloud.top, .cloud.top-backup').forEach(el => {
+        if (el) el.innerHTML = svgs[4];
+      });
+      document.querySelectorAll('.cloud.mid, .cloud.mid-backup').forEach(el => {
+        if (el) el.innerHTML = svgs[5];
+      });
+      document.querySelectorAll('.cloud.bot, .cloud.bot-backup').forEach(el => {
+        if (el) el.innerHTML = svgs[4];
+      });
     });
   }, []);
 
   useEffect(() => {
-      daySwap();
+    gsap.set('.moon', { bottom: '-200px', scale: 1.5 });
+    gsap.set('.sun', { bottom: '-200px', scale: 1.5 });
+    document.querySelectorAll('.cloud').forEach(tweenCloud);
+  }, []);
+
+  useEffect(() => {
+    daySwap();
   }, [isDark]);
 
   const tweenCloud = (cloud: Element) => {
@@ -85,7 +100,6 @@ const DayNightToggle: React.FC = () => {
       scaleX: 1.5,
       delay: 1.2
     });
-    
   };
 
   const generateStars = (n: number) => {
@@ -112,7 +126,7 @@ const DayNightToggle: React.FC = () => {
         <div className="stars"></div>
         <div className="stars2"></div>
         <div className="stars3"></div>
-    </div>
+      </div>
       <div className={`background ${isDark ? 'night' : 'day'}`}>
         <div className="overlay"></div>
         <div className="sun"></div>

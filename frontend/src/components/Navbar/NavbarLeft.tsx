@@ -3,6 +3,7 @@ import { RootState, store } from '@store/store';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { logout } from '@services/authService';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import DarkmodeBtn from './DarkmodeBtn';
 
@@ -145,6 +146,7 @@ const NavbarLeft = (props: Props) => {
       linkTo: '/camping'
     }
   ];
+  const totalCount = transactionUnreadCount + communityUnreadCount;
 
   return (
     <div
@@ -326,14 +328,20 @@ const NavbarLeft = (props: Props) => {
                 `} 
                 />
                 {(transactionUnreadCount + communityUnreadCount) > 0 && 
-                  <div 
-                    className='flex items-center justify-center absolute right-[0.75rem] top-0 min-w-[1rem] 
-                    bg-light-warning text-light-white
-                    dark:bg-dark-warning dark:text-dark-white
-                    text-sm rounded-full'
+                  <AnimatePresence>
+                  <motion.div
+                    key={totalCount}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    className='flex items-center justify-center absolute right-[0.75rem] top-0 min-w-[1rem]
+                              bg-light-warning text-light-white
+                              dark:bg-dark-warning dark:text-dark-white
+                              text-sm rounded-full'
                   >
-                    {transactionUnreadCount + communityUnreadCount}
-                </div>
+                    {totalCount}
+                  </motion.div>
+                </AnimatePresence>
                 }
             </div>
             <div

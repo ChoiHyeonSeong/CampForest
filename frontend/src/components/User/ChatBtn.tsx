@@ -62,7 +62,7 @@ const ChatBtn = (props: Props) => {
       const state: RootState = store.getState();
       if(response.type === 'READ') {
         if (state.userStore.userId !== response.senderId) {
-          store.dispatch(updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }));
+          store.dispatch(updateMessageReadStatus({ roomId: roomId, readerId: response.senderId }));
         }  
       }
       else if (state.chatStore.roomId === response.roomId) {
