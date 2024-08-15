@@ -3,18 +3,14 @@ import { useLocation } from "react-router-dom";
 import Board, { BoardType } from '@components/Board/Board';
 import { boardList, mixedBoardList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
 import { setUser, SimilarUserType } from '@store/userSlice';
 
 import { getOAuthAccessToken } from '@services/authService';
-
-import StarLight from '@components/Public/StarLight';
 import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
 import Recommand from '@components/Board/Recommand';
-import { RootState } from '@store/store';
-import Forest from '@components/Public/Forest';
 import DayNightToggle from '@components/Public/DayNightToggle';
 
 const useQuery = () => {
@@ -25,7 +21,6 @@ function Main() {
   const query = useQuery();
   const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
   const dispatch = useDispatch();
-  const isDark = useSelector((state: RootState) => state.themeStore.isDark);
 
   const [ref, inView] = useInView();
   const [boards, setBoards] = useState<BoardType[]>([]);
@@ -39,9 +34,12 @@ function Main() {
   const fetchBoards = async () => {
     try {
       dispatch(setIsLoading(true))
+      let userIds;
       if(sessionStorage.getItem('isLoggedIn')) {
         const userIds: number[] = JSON.parse(sessionStorage.getItem('similarUsers')!).map((similarUser: SimilarUserType) => similarUser.userId);
-        const response = await mixedBoardList(userIds, boardCursorIdRef.current, 10);
+      }
+      if(userIds) {
+          const response = await mixedBoardList(userIds, boardCursorIdRef.current, 10);
         dispatch(setIsLoading(false))
         boardCursorIdRef.current = response.data.data.nextCursor
         if (!response.data.data.hasNext) {
