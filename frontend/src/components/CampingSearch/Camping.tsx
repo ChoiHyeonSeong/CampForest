@@ -134,7 +134,7 @@ const Camping = (props: Props) => {
 
         {/* 캠핑후기 */}
         <div>
-          <div className={`flex items-center mt-[0.5rem]`}>
+          <div className={`flex items-center mt-[0.5rem] whitespace-nowrap`}>
             <div className={`text-lg me-[0.5rem]`}>
               {props.camping.averageRate ? '★'.repeat(Math.floor(props.camping.averageRate)) : '★★★★★'}
               <span className='ms-[0.25rem]'>{props.camping.averageRate ? Math.round(props.camping.averageRate * 10) / 10 : '기록 없음'}</span>

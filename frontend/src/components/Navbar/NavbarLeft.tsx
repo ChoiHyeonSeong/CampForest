@@ -159,9 +159,9 @@ const NavbarLeft = (props: Props) => {
         ${isEitherOpen ? 'md:w-[5rem]' : 'md:w-[15rem]'}
         ${props.isMenuBlocked ? 'block' : 'hidden lg:block'}
         fixed z-[80] md:z-[40] w-[82vw] h-[100%] mb-[2.75rem] pt-[0] md:pt-[3.2rem]
-        bg-light-white
-        dark:bg-dark-white
-        transition-all duration-300 ease-in-out
+        bg-light-white border-light-border-1
+        dark:bg-dark-white dark:border-dark-border-1
+        lg:border-r transition-all duration-300 ease-in-out
       `} 
       onTransitionEnd={props.handleTransitionEnd}
     >
