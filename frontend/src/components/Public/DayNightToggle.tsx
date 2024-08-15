@@ -31,8 +31,8 @@ const DayNightToggle: React.FC = () => {
       document.querySelectorAll('.cloud.mid, .cloud.mid-backup').forEach(el => el.innerHTML = svgs[5]);
       document.querySelectorAll('.cloud.bot, .cloud.bot-backup').forEach(el => el.innerHTML = svgs[4]);
 
-      gsap.set('.moon', { bottom: '-40px', scale: 1.5 });
-      gsap.set('.sun', { bottom: '-40px', scale: 1.5 });
+      gsap.set('.moon', { bottom: '-200px', scale: 1.5 });
+      gsap.set('.sun', { bottom: '-200px', scale: 1.5 });
       document.querySelectorAll('.cloud').forEach(tweenCloud);
     });
   }, []);
@@ -63,7 +63,7 @@ const DayNightToggle: React.FC = () => {
 
     gsap.to(isDark ? '.sun' : '.moon', {
       duration: 2,
-      bottom: '-40px',
+      bottom: '-200px',
       ease: 'power4.out',
       delay: 0.2
     });
