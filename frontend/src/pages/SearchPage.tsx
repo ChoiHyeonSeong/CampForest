@@ -8,6 +8,8 @@ import SearchAllList from '@components/Search/SearchAllList';
 
 import eventEmitter from '@utils/eventEmitter';
 
+import Swal from 'sweetalert2'
+
 const SearchPage = () => {
   const [inputText, setInputText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,10 +27,17 @@ const SearchPage = () => {
     eventEmitter.emit('recentSearchesUpdated', updatedSearches);
   }, []);
 
+  const errorAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "error"
+    });
+  }
+
   // 검색 실행 함수
   const executeSearch = useCallback((path: string = '') => {
     if (inputText.length < 2) {
-      alert('검색어는 두 글자 이상 입력해야 합니다.');
+      errorAlert('검색어는 두 글자 이상 입력해야 합니다.');
       return;
     }
     setSearchQuery(inputText);

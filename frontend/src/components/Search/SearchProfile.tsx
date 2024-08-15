@@ -6,6 +6,9 @@ import defaultImage from '@assets/images/basic_profile.png';
 import FollowBtn from '@components/User/FollowBtn';
 import ChatBtn from '@components/User/ChatBtn';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 export type profileType = {
   userId: number;
   nickname: string;
@@ -20,6 +23,8 @@ type Props = {
 }
 
 const SearchProfile = (props: Props) => {
+  const userState = useSelector((state: RootState) => state.userStore);
+
   const navigate = useNavigate();
 
   const callbackFunc = () => {
@@ -76,10 +81,17 @@ const SearchProfile = (props: Props) => {
       
       {/* 버튼 */}
       <div className='flex flex-all-center'>
-        <div className='me-[0.5rem]'>
-          <FollowBtn targetUserId={props.profile.userId} callbackFunction={callbackFunc}/>
-        </div>
-        <ChatBtn userId={props.profile.userId}/>
+        {userState.isLoggedIn ? (
+          <>
+            <div className='me-[0.5rem]'>
+              <FollowBtn targetUserId={props.profile.userId} callbackFunction={callbackFunc}/>
+            </div>
+            <ChatBtn userId={props.profile.userId}/>
+          </>
+        ) : (
+          <></>
+        )}
+        
       </div>
     </div>
   )

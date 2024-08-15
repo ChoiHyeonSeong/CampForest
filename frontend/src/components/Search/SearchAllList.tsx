@@ -10,8 +10,13 @@ import { productList } from '@services/productService'
 import { BoardType } from '@components/Board/Board';
 import { ProductType } from '@components/Product/ProductCard';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
+
+import Swal from 'sweetalert2'
 
 type Props = {
   searchText: string;
@@ -19,6 +24,8 @@ type Props = {
 
 const SearchAllList = (props: Props) => {
   const navigate = useNavigate();
+  const userState = useSelector((state: RootState) => state.userStore);
+
   const [profileList, setProfileList] = useState<profileType[]>([]);
   const [productsList, setProductsList] = useState<ProductType[]>([]);
   const [boardList, setBoardList] = useState<BoardType[]>([]);
@@ -30,7 +37,7 @@ const SearchAllList = (props: Props) => {
   const [isModifyOpen, setIsModyfyOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
   const [selectedModifyId, setSelectedModifyId] = useState<number | null>(null);
-
+  
   const fetchAllSearchResults = useCallback(async () => {
     if (props.searchText.length < 2) {
       setProfileList([]);

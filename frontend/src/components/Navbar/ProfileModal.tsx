@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { logout } from '@services/authService';
 import DefaultProfileImg from '@assets/images/basic_profile.png'
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   isOpen: boolean;
@@ -11,10 +12,12 @@ type Props = {
 };
 
 const ProfileModal = (props: Props) => {
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userStore);
   
   const loggedout = async () => {
     await logout()
+    navigate('/')
     window.location.reload();
   }
 

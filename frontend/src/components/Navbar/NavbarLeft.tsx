@@ -107,6 +107,7 @@ const NavbarLeft = (props: Props) => {
 
   const handleLogout = async () => {
     await logout();
+    navigate('/')
     props.closeMenu();
     window.location.reload();
   };

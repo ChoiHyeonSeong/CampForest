@@ -4,6 +4,8 @@ import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 
 import { userDelete, logout } from '@services/authService';
 
+import Swal from 'sweetalert2'
+
 const UserDelete = () => {
   const [isNicknameMatched, setIsNicknameMatched] = useState(true)
   const [currentNickname, setCurrentNickname] = useState('');
@@ -24,15 +26,29 @@ const UserDelete = () => {
     navigate(-1); // 이전 페이지로 이동
   };
 
+  const successAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "success"
+    });
+  }
+
+  const errorAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "error"
+    });
+  }
+  
   const requestDelete = async () => {
     if (currentNickname === inputNickname) {
       const result = await userDelete()
       if (result.data.status === 'C000') {
         await logout()
-        alert('회원탈퇴가 완료되었습니다.')
+        successAlert('회원탈퇴가 완료되었습니다.')
         navigate('/')
       } else {
-        alert('회원탈퇴를 실패했습니다. 다시 시도해주세요.')
+        errorAlert('회원탈퇴를 실패했습니다. 다시 시도해주세요.')
       }
     } else {
       setIsNicknameMatched(false)
