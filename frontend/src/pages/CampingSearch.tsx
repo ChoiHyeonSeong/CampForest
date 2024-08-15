@@ -583,7 +583,9 @@ function CampingSearch() {
     <div className={`z-[30]`}>
       {/* 메인 화면 */}
       <div className={`flex flex-col justify-center items-center min-h-screen`}>
-        <h2 className='w-[100%] md:max-w-[48rem] lg:max-w-[80rem] font-bold text-4xl mb-[1.8rem]'>캠핑장 검색</h2>
+        <h2 className='w-[100%] md:max-w-[48rem] lg:max-w-[80rem] font-bold md:text-3xl lg:text-4xl mb-[1.8rem] text-xl'>
+          캠핑장 검색
+        </h2>
         <div 
           className={`
             flex flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[42rem] p-[0.75rem] mx-[0.5rem]
