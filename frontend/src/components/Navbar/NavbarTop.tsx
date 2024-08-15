@@ -151,7 +151,13 @@ const NavbarTop = (props: Props) => {
         <div className={`flex md:hidden items-center w-[10rem] h-[100%] me-[1rem]`}>
           { locPath === '/' ?
             <BigLogoIcon className={`w-[10rem] fill-light-black dark:fill-dark-black`}/> :
-            <div className={`text-xl`}>{locText}</div>
+            <div>
+
+              <div className={`text-xl`}>
+                {locText}
+              </div>
+            </div>
+            
           }
         </div>
       </div>
@@ -193,6 +199,7 @@ const NavbarTop = (props: Props) => {
               src={user.profileImage ? user.profileImage : ProfileImage} 
               alt="NOIMG" 
               onError={handleImageError}  
+              className='w-full h-full'
             />
           </div>
           <ProfileModal

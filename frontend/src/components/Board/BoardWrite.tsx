@@ -254,7 +254,7 @@ const BoardWrite = () => {
               <div className={`relative`}>
                 <div 
                   className={`
-                    ms-auto
+                    ms-auto me-[1rem]
                     text-light-anchor hover:text-light-anchor-hover
                     dark:text-dark-anchor dark:hover:text-dark-anchor-hover
                     text-sm md:text-md cursor-pointer 
