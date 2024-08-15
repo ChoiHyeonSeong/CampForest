@@ -251,11 +251,7 @@ const ProductModify = () => {
           rounded
         `}
       >
-        <h4
-          className='text-2xl font-bold'
-        >거래 글 수정하기</h4>
-        <form 
-          className={`mt-[2rem]`} 
+        <form
           onSubmit={handleSubmit}
         >
           {/* 제목, 카테고리 */}
