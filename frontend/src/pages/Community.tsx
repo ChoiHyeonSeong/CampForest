@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
 import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
+import DayNightToggle from '@components/Public/DayNightToggle';
 
 const Community = () => {
   const dispatch = useDispatch();
@@ -138,6 +139,8 @@ const Community = () => {
 
   return (
     <div>
+      {/* 배경 */}
+      {<DayNightToggle />}
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (
