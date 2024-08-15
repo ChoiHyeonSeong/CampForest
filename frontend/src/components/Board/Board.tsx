@@ -316,27 +316,15 @@ const Board = (props: Props) => {
       >
         <div>
           <div className={`flex items-center me-[1rem]`}>
-            {props.board.liked ? (
               <HeartIcon 
                 onClick={toggleLike}
                 className={`
+                  ${props.board.liked ? 'fill-light-heart stroke-light-heart dark:fill-dark-heart dark:stroke-dark-heart'
+                    : 'fill-light-white dark:fill-dark-white stroke-light-border-icon dark:stroke-dark-border-icon'}
                   size-[1.5rem]
-                  fill-light-heart stroke-light-heart
-                  dark:fill-dark-heart dark:stroke-dark-heart
-                  cursor-pointer
+                  cursor-pointer transition-colors duration-300
                 `}
               />
-            ) : (
-              <HeartIcon 
-                onClick={toggleLike}
-                className={`
-                  size-[1.5rem]
-                  fill-none stroke-light-border-icon
-                  dark:stroke-dark-border-icon
-                  cursor-pointer  
-                `}
-              />
-            )}
             <div 
               className={`
                 mx-[0.5rem]
