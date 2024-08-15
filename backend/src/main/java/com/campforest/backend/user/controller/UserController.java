@@ -310,6 +310,24 @@ public class UserController {
 		}
 	}
 
+	@GetMapping("/isFollowing/{followeeId}")
+	public ApiResponse<?> isFollowing(
+		@AuthenticationPrincipal UserDetails userDetails,
+		@PathVariable Long followeeId) {
+		try {
+			Users fromUser = userService.findByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+			Users toUser = userService.findByUserId(followeeId)
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+			boolean isFollowing = userService.isFollowing(fromUser.getUserId(), toUser.getUserId());
+
+			return ApiResponse.createSuccess(isFollowing, "팔로우 여부 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.FOLLOW_NOT_FOUND);
+		}
+	}
+
 	@PostMapping("/public/password/reset")
 	public ApiResponse<?> resetUserPassword(@RequestBody RequestPasswordDTO requestDTO) {
 		try {
