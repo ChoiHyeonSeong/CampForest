@@ -443,7 +443,7 @@ const fetchMessages = async () => {
         border-t"
       >
         <input
-          className="bg-transparent focus:outline-none"
+          className="w-[90%] bg-transparent focus:outline-none"
           placeholder="대화내용을 입력하세요."
           value={userInput}
           onChange={(event) => setUserInput(event.target.value)}

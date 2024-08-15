@@ -183,9 +183,7 @@ function Main() {
 
   return (
     <div>
-      {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
-      {/* {isDark && <StarLight />} */}
-      {/* {!isDark && <Forest />} */}
+      {/* 배경 */}
       {<DayNightToggle />}
 
       {/* 디테일 모달 */}
@@ -228,9 +226,6 @@ function Main() {
             </div>
           ))}
         </div>
-        {/* <div>
-          <Recommand />
-        </div> */}
       </div>
 
       {/* intersection observer */}
