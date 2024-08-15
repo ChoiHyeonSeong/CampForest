@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 
-import { userDelete, logout } from '@services/authService';
+import axiosInstance, { userDelete, logout } from '@services/authService';
 
 import Swal from 'sweetalert2'
 
@@ -44,7 +44,14 @@ const UserDelete = () => {
     if (currentNickname === inputNickname) {
       const result = await userDelete()
       if (result.data.status === 'C000') {
-        await logout()
+         // 토큰 제거
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('nickname');
+        sessionStorage.removeItem('profileImage');
+        sessionStorage.removeItem('similarUsers');
+        sessionStorage.removeItem('isLoggedIn');
+        delete axiosInstance.defaults.headers['Authorization'];
         successAlert('회원탈퇴가 완료되었습니다.')
         navigate('/')
       } else {
@@ -104,8 +111,7 @@ const UserDelete = () => {
               -space-y-[0.25rem] text-center
             `}
           >
-            <div>계정으로 사용하는 이메일 주소를 입력하시면</div>
-            <div>비밀번호를 설정하실 수 있는 메일을 전송해드립니다.</div>
+            <div>회원 탈퇴를 원하시면 닉네임을 입력해주세요.</div>
           </div>
           <div className={`text-center`}>
             <input 
@@ -137,9 +143,9 @@ const UserDelete = () => {
               onClick={requestDelete}
               className={`
                 w-[100%] max-w-[30rem] mt-[1.5rem] mx-auto py-[0.75rem]
-                bg-light-black text-light-text-white
-                dark:bg-dark-black dark:text-dark-text-white
-                text-sm cursor-pointer
+                bg-light-black text-light-text-white hover:bg-light-warning
+                dark:bg-dark-black dark:text-dark-text-white dark:hover:bg-light-warning
+                text-sm cursor-pointer transition-colors duration-300
               `}
             >
               회원 탈퇴

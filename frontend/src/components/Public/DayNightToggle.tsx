@@ -122,18 +122,19 @@ const DayNightToggle: React.FC = () => {
     const stars2 = document.querySelector('.stars2') as HTMLElement;
     const stars3 = document.querySelector('.stars3') as HTMLElement;
 
-    if (stars1) stars1.style.boxShadow = generateStars(100);
-    if (stars2) stars2.style.boxShadow = generateStars(25);
+    if (stars1) stars1.style.boxShadow = generateStars(50);
+    if (stars2) stars2.style.boxShadow = generateStars(30);
     if (stars3) stars3.style.boxShadow = generateStars(10);
   }, []);
 
   return (
     <div className={`container ${isDark ? 'night' : 'day'}`}>
-      <div className={`fixed inset-0 w-screen h-screen z-[1] ${isDark ? '' : 'opacity-0'} duration-500 transition-opacity`}>
-        <div className="stars"></div>
-        <div className="stars2"></div>
-        <div className="stars3"></div>
-      </div>
+      <div className={`fixed inset-0 w-screen h-screen z-[1] stars ${isDark ? 'visible' : 'invisible'}`}>
+      <div className="star"></div>
+      <div className="star"></div>
+      <div className="star"></div>
+      {/* 원하는 만큼 별을 추가하세요 */}
+    </div>
       <div className={`background ${isDark ? 'night' : 'day'}`}>
         <div className="overlay"></div>
         <div className="sun"></div>
