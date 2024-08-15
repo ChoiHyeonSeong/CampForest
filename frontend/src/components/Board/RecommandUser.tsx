@@ -16,12 +16,12 @@ const RecommandUser:React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={`relative h-[15rem] p-[1rem] bg-light-gray text-center rounded`}>
+    <div className={`relative h-[17.5rem] md:h-[15rem] p-[1rem] bg-light-gray text-center rounded`}>
       <img
         src={props.userInfo.userProfileUrl ? props.userInfo.userProfileUrl : userImage} 
         alt="NoImg" 
         className={`
-          w-full aspect-1 mx-auto mb-[0.5rem]
+          w-[80%] md:w-[90%] aspect-1 mx-auto mb-[0.5rem]
           border-light-border
           dark:border-dark-border
           rounded-full border cursor-pointer
