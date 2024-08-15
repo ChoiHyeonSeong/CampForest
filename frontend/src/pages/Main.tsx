@@ -15,6 +15,7 @@ import BoardModify from '@components/Board/BoardModify';
 import Recommand from '@components/Board/Recommand';
 import { RootState } from '@store/store';
 import Forest from '@components/Public/Forest';
+import DayNightToggle from '@components/Public/DayNightToggle';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -185,8 +186,9 @@ function Main() {
   return (
     <div>
       {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
-      {isDark && <StarLight />}
-      {!isDark && <Forest />}
+      {/* {isDark && <StarLight />} */}
+      {/* {!isDark && <Forest />} */}
+      {<DayNightToggle />}
 
       {/* 디테일 모달 */}
       {

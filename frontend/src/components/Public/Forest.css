@@ -36,16 +36,16 @@
 .forest::before {
   content: '';
   position: absolute;
-  top: -50px;
+  top: -100px;
   left: 0;
   right: 0;
-  height: 50px;
+  height: 100px;
   background: 
     radial-gradient(
       50% 100% at 50% 100%,
       #228B22 0%,
       transparent 100%
     );
-  background-size: 50px 50px;
+  background-size: 100px 100px;
   background-repeat: repeat-x;
 }

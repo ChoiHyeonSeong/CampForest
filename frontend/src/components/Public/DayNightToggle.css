@@ -1,0 +1,142 @@
+.container {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  background: #fff;
+}
+
+.background {
+  width: 100vw;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: background 2s;
+}
+
+.background .forest-top svg polygon,
+.background .forest-bot svg path {
+  transition: fill 2s;
+}
+
+.background .stars {
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+.background.day {
+  background-color: #0aceff;
+}
+
+.background.day .cloud {
+  opacity: 1;
+}
+
+.background.day .forest-top svg polygon {
+  fill: #149cbf;
+}
+
+.background.day .forest-bot svg path {
+  fill: #0d87a3;
+}
+
+.background.night {
+  background-color: #172a60;
+}
+
+.background.night .forest-top svg polygon {
+  fill: #18214f;
+}
+
+.background.night .forest-bot svg path {
+  fill: #172a60;
+}
+
+.background.night .cloud {
+  opacity: 0.2;
+}
+
+.background.night .stars {
+  opacity: 0.28;
+}
+
+.overlay{
+  position:absolute;
+  z-index:10;
+  width:0;
+  height:0;
+  border-top:50vw solid rgba(255, 255, 255, 0.1);
+  border-right:50vw solid transparent;
+}
+
+.cloud {
+  position: absolute;
+  width: 150px;
+  transition: opacity 2s;
+}
+
+.cloud.top {
+  top: -15px;
+  left: 0px;
+}
+
+.cloud.top-backup {
+  top: -15px;
+  left: -100px;
+}
+
+.cloud.mid {
+  top: 35px;
+  left: 200px;
+}
+
+.cloud.mid-backup {
+  top: 35px;
+  left: 0px;
+}
+
+.cloud.bot {
+  top: 65px;
+  left: -30px;
+}
+
+.cloud.bot-backup {
+  top: 65px;
+  left: -230px;
+}
+
+.forest-top,
+.forest-bot {
+  position: absolute;
+  bottom: -3px;
+}
+
+.forest-top {
+  bottom: 10px;
+}
+
+.moon,
+.sun {
+  bottom: -40px;
+}
+
+.moon {
+  position: absolute;
+  left: 100px;
+  transform: scale(0.6, 2);
+}
+
+.moon svg {
+  width: 150px;
+  height: 150px;
+}
+
+.sun {
+  position: absolute;
+  left: 100px;
+}
+
+.sun svg {
+  width: 150px;
+  height: 150px;
+}
