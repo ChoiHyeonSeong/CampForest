@@ -106,9 +106,15 @@ public class TransactionChatController {
 	}
 
 	@GetMapping("/room/{roomId}/messages")
-	public ApiResponse<?> getChatHistory(@PathVariable Long roomId) {
+	public ApiResponse<?> getChatHistory(@PathVariable Long roomId, Authentication authentication) throws Exception {
+
+		Users user = userService.findByEmail(authentication.getName())
+			.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+		Long userId = user.getUserId();
+
 		try {
-			List<MessageWithTransactionDTO> messages = transactionChatService.getChatHistory(roomId);
+			List<MessageWithTransactionDTO> messages = transactionChatService.getChatHistory(roomId, userId);
 			Long productId = transactionChatService.getRoomById(roomId).get().getProductId();
 
 			ChatHistoryDto historyDto = new ChatHistoryDto(messages, productId);
@@ -156,6 +162,22 @@ public class TransactionChatController {
 			return ApiResponse.createSuccess(rooms, "채팅방 목록 가져오기 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.CHAT_ROOM_LIST_FAILED);
+		}
+	}
+
+	@PostMapping("/room/{roomId}/exit")
+	public ApiResponse<?> exitChatRoom(@PathVariable Long roomId, Authentication authentication) {
+		try {
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
+
+			Long userId = user.getUserId();
+
+			transactionChatService.exitChatRoom(roomId, userId);
+
+			return ApiResponse.createSuccess(null, "채팅방 나가기 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.CHAT_ROOM_EXIT_FAILED);
 		}
 	}
 

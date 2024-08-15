@@ -178,6 +178,7 @@ public class BoardController {
                     .orElseThrow(() -> new Exception("유저 정보 조회 실패"));
                 nowId = user.getUserId();
             }
+            userIds.add(nowId);
             CursorResult<BoardResponseDto> result = boardService.getMixedBoards(userIds, nowId,cursorId,size);
             return ApiResponse.createSuccess(result, "팔로워와 추천사용자 게시글");
         } catch (Exception e) {

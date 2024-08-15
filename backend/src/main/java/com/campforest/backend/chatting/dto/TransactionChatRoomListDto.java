@@ -18,4 +18,5 @@ public class TransactionChatRoomListDto {
 	private String lastMessage;
 	private LocalDateTime lastMessageTime;
 	private Long unreadCount;
+	private boolean isHidden;
 }

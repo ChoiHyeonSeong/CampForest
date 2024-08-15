@@ -53,6 +53,9 @@ public class TransactionChatRoom {
     @Column(name = "write_review_seller")
     private boolean writeSeller;
 
+    @Column(name = "is_hidden")
+    private boolean isHidden;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

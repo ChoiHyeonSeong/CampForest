@@ -14,13 +14,15 @@ public interface TransactionChatService {
 
 	TransactionChatMessage saveMessage(Long roomId, TransactionChatMessage message);
 
-	List<MessageWithTransactionDTO> getChatHistory(Long roomId);
+	List<MessageWithTransactionDTO> getChatHistory(Long roomId, Long userId);
 
 	Long getUnreadMessageCount(Long roomId, Long userId);
 
 	void markMessagesAsRead(Long roomId, Long userId);
 
 	public List<TransactionChatRoomListDto> getChatRoomsForUser(Long userId);
+
+	public void exitChatRoom(Long roomId, Long userId);
 
 	Optional<TransactionChatRoom> getRoomById(Long roomId);
 
