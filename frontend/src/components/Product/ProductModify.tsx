@@ -6,7 +6,8 @@ import MultiImageUpload from '@components/Public/MultiImageUpload';
 import ProductMap from './ProductMap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { setIsLoading } from '@store/modalSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 type Option = {
   id: number;
@@ -57,6 +58,7 @@ const ProductModify = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const productId = Number(useParams().productId);
+  const userState = useSelector((state: RootState) => state.userStore);
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Option>(categories[0]);
@@ -67,6 +69,8 @@ const ProductModify = () => {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [loadMap, setLoadMap] = useState(false);
   const buttons = ['대여', '판매'];
+
+  const [productUserId, setProductUserId] = useState(0);
 
   const [formData, setFormData]= useState<ProductRegistDto>({
     productId: 0,
@@ -84,7 +88,11 @@ const ProductModify = () => {
     try {
       const response = await productDetail(productId)
 
-      console.log(response)
+      const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+      if (isLoggedIn === null || isLoggedIn === "false" || response.userId !== userState.userId) {
+        navigate("/");
+        return;
+      }
 
       setFormData({
         productId: response.productId,

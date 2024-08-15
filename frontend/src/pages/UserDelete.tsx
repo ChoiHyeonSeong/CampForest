@@ -12,11 +12,16 @@ const UserDelete = () => {
   const [inputNickname, setInputNickname] = useState('');
 
   useEffect(() => {
-    const nickname = sessionStorage.getItem('nickname')
-    if (nickname !== null) {
-      setCurrentNickname(nickname)
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (isLoggedIn === null || isLoggedIn === "false") {
+      navigate("/");
     } else {
-      setCurrentNickname('닉네임 조회 불가')
+      const nickname = sessionStorage.getItem('nickname')
+      if (nickname !== null) {
+        setCurrentNickname(nickname)
+      } else {
+        setCurrentNickname('닉네임 조회 불가')
+      }
     }
   }, [])
 
