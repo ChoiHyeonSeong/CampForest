@@ -552,7 +552,7 @@ public class BoardController {
                 Users receiver = userService.findByUserId(comment.getCommentWriterId())
                         .orElseThrow(()-> new IllegalArgumentException("사용자 조회 실패"));
 
-                notificationService.createNotification(receiver, user, NotificationType.COMMENT, "님이 댓글에 좋아요를 눌렀습니다.");
+                notificationService.createNotification(receiver, user, NotificationType.COMMENTLIKE, "님이 댓글에 좋아요를 눌렀습니다.");
 
                 return ApiResponse.createSuccess(boardService.countCommentLike(commentId), "댓글 좋아요 성공하였습니다");
             }
