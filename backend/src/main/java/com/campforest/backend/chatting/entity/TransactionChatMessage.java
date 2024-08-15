@@ -39,6 +39,9 @@ public class TransactionChatMessage {
 	@Column(name = "sender_id")
 	private Long senderId;
 
+	@Column(name = "receiver_id")
+	private Long receiverId;
+
 	@Column(name = "room_id")
 	private Long roomId;
 
@@ -56,6 +59,12 @@ public class TransactionChatMessage {
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
+
+	@Column(name = "is_deleted_for_sender")
+	private boolean isDeletedForSender;
+
+	@Column(name = "is_deleted_for_receiver")
+	private boolean isDeletedForReceiver;
 
 	@PrePersist
 	protected void onCreate() {
