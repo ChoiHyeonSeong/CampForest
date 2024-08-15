@@ -12,7 +12,7 @@ const Recommand = () => {
         className={`
           mt-[1rem] p-[1rem]
           border-light-border bg-light-white bg-opacity-60
-          dark:border-dark-border dark:bg-light-white dark:bg-opacity-60
+          dark:border-dark-border dark:bg-dark-white dark:bg-opacity-60
           border rounded-md
         `}
       >

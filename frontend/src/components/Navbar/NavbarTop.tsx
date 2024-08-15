@@ -13,6 +13,23 @@ import NavTopPushModal from './NavTopPushModal';
 import { readNotification } from '@services/notificationService';
 import { updateNotificationList } from '@store/notificationSlice';
 
+
+const routeMapping = [
+  { path: '/', text: '메인' },
+  { path: '/user/login', text: '로그인' },
+  { path: '/user/regist/*', text: '회원가입' },
+  { path: '/user/:userId/*', text: '회원정보' },
+  { path: '/user/profile/edit', text: '회원정보 수정' },
+  { path: '/user/delete', text: '회원탈퇴' },
+  { path: '/product/*', text: '판매/대여' },
+  { path: '/camping', text: '캠핑장 찾기' },
+  { path: '/user/password/*', text: '비밀번호 찾기' },
+  { path: '/community/:category', text: '커뮤니티' },
+  { path: '/search/*', text: '검색' },
+  { path: '/landing', text: '설명' },
+  { path: '/review', text: '리뷰' }
+];
+
 type Props = {
   toggleMenu: () => void;
   closeMenu: () => void;
@@ -22,11 +39,13 @@ const NavbarTop = (props: Props) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userStore);
   const [locPath, setLocPath] = useState<string | null>(null);
+  const [locText, setlocText] = useState<string | null>(null);
+
   const currentLoc = useLocation();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPushModalOpen, setIsPushModalOpen] = useState(false);
 
-  async function readAllNotifications () {
+  const readAllNotifications = async () => {
     try {
       await readNotification()
       dispatch(updateNotificationList());
@@ -84,6 +103,26 @@ const NavbarTop = (props: Props) => {
     e.currentTarget.src = ProfileImage;
   };
 
+  const getLocationText = (pathname: string) => {
+    const route = routeMapping.find(route => {
+      // 패턴이 * 또는 :param으로 끝나는 경우 정규식 처리
+      const regexPath = route.path
+        .replace(/\*/g, '.*')            // 와일드카드 처리
+        .replace(/\/:[^\/]+/g, '/[^/]+'); // 파라미터 처리 (예: /community/:category)
+      
+      const regex = new RegExp(`^${regexPath}$`);
+      return regex.test(pathname);
+    });
+  
+    return route ? route.text : 'Unknown Page';
+  };
+
+  useEffect(() => {
+    if (locPath !== null) {
+      setlocText(getLocationText(locPath))
+    }
+  }, [locPath])
+
   return (
     <div 
       className={`
@@ -112,7 +151,13 @@ const NavbarTop = (props: Props) => {
         <div className={`flex md:hidden items-center w-[10rem] h-[100%] me-[1rem]`}>
           { locPath === '/' ?
             <BigLogoIcon className={`w-[10rem] fill-light-black dark:fill-dark-black`}/> :
-            <div className={`text-xl`}>{locPath}</div>
+            <div>
+
+              <div className={`text-xl`}>
+                {locText}
+              </div>
+            </div>
+            
           }
         </div>
       </div>
@@ -154,6 +199,7 @@ const NavbarTop = (props: Props) => {
               src={user.profileImage ? user.profileImage : ProfileImage} 
               alt="NOIMG" 
               onError={handleImageError}  
+              className='w-full h-full'
             />
           </div>
           <ProfileModal

@@ -123,8 +123,8 @@ function App() {
 
   return (
     <div>
-      <div className="App h-screen overflow-hidden bg-light-background dark:bg-dark-background">
-
+      <div className="App h-screen overflow-hidden">
+        
         {/* 이 아래가 PWA 설치 배너 */}
         {showBanner && (
           <div 

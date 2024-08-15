@@ -61,7 +61,7 @@ const FollowBtn = (props: Props) => {
           'bg-light-gray-1 dark:bg-dark-gray-1'
         }
         px-[0.75rem] md:px-[1rem] py-[0.25rem]
-        cursor-pointer rounded-md text-[100%]
+        cursor-pointer rounded-md text-[100%] transition-colors
       `}
     >
       {isFollowingState ? ('팔로잉') : ('팔로우')}

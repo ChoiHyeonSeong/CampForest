@@ -17,9 +17,9 @@ const StarLight = (props: Props) => {
     const stars2 = document.querySelector('.stars2') as HTMLElement;
     const stars3 = document.querySelector('.stars3') as HTMLElement;
 
-    if (stars1) stars1.style.boxShadow = generateStars(700);
-    if (stars2) stars2.style.boxShadow = generateStars(200);
-    if (stars3) stars3.style.boxShadow = generateStars(100);
+    if (stars1) stars1.style.boxShadow = generateStars(70);
+    if (stars2) stars2.style.boxShadow = generateStars(20);
+    if (stars3) stars3.style.boxShadow = generateStars(10);
   }, []);
 
   return (

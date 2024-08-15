@@ -48,6 +48,7 @@ const ProfileModal = (props: Props) => {
                     src={`${user.profileImage ? user.profileImage : DefaultProfileImg}`} 
                     alt="" 
                     onError={handleImageError}
+                    className='w-full h-full'
                   />
                 </div>
                 <div className={`mb-[0.5rem] text-lg`}>{user.nickname}</div>

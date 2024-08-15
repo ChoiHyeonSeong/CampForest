@@ -18,7 +18,7 @@ import { ReactComponent as ChatIcon } from '@assets/icons/nav-chat.svg'
 import { ReactComponent as SearchIcon } from '@assets/icons/nav-search.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as LeftIcon } from '@assets/icons/arrow-right.svg'
-import ShortLogo from '@assets/logo/mini-logo.png'
+import ShortLogo from '@assets/logo/logo-small.png'
 import { ReactComponent as LongLogo } from '@assets/logo/logo.svg'
 
 // 모바일 카테고리 사진
@@ -189,7 +189,7 @@ const NavbarLeft = (props: Props) => {
               <img 
                 src={ShortLogo} 
                 alt="NOIMG"
-                className={`h-[100%]`}/>
+                className={`w-[60%]`}/>
             </div>
 
             {/* 긴로고 */}
