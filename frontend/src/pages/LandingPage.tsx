@@ -96,7 +96,7 @@ const LandingPage = () => {
       {/* 스크롤 가능한 컨테이너 */}
       <div
         ref={scrollContainerRef}
-        className='absolute inset-0 overflow-y-auto scrollbar-hide snap-y snap-mandatory'
+        className='absolute inset-0 overflow-y-auto scrollbar-hide-mo snap-y snap-mandatory'
         style={{ scrollSnapType: 'y mandatory' }}
       >
         {/* page 1 */}
