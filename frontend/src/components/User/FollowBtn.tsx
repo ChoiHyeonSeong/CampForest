@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-import { followingList, userUnfollow, userFollow } from '@services/userService';
-
-type UserInfo = {
-  userId: number;
-}
+import { userUnfollow, userFollow, checkFollowing } from '@services/userService';
 
 type Props = {
   targetUserId: number;
@@ -12,15 +8,20 @@ type Props = {
 }
 
 const FollowBtn = (props: Props) => {
-  const loginUserId = Number(sessionStorage.getItem('userId'));
   const [isFollowingState, setIsFollowingState] = useState(false);
   const isFollowingRef = useRef(false);
 
   const fetchFollowing = async (first = false) => {
     try {
-      const followingData: UserInfo[] = await followingList(loginUserId);
       const checkUserId = () => {
-        return followingData.find(item => item['userId'] === props.targetUserId) ? true : false;
+        try {
+          const result = checkFollowing(props.targetUserId);
+          return Boolean(result);
+        } catch (error) {
+          console.error('checkFollowing failed: ', error);
+        } finally {
+          return false;
+        }
       };
 
       isFollowingRef.current = checkUserId()
@@ -28,7 +29,7 @@ const FollowBtn = (props: Props) => {
       if (first) {
         setIsFollowingState(isFollowingRef.current)
       } else {
-        if (isFollowingRef.current) {
+        if (isFollowingState) {
           const response = await userUnfollow(props.targetUserId)
           console.log(response)
         } else {
@@ -39,7 +40,7 @@ const FollowBtn = (props: Props) => {
         if (props.callbackFunction) {
           props.callbackFunction()
         }
-        setIsFollowingState(!isFollowingRef.current)
+        setIsFollowingState(!isFollowingState)
       }
     } catch (error) {
       console.error("Failed to fetch Followings: ", error);
@@ -59,7 +60,7 @@ const FollowBtn = (props: Props) => {
           'bg-light-signature text-light-white dark:bg-dark-signature dark:text-dark-white' : 
           'bg-light-gray-1 dark:bg-dark-gray-1'
         }
-        me-[0.5rem] px-[0.75rem] md:px-[1rem] py-[0.25rem]
+        px-[0.75rem] md:px-[1rem] py-[0.25rem]
         cursor-pointer rounded-md text-[100%]
       `}
     >

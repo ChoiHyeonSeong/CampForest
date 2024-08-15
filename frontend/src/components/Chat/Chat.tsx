@@ -3,10 +3,14 @@ import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
 import noImg from '@assets/images/basic_profile.png'
 import { RootState, store } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatDetail, communityChatList, exitCommunityChat, transactionChatDetail } from '@services/chatService';
+import { communityChatDetail, communityChatList, exitCommunityChat, exitTransactionChat, transactionChatDetail } from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { deleteChatUser, setChatInProgress, setCommunityChatUserList, setCommunityUnreadCount, setIsChatOpen, setProduct, setSaleStatus, updateCommunityChatUserList } from '@store/chatSlice';
+import { 
+  deleteCommunityChatUser, setChatInProgress, setCommunityChatUserList, 
+  setCommunityUnreadCount, setIsChatOpen, setProduct, setSaleStatus, 
+  deleteTransactionChatUser 
+} from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 import ProductInfoChat from './ProductInfoChat';
 import ChatTradeModal from './ChatTradeModal';
@@ -214,6 +218,26 @@ const fetchMessages = async () => {
     }
   };
 
+  const handleExitButton = () => {
+    if(chatState.chatInProgressType === '일반') {
+      try {
+        exitCommunityChat(chatState.roomId);
+        dispatch(deleteCommunityChatUser(chatState.roomId));
+        dispatch(setIsChatOpen(false));
+      } catch (error) {
+        console.error('일반 채팅방 나가기 실패 ', error);
+      }
+    } else {
+      try {
+        exitTransactionChat(chatState.roomId);
+        dispatch(deleteTransactionChatUser(chatState.roomId));
+        dispatch(setIsChatOpen(false));
+      } catch (error) {
+        console.error('거래 채팅방 나가기 실패: ', error);
+      }
+    }
+  }
+
   useEffect(() => {
     if (chatState.roomId !== 0) {
       opponentInfo();
@@ -314,9 +338,7 @@ const fetchMessages = async () => {
         <div 
           className='ms-auto text-light-warning dark:text-dark-warning cursor-pointer'
           onClick={() => {
-            exitCommunityChat(chatState.roomId);
-            dispatch(deleteChatUser(chatState.roomId));
-            dispatch(setIsChatOpen(false));
+            handleExitButton();
           }}
         >
           채팅방 나가기

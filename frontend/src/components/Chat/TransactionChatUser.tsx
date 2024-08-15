@@ -11,14 +11,20 @@ type Props = {
 const ChatUser = (props: Props) => {
   const chatUser = store.getState().chatStore.transactionChatUserList[props.index];
   const [lastMessageTime, setLastMessageTime] = useState('');
+  const [show, setShow] = useState(!chatUser.hidden);
   
   useEffect(() => {
     setLastMessageTime(formatTime(chatUser.lastMessageTime));
   }, [chatUser.lastMessageTime]) 
 
+  useEffect(() => {
+    setShow(chatUser.hidden);
+  }, [chatUser.hidden])
+
   return (
     <div 
       className={`
+        ${show ? 'hidden' : 'flex'}
         flex items-center px-[0.8rem] py-[1.25rem] 
         border-light-border
         dark:border-dark-border

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
-import { setUser, clearUser } from '@store/userSlice';
+import { setUser, clearUser, SimilarUserType } from '@store/userSlice';
 
 import NavbarTop from './NavbarTop';
 import NavbarLeft from './NavbarLeft';
@@ -137,14 +137,15 @@ const Navbar = () => {
 
     const storedIsLoggedIn = sessionStorage.getItem('isLoggedIn');
     const similarUsersString = sessionStorage.getItem('similarUsers');
-    let similarUsers: object = {};
+    let similarUsers: SimilarUserType[] = [];
     if (similarUsersString) {
       try {
         similarUsers = JSON.parse(similarUsersString);
       } catch (error) {
         console.error('Failed to parse similarUsers: ', error);
       }
-    } 
+    }
+
     if (storedIsLoggedIn === 'true') {
       const storageObj = {
         userId: Number(sessionStorage.getItem('userId')),
