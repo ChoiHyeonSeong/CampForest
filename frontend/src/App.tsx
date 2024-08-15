@@ -48,6 +48,7 @@ function App() {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+      
       // 브라우저 기본 설치 프롬프트 방지
       e.preventDefault();
       // 이벤트 저장
@@ -85,6 +86,7 @@ function App() {
 
   const handleCloseBanner = () => {
     setHideBanner(true);
+    localStorage.setItem('isPWAClosed', 'true')
   };
 
   const handleTransitionEnd = () => {
