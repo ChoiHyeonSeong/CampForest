@@ -85,6 +85,7 @@ const ProductList = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const maxVisitedPageRef = useRef<number>(0);
+  const [isChangeActiveTab, setIsChangeActiveTab] = useState(false);
 
   // 이벤트 핸들러
   const [isStateReset, setIsStateReset] = useState(false)
@@ -103,7 +104,7 @@ const ProductList = () => {
     maxVisitedPageRef.current = 0
   }
 
-  useEffect(() => {
+  const resetCategory = () => {
     const matchingCategory = CATEGORIES.find(category => category.url === params.category);
     if (matchingCategory) {
       setFilterCondition(prev => ({
@@ -117,6 +118,10 @@ const ProductList = () => {
         selectedCategory: { id: 1, name: '분류 전체' }
       }));
     }
+  }
+
+  useEffect(() => {
+    resetCategory()
   }, [params.category])
 
   const fetchProducts = useCallback(async (cursor: number | null = null): Promise<ProductListResponse> => {
@@ -212,8 +217,17 @@ const ProductList = () => {
         selectedLocation: null
       })
       setActiveTab(tabIndex);
+      setIsChangeActiveTab(true);
     }
   }, [activeTab]);
+
+
+  useEffect(() => {
+    if (isChangeActiveTab) {
+      setIsChangeActiveTab(false)
+      resetCategory()
+    }
+  }, [activeTab])
 
   useEffect(() => {
     resetState()
