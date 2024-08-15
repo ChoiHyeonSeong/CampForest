@@ -14,6 +14,7 @@ import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
 import Recommand from '@components/Board/Recommand';
 import { RootState } from '@store/store';
+import Forest from '@components/Public/Forest';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -185,6 +186,7 @@ function Main() {
     <div>
       {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
       {isDark && <StarLight />}
+      {!isDark && <Forest />}
 
       {/* 디테일 모달 */}
       {

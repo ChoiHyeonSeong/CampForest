@@ -26,7 +26,6 @@ import Product from '@pages/Product';
 import SearchPage from '@pages/SearchPage';
 import LandingPage from '@pages/LandingPage';
 import useSSE from '@hooks/useSSE';
-import DuckForest from '@components/Public/DuckForest';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -127,7 +126,6 @@ function App() {
       <div className="App h-screen overflow-hidden bg-light-background dark:bg-dark-background">
         
         {/* 이 아래가 PWA 설치 배너 */}
-        
         {showBanner && (
           <div 
             className={`
@@ -156,9 +154,6 @@ function App() {
             />
           </div>
         )} 
-       
-
-
         <Navbar />
         <div className='flex h-full'>
           {/* padding은 Navigation bar용 공간 */}
