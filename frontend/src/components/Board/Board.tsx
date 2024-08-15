@@ -55,6 +55,8 @@ type Props = {
 const Board = (props: Props) => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userStore);
+  const [liked, setLiked] = useState(props.board.liked);
+  const [likeCount, setLikeCount] = useState(props.board.likeCount);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [timeDifference, setTimeDifference] = useState('');
@@ -95,9 +97,13 @@ const Board = (props: Props) => {
           // dislike
           const result = await boardDislike(props.board.boardId, user.userId)
           props.updateLike(props.board.boardId, false, result)
+          setLikeCount(result);
+          setLiked(false);
         } else {
           const result = await boardLike(props.board.boardId, user.userId)
           props.updateLike(props.board.boardId, true, result)
+          setLikeCount(result);
+          setLiked(true);
         }
       } else {
         popLoginAlert()
@@ -341,7 +347,7 @@ const Board = (props: Props) => {
                 data-testid="e2e-boardheart"
                 onClick={toggleLike}
                 className={`
-                  ${props.board.liked ? 'fill-light-heart stroke-light-heart dark:fill-dark-heart dark:stroke-dark-heart'
+                  ${liked ? 'fill-light-heart stroke-light-heart dark:fill-dark-heart dark:stroke-dark-heart'
                     : 'fill-transparent dark:fill-dark-white stroke-light-border-icon dark:stroke-dark-border-icon'}
                   size-[1.5rem]
                   cursor-pointer transition-colors duration-300
@@ -353,7 +359,7 @@ const Board = (props: Props) => {
                 text-start md:text-sm
               `}
             >
-              {props.board.likeCount}
+              {likeCount}
             </div>
           </div>
         </div>
