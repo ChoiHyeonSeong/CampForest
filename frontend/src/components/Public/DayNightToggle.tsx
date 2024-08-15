@@ -82,17 +82,24 @@ const DayNightToggle: React.FC = () => {
       ease: 'power4.out',
       delay: 0.2
     });
-
+    
     gsap.to(isDark ? '.moon' : '.sun', {
-      duration: 0.5,
-      bottom: `${bounceSize}px`,
-      scaleX: 1.5,
-      scaleY: 1,
-      ease: 'bounce.out',
-      delay: 1
+      duration: 2,
+      bottom: '-200px',
+      ease: 'power4.out',
+      delay: 0.2
     });
 
     gsap.to(isDark ? '.moon' : '.sun', {
+      duration: 2,
+      bottom: `${visiblePosition}vh`,
+      ease: 'bounce.out',
+      scaleY: 1.5,
+      scaleX: 1.5,
+      delay: 1.2
+    });
+
+    gsap.to(isDark ? '.sun' : '.moon', {
       duration: 2,
       bottom: `${visiblePosition}vh`,
       ease: 'bounce.out',
