@@ -27,17 +27,17 @@ def generate_user(index):
         "birthdate": fake.date_of_birth(minimum_age=18, maximum_age=60).strftime('%Y-%m-%d'),
         "gender": random.choice(["M", "F"]),
         "isOpen": random.choice([True, False]),
-        "nickname": fake.user_name(),
+        "nickname": fake.borough() + fake.first_name() + fake.last_name(),
         "phoneNumber": fake.phone_number(),
         "introduction": fake.sentence(nb_words=10),
         "interests": random.sample(interests_options, 6)
     }
 
 # 4개의 사용자 정보 생성
-users = [generate_user(i) for i in range(1, 1001)]
+users = [generate_user(i) for i in range(1, 1000)]
 
 # 서버로 요청 전송
-url = "http://192.168.100.167:8080/user/auth/regist"
+url = "http://localhost:8080/api/user/public/regist"
 
 for user in users:
     # multipart/form-data 형식으로 데이터 준비
