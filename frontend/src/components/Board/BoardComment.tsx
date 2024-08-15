@@ -163,7 +163,6 @@ const BoardComment = (props: Props) => {
       </div>
       {/* 좋아요 */}
       <div 
-        data-testid="e2e-boardcomment-4"
         className={`
           ms-[1rem] space-y-[0.5rem]
           text-center
@@ -171,6 +170,7 @@ const BoardComment = (props: Props) => {
       >
         {liked ? (
           <HeartIcon
+            data-testid="e2e-boardcomment-4"
             onClick={dislike}
             className={`
               size-[1.2rem] 
@@ -181,6 +181,7 @@ const BoardComment = (props: Props) => {
           />
         ) : (
           <HeartIcon
+            data-testid="e2e-boardcomment-4"
             onClick={like}
             className='
               size-[1.2rem]
