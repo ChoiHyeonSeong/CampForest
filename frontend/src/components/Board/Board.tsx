@@ -380,9 +380,10 @@ const Board = (props: Props) => {
           </div>
         </div>
 
-        <div className='flex items-center ms-auto' data-testid="e2e-boardsave">
+        <div className='flex items-center ms-auto'>
           {props.board.saved ? 
             (<BookmarkIcon
+              data-testid="e2e-boardsave"
               onClick={() => handleBookmark()}
               className={`
                 inline size-[1.5rem]
@@ -391,6 +392,7 @@ const Board = (props: Props) => {
                 cursor-pointer
               `}
             />) : (<BookmarkIcon
+              data-testid="e2e-boardsave"
               onClick={() => handleBookmark()}
               className={`
                 inline size-[1.5rem]
