@@ -4,8 +4,6 @@ import com.campforest.backend.chatting.dto.CommunityChatRoomListDto;
 import com.campforest.backend.chatting.entity.CommunityChatMessage;
 import com.campforest.backend.chatting.repository.communitymessage.CommunityChatMessageRepository;
 
-import org.apache.catalina.User;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.chatting.dto.CommunityChatDto;

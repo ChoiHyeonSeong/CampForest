@@ -100,7 +100,6 @@ public class ProductService {
 				isSaved = true;
 			}
 		}
-		System.out.println(isSaved);
 		ProductDetailDto productDetailDto = new ProductDetailDto(findProduct, imageUrls, user.getNickname(), user.getUserImage(),temperature);
 		productDetailDto.setSaved(isSaved);
 

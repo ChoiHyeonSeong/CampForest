@@ -86,7 +86,6 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     @Override
     public Long getUnreadMessageCount(Long roomId, Long userId) {
         return transactionChatMessageRepository.countUnreadMessagesForUser(roomId, userId);
-
     }
 
     @Transactional
@@ -139,9 +138,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
     @Transactional
     @Override
     public Object getRentTransactionEntity(Long rentId) {
-        System.out.println(rentId);
-        Rent rent = rentRepository.findById(rentId).orElseThrow();
-
+        Rent rent = rentRepository.findById(rentId).orElseThrow()
         return toRentDto(rent);
     }
 

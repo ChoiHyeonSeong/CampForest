@@ -49,7 +49,6 @@ public class S3Service {
 
 	private String upload(String fileName, File uploadFile, String extend) {
 		String newFileName = buildFileName(fileName, extend);
-		log.info(newFileName);
 		String uploadImageUrl = putS3(uploadFile, newFileName);
 		removeNewFile(uploadFile);
 		return uploadImageUrl;
@@ -69,7 +68,6 @@ public class S3Service {
 				.withCannedAcl(CannedAccessControlList.PublicRead)
 		);
 		String s3Url = amazonS3.getUrl(bucket, fileName).toString();
-		log.info(s3Url);
 		return s3Url;
 	}
 
