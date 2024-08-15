@@ -17,6 +17,7 @@ module.exports = {
         'clouds1': 'clouds1 110s linear infinite',
         'clouds2': 'clouds2 100s linear infinite',
         'slideIn': 'slide-in 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'bounceY': 'bounceY 2s infinite',
       },
       keyframes: {
         shake: {
@@ -33,6 +34,10 @@ module.exports = {
         slideIn: {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' },
+        },
+        bounceY: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         }
       },
       colors: {
