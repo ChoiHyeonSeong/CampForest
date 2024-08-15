@@ -175,7 +175,7 @@ const ChatTradePropser = ({
               className="
               flex justify-center items-center w-full py-[0.25rem] 
               bg-green-600 text-light-white
-              dark:bg-dark-black dark:text-dark-white
+              dark:bg-green-500 dark:text-dark-white
               rounded
             "
               onClick={() => {
@@ -195,7 +195,7 @@ const ChatTradePropser = ({
               className="
               flex justify-center items-center w-full py-[0.25rem] 
               bg-light-warning text-light-white
-              dark:bg-dark-black dark:text-dark-white
+              dark:bg-dark-warning dark:text-dark-white
               rounded
             "
               onClick={() => {

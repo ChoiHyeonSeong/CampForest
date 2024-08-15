@@ -630,7 +630,7 @@ function Detail() {
                       font-medium
                     `}
                   >
-                    {product.temperature}
+                    {product.temperature}℃
                   </div>
                 </div>
                 <div
