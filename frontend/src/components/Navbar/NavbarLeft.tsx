@@ -400,7 +400,7 @@ const NavbarLeft = (props: Props) => {
 
           {/* 검색 */}
           <div 
-            id="searchuser-1"
+            data-testid="searchuser-1"
             onClick={() => props.toggleExtendMenu('search')}
             className={`
               flex h-[3.5rem]
