@@ -1,50 +1,34 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import RecommandUser from './RecommandUser';
-import RecommandTransaction from './RecommandTransaction';
-import { useSelector } from 'react-redux';
-import { RootState } from '@store/store';
+import { SimilarUserType } from '@store/userSlice';
 
 const Recommand = () => {
-  const similarUsers = useSelector((state: RootState) => state.userStore).similarUsers;
-  useEffect(() => {
-    console.log(similarUsers);
-  }, [])
+  const similarUsers = JSON.parse(sessionStorage.getItem('similarUsers')!)
   return (
     <div 
       className={`
-        max-xl:hidden xl:sticky lg:top-[13rem] xl:ms-[3rem] p-[2rem]
-        border-light-border
-        dark:border-dark-border
+        mt-[1rem] p-[1rem]
+        border-light-border bg-light-white bg-opacity-60
+        dark:border-dark-border dark:bg-light-white dark:bg-opacity-60
         border rounded-md
       `}
     >
       {/* 사용자 추천 */}
       <div 
         className={`
-          pb-[1rem]
           border-light-border
           dark:border-dark-border
-          border-b
         `}
       >
-        <div className={`mb-[0.5rem]`}>
+        <div className={`ms-[0.5rem] mb-[0.5rem] font-semibold`}>
           사용자 추천
         </div>
-        <div className={`space-y-[1rem]`}>
-          {/* {similarUsers.map((similarUser, index) => (
-            <RecommandUser key={index} />
-          ))} */}
-        </div>
-      </div>
-      {/* 인기 거래 글 */}
-      <div className={`mt-[1rem]`}>
-        <div className={`mb-[0.5rem]`}>
-          인기 거래 글
-        </div>
-        <div className={`space-y-[1rem]`}>
-          <RecommandTransaction />
-          <RecommandTransaction />
-          <RecommandTransaction />
+        <div className={`grid grid-cols-4 gap-[0.5rem]`}>
+          {similarUsers.map((similarUser: SimilarUserType, index: number) => (
+            <div>
+              <RecommandUser userInfo={similarUser} key={index} />
+            </div>
+          ))}
         </div>
       </div>
     </div>

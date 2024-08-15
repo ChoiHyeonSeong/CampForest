@@ -3,6 +3,7 @@ import userImage from '@assets/images/basic_profile.png'
 import { NotificationType } from '@store/notificationSlice';
 import { formatTime } from '@utils/formatTime';
 import { useNavigate } from 'react-router-dom';
+import FollowBtn from '@components/User/FollowBtn';
 
 type Props = {
   notification: NotificationType;
@@ -27,12 +28,7 @@ const Notification = ({notification}: Props) => {
                 {formatTime(notification.createdAt)}
               </span>
             </div>
-            <div className={`
-              shrink-0 px-[0.75rem] py-[0.35rem] 
-              bg-light-signature text-light-white hover:bg-light-signature-hover dark:bg-dark-signature hover:dark:bg-dark-signature-hover
-              text-[0.8rem] text-center rounded-md cursor-pointer`}>
-              팔로우
-            </div>
+            <FollowBtn targetUserId={notification.senderId}/>
           </div>
         );
       case 'LIKE':

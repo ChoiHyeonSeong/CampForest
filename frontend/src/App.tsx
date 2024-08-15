@@ -26,6 +26,7 @@ import LandingPage from '@pages/LandingPage';
 import LightMode from '@components/Public/LightMode';
 import ForestBg from '@components/Public/ForestBg'
 import useSSE from '@hooks/useSSE';
+import DuckForest from '@components/Public/DuckForest';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -145,13 +146,15 @@ function App() {
         {modals.isLoading ? <LoadingModal /> : <></>}
 
 
-        {/* 라이트 모드 배경  */}
+        {/* 라이트 모드 배경 후보 1  */}
         {/* {!isDark && <LightMode />} */}
-
+        {/* 라이트 모드 배경 후보 2  */}
+        {/* {!isDark && <ForestBg />} */}
+        {/* 라이트 모드 배경 후보 3  */}
+        {!isDark && <DuckForest />}
         {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
         {isDark && <StarLight />}
         
-        {/* <ForestBg /> */}
       </div>
     </div>
   );
