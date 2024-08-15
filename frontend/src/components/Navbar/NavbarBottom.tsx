@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 
 type Props = {
+  setIsExtendChatListOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleMenu: () => void;
   closeMenu: () => void;
 }
@@ -92,6 +93,7 @@ const NavbarBottom = (props: Props) => {
       {/* 채팅 */}
       <div 
         className={`flex flex-all-center w-[3.2rem] cursor-pointer`}
+        onClick={() => props.setIsExtendChatListOpen(true)}
       >
         <ChatIcon 
           className={`

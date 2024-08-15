@@ -78,7 +78,7 @@ const ChatTradeModal = (props: Props) => {
     >
       <div
         className='
-          relative left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 md:w-[90%] md:h-[90%] pt-[1.5rem] px-[1.5rem]
+          relative left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 md:w-[90%] h-full md:h-[90%] pt-[0.5rem] md:pt-[1.5rem] px-[1.5rem]
           bg-light-white
           dark:bg-dark-white
           rounded-lg overflow-scroll
@@ -88,10 +88,10 @@ const ChatTradeModal = (props: Props) => {
           onClick={() => {props.setModalOpen(false)}}
           className='flex justify-between'
         >
-          <div className='text-xl font-semibold'>거래 정보</div>
-          <div className='cursor-pointer'><CloseIcon /></div>
+          <div className='text-lg md:text-xl font-semibold'>거래 정보</div>
+          <div className='cursor-pointer dark:fill-dark-black'><CloseIcon /></div>
         </div>
-        <div className='mt-[1rem] px-[15%] bg-light-gray dark:bg-dark-gray'>
+        <div className='mt-[0.5rem] px-[15%] bg-light-gray dark:bg-dark-gray'>
           {/* 이미지 */}
           <Swiper
               className="w-full aspect-1 bg-black"
@@ -160,13 +160,13 @@ const ChatTradeModal = (props: Props) => {
               />
             </Swiper>
           </div>
-        <div className='mt-[2rem]'>
-          <div className='text-2xl font-semibold mb-[0.5rem]'>
+        <div className='mt-[1rem] md:mt-[2rem] max-md:text-sm'>
+          <div className='text-lg md:text-2xl font-semibold mb-[0.5rem]'>
             {product.productName}
           </div>
           {product.productType === 'SALE' ? (<div className='grid grid-cols-3'>
             <div className='col-span-2 space-y-[0.25rem]'>
-              <div className='flex'>
+              <div className='flex max-md:text-sm'>
                 <div className='w-[4rem] me-[0.5rem] font-semibold'>금액</div>
                 {props.transactionEntity.realPrice}원
               </div>
@@ -183,7 +183,7 @@ const ChatTradeModal = (props: Props) => {
             </div>
           </div>) : (
             <div>
-            <div className='grid grid-cols-5'>
+            <div className='grid grid-cols-5 max-md:text-sm'>
               <div className='col-span-3 space-y-[0.25rem]'>
                 <div className='flex'>
                   <div className='w-[4rem] me-[0.5rem] font-semibold'>금액</div>
@@ -216,7 +216,7 @@ const ChatTradeModal = (props: Props) => {
             </div>)
           }
           
-          <div className='mt-[2rem] mb-[0.5rem] text-xl font-semibold'>
+          <div className='mt-[1rem] md:mt-[2rem] mb-[0.5rem] text-xl font-semibold'>
             거래 장소
           </div>
         </div>

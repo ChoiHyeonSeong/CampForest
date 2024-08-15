@@ -194,7 +194,11 @@ const Navbar = () => {
         <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
       </div>
       {/* 모바일용 하단 네비게이션바 */}
-      <NavbarBottom toggleMenu={toggleMenu} closeMenu={closeMenu}/>
+      <NavbarBottom 
+      setIsExtendChatListOpen={setIsExtendChatListOpen}
+        toggleMenu={toggleMenu} 
+        closeMenu={closeMenu}
+      />
 
       {/* 우측 하단 고정사이드바 */}
       <Aside user={user} />

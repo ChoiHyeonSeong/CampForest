@@ -112,12 +112,12 @@ const ChatTradeModal = (props: Props) => {
     >
       <div
         className='
-          relative left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 md:w-[90%] md:h-[90%] p-[1.5rem]
+          relative left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 md:w-[90%] h-full md:h-[90%] p-[1rem] md:p-[1.5rem]
           bg-light-white
           dark:bg-dark-white
           rounded-lg
         '>
-          <div className='flex justify-between mb-[1rem] text-2xl'>
+          <div className='flex justify-between md:mb-[1rem] text-xl md:text-2xl'>
             <div>
               거래 요청
             </div>
@@ -135,10 +135,10 @@ const ChatTradeModal = (props: Props) => {
           {/* 상품 정보 */}
           <div 
             className='
-              flex mb-[1rem] py-[1rem]
+              flex md:mb-[1rem] py-[1rem]
               border-light-border
               dark:border-dark-border
-              border-y
+              border-b md:border-y
             '
           >
             <div className='w-1/4'>
@@ -149,14 +149,14 @@ const ChatTradeModal = (props: Props) => {
             </div>
             <div className='relative w-3/4 px-[1rem]'>
               <div>
-                <div className='text-xl'>
+                <div className='text-sm md:text-xl'>
                   {chatState.product.productName}
                 </div>
                 <div 
                   className='
                     text-light-signature
                     dark:text-dark-signature
-                    text-base
+                    text-sm md:text-base
                   '
                 >
                   {chatState.product.productType === 'RENT' ? '대여' : '판매'}
@@ -164,12 +164,12 @@ const ChatTradeModal = (props: Props) => {
               </div>
               <div 
                 className='
-                  flex absolute bottom-0 left-[1rem]
-                  text-lg
+                  md:flex md:absolute bottom-0 left-[1rem]
+                  max-md:text-sm text-lg
                 '
               >
                 <div className='flex items-center'>
-                  <span className='text-base me-[0.5rem]'>금액</span>
+                  <span className='md:text-base me-[0.5rem]'>금액</span>
                   <span className='font-semibold'>
                     {chatState.product.productType === 'RENT' ? `${chatState.product.productPrice}원` : `${chatState.product.productPrice}원/일`}
                   </span>
@@ -177,14 +177,14 @@ const ChatTradeModal = (props: Props) => {
                 {chatState.product.productType ==='RENT' ? (
                   <div className='flex items-center'>
                     <span 
-                      className='
+                      className='max-md:hidden
                         mx-[0.5rem]
                         text-sm
                       '
                     >
                       |
                     </span>
-                    <span className='text-base me-[0.5rem]'>
+                    <span className='md:text-base me-[0.5rem]'>
                       보증금
                     </span>
                     <span className='font-semibold'>
@@ -200,8 +200,8 @@ const ChatTradeModal = (props: Props) => {
             className='p-[0.5rem]'
             onSubmit={handleSubmit}
           >
-            <div className='mb-[1.5rem]'>
-              <div className='font-semibold text-lg'>
+            <div className='mb-[1rem] md:mb-[1.5rem]'>
+              <div className='font-semibold md:text-lg'>
                 {chatState.product.productType === 'SALE' ? '거래 ' : '대여 '}
                 희망 시간
               </div>
@@ -210,8 +210,8 @@ const ChatTradeModal = (props: Props) => {
                   placeholderText="날짜와 시간을 선택해주세요."
                   className='
                         w-full mt-[0.5rem] p-[0.5rem]
-                        border-light-border-2 focus:outline-light-signature
-                        dark:border-dark-border-2 dark:focus:outline-dark-signature
+                        bg-light-white border-light-border-2 focus:outline-light-signature
+                        dark:bg-dark-white dark:border-dark-border-2 dark:focus:outline-dark-signature
                         border rounded-lg
                       '
                   dateFormat='yyyy.MM.dd HH:mm' // 날짜와 시간 포맷 변경
@@ -236,14 +236,14 @@ const ChatTradeModal = (props: Props) => {
             <div>
               {chatState.product.productType === 'RENT' && (
                 <div>
-                  <span className='font-semibold text-lg'>반납 희망 시간</span>
+                  <span className='font-semibold md:text-lg'>반납 희망 시간</span>
                   <div>
                     <DatePicker
                       placeholderText="날짜와 시간을 선택해주세요."
                       className='
                         w-full mt-[0.5rem] p-[0.5rem]
-                        border-light-border-2 focus:outline-light-signature
-                        dark:border-dark-border-2 dark:focus:outline-dark-signature
+                        bg-light-white border-light-border-2 focus:outline-light-signature
+                        dark:bg-dark-white dark:border-dark-border-2 dark:focus:outline-dark-signature
                         border rounded-lg
                       '
                       dateFormat='yyyy.MM.dd HH:mm' // 날짜와 시간 포맷 변경
@@ -266,7 +266,7 @@ const ChatTradeModal = (props: Props) => {
                 </div>
               </div>)}
             </div>
-            <div className='flex w-full mt-[1.5rem]'>
+            <div className='flex w-full mt-[1rem] md:mt-[1.5rem]'>
               <div className='w-1/2 pr-2'>
                 <div className='font-semibold text-lg'>
                   금액 
@@ -276,8 +276,8 @@ const ChatTradeModal = (props: Props) => {
                   <input
                     className='
                     w-full mt-[0.5rem] p-[0.5rem]
-                    border-light-border-2 focus:outline-light-signature
-                    dark:border-dark-border-2 dark:focus:outline-dark-signature
+                    bg-light-white border-light-border-2 focus:outline-light-signature
+                    dark:bg-dark-white dark:border-dark-border-2 dark:focus:outline-dark-signature
                     border rounded-lg
                   '
                     type='number'
@@ -298,8 +298,8 @@ const ChatTradeModal = (props: Props) => {
                     <input
                       className='
                       w-full mt-[0.5rem] p-[0.5rem]
-                      border-light-border-2 focus:outline-light-signature
-                      dark:border-dark-border-2 dark:focus:outline-dark-signature
+                      bg-light-white border-light-border-2 focus:outline-light-signature
+                      dark:bg-dark-white dark:border-dark-border-2 dark:focus:outline-dark-signature
                       border rounded-lg
                     '
                       type='number'
@@ -313,7 +313,7 @@ const ChatTradeModal = (props: Props) => {
               )}
             </div>
             <div>
-              <div className='mt-[1.5rem] font-semibold text-lg'>
+              <div className='mt-[1rem] md:mt-[1.5rem] font-semibold text-lg'>
                 거래 희망 장소
               </div>
               <div 
@@ -333,7 +333,7 @@ const ChatTradeModal = (props: Props) => {
                   `}
                 />
                 <div className={`
-                    ${location.address === '장소를 선택하세요.' ? 'text-light-text-secondary dark:text-dark-text-secondary' : 'text-light-text-secondary dark:text-dark-text-secondary'} 
+                    ${location.address === '장소를 선택하세요.' ? 'text-light-text-secondary dark:text-dark-text-secondary' : ''} 
                     cursor-pointer
                   `}
                 >
@@ -344,7 +344,7 @@ const ChatTradeModal = (props: Props) => {
             <button 
               type='submit' 
               className={`
-                absolute md:w-[calc(90%-1rem)] bottom-[2rem] p-[0.5rem]
+                md:absolute md:w-[calc(90%-1rem)] md:bottom-[2rem] max-md:mt-[1rem] w-full p-[0.5rem]
                 bg-light-black text-light-white hover:bg-light-signature
                 dark:bg-dark-black dark:text-dark-white hover:dark:bg-dark-signature
                 transition-all duration-150 rounded-lg

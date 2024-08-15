@@ -102,8 +102,8 @@ const ChatUserList = (props: Props) => {
       </div>
       <div
         className={`
-          ${chatState.isChatOpen ? 'translate-x-[20rem]' : '-translate-x-full'} 
-          max-md:hidden absolute top-0 -z-[135] w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+          ${chatState.isChatOpen ? 'max-md:translate-x-[100vw] translate-x-[20rem]' : '-translate-x-[100vw]'} 
+          absolute top-0 -z-[135] md:w-[35rem] md:max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
           bg-light-white outline-light-border-1
           dark:bg-dark-white dark:outline-dark-border-1
           transition-all duration-300 ease-in-out outline outline-1

@@ -138,7 +138,26 @@ const Chat = () => {
   async function fetchProduct () {
     const result = await productDetail(chatState.product.productId);
     dispatch(setProduct(result));
-}
+  }
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 이벤트 리스너 추가
+    window.history.pushState(null, '', window.location.href);
+    if(chatState.isChatOpen) {
+      window.addEventListener('popstate', handleBackButton);
+    } else {
+      window.removeEventListener('popstate', handleBackButton);
+    }
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, [chatState.isChatOpen]);
+
+  function handleBackButton () {
+    dispatch(setIsChatOpen(false))
+  }
 
 const fetchMessages = async () => {
   try {
@@ -278,24 +297,10 @@ const fetchMessages = async () => {
 
   const unifiedMessages = messages.map(unifyMessage);
 
-  // 일반 채팅방 목록 가져오기
-  const fetchCommunityChatList = async () => {
-    const userId = store.getState().userStore.userId;
-    if (userId) {
-      const response = await communityChatList();
-      let count = 0;
-      response.forEach((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
-      store.dispatch(setCommunityUnreadCount(count));
-      store.dispatch(setCommunityChatUserList(response));
-    }
-  }
-
   return (
     <div
       className={`
-        flex flex-col max-md:hidden fixed top-0 w-[35rem] max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+        flex flex-col fixed top-0 max-md:w-[100vw] md:w-[35rem] md:max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
         bg-light-white outline-light-border-1
         dark:bg-dark-white dark:outline-dark-border-1
         transition-all duration-300 ease-in-out outline outline-1
@@ -322,14 +327,14 @@ const fetchMessages = async () => {
       ))}
       {/* 상대 정보 */}
       <div
-        className={`flex items-center shrink-0 p-[0.8rem]
+        className={`flex items-center shrink-0 h-[3rem] p-[0.8rem]
         border-light-border-1
         dark:border-dark-border-1
         border-b`}
       >
-        <div className={`me-[0.75rem] cursor-pointer`} onClick={() => dispatch(setIsChatOpen(false))}>
+        <div className={`me-[0.75rem] cursor-pointer`} onClick={handleBackButton}>
           <LeftIcon
-            className={`hidden md:block md:size-[1.8rem]
+            className={`md:size-[1.8rem]
             fill-light-border-icon
             dark:fill-dark-border-icon`}
           />
@@ -355,7 +360,7 @@ const fetchMessages = async () => {
         </div>
       )}
       {/* 메세지 부분 */}
-      <div className="h-full ps-[0.75rem] overflow-scroll" ref={scrollRef}>
+      <div className="h-full ps-[0.75rem] max-md:pe-[0.75rem] overflow-scroll" ref={scrollRef}>
         {unifiedMessages && unifiedMessages.length > 0 ? (
           unifiedMessages.map((message) =>
             message.senderId === chatState.otherId ? (

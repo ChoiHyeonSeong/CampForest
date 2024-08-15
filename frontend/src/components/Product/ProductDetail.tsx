@@ -563,7 +563,7 @@ function Detail() {
                   >
                     보증금
                   </div>
-                  <div className={`font-bold`}>{product.deposit} 원</div>
+                  <div className={`font-bold`}>{priceComma(product.deposit)} 원</div>
                 </div>
               </div>
             </div>

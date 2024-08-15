@@ -6,6 +6,8 @@ import { useWebSocket } from 'Context/WebSocketContext';
 import { setSaleStatus } from '@store/chatSlice';
 import { ReactComponent as CheckIcon } from '@assets/icons/check.svg';
 import { ReactComponent as CancleIcon } from '@assets/icons/close.svg';
+import { priceComma } from '@utils/priceComma';
+import { meetingTimeFormat } from '@utils/meetingTimeFormat';
 
 type Props = {
   setModalType: React.Dispatch<React.SetStateAction<string>>;
@@ -29,9 +31,9 @@ const ChatTradePropser = ({
   return (
     <div
       className={`
-        flex relative flex-col min-w-[19rem] p-[0.7rem]
-        bg-white border-light-border-2
-        dark:border-dark-border-2
+        flex relative flex-col min-w-[17rem] md:min-w-[19rem] p-[0.7rem]
+        bg-light-white border-light-border-2
+        dark:bg-dark-white dark:border-dark-border-2
         rounded-md border-2
       `}
     >
@@ -45,6 +47,7 @@ const ChatTradePropser = ({
           flex items-center ps-[0.3rem] py-[0.35rem]
           bg-light-reviewcard
           dark:bg-dark-reviewcard
+          rounded-md
           "
       >
         {/* 상품사진 */}
@@ -76,7 +79,7 @@ const ChatTradePropser = ({
           </div>
           <div className="line-clamp-1 break-all">{product.productName}</div>
           <div className="font-bold">
-            {transactionEntity?.realPrice}원{product.productType === 'RENT' && <span>/일</span>}
+            {priceComma(transactionEntity?.realPrice)}원{product.productType === 'RENT' && <span>/일</span>}
           </div>
         </div>
       </div>
@@ -91,8 +94,8 @@ const ChatTradePropser = ({
         >
           <p
             className="
-              me-[0.5rem]
-              font-semibold
+              max-md:w-1/5 me-[0.5rem]
+              max-md:text-sm font-semibold
             "
           >
             지역
@@ -115,8 +118,8 @@ const ChatTradePropser = ({
         >
           <p
             className="
-              me-[0.5rem]
-              font-semibold
+              max-md:w-1/5 md:me-[0.5rem]
+              max-md:text-sm font-semibold
             "
           >
             일시
@@ -127,7 +130,7 @@ const ChatTradePropser = ({
               dark:text-dark-text-secondary
             "
           >
-            {transactionEntity?.meetingTime}
+            {meetingTimeFormat(transactionEntity?.meetingTime)}
           </p>)}
           {transactionEntity?.rentStatus && (
             <div
@@ -137,10 +140,10 @@ const ChatTradePropser = ({
             "
           >
             <div>
-              {transactionEntity.rentStartDate}
+              {meetingTimeFormat(transactionEntity.rentStartDate)}
             </div>
             <div>
-              {transactionEntity.rentEndDate}
+              {meetingTimeFormat(transactionEntity.rentEndDate)}
             </div>
           </div>)}
         </div>

@@ -69,7 +69,6 @@ const NavbarLeft = (props: Props) => {
     props.isExtendNotificationOpen ||
     props.isExtendSearchOpen
   );
-  const [selectedExtendMenu, setSelectedExtendMenu] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const communityUnreadCount = useSelector((state: RootState) => state.chatStore.communityUnreadCount);
   const transactionUnreadCount = useSelector((state: RootState) => state.chatStore.transactionUnreadCount);

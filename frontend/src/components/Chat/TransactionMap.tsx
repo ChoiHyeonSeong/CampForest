@@ -25,7 +25,7 @@ const TransactionMap: React.FC<Props> = ( props ) => {
       });
 
       const infoWindow = new naver.maps.InfoWindow({
-        content: `<div style='padding:10px;'><div>${props.address}</div></div>`,
+        content: `<div style='padding:10px;color:#333333'><div>${props.address}</div></div>`,
         disableAnchor: true,
         pixelOffset: new naver.maps.Point(0, -10),
       });
