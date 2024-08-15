@@ -292,7 +292,7 @@ const ProductList = () => {
   }
 
   return (
-    <div className={`flex justify-center items-center min-h-screen lg:mb-[1.5rem]`}>
+    <div className={`flex justify-center min-h-screen lg:mb-[1.5rem]`}>
       <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-[1.5rem]`}>
         <div className={`hidden md:flex items-center justify-between lg:mt-[3rem] mb-[2.5rem]`}>
           <div className={`flex font-medium md:text-[1.6rem]`}>

@@ -382,22 +382,18 @@ function Detail() {
       <div
         className={`
           w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6
-          bg-light-gray
-          dark:bg-dark-gray
         `}
       >
         {/* 상단 */}
         <div
           className={`
-            flex lg:flex-row flex-col relative w-full mb-[2rem] p-[0.75rem]
-            bg-light-gray
-            dark:bg-dark-gray
+            flex lg:flex-row flex-col relative w-full mb-[2rem] me-[0.75rem]
             overflow-hidden rounded
           `}
         >
           {/* 이미지 */}
           <Swiper
-            className="w-2/5 aspect-1 bg-black"
+            className="w-full md:w-3/5 lg:w-2/5 aspect-1 bg-black"
             style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
             modules={[Navigation, Pagination]}
             spaceBetween={0}
@@ -687,12 +683,12 @@ function Detail() {
           >
             <span className={`font-medium`}>{product.nickname}</span>의 다른 거래 상품 구경하기
           </div>
-          <div className={`w-full flex flex-wrap`}>
+          <div className={`w-full flex flex-wrap max-md:flex-col max-md:justify-center max-md:items-center`}>
             {/* <ProductCard /> */}
             {relatedProducts.map((product) => (
               <div
                 key={product.productId}
-                className='w-[20%]'
+                className='w-[80%] md:w-[20%]'
               >
                 <ProductCard 
                   product={product}
