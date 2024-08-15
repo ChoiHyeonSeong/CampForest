@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate  } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import ProfileModal from './ProfileModal';
-
+import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
 import { ReactComponent as BigLogoIcon } from '@assets/logo/logo.svg'
 import { ReactComponent as HamMenuIcon } from '@assets/icons/ham-menu.svg'
 import { ReactComponent as PushIcon } from '@assets/icons/nav-push.svg'
@@ -34,14 +34,15 @@ const routeMapping = [
 type Props = {
   toggleMenu: () => void;
   closeMenu: () => void;
+  customLocText?: string;
 }
 
 const NavbarTop = (props: Props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userStore);
   const [locPath, setLocPath] = useState<string | null>(null);
   const [locText, setlocText] = useState<string | null>(null);
-
   const currentLoc = useLocation();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPushModalOpen, setIsPushModalOpen] = useState(false);
@@ -54,6 +55,12 @@ const NavbarTop = (props: Props) => {
       console.error('읽음 처리 실패: ', error);
     }
   }
+
+  useEffect(() => {
+    if (locPath !== null) {
+      setlocText(props.customLocText || getLocationText(locPath))
+    }
+  }, [locPath, props.customLocText])
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -124,6 +131,10 @@ const NavbarTop = (props: Props) => {
     }
   }, [locPath])
 
+  const handleBackNavigation = () => {
+    navigate(-1);
+  };
+
   return (
     <div 
       className={`
@@ -149,10 +160,14 @@ const NavbarTop = (props: Props) => {
           />
         </div>
 
-        <div className={`flex md:hidden items-center w-[8rem] h-[100%] ms-[1rem]`}>
+        <div className={`flex md:hidden items-center w-[8rem] h-[100%]`}>
           { locPath === '/' ?
             <BigLogoIcon className={`w-[8rem] fill-light-black dark:fill-dark-black`}/> :
-            <div>
+            <div className='flex items-center'>
+              <ArrowLeftIcon
+                onClick={handleBackNavigation}
+                className='fill-light-black dark:fill-dark-black size-[1.4rem] me-[0.25rem]'
+              />
 
               <div className={`text-xl`}>
                 {locText}
