@@ -3,6 +3,7 @@ import { ko } from 'date-fns/locale';
 
 export function formatTime(createdAt: string): string {
   const date = new Date(createdAt);
+  date.setHours(date.getHours() + 9);
   const now = new Date();
 
   if (isToday(date)) {

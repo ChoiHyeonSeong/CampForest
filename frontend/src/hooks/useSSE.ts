@@ -86,75 +86,76 @@ const useSSE = () => {
     // 메세지를 받았을 때
     subscribe(`/sub/transaction/${roomId}`, async (data) => {
       const response = JSON.parse(data.body);
-      console.log('Received chat message: ', response);
-      const state: RootState = store.getState();
+          console.log('Received chat message: ', response);
+          const state: RootState = store.getState();
 
-      if (response.message && response.message.messageType === 'TRANSACTION') {
-        if (state.chatStore.roomId === response.message.roomId) {
-          dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
-          
-          const fetchedMessages = await transactionChatDetail(response.message.roomId);
-          store.dispatch(setChatInProgress(fetchedMessages.messages));
-          let lastSaleState = '';
-          let confirmedCount = 0;
-          for (const message of fetchedMessages.messages) {
-            if (message.transactionEntity) {
-              if (message.transactionEntity.saleStatus) {
-                if (message.transactionEntity.saleStatus === 'CONFIRMED') {
-                  ++confirmedCount;
-                  if (confirmedCount === 2) {
-                    lastSaleState = message.transactionEntity.saleStatus;
-                    dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
-                    dispatch(setTransactionInfo({
-                      ...state.reviewStore,
-                      productType: 'SALE',
-                      price: message.transactionEntity.realPrice,
-                      deposit: 0
-                    }))
+          if (response.message && response.message.messageType === 'TRANSACTION') {
+            if (state.chatStore.roomId === response.message.roomId) {
+              dispatch(updateTransactionChatUserList({ ...response.message, inProgress: true }));
+              
+              const fetchedMessages = await transactionChatDetail(response.message.roomId);
+              store.dispatch(setChatInProgress(fetchedMessages.messages));
+              let lastSaleState = '';
+              let confirmedCount = 0;
+              for (const message of fetchedMessages.messages) {
+                if (message.transactionEntity) {
+                  if (message.transactionEntity.saleStatus) {
+                    if (message.transactionEntity.saleStatus === 'CONFIRMED') {
+                      ++confirmedCount;
+                      if (confirmedCount === 2) {
+                        lastSaleState = message.transactionEntity.saleStatus;
+                        dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
+                        dispatch(setTransactionInfo({
+                          ...state.reviewStore,
+                          productType: 'SALE',
+                          price: message.transactionEntity.realPrice,
+                          deposit: 0
+                        }))
+                      }
+                    } else if (message.transactionEntity.saleStatus !== '') {
+                      lastSaleState = message.transactionEntity.saleStatus;
+                    }
+                  } else {
+                    if (message.transactionEntity.rentStatus === 'CONFIRMED') {
+                      ++confirmedCount;
+                      if (confirmedCount === 2) {
+                        console.log('setTransactionInfo', message.transactionEntity);
+                        lastSaleState = message.transactionEntity.rentStatus;
+                        dispatch(setOpponentInfo({...state.reviewStore, opponentId: state.chatStore.otherId}))
+                        dispatch(setTransactionInfo({
+                          ...state.reviewStore,
+                          productType: 'RENT',
+                          price: message.transactionEntity.realPrice,
+                          deposit: message.transactionEntity.deposit
+                        }))
+                      }
+                    } else {
+                      lastSaleState = message.transactionEntity.rentStatus;
+                    }
                   }
-                } else if (message.transactionEntity.saleStatus !== '') {
-                  lastSaleState = message.transactionEntity.saleStatus;
-                }
-              } else {
-                if (message.transactionEntity.rentStatus === 'CONFIRMED') {
-                  ++confirmedCount;
-                  if (confirmedCount === 2) {
-                    lastSaleState = message.transactionEntity.rentStatus;
-                    dispatch(setOpponentInfo({opponentId: state.chatStore.otherId, opponentNickname: state.reviewStore.opponentNickname}))
-                    dispatch(setTransactionInfo({
-                      ...state.reviewStore,
-                      productType: 'RENT',
-                      price: message.transactionEntity.realPrice,
-                      deposit: message.transactionEntity.deposit
-                    }))
-                  }
-                } else {
-                  lastSaleState = message.transactionEntity.rentStatus;
                 }
               }
+        
+              console.log('lastSaleState', lastSaleState);
+              dispatch(setSaleStatus(lastSaleState));
+              publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
+            } else {
+              dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
             }
           }
-    
-          console.log('lastSaleState', lastSaleState);
-          dispatch(setSaleStatus(lastSaleState));
-          publishMessage(`/pub/transaction/${response.message.roomId}/read`, state.userStore.userId);
-        } else {
-          dispatch(updateTransactionChatUserList({ ...response.message, inProgress: false }));
-        }
-      }
-      else if (response.messageType === 'READ') {
-          dispatch(setChatInProgress([...store.getState().chatStore.chatInProgress.map((message: any) => 
-            message.message ? (
-              message.message.roomId === response.roomId && message.message.senderId !== response.senderId
-              ? { transactionEntity: message.transactionEntity, message: {...message.message, read: true } }
-              : message
-            ) : (
-              message.roomId === response.roomId && message.senderId !== response.senderId
-              ? { ...message, read: true }
-              : message
-            )
-          )]))
-        } 
+          else if (response.messageType === 'READ') {
+              dispatch(setChatInProgress([...store.getState().chatStore.chatInProgress.map((message: any) => 
+                message.message ? (
+                  message.message.roomId === response.roomId && message.message.senderId !== response.senderId
+                  ? { transactionEntity: message.transactionEntity, message: {...message.message, read: true } }
+                  : message
+                ) : (
+                  message.roomId === response.roomId && message.senderId !== response.senderId
+                  ? { ...message, read: true }
+                  : message
+                )
+              )]))
+            } 
       // 현재 열려 있는 채팅방 내용 갱신
       else if (response.messageType === 'MESSAGE') {
         if (state.chatStore.roomId === response.roomId) {
