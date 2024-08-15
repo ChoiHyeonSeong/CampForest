@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { RootState } from '@store/store';
 import { setUser, clearUser, SimilarUserType } from '@store/userSlice';
 
@@ -15,6 +16,8 @@ import Aside from './Aside';
 import { setIsChatOpen } from '@store/chatSlice';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const currentLoc = useLocation();
   const user = useSelector((state: RootState) => state.userStore);
   const chatState = useSelector((state: RootState) => state.chatStore);
   const dispatch = useDispatch();
@@ -118,6 +121,15 @@ const Navbar = () => {
   }, [chatState.isChatOpen])
 
   useEffect(() => {
+    const isLandingSee = localStorage.getItem("isLandingSee");
+    if (isLandingSee === null || isLandingSee === "false") {
+      navigate("/Landing");
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(123)
+
     // 화면 줄어들면 Menu 강제로 닫기
     const handleAllMenu = () => {
       dispatch(setIsChatOpen(false));

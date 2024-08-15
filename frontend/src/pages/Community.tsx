@@ -32,6 +32,7 @@ const Community = () => {
       } else {
         response = await filteredBoardList(category, boardCursorIdRef.current, 10);
       }
+      console.log(response)
       dispatch(setIsLoading(false))
       boardCursorIdRef.current = response.data.data.nextCursor
       if (!response.data.data.hasNext) {
@@ -99,6 +100,7 @@ const Community = () => {
   }
 
   const updateLike = async (boardId: number, isLiked: boolean, likedCount: number) => {
+    console.log(123)
     setBoards(prevBoards =>
       prevBoards.map(board =>
         board.boardId === boardId
@@ -109,6 +111,7 @@ const Community = () => {
   };
 
   const updateSaved = async (boardId: number, isSaved: boolean) => {
+    console.log(123456124901)
     console.log(isSaved)
     setBoards(prevBoards =>
       prevBoards.map(board =>
