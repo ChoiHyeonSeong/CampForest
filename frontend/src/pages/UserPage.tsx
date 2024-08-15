@@ -11,6 +11,7 @@ import UReview from '@components/User/UReview';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
+import PageNotFound from './PageNotFound';
 
 export type UserInfo = {
   nickname: string;
@@ -130,6 +131,7 @@ const UserPage = () => {
                 <Route path='/' element={<UBoard />} />
                 <Route path='/product' element={<UProduct />} />
                 <Route path='/review' element={<UReview userId={userId} />} />
+                <Route path='*' element={<PageNotFound />} />
               </Routes>
             </div>
 

@@ -8,6 +8,7 @@ import { RootState } from '@store/store';
 import { registRequired } from '@store/registSlice';
 
 import { registByEmail, getOAuthInformation } from '@services/authService';
+import PageNotFound from './PageNotFound';
 
 type RegistRequired = {
   userName: string,
@@ -140,6 +141,7 @@ const Regist: React.FC = () => {
         <Routes>
           <Route path='/' element={<Email />} />
           <Route path='/information' element={<Information />} />
+          <Route path='*' element={<PageNotFound />} />
         </Routes>
 
 

@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const PageNotFound: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
     setFadeIn(true);
   }, []);
+
+  useEffect(() => {
+    if(location.pathname.startsWith('/user')) {
+      navigate('/notFound');
+    }
+  }, [])
 
   return (
     <div

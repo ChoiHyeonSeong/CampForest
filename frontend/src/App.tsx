@@ -26,6 +26,7 @@ import Product from '@pages/Product';
 import SearchPage from '@pages/SearchPage';
 import LandingPage from '@pages/LandingPage';
 import useSSE from '@hooks/useSSE';
+import PageNotFound from '@pages/PageNotFound';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -182,6 +183,7 @@ function App() {
               <Route path="/community/:category" element={<Community />} />
               <Route path="/search/*" element={<SearchPage />} />
               <Route path='/review' element={<ReviewPage />} />
+              <Route path='*' element={<PageNotFound />} />
             </Routes>
             {/* 여기까지 컨텐츠 */}
           </div>

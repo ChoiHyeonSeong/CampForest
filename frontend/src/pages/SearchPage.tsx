@@ -9,6 +9,7 @@ import SearchAllList from '@components/Search/SearchAllList';
 import eventEmitter from '@utils/eventEmitter';
 
 import Swal from 'sweetalert2'
+import PageNotFound from './PageNotFound';
 
 const SearchPage = () => {
   const [inputText, setInputText] = useState('');
@@ -170,6 +171,7 @@ const SearchPage = () => {
             <Route path='/profile' element={<SearchProfileList key={searchKey} searchText={searchQuery} />} />
             <Route path='/board' element={<SearchBoardList key={searchKey} searchText={searchQuery} />} />
             <Route path='/product' element={<SearchProductList key={searchKey} searchText={searchQuery} />} />
+            <Route path='*' element={<PageNotFound />} />
           </Routes>
         </div>
       </div>
