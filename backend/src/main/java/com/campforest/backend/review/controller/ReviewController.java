@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.review.dto.ReviewRequestDto;
+import com.campforest.backend.review.dto.ReviewResponseDto;
 import com.campforest.backend.review.model.Review;
 import com.campforest.backend.review.service.ReviewService;
 import com.campforest.backend.user.model.Users;
@@ -35,6 +39,7 @@ public class ReviewController {
 	private final ReviewService reviewService;
 	private final UserService userService;
 	private final S3Service s3Service;
+	private final NotificationService notificationService;
 
 	// 리뷰 작성
 	@PostMapping(consumes = { "application/json", "multipart/form-data" })
@@ -61,9 +66,11 @@ public class ReviewController {
 			}
 
 			reviewRequestDto.setReviewImageUrl(imageUrls);
-			Review review = reviewService.writeReview(reviewRequestDto);
+			ReviewResponseDto reviewResponseDto = reviewService.writeReview(reviewRequestDto);
 
-			return ApiResponse.createSuccess(review, "리뷰 작성이 완료되었습니다.");
+			notificationService.createNotification(reviewResponseDto.getReview().getReviewed(), reviewResponseDto.getReview().getReviewer(), NotificationType.REVIEW, "님이 리뷰를 남기셨습니다.");
+
+			return ApiResponse.createSuccess(reviewResponseDto, "리뷰 작성이 완료되었습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.REVIEW_CREATION_FAILED);
 		}
@@ -104,8 +111,8 @@ public class ReviewController {
 		}
 	}
 
-	// 받은 리뷰 조회
-	@GetMapping("/received")
+	// 자기가 받은 리뷰 조회
+	@GetMapping()
 	public ApiResponse<?> getAllReceivedReviews(Authentication authentication) {
 		try {
 			Users user = userService.findByEmail(authentication.getName())
@@ -113,6 +120,17 @@ public class ReviewController {
 
 			List<Review> reviews = reviewService.findAllReceivedReviews(user.getUserId());
 			return ApiResponse.createSuccess(reviews, "받은 리뷰 목록입니다.");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.REVIEW_READ_FAILED);
+		}
+	}
+
+	//다른 사람이 받은 리뷰 조회
+	@GetMapping("/received")
+	public ApiResponse<?> getAllReceivedReviewsOther(@RequestParam("userId") Long userId) {
+		try {
+			List<Review> reviews = reviewService.findAllReceivedReviews(userId);
+			return ApiResponse.createSuccess(reviews, "받은 리뷰 목록입니다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.REVIEW_READ_FAILED);
 		}

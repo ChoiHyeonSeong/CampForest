@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCode {
 	// Internal Server Error
 	INTERNAL_SERVER_ERROR("C001", HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생했습니다."),
+	NOT_FOUND_API_URL("C002", HttpStatus.NOT_FOUND, "요청한 API url을 찾을 수 없습니다."),
+	RESOURCE_NOT_FOUND("C003", HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
+	ACCESS_DENIED("C004", HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
 
 	// User Error
 	USER_REGISTER_FAILED("U001", HttpStatus.BAD_REQUEST, "사용자 등록에 실패했습니다."),
@@ -20,6 +23,17 @@ public enum ErrorCode {
 	USER_DELETE_FAILED("U006", HttpStatus.BAD_REQUEST, "회원 탈퇴에 실패했습니다."),
 	TEMP_USER_NOT_FOUND("U007", HttpStatus.NOT_FOUND, "임시 사용자를 찾을 수 없습니다."),
 	OAUTH_CODE_NOT_FOUND("U008", HttpStatus.NOT_FOUND, "OAuth 코드를 찾을 수 없습니다."),
+	ALREADY_EXIST_PHONE_NUMBER("U009", HttpStatus.BAD_REQUEST, "이미 존재하는 전화번호입니다."),
+	USER_UPDATE_FAILED("U010", HttpStatus.BAD_REQUEST, "사용자 정보 업데이트에 실패했습니다."),
+	EMAIL_ALREADY_EXIST("U011", HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
+
+	// Email Error
+	EMAIL_SEND_FAIL("E001", HttpStatus.BAD_REQUEST, "이메일 전송에 실패했습니다."),
+	PASSWORD_RESET_TOKEN_NOT_VALID("E002", HttpStatus.BAD_REQUEST, "비밀번호 재설정 토큰이 유효하지 않습니다."),
+
+	// SMS Error
+	SMS_SEND_FAIL("SM001", HttpStatus.BAD_REQUEST, "SMS 전송에 실패했습니다."),
+	SMS_CODE_NOT_MATCH("SM002", HttpStatus.BAD_REQUEST, "SMS 인증 코드가 일치하지 않습니다."),
 
 	// Follow Error
 	FOLLOW_ALREADY_EXISTS("F001", HttpStatus.BAD_REQUEST, "이미 팔로우한 사용자입니다."),
@@ -34,6 +48,7 @@ public enum ErrorCode {
 	ACCESS_TOKEN_EXPIRED("A004", HttpStatus.UNAUTHORIZED, "Access Token이 만료되었습니다."),
 	REFRESH_TOKEN_EXPIRED("A005", HttpStatus.UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
 	REFRESH_TOKEN_BLACKLISTED("A006", HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 Refresh Token입니다."),
+	REFRESH_TOKEN_NOT_FOUND("A007", HttpStatus.UNAUTHORIZED, "Refresh Token을 찾을 수 없습니다."),
 
 	// Product Error
 	PRODUCT_CREATION_FAILED("P001", HttpStatus.BAD_REQUEST, "제품 생성에 실패했습니다."),
@@ -45,6 +60,11 @@ public enum ErrorCode {
 	INVALID_PRODUCT_TYPE("P007", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 유형입니다."),
 	INVALID_PRODUCT_LOCATION("P008", HttpStatus.BAD_REQUEST, "유효하지 않은 제품 위치입니다."),
 	INVALID_AUTHORIZED("P009", HttpStatus.BAD_REQUEST, "인증되지 않은 사용자입니다."),
+
+	// SaveProduct Error
+	SAVEPRODUCT_CREATION_FAILED("P010", HttpStatus.BAD_REQUEST,  "장비 게시물 찜 생성에 실패했습니다."),
+	SAVEPRODUCT_DELETION_FAILED("P011", HttpStatus.BAD_REQUEST, "장비 게시물 찜 삭제에 실패했습니다."),
+	SAVEPRODUCT_NOT_FOUND("P012", HttpStatus.BAD_REQUEST, "장비 게시물 찜 목록 불러오기에 실패했습니다"),
 	
 	// Board Error
 	BOARD_NOT_FOUND("B001", HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
@@ -105,11 +125,22 @@ public enum ErrorCode {
 	CHAT_UNREAD_COUNT_FAILED("CH006", HttpStatus.BAD_REQUEST, "읽지 않은 메시지 수 조회에 실패했습니다."),
 	CHAT_ROOM_LIST_FAILED("CH007", HttpStatus.BAD_REQUEST, "채팅방 목록 조회에 실패했습니다."),
 	RENT_UPDATE_FAILED("R007", HttpStatus.BAD_REQUEST, "예약 업데이트 불가능합니다."),
+	CHAT_ROOM_EXIT_FAILED("CH008", HttpStatus.BAD_REQUEST, "채팅방 나가기 실패하였습니다"),
 
 	// Review Error
 	REVIEW_CREATION_FAILED("R008", HttpStatus.BAD_REQUEST, "리뷰 생성에 실패하였습니다."),
 	REVIEW_DELETE_FAILED("R009", HttpStatus.BAD_REQUEST, "리뷰 삭제에 실패하였습니다"),
 	REVIEW_READ_FAILED("R010", HttpStatus.BAD_REQUEST, "리뷰를 불러오는 데 실패하였습니다"),
+
+	// Notification Error
+	NOTIFICATION_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
+	NOTIFICATION_DELETE_FAILED("N002", HttpStatus.BAD_REQUEST, "알림 삭제에 실패했습니다."),
+	NOTIFICATION_NOT_MATCH_WITH_RECEIVER("N003", HttpStatus.BAD_REQUEST, "알림의 수신자가 일치하지 않습니다."),
+
+	// Campsite Review Error
+	CAMPSITE_REVIEW_LOAD_FAILED("CR001", HttpStatus.BAD_REQUEST, "캠핑장 리뷰를 불러오는 데 실패하였습니다."),
+	CAMPSITE_REVIEW_SAVE_FAILED("CR002", HttpStatus.BAD_REQUEST, "캠핑장 리뷰를 저장하는 데 실패하였습니다."),
+	CAMPSITE_REVIEW_DELETE_FAILED("CR003", HttpStatus.BAD_REQUEST, "캠핑장 리뷰를 삭제하는 데 실패하였습니다."),
 	;
 
 	private final String code;

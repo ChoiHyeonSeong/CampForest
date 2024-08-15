@@ -1,18 +1,24 @@
 package com.campforest.backend.user.controller;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,13 +31,19 @@ import com.campforest.backend.common.ApiResponse;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.common.JwtTokenProvider;
 import com.campforest.backend.config.s3.S3Service;
+import com.campforest.backend.notification.model.NotificationType;
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.user.dto.request.RequestLoginDTO;
-import com.campforest.backend.user.dto.request.RequestRefreshTokenDTO;
+import com.campforest.backend.user.dto.request.RequestPasswordDTO;
 import com.campforest.backend.user.dto.request.RequestRegisterDTO;
+import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
 import com.campforest.backend.user.dto.response.ResponseInfoDTO;
 import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
+import com.campforest.backend.user.dto.response.ResponseSearchDTO;
+import com.campforest.backend.user.dto.response.ResponseLoginDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
+import com.campforest.backend.user.dto.response.SimilarDto;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.TokenService;
 import com.campforest.backend.user.service.UserService;
@@ -53,8 +65,9 @@ public class UserController {
 	private final TokenService tokenService;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final NotificationService notificationService;
 
-	@PostMapping("/auth/regist")
+	@PostMapping("/public/regist")
 	public ApiResponse<?> registUser(
 		@RequestPart(value = "profileImage", required = false) MultipartFile profileImageFile,
 		@RequestPart(value = "registUserDto") RequestRegisterDTO requestDTO) {
@@ -76,7 +89,7 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/auth/login")
+	@PostMapping("/public/login")
 	public ApiResponse<?> login(@RequestBody RequestLoginDTO requestDTO, HttpServletResponse response) {
 		Authentication authentication = userService.authenticateUser(requestDTO.getEmail(), requestDTO.getPassword());
 
@@ -91,8 +104,8 @@ public class UserController {
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
 				.secure(true)
-				// TODO : sameSite 설정 변경
 				.sameSite("None")
+				.domain("i11d208.p.ssafy.io")
 				.build();
 
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
@@ -100,9 +113,9 @@ public class UserController {
 
 			Users users = userService.findByEmail(requestDTO.getEmail())
 				.orElseThrow(() -> new NotFoundException("유저 정보 조회 실패"));
-			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
+			ResponseLoginDTO responseDTO = ResponseLoginDTO.fromEntity(users);
 
-			List<Integer> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
+			List<SimilarDto> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
 			responseDTO.setSimilarUsers(similarUsers);
 
 			return ApiResponse.createSuccess(responseDTO, "로그인이 완료되었습니다.");
@@ -110,7 +123,7 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 	}
 
-	@PostMapping("/auth/logout")
+	@PostMapping("/public/logout")
 	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
 		String refreshToken = extractRefreshToken(request);
 
@@ -127,37 +140,67 @@ public class UserController {
 		return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 	}
 
-	@GetMapping("/auth/info")
+	@GetMapping("/public/info")
 	public ApiResponse<?> getUserInfo(@RequestParam("userId") Long userId) {
 		try {
-			Users users = userService.findByUserId(userId)
-				.orElseThrow(() -> new Exception("유저 정보 조회 실패"));
-
-			ResponseInfoDTO responseDTO = ResponseInfoDTO.fromEntity(users);
+			ResponseInfoDTO responseDTO = userService.getUserInfo(userId);
 			return ApiResponse.createSuccess(responseDTO, "유저 정보 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 		}
 	}
 
-	@PostMapping("/auth/refreshToken")
-	public ApiResponse<?> refreshToken(@RequestBody RequestRefreshTokenDTO requestDTO, HttpServletResponse response) {
+	@GetMapping("/public/search")
+	public ApiResponse<?> searchUsersByNickname(
+		@RequestParam("nickname") String nickname,
+		@RequestParam(value = "cursor", defaultValue = "0") Long cursor,
+		@RequestParam(value = "limit", defaultValue = "10") int limit){
 		try {
-			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(requestDTO.getRefreshToken());
+			List<ResponseInfoDTO> responseDTOList = userService.findByNicknameContaining(nickname, cursor, limit);
+			if (responseDTOList.isEmpty()) {
+				return ApiResponse.createSuccess(Collections.emptyList(), "검색 결과가 없습니다.");
+			}
+			long totalCount = userService.countByNicknameContaining(nickname);
+			long lastId = responseDTOList.get(responseDTOList.size() - 1).getUserId();
+			boolean hasNext = responseDTOList.size() == limit;
+
+			ResponseSearchDTO response = ResponseSearchDTO.builder()
+				.totalCount(totalCount)
+				.users(responseDTOList)
+				.nextCursor(lastId)
+				.hasNext(hasNext)
+				.build();
+
+			return ApiResponse.createSuccess(response, "유저 검색 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/public/refreshToken")
+	public ApiResponse<?> refreshToken(
+		@CookieValue(name = "refreshToken", required = false) String refreshToken,
+		HttpServletResponse response) {
+		try {
+			if (refreshToken == null || refreshToken.isEmpty()) {
+				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
+			}
+
+			ResponseRefreshTokenDTO responseDTO = tokenService.refreshToken(refreshToken);
 
 			if (responseDTO == null) {
 				throw new IllegalArgumentException("Refresh Token이 만료되었거나 존재하지 않습니다.");
 			}
 			String accessToken = responseDTO.getAccessToken();
-			String refreshToken = responseDTO.getRefreshToken();
+			String newRefreshToken = responseDTO.getRefreshToken();
 
-			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
+			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
 				.httpOnly(true)
+				.secure(true)
 				.maxAge(60 * 60 * 24 * 14)
 				.path("/")
-				.secure(true)
-				// TODO : sameSite 설정 변경
 				.sameSite("None")
+				.domain("i11d208.p.ssafy.io")
 				.build();
 
 			response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
@@ -170,6 +213,35 @@ public class UserController {
 			return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 		}
 	}
+
+	@GetMapping("/profile")
+	public ApiResponse<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
+		try {
+			Users users = userService.findByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+			ResponseUserDTO responseDTO = ResponseUserDTO.fromEntity(users);
+
+			return ApiResponse.createSuccess(responseDTO, "프로필 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+		}
+	}
+
+	@PutMapping("/update")
+	public ApiResponse<?> updateProfile(
+		@AuthenticationPrincipal UserDetails userDetails,
+		@RequestPart(value = "profileImage", required = false) MultipartFile profileImageFile,
+		@RequestPart(value = "updateUserDto") RequestUpdateDTO requestDTO) {
+		try {
+			String userEmail = userDetails.getUsername();
+			userService.updateUserProfile(userEmail, requestDTO, profileImageFile);
+
+			return ApiResponse.createSuccess(null, "프로필 업데이트 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
 
 	@DeleteMapping
 	public ApiResponse<?> withdrawUser(Authentication authentication, HttpServletResponse response) {
@@ -196,6 +268,12 @@ public class UserController {
 	public ApiResponse<?> followUser(Authentication authentication, @PathVariable Long followeeId) {
 		try {
 			userService.followUser(authentication, followeeId);
+			Users fromUser = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+			Users toUser = userService.findByUserId(followeeId)
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+			notificationService.createNotification(toUser, fromUser, NotificationType.FOLLOW, "님이 팔로우를 시작했습니다.");
 			return ApiResponse.createSuccess(null, "팔로우 성공");
 		} catch (IllegalArgumentException e) {
 			return ApiResponse.createError(ErrorCode.FOLLOW_FAILED);
@@ -212,7 +290,7 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/auth/follower/{userId}")
+	@GetMapping("/public/follower/{userId}")
 	public ApiResponse<?> getFollowers(@PathVariable Long userId) {
 		try {
 			List<ResponseFollowDTO> followers = userService.getFollowers(userId);
@@ -222,13 +300,45 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/auth/following/{userId}")
+	@GetMapping("/public/following/{userId}")
 	public ApiResponse<?> getFollowing(@PathVariable Long userId) {
 		try {
 			List<ResponseFollowDTO> following = userService.getFollowing(userId);
 			return ApiResponse.createSuccess(following, "팔로잉 목록 조회 성공");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.FOLLOW_NOT_FOUND);
+		}
+	}
+
+	@GetMapping("/isFollowing/{followeeId}")
+	public ApiResponse<?> isFollowing(
+		@AuthenticationPrincipal UserDetails userDetails,
+		@PathVariable Long followeeId) {
+		try {
+			Users fromUser = userService.findByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+			Users toUser = userService.findByUserId(followeeId)
+				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+
+			boolean isFollowing = userService.isFollowing(fromUser.getUserId(), toUser.getUserId());
+
+			return ApiResponse.createSuccess(isFollowing, "팔로우 여부 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.FOLLOW_NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/public/password/reset")
+	public ApiResponse<?> resetUserPassword(@RequestBody RequestPasswordDTO requestDTO) {
+		try {
+			String encodedPassword = passwordEncoder.encode(requestDTO.getPassword());
+			requestDTO.setPassword(encodedPassword);
+
+			userService.updateUserPassword(requestDTO);
+
+			return ApiResponse.createSuccess(null, "비밀번호 변경에 성공하였습니다.");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
 		}
 	}
 

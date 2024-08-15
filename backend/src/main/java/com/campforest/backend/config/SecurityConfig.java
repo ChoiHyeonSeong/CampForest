@@ -7,9 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.campforest.backend.common.JwtTokenProvider;
@@ -56,14 +59,19 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/api/user/auth/**", "/api/email/**", "/api/login/**", "/api/board/**", "/api/product/search", "/api/product/{productId}", "/ws/**", "/pub/", "/sub/", "communitychat/**").permitAll()
+				.requestMatchers("/api/user/public/**", "/api/email/**", "/api/oauth/**",
+					"/api/board/public/**", "/api/product/public/**", "/api/rent/public/**",
+					"/api/communitychat/**", "/api/notification/**", "/api/sms/**",
+					"/ws/**", "/pub/", "/sub/", "/api/campsite/public/**").permitAll()
 				.anyRequest().authenticated())
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(oAuth2AuthenticationSuccessHandler)
 			)
-			.exceptionHandling(exception ->
-				exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
+			.exceptionHandling(exception -> exception
+				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+				.accessDeniedHandler(new CustomAccessDeniedHandler())
+			)
 			.formLogin(AbstractHttpConfigurer::disable);
 
 		return http.build();

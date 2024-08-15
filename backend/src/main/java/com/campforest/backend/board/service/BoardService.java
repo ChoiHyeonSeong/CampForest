@@ -8,20 +8,30 @@ import com.campforest.backend.board.dto.BoardRequestDto;
 import com.campforest.backend.board.dto.BoardResponseDto;
 import com.campforest.backend.board.dto.CommentRequestDto;
 import com.campforest.backend.board.dto.CommentResponseDto;
+import com.campforest.backend.board.dto.CountResponseDto;
+import com.campforest.backend.board.dto.SearchResult;
+import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Comment;
+import com.campforest.backend.common.CursorResult;
 
 public interface BoardService {
 	void writeBoard(BoardRequestDto boardRequestDto);
 
-	BoardResponseDto getBoard(Long boardId);
+	BoardResponseDto getBoard(Long nowId, Long boardId);
 
-	Page<BoardResponseDto> getAllBoards(Long nowId, int page, int size);
+	CursorResult<BoardResponseDto> getAllBoards(Long nowId, Long cursorId, int size);
 
-	Page<BoardResponseDto> getUserBoards(Long nowId,Long userId, int page, int size);
+	CursorResult<BoardResponseDto> getFollowingBoards(Long nowId, Long cursorId, int size);
 
-	Page<BoardResponseDto> getTitleBoards(Long nowId,String title, int page, int size);
+	SearchResult<BoardResponseDto> getUserBoards(Long nowId, Long userId, Long cursorId, int size);
 
-	Page<BoardResponseDto> getCategoryBoards(Long nowId,String category, int page, int size);
+	SearchResult<BoardResponseDto> getKeywordBoards(Long nowId, String title, Long cursorId, int size);
+
+	SearchResult<BoardResponseDto> getCategoryBoards(Long nowId, String category, Long cursorId, int size);
+
+	SearchResult<BoardResponseDto> getSavedBoards(Long nowId, Long cursorId, int size);
+
+	Boards findByBoardId(Long boardId);
 
 	void modifyBoard(Long boardId, BoardRequestDto boardRequestDto);
 
@@ -43,7 +53,7 @@ public interface BoardService {
 
 	void writeComment(Long boardId, CommentRequestDto commentRequestDto);
 
-	Page<CommentResponseDto> getComments(Long nowId,Long boardId, int page, int size);
+	Page<CommentResponseDto> getComments(Long nowId, Long boardId, int page, int size);
 
 	List<CommentResponseDto> getUserComment(Long commentWriterId);
 
@@ -59,7 +69,11 @@ public interface BoardService {
 
 	Long countCommentLike(Long commentId);
 
-	Page<BoardResponseDto> getSavedBoards(Long nowId, int page, int size);
-
 	Comment getCommentById(Long commentId);
+
+	CountResponseDto countAll(Long userId);
+
+	CursorResult<BoardResponseDto> getMixedBoards(List<Long> userIds, Long nowId, Long cursorId, int size);
 }
+
+

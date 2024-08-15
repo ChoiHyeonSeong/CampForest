@@ -25,6 +25,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
@@ -32,6 +33,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Sale {
 
 	@Id
@@ -72,15 +74,20 @@ public class Sale {
 	@Column(name = "meeting_place")
 	private String meetingPlace;
 
-	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonManagedReference
-	private List<Review> reviews;
-
 	@Column(columnDefinition = "boolean default false")
 	private boolean confirmedByBuyer;
 
 	@Column(columnDefinition = "boolean default false")
 	private boolean confirmedBySeller;
+
+	@Column(name = "real_price")
+	private Long realPrice;
+
+	@Column(name = "latitude")
+	private Double latitude;
+
+	@Column(name = "longitude")
+	private Double longitude;
 
 	public void requestSale() {
 		this.saleStatus = TransactionStatus.REQUESTED;
@@ -93,6 +100,11 @@ public class Sale {
 
 	public void acceptSale() {
 		this.saleStatus = TransactionStatus.RESERVED;
+		this.modifiedAt = LocalDateTime.now();
+	}
+
+	public void denySale() {
+		this.saleStatus = TransactionStatus.DENIED;
 		this.modifiedAt = LocalDateTime.now();
 	}
 
@@ -115,10 +127,17 @@ public class Sale {
 			.saleStatus(TransactionStatus.RECEIVED)
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
+			.latitude(this.latitude)
+			.longitude(this.longitude)
 			.build();
 	}
 
 	public boolean isFullyConfirmed() {
 		return this.confirmedByBuyer && this.confirmedBySeller;
+	}
+
+	public void confirmSaleStatus() {
+		this.saleStatus = TransactionStatus.CONFIRMED;
+		this.modifiedAt = LocalDateTime.now();
 	}
 }

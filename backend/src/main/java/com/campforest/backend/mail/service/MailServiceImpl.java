@@ -2,6 +2,7 @@ package com.campforest.backend.mail.service;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,7 +10,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.campforest.backend.mail.model.MailAuth;
+import com.campforest.backend.mail.model.PasswordAuth;
 import com.campforest.backend.mail.repository.MailAuthRepository;
+import com.campforest.backend.mail.repository.PasswordAuthRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -21,9 +24,14 @@ public class MailServiceImpl implements MailService {
 
 	private final JavaMailSender javaMailSender;
 	private final MailAuthRepository mailAuthRepository;
+	private final PasswordAuthRepository passwordAuthRepository;
 
 	@Value("${spring.mail.username}")
 	private String username;
+
+	@Value("${frontend.url}")
+	private String frontendUrl;
+
 	private int authCode;
 
 	@Override
@@ -41,6 +49,27 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
+	public void passwordEmail(String email) {
+		String resetToken = generateResetToken();
+		String resetUrl = frontendUrl + "/user/password/change?token=" + resetToken;
+
+		String title = "[CampForest] : 비밀번호 변경을 위한 메일입니다.";
+		String content =
+			"비밀번호 변경을 위한 링크입니다." +
+				"<br><br>" +
+				"아래 링크를 클릭하여 비밀번호를 변경해주세요:" +
+				"<br>" +
+				"<a href='" + resetUrl + "'>" + resetUrl + "</a>" +
+				"<br><br>" +
+				"이 링크는 10분간 유효합니다.";
+
+		sendEmail(username, email, title, content);
+
+		PasswordAuth passwordAuth = new PasswordAuth(resetToken, email);
+		passwordAuthRepository.save(passwordAuth);
+	}
+
+	@Override
 	public boolean checkAuthCode(String email, String authCode) {
 		Optional<MailAuth> storedAuth = mailAuthRepository.findById(email);
 
@@ -50,6 +79,22 @@ public class MailServiceImpl implements MailService {
 
 			if(storedAuthCode.equals(authCode)) {
 				mailAuthRepository.deleteById(email);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean verifyResetToken(String email, String token) {
+		Optional<PasswordAuth> storedAuth = passwordAuthRepository.findById(email);
+
+		if (storedAuth.isPresent()) {
+			PasswordAuth passwordAuth = storedAuth.get();
+			String storedToken = passwordAuth.getResetToken();
+
+			if(storedToken.equals(token)) {
+				passwordAuthRepository.deleteById(email);
 				return true;
 			}
 		}
@@ -82,5 +127,9 @@ public class MailServiceImpl implements MailService {
 		}
 
 		authCode = Integer.parseInt(randomCode);
+	}
+
+	private String generateResetToken() {
+		return UUID.randomUUID().toString();
 	}
 }

@@ -12,7 +12,8 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 	basePackages = {
 		"com.campforest.backend.mail.repository",
 		"com.campforest.backend.oauth.repository",
-		"com.campforest.backend.user.repository.redis"
+		"com.campforest.backend.user.repository.redis",
+		"com.campforest.backend.sms.repository"
 	}
 )
 public class RedisConfig {

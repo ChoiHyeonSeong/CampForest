@@ -28,9 +28,12 @@ public class ProductDetailDto {
 	private List<String> imageUrls;
 	private UserImage userImage;
 	private String nickname;
+	private boolean saved;
+	private Double latitude;
+	private Double longitude;
+	private Long temperature;
 
-
-	public ProductDetailDto(Product product, List<String> imageUrls, String nickname, UserImage userImage) {
+	public ProductDetailDto(Product product, List<String> imageUrls, String nickname, UserImage userImage, Long temperature) {
 		this.productId = product.getId();
 		this.category = product.getCategory();
 		this.productName = product.getProductName();
@@ -45,5 +48,8 @@ public class ProductDetailDto {
 		this.nickname = nickname;
 		this.deposit = product.getDeposit();
 		this.userId = product.getUserId();
+		this.latitude = product.getLatitude();
+		this.longitude = product.getLongitude();
+		this.temperature = temperature;
 	}
 }

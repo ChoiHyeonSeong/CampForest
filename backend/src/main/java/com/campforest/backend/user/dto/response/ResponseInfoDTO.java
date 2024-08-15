@@ -9,23 +9,23 @@ import lombok.Setter;
 @Getter
 @Builder
 public class ResponseInfoDTO {
+	private Long userId;
 	private String nickname;
 	private int followingCount;
 	private int followerCount;
 	private String introduction;
 	private String profileImage;
+	private Long temperature;
 	private boolean isOpen;
 
 	public static ResponseInfoDTO fromEntity(Users users) {
-		String imageUrl = null;
-		if (users.getUserImage() != null) {
-			imageUrl = users.getUserImage().getImageUrl();
-		}
+		String imageUrl = users.getUserImage() == null ? null : users.getUserImage().getImageUrl();
+
 		return ResponseInfoDTO.builder()
+				.userId(users.getUserId())
 				.nickname(users.getNickname())
-				.followingCount(users.getFollowing().size())
-				.followerCount(users.getFollowers().size())
 				.introduction(users.getIntroduction())
+				.temperature(users.getTemperature())
 				.profileImage(imageUrl)
 				.isOpen(users.isOpen())
 				.build();

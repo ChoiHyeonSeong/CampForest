@@ -2,6 +2,9 @@ package com.campforest.backend.user.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -30,8 +34,10 @@ public class UserImage {
 	@Column(name = "user_image_id")
 	private Long userImageId;
 
+	@Setter
 	@OneToOne
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private Users user;
 
 	@Column(name = "image_url")
@@ -46,4 +52,8 @@ public class UserImage {
 		columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedAt;
+
+	public void updateImageUrl(String newImageUrl) {
+		this.imageUrl = newImageUrl;
+	}
 }

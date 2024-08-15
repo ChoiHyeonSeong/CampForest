@@ -9,5 +9,7 @@ public interface TransactionChatRoomRepositoryCustom {
     TransactionChatRoom findOrCreateChatRoom(Long productId,Long user1Id, Long user2Id);
     // public Optional<CommunityChatRoom> findByUser1IdAndUser2Id(Long user1Id, Long user2Id);
     //
-    // List<TransactionChatRoom> findByUser1IdOrUser2Id(Long user1Id, Long user2Id);
+    List<TransactionChatRoom> findByUser1IdOrUser2Id(Long user1Id, Long user2Id);
+
+    Long findProductIdByRoomId(Long roomId);
 }
