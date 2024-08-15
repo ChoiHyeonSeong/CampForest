@@ -341,7 +341,7 @@ const Board = (props: Props) => {
                 onClick={toggleLike}
                 className={`
                   ${props.board.liked ? 'fill-light-heart stroke-light-heart dark:fill-dark-heart dark:stroke-dark-heart'
-                    : 'fill-light-white dark:fill-dark-white stroke-light-border-icon dark:stroke-dark-border-icon'}
+                    : 'fill-transparent dark:fill-dark-white stroke-light-border-icon dark:stroke-dark-border-icon'}
                   size-[1.5rem]
                   cursor-pointer transition-colors duration-300
                 `}

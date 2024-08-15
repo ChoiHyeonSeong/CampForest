@@ -132,7 +132,7 @@ const NavbarTop = (props: Props) => {
         dark:bg-dark-white
         lg:bg-inherit border-light-border-1
         dark:lg:bg-inherit dark:border-dark-border-1
-        border-b md:border-none
+        border-b
       `}  
     >
       <div>
@@ -149,9 +149,9 @@ const NavbarTop = (props: Props) => {
           />
         </div>
 
-        <div className={`flex md:hidden items-center w-[10rem] h-[100%] me-[1rem]`}>
+        <div className={`flex md:hidden items-center w-[8rem] h-[100%] ms-[1rem]`}>
           { locPath === '/' ?
-            <BigLogoIcon className={`w-[10rem] fill-light-black dark:fill-dark-black`}/> :
+            <BigLogoIcon className={`w-[8rem] fill-light-black dark:fill-dark-black`}/> :
             <div>
 
               <div className={`text-xl`}>

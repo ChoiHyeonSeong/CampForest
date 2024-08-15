@@ -163,7 +163,7 @@ const NavbarLeft = (props: Props) => {
         fixed z-[80] md:z-[40] w-[82vw] h-[100%] mb-[2.75rem] pt-[0] md:pt-[3.2rem]
         bg-light-white border-light-border-1
         dark:bg-dark-white dark:border-dark-border-1
-        lg:border-r transition-all duration-300 ease-in-out
+        md:border-r transition-all duration-300 ease-in-out
       `} 
       onTransitionEnd={props.handleTransitionEnd}
     >
@@ -578,7 +578,7 @@ const NavbarLeft = (props: Props) => {
         </div>
         
         {/* 다크모드 버튼 */}
-        <div className='flex flex-all-center mb-[1.5rem]'>
+        <div className='flex max-md:ms-[3rem] md:flex-all-center mb-[1.5rem]'>
           <p className='me-[1.5rem]'>다크모드설정</p>
           <DarkmodeBtn />
         </div>

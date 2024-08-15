@@ -23,7 +23,7 @@ const NavbarLeftExtendChat = (props: Props) => {
         ${props.isExtendMenuOpen ? 
           (
             chatState.isChatOpen ? 
-            'max-md:-translate-x-[100%] max-lg:-translate-x-[15rem] translate-x-[5rem]' : 
+            'max-md:-translate-x-[100%] max-lg:-translate-x-[100%] translate-x-[5rem]' : 
             'max-md:translate-x-0 translate-x-[5rem]'
           ) : 
           '-translate-x-full'
