@@ -70,7 +70,7 @@ public class BoardController {
                     String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
                     imageUrls.add(fileUrl);
                 }
-            }
+            } 
             boardRequestDto.setImageUrls(imageUrls);
             boardRequestDto.setUserId(users.getUserId());
             boardService.writeBoard(boardRequestDto);
