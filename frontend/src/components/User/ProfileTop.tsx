@@ -199,13 +199,13 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
                 setIsModalOpen(true)
                 setIsFollowing(false)
               }} 
-              className={`inline-block pe-[0.75rem]`}
+              className={`inline-block pe-[0.75rem] cursor-pointer`}
             >
               팔로워
               <span 
                 className={`
                   ms-[0.5rem]
-                  font-medium cursor-pointer
+                  font-medium
                 `}
               >
                 {userinfo?.followerCount}
@@ -216,13 +216,13 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
                 setIsModalOpen(true)
                 setIsFollowing(true)
               }} 
-              className={`inline-block`}
+              className={`inline-block cursor-pointer`}
             >
               팔로잉
               <span 
                 className={`
                    ms-[0.5rem]
-                  font-medium cursor-pointer
+                  font-medium
                 `}
               >
                 {userinfo?.followingCount}
@@ -289,7 +289,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
             <img 
               src={FireGif} 
               alt="불꽃" 
-              className={`absolute -right-[4rem] -top-[4.5rem] z-[0] w-[128px] min-w-[128px] h-[160px] min-h-[160px]`}
+              className={`absolute -right-[4rem] -top-[4.5rem] z-[0] w-[128px] min-w-[128px] h-[160px] min-h-[160px] no-drag`}
             />
           </div>
         </div>

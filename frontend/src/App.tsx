@@ -5,6 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { setIsBoardWriteModal } from '@store/modalSlice';
 import { useThemeEffect } from '@hooks/useThemeEffect';
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
+
+import LogoFavicon from '@assets/logo/logo-small.png'
 
 import Navbar from '@components/Navbar/Navbar';
 import Login from '@pages/Login';
@@ -18,13 +21,10 @@ import FindPassword from '@pages/FindPassword';
 import Community from '@pages/Community';
 import BoardWrite from '@components/Board/BoardWrite';
 import LoadingModal from '@components/Public/LoadingModal';
-import StarLight from '@components/Public/StarLight';
 import ReviewPage from '@components/Product/WriteReview'
 import Product from '@pages/Product';
 import SearchPage from '@pages/SearchPage';
 import LandingPage from '@pages/LandingPage';
-import LightMode from '@components/Public/LightMode';
-import ForestBg from '@components/Public/ForestBg'
 import useSSE from '@hooks/useSSE';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -40,10 +40,11 @@ function App() {
   const modals = useSelector((state: RootState) => state.modalStore);
   const dispatch = useDispatch()
   const currentLoc = useLocation();
-  const isDark = useSelector((state: RootState) => state.themeStore.isDark);
+  
   
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
+  const [hideBanner, setHideBanner] = useState(true);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
@@ -82,6 +83,24 @@ function App() {
     setShowBanner(false);
   };
 
+  const handleCloseBanner = () => {
+    setHideBanner(true);
+  };
+
+  const handleTransitionEnd = () => {
+    if (hideBanner) {
+      setShowBanner(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showBanner) {
+      setTimeout(() => {
+        setHideBanner(false);
+      }, 500);
+    }
+  }, [showBanner]);
+
   useThemeEffect();
   
   useEffect(() => {
@@ -104,17 +123,39 @@ function App() {
 
   return (
     <div>
-      <div className="App h-screen overflow-hidden">
+      <div className="App h-screen overflow-hidden bg-light-background dark:bg-dark-background">
         
         {/* 이 아래가 PWA 설치 배너 */}
-        {/*
+        
         {showBanner && (
-          <div className="install-banner flex flex-all-center z-[500] fixed top-0 w-screen bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white">
-            <p>앱을 설치하여 더 나은 경험을 누려보세요!</p>
-            <button onClick={handleInstallClick}>설치하기</button>
+          <div 
+            className={`
+              install-banner
+              flex flex-all-center fixed top-0 left-1/2 transform -translate-x-1/2 z-[500] 
+              w-screen lg:w-fit h-[5rem] ps-[2rem]
+              bg-light-black text-light-white 
+              dark:bg-dark-black dark:text-dark-white
+              ${hideBanner ? 'translate-y-[-100%]' : 'translate-y-0'}
+              transition-transform duration-500 lg:rounded-b-lg
+            `}
+            onTransitionEnd={handleTransitionEnd}
+          >
+            <p className='max-md:text-sm'>앱을 설치하여 더 나은 경험을 누려보세요!</p>
+            <div className='ms-[1rem]'>
+              <img onClick={handleInstallClick} src={LogoFavicon} alt="" className='w-[50%] cursor-pointer'/>
+            </div>
+            <CloseIcon 
+              onClick={handleCloseBanner}
+              className={`
+                absolute top-2 right-2 md:size-[1.5rem]
+                fill-light-border-icon
+                dark:fill-dark-border-icon
+                cursor-pointer
+              `}
+            />
           </div>
         )} 
-        */}
+       
 
 
         <Navbar />
@@ -143,15 +184,6 @@ function App() {
         {/* 모달은 이 아래부터 */}
         {modals.isBoardWriteModal ? <BoardWrite /> : <></>}
         {modals.isLoading ? <LoadingModal /> : <></>}
-
-
-        {/* 라이트 모드 배경  */}
-        {/* {!isDark && <LightMode />} */}
-
-        {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
-        {isDark && <StarLight />}
-        
-        {/* <ForestBg /> */}
       </div>
     </div>
   );

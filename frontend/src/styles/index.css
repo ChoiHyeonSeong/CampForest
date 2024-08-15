@@ -30,6 +30,10 @@
   .scrollbar-hide-mo::-webkit-scrollbar {
     display: none;
   }
+  .no-drag {
+    user-select: none;
+    pointer-events: none;
+  }
 }
 
 @font-face {

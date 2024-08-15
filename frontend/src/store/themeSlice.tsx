@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isDark: false,
+  isApp: false,
 }
 
 const themeSlice = createSlice({
@@ -15,9 +16,15 @@ const themeSlice = createSlice({
     darkMode: (state) => {
       state.isDark = true;
       document.documentElement.classList.add('dark');
+    },
+    setDisplayAppMode: (state) => {
+      state.isApp = true;
+    },
+    setDisplayBrowserMode: (state) => {
+      state.isApp = false;
     }
   }
 })
 
-export const { lightMode, darkMode } = themeSlice.actions;
+export const { lightMode, darkMode, setDisplayAppMode, setDisplayBrowserMode } = themeSlice.actions;
 export default themeSlice.reducer;

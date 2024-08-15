@@ -90,9 +90,9 @@ const NavbarTop = (props: Props) => {
         flex justify-between fixed lg:top-0 md:right-0 z-[50] lg:z-[30] w-[100%] lg:w-[1.75rem] h-[3.2rem] py-[0.25rem] ps-[0.5rem] md:ps-0 lg:mx-[1rem] 
         bg-light-white
         dark:bg-dark-white
-        lg:bg-inherit 
-        dark:lg:bg-inherit
-        lg:border-none
+        lg:bg-inherit border-light-border-1
+        dark:lg:bg-inherit dark:border-dark-border-1
+        border-b md:border-none
       `}  
     >
       <div>
