@@ -46,6 +46,7 @@ const CommentInput = (props: Props) => {
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
         />
         <input
+          data-testid="e2e-boardcomment-2"
           type='text'
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -59,6 +60,7 @@ const CommentInput = (props: Props) => {
           `}
         />
         <button 
+          data-testid="e2e-boardcomment-3"
           onClick={handleAddComment} 
           className={`
             mx-[0.5rem] 
