@@ -8,9 +8,11 @@ import com.campforest.backend.transaction.model.TransactionStatus;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class SaleResponseDto {
 
 	private Long saleId;

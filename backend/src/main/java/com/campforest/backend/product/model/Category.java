@@ -3,12 +3,12 @@ package com.campforest.backend.product.model;
 public enum Category {
 	텐트("텐트"),
 	의자("의자"),
-	침낭_매트("침낭/매트"),
+	침낭("침낭"),
 	테이블("테이블"),
 	랜턴("랜턴"),
-	코펠_식기("코펠/식기"),
+	코펠("코펠"),
 	안전용품("안전용품"),
-	버너_화로("버너/화로"),
+	버너("버너"),
 	기타("기타");
 
 	private final String categoryName;

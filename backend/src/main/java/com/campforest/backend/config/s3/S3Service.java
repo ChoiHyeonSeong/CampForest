@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,7 +49,6 @@ public class S3Service {
 
 	private String upload(String fileName, File uploadFile, String extend) {
 		String newFileName = buildFileName(fileName, extend);
-		log.info(newFileName);
 		String uploadImageUrl = putS3(uploadFile, newFileName);
 		removeNewFile(uploadFile);
 		return uploadImageUrl;
@@ -66,7 +68,6 @@ public class S3Service {
 				.withCannedAcl(CannedAccessControlList.PublicRead)
 		);
 		String s3Url = amazonS3.getUrl(bucket, fileName).toString();
-		log.info(s3Url);
 		return s3Url;
 	}
 

@@ -1,6 +1,7 @@
 package com.campforest.backend.product.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -89,11 +90,27 @@ public class Product {
 	@Column(name = "is_sold", columnDefinition = "boolean default false")
 	private boolean isSold;
 
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private List<SaveProduct> savedBy = new ArrayList<>();
+
+	@Column(name = "latitude")
+	private Double latitude;
+
+	@Column(name = "longitude")
+	private Double longitude;
+
 	public void update(ProductUpdateDto productUpdateDto) {
 		this.productName = productUpdateDto.getProductName();
 		this.productPrice = productUpdateDto.getProductPrice();
 		this.productContent = productUpdateDto.getProductContent();
 		this.location = productUpdateDto.getLocation();
 		this.category = productUpdateDto.getCategory();
+		this.latitude = productUpdateDto.getLatitude();
+		this.longitude = productUpdateDto.getLongitude();
+	}
+
+	public void incrementHit() {
+		this.hit++;
 	}
 }

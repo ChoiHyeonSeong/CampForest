@@ -28,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 public class TransactionChatRoom {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
     @Column(name = "seller_id")
@@ -46,6 +46,15 @@ public class TransactionChatRoom {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "write_review_buyer")
+    private boolean writeBuyer;
+
+    @Column(name = "write_review_seller")
+    private boolean writeSeller;
+
+    @Column(name = "is_hidden")
+    private boolean isHidden;
 
     @PrePersist
     protected void onCreate() {

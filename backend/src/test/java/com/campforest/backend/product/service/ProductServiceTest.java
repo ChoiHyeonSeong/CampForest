@@ -50,7 +50,7 @@ class ProductServiceTest {
 		productRegistDto.setProductPrice(5000L);
 		productRegistDto.setProductContent("ASdasda");
 		productRegistDto.setProductType(ProductType.RENT);
-		productRegistDto.setCategory(Category.버너_화로);
+		productRegistDto.setCategory(Category.버너);
 
 		List<String> imageUrls = new ArrayList<>();
 		imageUrls.add("DASDAS");
@@ -114,7 +114,7 @@ class ProductServiceTest {
 		productUpdateDto.setProductName("수정된 텐트");
 		productUpdateDto.setProductPrice(6000L);
 		productUpdateDto.setProductContent("수정된 설명");
-		productUpdateDto.setCategory(Category.코펠_식기);
+		productUpdateDto.setCategory(Category.코펠);
 		productUpdateDto.setProductImageUrl(Arrays.asList("NEW_URL1", "NEW_URL2"));
 
 		when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));

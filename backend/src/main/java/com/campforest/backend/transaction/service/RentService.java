@@ -2,12 +2,17 @@ package com.campforest.backend.transaction.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.campforest.backend.notification.service.NotificationService;
 import com.campforest.backend.product.model.Product;
 import com.campforest.backend.product.repository.ProductRepository;
 import com.campforest.backend.transaction.dto.Rent.RentRequestDto;
@@ -26,77 +31,151 @@ public class RentService {
 
 	private final RentRepository rentRepository;
 	private final ProductRepository productRepository;
+	private final NotificationService notificationService;
+
 
 	@Transactional
-	public void rentRequest(RentRequestDto rentRequestDto) {
+	public Map<String, Long> rentRequest(RentRequestDto rentRequestDto) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
-		validateDuplicateRequest(rentRequestDto);
 
+
+		Map<String, Long> result = new HashMap<>();
 		Long requesterId = rentRequestDto.getRequesterId();
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
+
+
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
 
 		Rent rent = buildRent(rentRequestDto, product, requesterId, receiverId, TransactionStatus.REQUESTED);
 		rent.requestRent();
 		rentRepository.save(rent);
 
-		Rent reverseRent = buildRent(rentRequestDto, product, receiverId, requesterId, TransactionStatus.RECEIVED);
+		Rent reverseRent = reverseBuildRent(rentRequestDto, product, receiverId, requesterId, TransactionStatus.RECEIVED);
 		reverseRent.receiveRent();
 		rentRepository.save(reverseRent);
+
+		result.put("rentId", rent.getId());
+		result.put("reverseRentId", reverseRent.getId());
+
+		return result;
 	}
 
 	@Transactional
-	public void acceptRent(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> acceptRent(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
-		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
+		List<Rent> reservedRents = rentRepository.findByProductIdAndRentStatusAndRentEndDateAfter(
+			product.getId(), TransactionStatus.RESERVED, rentRequestDto.getRentStartDate());
 
+		for (Rent reservedRent : reservedRents) {
+			if (isOverlapping(rentRequestDto.getRentStartDate(), rentRequestDto.getRentEndDate(), reservedRent.getRentStartDate(), reservedRent.getRentEndDate())) {
+				throw new RuntimeException("이미 예약 차있습니다..");
+			}
+		}
+
+		Long rentId = 0L;
+
+		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
+		for(Rent rent : rents) {
+			if(rent.getRentStatus().equals(TransactionStatus.RECEIVED)) {
+				rentId = rent.getId();
+			}
+		}
 		rents[0].acceptRent();
 		rents[1].acceptRent();
 
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+		result.put("rentId", rentId);
+
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
+
+		return result;
+	}
+
+	private boolean isOverlapping(LocalDateTime rentStartDate, LocalDateTime rentEndDate, LocalDateTime reservedStartDate, LocalDateTime reservedEndDate) {
+		LocalDate date1 = rentStartDate.toLocalDate();
+		LocalDate date2 = rentEndDate.toLocalDate();
+		LocalDate date3 = reservedStartDate.toLocalDate();
+		LocalDate date4 = reservedEndDate.toLocalDate();
+
+		return !date2.isBefore(date3) && !date4.isBefore(date1);
 	}
 
 	@Transactional
-	public void denyRent(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> denyRent(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
+		Long rentId = 0L;
 		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
 
-		rentRepository.delete(rents[0]);
-		rentRepository.delete(rents[1]);
+		for(Rent rent : rents) {
+			if(rent.getRentStatus().equals(TransactionStatus.RECEIVED)) {
+				rentId = rent.getId();
+			}
+		}
+		rents[0].denyRent();
+		rents[1].denyRent();
+
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+		result.put("rentId", rentId);
+
+		rentRepository.save(rents[0]);
+		rentRepository.save(rents[1]);
+
+		return result;
 	}
 
 	@Transactional
-	public void confirmRent(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> confirmRent(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템이 없습니다."));
 
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
+		Long rentId = 0L;
 		Rent[] rents = getRents(rentRequestDto, requesterId, receiverId);
+
+		for(Rent rent : rents) {
+			if(rent.getRentStatus().equals(TransactionStatus.RESERVED)) {
+				rentId = rent.getId();
+			}
+		}
 
 		boolean isRequesterOwner = requesterId.equals(rentRequestDto.getOwnerId());
 		rents[0].confirmRent(isRequesterOwner); // 소유자가 요청자일 경우
-		rents[1].confirmRent(!isRequesterOwner); // 소유자가 아닌 경우
+		rents[1].confirmRent(isRequesterOwner); // 소유자가 아닌 경우
+
+		Rent rent = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
+			requesterId,receiverId)
+			.orElseThrow(()-> new IllegalArgumentException("찾을 수 없는 대여요청입니다."));
+		rent.confirmRentStatus();
 
 		if (rents[0].isFullyConfirmed() && rents[1].isFullyConfirmed()) {
-			rents[0].setRentStatus(TransactionStatus.CONFIRMED);
-			rents[1].setRentStatus(TransactionStatus.CONFIRMED);
-
 			productRepository.save(product);
 		}
 
+		Map<String, Long> result = new HashMap<>();
+		result.put("requesterId", requesterId);
+		result.put("receiverId", receiverId);
+		result.put("rentId", rentId);
+
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
+		return result;
 	}
 
 	public RentResponseDto getRent(RentRequestDto rentRequestDto, Long requesterId) {
@@ -113,16 +192,28 @@ public class RentService {
 	}
 
 	public List<LocalDate> getRentAvailability(Long productId, LocalDate currentDate) {
-		List<Rent> reservedRent = rentRepository.findByProductIdAndRentStartDateAfter(productId, currentDate);
 
-		return reservedRent.stream()
-			.flatMap(rent -> rent.getRentStartDate()
-				.toLocalDate()
-				.datesUntil(rent.getRentEndDate().toLocalDate().plusDays(1)))
-			.collect(Collectors.toList());
+		LocalDateTime startOfDay = currentDate.atStartOfDay();
+
+		List<Rent> reservedRent = rentRepository.findReservedRents(productId, startOfDay);
+
+		Set<LocalDate> uniqueDates = new TreeSet<>();// TreeSet을 사용하여 날짜를 정렬된 상태로 유지
+
+		for(Rent rent : reservedRent) {
+			if(rent.getRentStatus().equals(TransactionStatus.RESERVED)) {
+				LocalDate start = rent.getRentStartDate().toLocalDate();
+				LocalDate end = rent.getRentEndDate().toLocalDate();
+
+				// start부터 end까지의 모든 날짜를 Set에 추가
+				start.datesUntil(end.plusDays(1)).forEach(uniqueDates::add);
+			}
+		}
+
+		// Set을 List로 변환하여 반환
+		return new ArrayList<>(uniqueDates);
 	}
 
-	public void update(RentRequestDto rentRequestDto, Long requesterId) {
+	public Map<String, Long> update(RentRequestDto rentRequestDto, Long requesterId) {
 		Product product = productRepository.findById(rentRequestDto.getProductId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 아이템 없습니다."));
 
@@ -146,15 +237,22 @@ public class RentService {
 		rents[0].setMeetingPlace(rentRequestDto.getMeetingPlace());
 		rents[1].setMeetingPlace(rentRequestDto.getMeetingPlace());
 
+		rents[0].setLongitude(rentRequestDto.getLongitude());
+		rents[1].setLongitude(rentRequestDto.getLongitude());
+
+		rents[0].setLatitude(rentRequestDto.getLatitude());
+		rents[1].setLatitude(rentRequestDto.getLatitude());
+
+		Rent rent = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
+			requesterId, receiverId)
+				.orElseThrow(() -> new IllegalArgumentException("없습니다"));
+
+		Map<String, Long> result = new HashMap<>();
+		result.put("rentId", rent.getId());
+
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
-	}
-
-	private void validateDuplicateRequest(RentRequestDto rentRequestDto) {
-		rentRepository.findByProductIdAndRequesterId(rentRequestDto.getProductId(), rentRequestDto.getRequesterId())
-			.ifPresent(rent -> {
-				throw new RuntimeException("이미 대여 요청을 보냈습니다.");
-			});
+		return result;
 	}
 
 	private Rent buildRent(RentRequestDto rentRequestDto, Product product, Long requesterId, Long receiverId,
@@ -173,21 +271,47 @@ public class RentService {
 			.meetingPlace(rentRequestDto.getMeetingPlace())
 			.createdAt(LocalDateTime.now())
 			.modifiedAt(LocalDateTime.now())
+			.realPrice(rentRequestDto.getRealPrice())
+			.longitude(rentRequestDto.getLongitude())
+			.latitude(rentRequestDto.getLatitude())
+			.build();
+	}
+
+	private Rent reverseBuildRent(RentRequestDto rentRequestDto, Product product, Long receiverId, Long requesterId,
+		TransactionStatus status) {
+		return Rent.builder()
+			.product(product)
+			.renterId(rentRequestDto.getRenterId())
+			.requesterId(receiverId)
+			.receiverId(requesterId)
+			.ownerId(rentRequestDto.getOwnerId())
+			.rentStatus(status)
+			.rentStartDate(rentRequestDto.getRentStartDate())
+			.rentEndDate(rentRequestDto.getRentEndDate())
+			.deposit(rentRequestDto.getDeposit())
+			.meetingTime(rentRequestDto.getMeetingTime())
+			.meetingPlace(rentRequestDto.getMeetingPlace())
+			.createdAt(LocalDateTime.now())
+			.modifiedAt(LocalDateTime.now())
+			.realPrice(rentRequestDto.getRealPrice())
+			.longitude(rentRequestDto.getLongitude())
+			.latitude(rentRequestDto.getLatitude())
 			.build();
 	}
 
 	private Long determineReceiverId(Product product, Long requesterId, RentRequestDto rentRequestDto) {
-		return requesterId.equals(product.getUserId()) ? rentRequestDto.getOwnerId() : rentRequestDto.getRenterId();
+		return requesterId.equals(product.getUserId()) ? rentRequestDto.getRenterId(): rentRequestDto.getOwnerId() ;
 	}
 
 	private Rent[] getRents(RentRequestDto rentRequestDto, Long requesterId, Long receiverId) {
-		Rent rent1 = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(),
+		Rent rent1 = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
 				requesterId, receiverId)
 			.orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 대여 요청 입니다."));
-		Rent rent2 = rentRepository.findByProductIdAndRequesterIdAndReceiverId(rentRequestDto.getProductId(),
+		Rent rent2 = rentRepository.findTopByProductIdAndRequesterIdAndReceiverIdOrderByCreatedAtDesc(rentRequestDto.getProductId(),
 				receiverId, requesterId)
 			.orElseThrow(() -> new IllegalArgumentException("상대방 요청을 찾을 수 없습니다."));
 		return new Rent[] {rent1, rent2};
 	}
+
 
 }

@@ -3,10 +3,13 @@ package com.campforest.backend.board.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.campforest.backend.board.entity.Boards;
 import com.campforest.backend.board.entity.Likes;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -30,4 +33,6 @@ public class BoardResponseDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 	private List<String> imageUrls;
+	private boolean isRecommended;
+
 }

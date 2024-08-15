@@ -2,7 +2,13 @@ package com.campforest.backend.product.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.campforest.backend.common.ApiResponse;
+import com.campforest.backend.common.CursorResult;
 import com.campforest.backend.common.ErrorCode;
 import com.campforest.backend.config.s3.S3Service;
 import com.campforest.backend.product.dto.ProductDetailDto;
@@ -41,7 +48,7 @@ public class ProductController {
 	private final S3Service s3Service;
 	private final UserService userService;
 
-	//게시물 작성
+	// 게시물 작성
 	@PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ApiResponse<?> createProduct(Authentication authentication,
 		@RequestPart(value = "files", required = false) MultipartFile[] files,
@@ -71,25 +78,54 @@ public class ProductController {
 		return ApiResponse.createSuccessWithNoContent("게시물 작성에 성공하였습니다");
 	}
 
+
 	//게시물 정보 가져오기
-	@GetMapping("/{productId}")
-	public ApiResponse<?> getProduct(@PathVariable Long productId) {
+	@GetMapping("/public/{productId}")
+	public ApiResponse<?> getProduct(Authentication authentication, @PathVariable Long productId) {
 		ProductDetailDto findProduct;
+		Long userId = null;
+
+		// 사용자 인증 정보가 있으면 userId 추출
+		if (authentication != null && authentication.isAuthenticated()) {
+			Users user = userService.findByEmail(authentication.getName()).orElse(null);
+			userId = user != null ? user.getUserId() : null;
+		}
+
 		try {
-			findProduct = productService.getProduct(productId);
+			findProduct = productService.getProductByUserId(productId, userId);
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.PRODUCT_NOT_FOUND);
 		}
 
 		return ApiResponse.createSuccess(findProduct, "게시물 조회 성공하였습니다.");
 	}
+	//대여 이미지 수정
+	@PostMapping("/modifyImage")
+	public List<String> modifyImage(
+		@RequestPart(value = "files", required = false) MultipartFile[] files
+	){
+		try {
+			List<String> imageUrls = new ArrayList<>();
+			if (files != null) {
+				for (MultipartFile file : files) {
+					String extension = file.getOriginalFilename()
+						.substring(file.getOriginalFilename().lastIndexOf("."));
+					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
+					imageUrls.add(fileUrl);
+				}
+			}
+			return imageUrls;
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
 
 	//게시물 수정
 	@PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ApiResponse<?> updateProduct(
 		Authentication authentication,
-		@RequestPart(value = "files", required = false) MultipartFile[] files,
-		@RequestPart(value = "productUpdateDto") ProductUpdateDto productUpdateDto
+		@RequestBody ProductUpdateDto productUpdateDto
 	) throws Exception {
 
 		Users user = userService.findByEmail(authentication.getName())
@@ -102,20 +138,7 @@ public class ProductController {
 			return ApiResponse.createError(ErrorCode.INVALID_AUTHORIZED);
 		}
 
-		List<String> imageUrls = new ArrayList<>();
-		if (files != null) {
-			try {
-				for (MultipartFile file : files) {
-					String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-					String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
-					imageUrls.add(fileUrl);
-				}
-			} catch (IOException e) {
-				return ApiResponse.createError(ErrorCode.PRODUCT_UPDATE_FAILED);
-			}
-		}
 		productUpdateDto.setUserId(user.getUserId());
-		productUpdateDto.setProductImageUrl(imageUrls);
 		try {
 			productService.updateProduct(productUpdateDto.getProductId(), productUpdateDto);
 		} catch (Exception e) {
@@ -126,7 +149,7 @@ public class ProductController {
 	}
 
 	//게시물 삭제
-	@DeleteMapping()
+	@DeleteMapping("/{productId}")
 	public ApiResponse<?> deleteProduct(Authentication authentication, @PathVariable Long productId) throws Exception {
 
 		Users user = userService.findByEmail(authentication.getName())
@@ -163,16 +186,25 @@ public class ProductController {
 
 	// 게시물 조회 - 카테고리, 검색, 지역, 대여&판매, 페이지
 	@Transactional(readOnly = true)
-	@GetMapping("/search")
+	@GetMapping("/public/search")
 	public ApiResponse<?> findProductsByDynamicConditions(
 		@RequestParam(required = false) String category,
 		@RequestParam(required = false) ProductType productType,
 		@RequestParam(required = false) Long minPrice,
 		@RequestParam(required = false) Long maxPrice,
-		@RequestParam(required = false) List<String> locations,
+		@RequestParam(required = false) String locations,
 		@RequestParam(required = false) String titleKeyword,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "20") int size) {
+		@RequestParam(required = false) Long findUserId,
+		@RequestParam(required = false) Long cursorId,
+		@RequestParam(defaultValue = "10") int size,
+		Authentication authentication) {
+
+		Long userId = null;
+		if (authentication != null && authentication.isAuthenticated()) {
+			Users user = userService.findByEmail(authentication.getName()).orElse(null);
+			userId = user != null ? user.getUserId() : null;
+		}
+
 		Category categoryEnum = null;
 		if (category != null) {
 			try {
@@ -182,16 +214,27 @@ public class ProductController {
 			}
 		}
 
-		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSearchDto> result;
+		List<String> processedLocations = null;
+		if (locations != null && !locations.isEmpty()) {
+			processedLocations = Arrays.stream(locations.split("&"))
+				.map(location -> location.replace(",", " "))
+				.collect(Collectors.toList());
+		}
+
 		try {
-			result = productService.findProductsByDynamicConditions(categoryEnum,
-				productType, minPrice, maxPrice, locations, titleKeyword, pageable);
+			CursorResult<ProductSearchDto> result = productService.findProductsByDynamicConditionsWithCursor(
+				categoryEnum, productType, minPrice, maxPrice, processedLocations, titleKeyword, size, userId, findUserId, cursorId);
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("products", result.getContent());
+			responseMap.put("nextCursorId", result.getNextCursor());
+			responseMap.put("hasNext", result.isHasNext());
+			responseMap.put("totalCount", result.getTotalCount());
+
+			return ApiResponse.createSuccess(responseMap, "성공적으로 조회하였습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-
-		return ApiResponse.createSuccess(result, "성공적으로 조회하였습니다.");
 	}
 
 }
