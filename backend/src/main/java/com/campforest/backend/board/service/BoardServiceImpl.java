@@ -222,6 +222,9 @@ public class BoardServiceImpl implements BoardService {
             if (boardRepository.checkFollow(nowId, board.getUserId())){
                 dto.setRecommended(false);
             }
+            else if(board.getUserId()==nowId){
+                dto.setRecommended(false);
+            }
             else dto.setRecommended(true);
             dto.setNickname(user.getNickname());
             dto.setLiked(likeBoardsId.contains(board.getBoardId()));
