@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import userImage from '@assets/images/basic_profile.png'
 import { SimilarUserType } from '@store/userSlice'
@@ -16,7 +16,7 @@ const RecommandUser:React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={`relative h-[17.5rem] md:h-[15rem] p-[1rem] bg-light-gray text-center rounded`}>
+    <div className={`relative h-[17.5rem] md:h-[15rem] p-[1rem] bg-light-gray dark:bg-dark-gray text-center rounded`}>
       <img
         src={props.userInfo.userProfileUrl ? props.userInfo.userProfileUrl : userImage} 
         alt="NoImg" 

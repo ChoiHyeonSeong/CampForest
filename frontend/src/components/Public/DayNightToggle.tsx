@@ -18,7 +18,6 @@ const DayNightToggle: React.FC = () => {
       'https://dl.dropboxusercontent.com/s/1tluv1o16bu8dv1/egles_light.svg?dl=0',
       'https://dl.dropboxusercontent.com/s/df61ibt6hk9mk2z/sun.svg',
       'https://dl.dropboxusercontent.com/s/z5nkite52l21gnn/moon.svg',
-      'https://dl.dropboxusercontent.com/s/a24sxazrdbnkn4q/stars.svg?dl=0',
       'https://dl.dropboxusercontent.com/s/n329j6mekvr5mec/makonis_1.svg?dl=0',
       'https://dl.dropboxusercontent.com/s/jpd6t207d4s1ozo/makonis_2.svg?dl=0'
     ];
@@ -28,18 +27,18 @@ const DayNightToggle: React.FC = () => {
       document.querySelector('.forest-bot')!.innerHTML = svgs[1];
       document.querySelector('.sun')!.innerHTML = svgs[2];
       document.querySelector('.moon')!.innerHTML = svgs[3];
-      document.querySelector('.stars')!.innerHTML = svgs[4];
-      document.querySelectorAll('.cloud.top, .cloud.top-backup').forEach(el => el.innerHTML = svgs[5]);
-      document.querySelectorAll('.cloud.mid, .cloud.mid-backup').forEach(el => el.innerHTML = svgs[6]);
-      document.querySelectorAll('.cloud.bot, .cloud.bot-backup').forEach(el => el.innerHTML = svgs[5]);
+      document.querySelectorAll('.cloud.top, .cloud.top-backup').forEach(el => el.innerHTML = svgs[4]);
+      document.querySelectorAll('.cloud.mid, .cloud.mid-backup').forEach(el => el.innerHTML = svgs[5]);
+      document.querySelectorAll('.cloud.bot, .cloud.bot-backup').forEach(el => el.innerHTML = svgs[4]);
 
-      gsap.set('.moon', { bottom: '40px', scale: 1 });
+      gsap.set('.moon', { bottom: '-40px', scale: 1.5 });
+      gsap.set('.sun', { bottom: '-40px', scale: 1.5 });
       document.querySelectorAll('.cloud').forEach(tweenCloud);
     });
   }, []);
 
   useEffect(() => {
-    daySwap();
+      daySwap();
   }, [isDark]);
 
   const tweenCloud = (cloud: Element) => {
@@ -60,49 +59,64 @@ const DayNightToggle: React.FC = () => {
 
   const daySwap = () => {
     const bounceSize = 75;
-    const visiblePosition = 45;
+    const visiblePosition = 70;
 
     gsap.to(isDark ? '.sun' : '.moon', {
-      duration: 0.2,
-      bottom: `${bounceSize}px`,
-      scaleX: 0.6,
-      ease: 'bounce.out'
-    });
-
-    gsap.to(isDark ? '.sun' : '.moon', {
-      duration: 0.3,
+      duration: 2,
       bottom: '-40px',
       ease: 'power4.out',
       delay: 0.2
     });
 
-    gsap.set(isDark ? '.sun' : '.moon', { scaleX: 1 });
-
     gsap.to(isDark ? '.moon' : '.sun', {
       duration: 0.5,
       bottom: `${bounceSize}px`,
-      scaleX: 1,
-      scaleY: 0.6,
+      scaleX: 1.5,
+      scaleY: 1,
       ease: 'bounce.out',
       delay: 1
     });
 
     gsap.to(isDark ? '.moon' : '.sun', {
-      duration: 0.4,
-      bottom: `${visiblePosition}px`,
+      duration: 2,
+      bottom: `${visiblePosition}vh`,
       ease: 'bounce.out',
-      scaleY: 1,
+      scaleY: 1.5,
+      scaleX: 1.5,
       delay: 1.2
     });
+    
   };
 
+  const generateStars = (n: number) => {
+    let value = `${Math.floor(Math.random() * 2000)}px ${Math.floor(Math.random() * 2000)}px #FFF`;
+    for (let i = 2; i <= n; i++) {
+      value += `, ${Math.floor(Math.random() * 2000)}px ${Math.floor(Math.random() * 2000)}px #FFF`;
+    }
+    return value;
+  };
+
+  useEffect(() => {
+    const stars1 = document.querySelector('.stars') as HTMLElement;
+    const stars2 = document.querySelector('.stars2') as HTMLElement;
+    const stars3 = document.querySelector('.stars3') as HTMLElement;
+
+    if (stars1) stars1.style.boxShadow = generateStars(100);
+    if (stars2) stars2.style.boxShadow = generateStars(25);
+    if (stars3) stars3.style.boxShadow = generateStars(10);
+  }, []);
+
   return (
-    <div className={`container ${isDark ? 'night' : 'day'} fixed inset-0 w-screen h-screen z-[10]`}>
+    <div className={`container ${isDark ? 'night' : 'day'}`}>
+      <div className={`fixed inset-0 w-screen h-screen z-[1] ${isDark ? '' : 'opacity-0'} duration-500 transition-opacity`}>
+        <div className="stars"></div>
+        <div className="stars2"></div>
+        <div className="stars3"></div>
+    </div>
       <div className={`background ${isDark ? 'night' : 'day'}`}>
         <div className="overlay"></div>
         <div className="sun"></div>
         <div className="moon"></div>
-        <div className="stars"></div>
         <div className="cloud top"></div>
         <div className="cloud top-backup"></div>
         <div className="cloud mid"></div>
