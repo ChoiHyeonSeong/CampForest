@@ -3,16 +3,16 @@ import { useLocation } from "react-router-dom";
 import Board, { BoardType } from '@components/Board/Board';
 import { boardList, mixedBoardList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
-import { setUser } from '@store/userSlice';
+import { setUser, SimilarUserType } from '@store/userSlice';
 
 import { getOAuthAccessToken } from '@services/authService';
 
 import StarLight from '@components/Public/StarLight';
 import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
-import { RootState, store } from '@store/store';
+import Recommand from '@components/Board/Recommand';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -37,7 +37,7 @@ function Main() {
     try {
       dispatch(setIsLoading(true))
       if(sessionStorage.getItem('isLoggedIn')) {
-        const userIds: number[] = Object.keys(JSON.parse(sessionStorage.getItem('similarUsers')!)).map(Number);
+        const userIds: number[] = JSON.parse(sessionStorage.getItem('similarUsers')!).map((similarUser: SimilarUserType) => similarUser.userId);
         const response = await mixedBoardList(userIds, boardCursorIdRef.current, 10);
         dispatch(setIsLoading(false))
         boardCursorIdRef.current = response.data.data.nextCursor
@@ -206,6 +206,7 @@ function Main() {
       {/* 본문 */}
       <div className={`flex justify-center`}>
         <div className={`w-[100%] md:w-[40rem]`}>
+          <Recommand />
           {boards?.map((board) => (
             <div 
               className={`my-[1.25rem] ${visibleBoards.includes(board.boardId) ? 'fade-in-down' : 'opacity-0'}`} 

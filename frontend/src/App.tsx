@@ -26,6 +26,7 @@ import Product from '@pages/Product';
 import SearchPage from '@pages/SearchPage';
 import LandingPage from '@pages/LandingPage';
 import useSSE from '@hooks/useSSE';
+import DuckForest from '@components/Public/DuckForest';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];

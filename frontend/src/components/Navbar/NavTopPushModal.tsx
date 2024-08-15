@@ -63,7 +63,7 @@ const NavTopPushModal = (props: Props) => {
       >
         {isMobile ? (
           <div className="flex items-center p-4 border-b">
-            <ArrowLeftIcon onClick={props.onClose} className="w-6 h-6 mr-2 cursor-pointer" />
+            <ArrowLeftIcon onClick={props.onClose} className="w-6 h-6 mr-2 cursor-pointer fill-light-text dark:fill-dark-text" />
             <h2 className="text-lg font-semibold">알림</h2>
           </div>
         ) : (

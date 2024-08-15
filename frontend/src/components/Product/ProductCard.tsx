@@ -95,14 +95,13 @@ const ProductCard = (props: Props) => {
           className={`
             ${props.product.sold ? '' : 'hidden'}
             flex justify-center items-center absolute z-[6] w-full h-full
-            bg-light-black
-            dark:bg-dark-black
-            opacity-60
+            bg-black bg-opacity-60
+            
           `}
         >
           <div 
             className={`
-              flex justify-center items-center w-1/3 
+              flex justify-center items-center shrink-0 size-1/3 md:size-1/3
               border-light-white
               dark:border-light-white
               aspect-1 border-2 rounded-full
@@ -110,9 +109,8 @@ const ProductCard = (props: Props) => {
           >
             <div 
               className={`
-                text-light-white 
-                dark:text-dark-white
-                text-center
+                text-white 
+                text-center text-[0.72rem] md:text-[0.72rem]
               `}
             >
               판매<br/>완료

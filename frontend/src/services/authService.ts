@@ -1,5 +1,6 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { communityChatList } from "./chatService";
+import { SimilarUserType } from "@store/userSlice";
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -11,7 +12,7 @@ type LoginResponse = {
     userId: number,
     nickname: string,
     profileImage: string,
-    similarUsers: object
+    similarUsers: SimilarUserType[],
   },
 }
 

@@ -2,26 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import defaultImage from '@assets/images/basic_profile.png';
 import FireGif from '@assets/images/fire.gif';
 import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
-import { RootState, store } from '@store/store';
-import { 
-  addMessageToChatInProgress, 
-  selectCommnunity,
-  setChatInProgressType, 
-  setCommunityChatUserList, 
-  setIsChatOpen, 
-  setOtherId, 
-  setRoomId, 
-  setCommunityUnreadCount, 
-  updateCommunityChatUserList, 
-  updateMessageReadStatus 
-} from '@store/chatSlice';
-import { communityChatList, initCommunityChat } from '@services/chatService';
-import { useWebSocket } from 'Context/WebSocketContext';
-import { ChatUserType } from '@components/Chat/ChatUser';
 
 type UserInfo = {
   nickname: string;
@@ -41,12 +24,9 @@ type Props = {
 }
 
 export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, fetchUserInfo }: Props) {
-  const dispatch = useDispatch();
-  const chatState = useSelector((state: RootState) => state.chatStore);
   const userId = Number(useParams().userId);
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
-  const { subscribe, publishMessage } = useWebSocket();
 
   useEffect(() => {
     if (userId === loginUserId) {
@@ -60,68 +40,6 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
   let percentage: number = 50;
   if (userinfo) {
     percentage = Math.min(Math.max(Math.round((userinfo.temperature / 1400) * 100), 0), 100);
-  }
-  
-  
-  async function handleChatButton() {
-    const matchedUser = chatState.communityChatUserList.find((chatUser) => chatUser.otherUserId === userId);
-    if (matchedUser) {
-      dispatch(setChatInProgressType('일반'))
-      dispatch(selectCommnunity());
-      dispatch(setOtherId(matchedUser.otherUserId));
-      dispatch(setRoomId(matchedUser.roomId));
-      dispatch(setIsChatOpen(true));
-    } else {
-      try {
-        const roomId = await initCommunityChat(userId);
-        await fetchCommunityChatList()
-        dispatch(setChatInProgressType('일반'))
-        dispatch(selectCommnunity());
-        dispatch(setOtherId(userId));
-        dispatch(setIsChatOpen(true));
-        dispatch(setRoomId(roomId));
-  
-        // roomId가 확실히 업데이트된 후에 subscribe 함수 호출
-        subscribeToChat(roomId);
-      } catch (error) {
-        console.error("Error in handleChatButton:", error);
-      }
-    }
-  }
-
-  // 일반 채팅방 목록 가져오기
-  const fetchCommunityChatList = async () => {
-    const userId = store.getState().userStore.userId;
-    if (userId) {
-      const response = await communityChatList();
-      let count = 0;
-      response.forEach((chatUser: ChatUserType) => {
-        count += chatUser.unreadCount;
-      })
-      store.dispatch(setCommunityUnreadCount(count));
-      store.dispatch(setCommunityChatUserList(response));
-    }
-  }
-
-  function subscribeToChat(roomId: number) {
-    // 메세지를 받았을 때
-    subscribe(`/sub/community/${roomId}`, (message: { body: string }) => {
-      const response = JSON.parse(message.body);
-      const state: RootState = store.getState();
-      if(response.type === 'READ') {
-        if (state.userStore.userId !== response.senderId) {
-          store.dispatch(updateMessageReadStatus({ roomId: response.roomId, readerId: response.senderId }));
-        }  
-      }
-      else if (state.chatStore.roomId === response.roomId) {
-        dispatch(updateCommunityChatUserList({...response, inProgress: true}));
-        publishMessage(`/pub/room/${response.roomId}/markAsRead`, loginUserId);
-        dispatch(addMessageToChatInProgress(response));
-      } else {
-        dispatch(updateCommunityChatUserList({...response, inProgress: false}));
-      }
-    });
-
   }
 
   return (
@@ -168,7 +86,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
                   flex
                 `}
               > 
-                <div className='text-xs md:text-base'>
+                <div className='me-[0.5rem] text-xs md:text-base'>
                   <FollowBtn targetUserId={userId} callbackFunction={fetchUserInfo}/>
                 </div>
                 <div 
@@ -176,7 +94,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
                     text-xs md:text-base
                   `}
                 >
-                  <ChatBtn handleChatButton={handleChatButton}/>
+                  <ChatBtn userId={userId} />
                 </div>
               </div>
             </div>
