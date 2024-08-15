@@ -70,6 +70,7 @@ module.exports = {
             DEFAULT: '#3982FF',
             hover: '#355388'
           },
+          background: '#FFFFFF'
         },
 
         dark: {
@@ -106,6 +107,7 @@ module.exports = {
             DEFAULT: '#6BA4FF',
             hover: '#9CC3FF'
           },
+          background: '#111111'
         }
       }
     },

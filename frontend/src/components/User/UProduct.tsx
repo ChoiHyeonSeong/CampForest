@@ -191,7 +191,7 @@ const UProduct = (props: Props) => {
             onClick={() => setMyBoard(true)}
             className={`
               ${myBoard ? 'font-bold' : 'text-light-text-secondary'}
-              flex items-center
+              flex items-center cursor-pointer
             `}
           >
             <ArticleIcon 
@@ -214,7 +214,7 @@ const UProduct = (props: Props) => {
             onClick={() => setMyBoard(false)}
             className={`
             ${userId !== userState.userId ? 'hidden' : ''}
-              flex items-center ms-[2.5rem]
+              flex items-center ms-[2.5rem] cursor-pointer
             `}
           >
             <Heart 

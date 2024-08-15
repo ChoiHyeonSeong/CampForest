@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface PaginationProps {
   totalItems: number;
@@ -9,7 +9,23 @@ interface PaginationProps {
 
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }: PaginationProps) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const maxVisiblePages = 10;
+  
+  const [maxVisiblePages, setMaxVisiblePages] = useState(10);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMaxVisiblePages(10); // 데스크탑
+      } else if (window.innerWidth >= 768) {
+        setMaxVisiblePages(5); // 태블릿
+      } else {
+        setMaxVisiblePages(3); // 모바일
+      }
+    };
+
+    handleResize(); // 초기 설정
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const getPageNumbers = () => {
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
