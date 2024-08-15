@@ -74,6 +74,7 @@ const LandingPage = () => {
 
   const handleSkipClick = () => {
     navigate('/');
+    localStorage.setItem('isLandingSee', 'true')
   };
 
   return (

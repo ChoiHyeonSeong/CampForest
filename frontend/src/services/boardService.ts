@@ -65,7 +65,7 @@ export const boardUserList = async (userId: number, cursorId: number | null, siz
 export const filteredBoardList = (category: string, cursorId: number | null, size: number) => {
   const params = { category: category, cursorId: cursorId, size: size };
   
-  const response = axios.get(`/board/public/category`, {params});
+  const response = axiosInstance.get(`/board/public/category`, {params});
   return response;
 }
 

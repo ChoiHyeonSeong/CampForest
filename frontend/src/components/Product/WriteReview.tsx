@@ -6,10 +6,14 @@ import { ReviewState } from '@store/reviewSlice'
 import { reviewWrite } from '@services/reviewService'
 import { useNavigate } from 'react-router-dom'
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 type Props = {
 }
 const WriteReview = (props: Props) => {
   const navigate = useNavigate();
+  const userStore = useSelector((state: RootState) => state.userStore);
   const [productImages, setProductImages] = useState<File[]>([]);
   const [content, setContent] = useState('');
   const [rating, setRating] = useState<number>(0);
@@ -31,9 +35,12 @@ const WriteReview = (props: Props) => {
 
   useEffect(() => {
     const savedState = loadReviewState();
-    if (savedState) {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (savedState === null || isLoggedIn === null || isLoggedIn === "false") {
+      navigate("/");
+    } else if (savedState) {
       setReviewState(savedState)
-    }
+    } 
   }, []);
 
   const handleImagesChange = (images: File[]) => {
@@ -221,7 +228,8 @@ const WriteReview = (props: Props) => {
             `}
             onClick={async () => {
               await reviewWrite(reviewState.opponentId, content, rating, reviewState.productType, reviewState.roomId, productImages, );
-              navigate(`/user/${reviewState.opponentId}`);
+              sessionStorage.removeItem('reviewState')
+              navigate(`/user/${userStore.userId}`);
             }}
           >
             <div>

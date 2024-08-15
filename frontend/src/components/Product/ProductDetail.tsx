@@ -75,6 +75,7 @@ function Detail() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { subscribe, publishMessage } = useWebSocket();
+  const isLoggedIn = Boolean(sessionStorage.getItem('isLoggedIn'));
   const loginUserId = Number(sessionStorage.getItem('userId'));
   const productId = Number(useParams().productId);
   const chatState = useSelector((state: RootState) => state.chatStore);
@@ -171,7 +172,12 @@ function Detail() {
   };
 
   useEffect(() => {
-    fetchProduct();
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (isLoggedIn === null || isLoggedIn === "false") {
+      navigate("/");
+    } else {
+      fetchProduct();
+    }
   }, []);
 
   async function handleChatButton() {
@@ -498,12 +504,16 @@ function Detail() {
                   {product.productType === 'SALE' ? '판매' : '대여'}
                 </div>
               </div>
-              <MoreOptionsMenu
-                isUserPost={loginUserId === product.userId}
-                deleteId={0}
-                deleteFunction={deleteFunction}
-                updateFunction={updateFunction}
-              />
+              {isLoggedIn && loginUserId === product.userId ? (
+                <MoreOptionsMenu
+                  isUserPost={loginUserId === product.userId}
+                  deleteId={0}
+                  deleteFunction={deleteFunction}
+                  updateFunction={updateFunction}
+                />
+              ) : (
+                <></>
+              )}
             </div>
             <div className={`text-2xl font-medium`}>{product.productName}</div>
             <div

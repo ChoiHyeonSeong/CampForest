@@ -44,33 +44,38 @@ const ProfileEdit = (props: Props) => {
   const [isBtnActive, setIsBtnActive] = useState(false);
 
   useEffect(() => {
-    dispatch(registClear())
-    let originalData: OriginalData;
-    const getOriginalData = async () => {
-      try {
-        const response = await userGetProfile()
-        
-        console.log(response)
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (isLoggedIn === null || isLoggedIn === "false") {
+      navigate("/");
+    } else {
+      dispatch(registClear())
+      let originalData: OriginalData;
+      const getOriginalData = async () => {
+        try {
+          const response = await userGetProfile()
+          
+          console.log(response)
 
-        originalData = response.data.data
-        setOriginalImage(originalData?.profileImage);
+          originalData = response.data.data
+          setOriginalImage(originalData?.profileImage);
 
-        console.log(originalData)
-        dispatch(registOptional({
-          userBirthdate: originalData.birthdate,
-          userGender: originalData.gender,
-          interests: originalData.interests.map(obj => obj.interest),
-          introduction: originalData.introduction,
-          nickname: originalData.nickname,
-          profileImage: originalData.profileImage,
-        }))
-      } catch (error) {
-        console.log(error)
-        throw(error)
+          console.log(originalData)
+          dispatch(registOptional({
+            userBirthdate: originalData.birthdate,
+            userGender: originalData.gender,
+            interests: originalData.interests.map(obj => obj.interest),
+            introduction: originalData.introduction,
+            nickname: originalData.nickname,
+            profileImage: originalData.profileImage,
+          }))
+        } catch (error) {
+          console.log(error)
+          throw(error)
+        }
       }
-    }
 
-    getOriginalData()
+      getOriginalData()
+    }
   }, [])
 
   const submitUpdate = async () => {
