@@ -1,5 +1,5 @@
 import '@styles/App.css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/store';
@@ -27,12 +27,61 @@ import LightMode from '@components/Public/LightMode';
 import ForestBg from '@components/Public/ForestBg'
 import useSSE from '@hooks/useSSE';
 
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed',
+    platform: string
+  }>;
+  prompt(): Promise<void>;
+}
+
 function App() {
   const modals = useSelector((state: RootState) => state.modalStore);
   const dispatch = useDispatch()
   const currentLoc = useLocation();
   const isDark = useSelector((state: RootState) => state.themeStore.isDark);
   
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [showBanner, setShowBanner] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+      // 브라우저 기본 설치 프롬프트 방지
+      e.preventDefault();
+      // 이벤트 저장
+      setInstallPrompt(e);
+      // 배너 표시
+      setShowBanner(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+    };
+  }, []);
+
+  const handleInstallClick = () => {
+    if (!installPrompt) {
+      return;
+    }
+    // 설치 프롬프트 표시
+    installPrompt.prompt();
+    // 사용자의 응답 대기
+    installPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('사용자가 앱 설치를 수락했습니다');
+      } else {
+        console.log('사용자가 앱 설치를 거부했습니다');
+      }
+      // 프롬프트 사용 후 초기화
+      setInstallPrompt(null);
+    });
+    // 배너 숨기기
+    setShowBanner(false);
+  };
+
   useThemeEffect();
   
   useEffect(() => {
@@ -56,6 +105,18 @@ function App() {
   return (
     <div>
       <div className="App h-screen overflow-hidden">
+        
+        {/* 이 아래가 PWA 설치 배너 */}
+        {/*
+        {showBanner && (
+          <div className="install-banner flex flex-all-center z-[500] fixed top-0 w-screen bg-light-black dark:bg-dark-black text-light-white dark:text-dark-white">
+            <p>앱을 설치하여 더 나은 경험을 누려보세요!</p>
+            <button onClick={handleInstallClick}>설치하기</button>
+          </div>
+        )} 
+        */}
+
+
         <Navbar />
         <div className='flex h-full'>
           {/* padding은 Navigation bar용 공간 */}
