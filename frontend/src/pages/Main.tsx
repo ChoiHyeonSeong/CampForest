@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import Board, { BoardType } from '@components/Board/Board';
 import { boardList, mixedBoardList } from '@services/boardService';
 import { useInView } from 'react-intersection-observer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
 import { setUser, SimilarUserType } from '@store/userSlice';
 
@@ -13,6 +13,7 @@ import StarLight from '@components/Public/StarLight';
 import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
 import Recommand from '@components/Board/Recommand';
+import { RootState } from '@store/store';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
