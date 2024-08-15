@@ -1,6 +1,6 @@
 .container {
   position: absolute;
-  z-index: 0;
+  z-index: -1;
   top: 0%;
   left: 0%;
   width: 100%;
@@ -59,7 +59,7 @@
 }
 
 .background.day {
-  background-color: #0aceff;
+  background-color: #8eccff;
 }
 
 .background.day .cloud {
