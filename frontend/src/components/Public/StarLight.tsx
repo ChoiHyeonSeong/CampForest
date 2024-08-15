@@ -23,7 +23,7 @@ const StarLight = (props: Props) => {
   }, []);
 
   return (
-    <div className='fixed inset-0 w-screen h-screen z-[-1]'>
+    <div className='fixed inset-0 w-screen h-screen z-[0]'>
       <div className='star-container'>
         <div className="stars"></div>
         <div className="stars2"></div>
