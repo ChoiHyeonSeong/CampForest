@@ -7,10 +7,12 @@ import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg'
 import { RootState } from '@store/store'
 import { useSelector } from 'react-redux'
 import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import defaultProfileImage from '@assets/images/basic_profile.png'
 
 import { boardDelete, boardLike, boardDislike, boardSave, deleteSave } from '@services/boardService';
+
+import Swal from 'sweetalert2'
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -51,10 +53,22 @@ type Props = {
 }
 
 const Board = (props: Props) => {
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userStore);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [timeDifference, setTimeDifference] = useState('');
+
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      navigate('/user/login')
+    });
+  }
 
   const deleteBoard = async () => {
     try {
@@ -84,7 +98,7 @@ const Board = (props: Props) => {
           props.updateLike(props.board.boardId, true, result)
         }
       } else {
-        alert("로그인 해주세요.")
+        popLoginAlert()
       }
     } catch (error) {
       console.log(error)
@@ -122,7 +136,7 @@ const Board = (props: Props) => {
           props.updateSaved(props.board.boardId, true)
         }
       } else {
-        alert("로그인 해주세요.")
+        popLoginAlert()
       }
     } catch (error) {
       console.error('북마크 취소 실패: ', error);
@@ -172,12 +186,17 @@ const Board = (props: Props) => {
               <div className={`md:text-sm`}>{props.board.category}</div>
             </div>
           </div>
-          <MoreOptionsMenu 
-            isUserPost={user.userId === props.board.userId} 
-            updateFunction={updateFunction}
-            deleteFunction={deleteBoard} 
-            deleteId={props.board.boardId}
-          />
+          {user.isLoggedIn && user.userId === props.board.userId ? (
+            <MoreOptionsMenu 
+              isUserPost={user.userId === props.board.userId} 
+              updateFunction={updateFunction}
+              deleteFunction={deleteBoard} 
+              deleteId={props.board.boardId}
+            />
+          ) : (
+            <></>
+          )}
+          
         </div>
 
         {/* 사진 및 내용 */}

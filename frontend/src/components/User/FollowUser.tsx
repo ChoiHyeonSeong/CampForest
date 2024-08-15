@@ -1,5 +1,9 @@
 import React from 'react';
 import FollowBtn from './FollowBtn';
+import defaultImage from '@assets/images/basic_profile.png';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 type Props = {
   userId: number;
@@ -9,6 +13,8 @@ type Props = {
 }
 
 const FollowUser = (props: Props) => {
+  const userState = useSelector((state: RootState) => state.userStore);
+
   return (
     <div
       className={`
@@ -19,7 +25,7 @@ const FollowUser = (props: Props) => {
       `}
     >
       <img 
-        src={props.profileImage} 
+        src={props.profileImage ? props.profileImage : defaultImage} 
         alt="프로필 사진" 
         className={`
           size-[3.25rem] me-1
@@ -51,7 +57,11 @@ const FollowUser = (props: Props) => {
         </div>
       </div>
       <div className={`flex items-center ms-auto`}>
-        <FollowBtn targetUserId={props.userId} callbackFunction={props.fetchUserInfo}/>
+        {userState.isLoggedIn ? (
+          <FollowBtn targetUserId={props.userId} callbackFunction={props.fetchUserInfo}/>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   )

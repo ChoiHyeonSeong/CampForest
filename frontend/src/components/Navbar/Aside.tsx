@@ -9,13 +9,16 @@ import { ReactComponent as CommunityIcon } from '@assets/icons/nav-community.svg
 import { useDispatch } from 'react-redux'
 import { setIsBoardWriteModal } from '@store/modalSlice'
 import { RootState } from '@store/store'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
+import Swal from 'sweetalert2'
 
 type Props = {
   user: RootState['userStore'];
 }
 
 const Aside = (props: Props) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
@@ -58,15 +61,43 @@ const Aside = (props: Props) => {
     transition-all duration-200
   `;
 
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      navigate('/user/login')
+    });
+  }
+
+  const moveToProductWrite = () => {
+    if (props.user.isLoggedIn) {
+      toggleExpand()
+      navigate('/product/write')
+    } else {
+      popLoginAlert()
+    }
+  }
+
+  const toggleWriteOpen = () => {
+    if (props.user.isLoggedIn) {
+      dispatch(setIsBoardWriteModal(true))
+      toggleExpand()
+    } else {
+      popLoginAlert()
+    }
+  }
+
   return (
     <aside className={`fixed bottom-[4rem] md:bottom-[2rem] right-[1.25rem] md:right-[1.25rem] z-[20]`}>
 
       {/* Aside 글쓰기 (로그인 해야 보임) */}
-      <div className={`${props.user.isLoggedIn ? 'flex' : 'hidden'} items-center relative mb-[0.5rem]`}>
+      <div className={`flex items-center relative mb-[0.5rem]`}>
         <div className={`flex absolute right-[0.5rem]`}>
-        <Link 
-            onClick={toggleExpand} 
-            to='product/write' 
+          <div 
+            onClick={moveToProductWrite} 
             className={getButtonClassNames(`
               ${isExpanded ? 'opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
               flex flex-all-center w-[2.75rem] h-[2.75rem] 
@@ -96,12 +127,9 @@ const Aside = (props: Props) => {
             >
               거래
             </span>
-          </Link>
+          </div>
           <div 
-            onClick={() => {
-              dispatch(setIsBoardWriteModal(true))
-              toggleExpand()
-            }}
+            onClick={toggleWriteOpen}
             className={getButtonClassNames(`
               ${isExpanded ? 'opacity-100 -translate-x-full' : 'opacity-0 -translate-x-0 pointer-events-none'}
               flex flex-all-center w-[2.75rem] h-[2.75rem] ml-[0.5rem]

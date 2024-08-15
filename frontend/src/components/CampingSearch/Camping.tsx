@@ -59,6 +59,7 @@ const Camping = (props: Props) => {
         border-light-border-1 bg-light-gray
         dark:border-dark-border-1 dark:bg-dark-gray
         border-b mb-[0.5rem]
+        cursor-pointer
       `}
     >
       {/* 캠핑이미지 */}
