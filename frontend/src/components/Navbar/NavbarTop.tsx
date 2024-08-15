@@ -26,6 +26,7 @@ const routeMapping = [
   { path: '/user/password/*', text: '비밀번호 찾기' },
   { path: '/community/:category', text: '커뮤니티' },
   { path: '/search/*', text: '검색' },
+  { path: '/search', text: '검색' },
   { path: '/landing', text: '설명' },
   { path: '/review', text: '리뷰' }
 ];
@@ -114,7 +115,7 @@ const NavbarTop = (props: Props) => {
       return regex.test(pathname);
     });
   
-    return route ? route.text : 'Unknown Page';
+    return route ? route.text : '';
   };
 
   useEffect(() => {

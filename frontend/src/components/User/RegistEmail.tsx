@@ -10,6 +10,8 @@ import { requestEmail, validateEmail, requestPhone, validatePhone } from '@servi
 
 import Timer from '@components/Public/Timer';
 
+import Swal from 'sweetalert2'
+
 const RegistEmail: React.FC = () => {
   const dispatch = useDispatch();
 
@@ -55,6 +57,20 @@ const RegistEmail: React.FC = () => {
     2: 'text-light-gray-2 dark:text-dark-gray-2'
   }
 
+  const successAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "success"
+    });
+  }
+
+  const errorAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "error"
+    });
+  }
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     dispatch(
@@ -73,10 +89,10 @@ const RegistEmail: React.FC = () => {
       dispatch(setIsLoading(true))
       const result = await requestPhone(inputPhoneValue)
       if (result?.data.status === 'C000') {
-        alert('SMS가 발송되었습니다.')
+        successAlert('SMS가 발송되었습니다.')
         setPhoneCertificationState(1)
       } else {
-        alert('다시 요청해주세요.')
+        errorAlert('다시 요청해주세요.')
       }
       dispatch(setIsLoading(false))
     } catch (error) {
@@ -89,7 +105,7 @@ const RegistEmail: React.FC = () => {
     try {
       const result = await validatePhone(inputPhoneValue, phoneValidateNumber)
       if (result?.data.status === 'C000') {
-        alert('정상적으로 인증되었습니다.');
+        successAlert('정상적으로 인증되었습니다.');
         setPhoneCertificationState(2);
         dispatch(
           registRequired({
@@ -98,7 +114,7 @@ const RegistEmail: React.FC = () => {
           })
         );
       } else {
-        alert('인증에 실패했습니다. 다시 요청해주세요.')
+        errorAlert('인증에 실패했습니다. 다시 요청해주세요.')
         setPhoneCertificationState(0)
       }
     } catch (error) {
@@ -118,12 +134,12 @@ const RegistEmail: React.FC = () => {
         dispatch(setIsLoading(true))
         const result = await requestEmail(inputEmailValue)
         if (result?.data.status === 'C000') {
-          alert('이메일이 발송되었습니다.')
+          successAlert('이메일이 발송되었습니다.')
           setEmailCertificationState(1)
         } else if (result?.data.status === 'U011') {
-          alert('이미 가입된 이메일입니다.')
+          errorAlert('이미 가입된 이메일입니다.')
         } else {
-          alert('다시 요청해주세요.')
+          errorAlert('다시 요청해주세요.')
         }
         dispatch(setIsLoading(false))
       } catch (error) {
@@ -144,7 +160,7 @@ const RegistEmail: React.FC = () => {
     try {
       const result = await validateEmail(inputEmailValue, emailValidateNumber)
       if (result?.data.status === 'C000') {
-        alert('정상적으로 인증되었습니다.');
+        successAlert('정상적으로 인증되었습니다.');
         setEmailCertificationState(2);
         dispatch(
           registRequired({
@@ -153,7 +169,7 @@ const RegistEmail: React.FC = () => {
           })
         );
       } else {
-        alert('인증에 실패했습니다. 다시 요청해주세요.')
+        errorAlert('인증에 실패했습니다. 다시 요청해주세요.')
         setEmailCertificationState(0)
       }
     } catch (error) {

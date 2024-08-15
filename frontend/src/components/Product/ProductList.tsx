@@ -302,7 +302,9 @@ const ProductList = () => {
       text: "로그인 후 사용가능합니다.",
       confirmButtonText: '확인'
     }).then(result => {
-      navigate('/user/login')
+      if (result.isConfirmed) {
+        navigate('/user/login')
+      }
     });
   }
 

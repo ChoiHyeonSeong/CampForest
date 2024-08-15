@@ -41,28 +41,38 @@ const BoardComment = (props: Props) => {
       text: "로그인 후 사용가능합니다.",
       confirmButtonText: '확인'
     }).then(result => {
-      navigate('/user/login')
+      if (result.isConfirmed) {
+        navigate('/user/login')
+      }
     });
   }
 
   const like = async () => {
-    try {
-      const result = await commentLike(props.comment.commentId);
-      setLiked(true);
-      setLikeCount(result);
-    } catch (error) {
-      console.log(error);
-    }
+    if (userstate.isLoggedIn) {
+      try {
+        const result = await commentLike(props.comment.commentId);
+        setLiked(true);
+        setLikeCount(result);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      popLoginAlert()
+    } 
   }
 
   const dislike = async () => {
-    try {
-      const result = await commentDislike(props.comment.commentId);
-      setLiked(false);
-      setLikeCount(result);
-    } catch (error) {
-      console.log(error);
-    };
+    if (userstate.isLoggedIn) {
+      try {
+        const result = await commentDislike(props.comment.commentId);
+        setLiked(false);
+        setLikeCount(result);
+      } catch (error) {
+        console.log(error);
+      };
+    } else {
+      popLoginAlert()
+    }
   }
 
   useEffect(() => {

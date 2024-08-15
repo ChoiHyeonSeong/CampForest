@@ -6,6 +6,7 @@ import Notification from '@components/Notification/Notification';
 import { logout } from '@services/authService';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   isOpen: boolean;
@@ -14,11 +15,13 @@ type Props = {
 
 
 const NavTopPushModal = (props: Props) => {
+  const navigate = useNavigate();
   const notificationState = useSelector((state: RootState) => state.notificationStore);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   
   const loggedout = async () => {
     await logout()
+    navigate('/')
     window.location.reload();
   }
 
