@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+
 };
 
 
@@ -57,8 +58,8 @@ const NavTopPushModal = (props: Props) => {
     >
       <div 
         className={`
-          ${isMobile ? 'w-full h-full' : 'absolute right-0 top-[3rem] w-[23rem] max-h-[40rem]'}
-          bg-light-white dark:bg-dark-white
+          ${isMobile ? 'w-full h-full bg-light-white dark:bg-dark-white' : 'absolute right-0 top-[3rem] w-[23rem] max-h-[40rem]'}
+          bg-light-gray dark:bg-dark-gray rounded scrollbar-hide
           overflow-scroll
           ${isMobile ? 'animate-slideIn' : ''}
         `}
