@@ -202,7 +202,7 @@ const BoardModify = (props: Props) => {
         >
           <div className={`flex flex-col flex-grow`}>
             <div className={`flex items-center mb-[1.5rem]`}>
-              <div>
+              {/* <div>
                 <ArrowLeftIcon 
                   onClick={() => props.modifyClose()} 
                   className={`
@@ -212,14 +212,13 @@ const BoardModify = (props: Props) => {
                     cursor-pointer
                   `}
                 />
-              </div>
+              </div> */}
               <div 
                 className={`
-                  ms-[1rem] md:ms-0
-                  font-bold text-2xl
+                  font-bold text-lg md:text-2xl
                 `}
               >
-                  커뮤니티 글 수정
+                  글수정하기
               </div>
               <div className={`ms-auto`}>
                 <CloseIcon 

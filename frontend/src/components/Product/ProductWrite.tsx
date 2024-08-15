@@ -183,7 +183,9 @@ const ProductWrite = () => {
       >
         <h4
           className='text-2xl font-bold'
-        >거래 글쓰기</h4>
+        >
+          글쓰기
+        </h4>
         <form 
           className={`mt-[2rem]`} 
           onSubmit={handleSubmit}
