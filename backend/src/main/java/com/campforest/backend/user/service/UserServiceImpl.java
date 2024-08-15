@@ -239,6 +239,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public boolean isFollowing(Long followerId, Long followeeId) {
+		return followRepository.countByFollowerIdAndFolloweeId(followerId, followeeId) > 0;
+	}
+
+	@Override
 	public List<SimilarDto> getPythonRecommendUsers(Long userId) {
 		RestTemplate restTemplate = new RestTemplate();
 		String pythonUrl = filterServerUrl + userId;

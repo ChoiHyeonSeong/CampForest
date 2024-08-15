@@ -45,6 +45,8 @@ public interface UserService {
 
 	List<ResponseFollowDTO> getFollowing(Long userId);
 
+	boolean isFollowing(Long followerId, Long followeeId);
+
 	List<SimilarDto> getPythonRecommendUsers(Long userId);
 
 	List<ResponseInfoDTO> findByNicknameContaining(String nickname, Long cursor, int limit);
