@@ -70,7 +70,7 @@ public class BoardController {
                     String fileUrl = s3Service.upload(file.getOriginalFilename(), file, extension);
                     imageUrls.add(fileUrl);
                 }
-            }
+            } 
             boardRequestDto.setImageUrls(imageUrls);
             boardRequestDto.setUserId(users.getUserId());
             boardService.writeBoard(boardRequestDto);
@@ -237,7 +237,7 @@ public class BoardController {
                 nowId = user.getUserId();
             }
 
-            SearchResult<BoardResponseDto> boardResponseDtos = boardService.getKeywordBoards(-1L, keyword, cursorId, size);
+            SearchResult<BoardResponseDto> boardResponseDtos = boardService.getKeywordBoards(nowId, keyword, cursorId, size);
             String message = authentication ==null  ? "비로그인 키워드별 게시글 목록 조회 성공하였습니다" : "키워드별 게시글 목록 조회 성공하였습니다";
             return ApiResponse.createSuccess(boardResponseDtos, message);
 
@@ -264,7 +264,7 @@ public class BoardController {
                 nowId = user.getUserId();
             }
 
-            SearchResult<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(-1L, category, cursorId, size);
+            SearchResult<BoardResponseDto> boardResponseDtos = boardService.getCategoryBoards(nowId, category, cursorId, size);
             String message = authentication ==null  ? "비로그인 카테고리별 게시글 목록 조회 성공하였습니다" : "카테고리별 게시글 목록 조회 성공하였습니다";
             return ApiResponse.createSuccess(boardResponseDtos, message);
 
