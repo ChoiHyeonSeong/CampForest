@@ -34,6 +34,7 @@ import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
 import com.campforest.backend.user.dto.response.ResponseInfoDTO;
+import com.campforest.backend.user.dto.response.SimilarDto;
 import com.campforest.backend.user.model.Follow;
 import com.campforest.backend.user.model.Interest;
 import com.campforest.backend.user.model.UserImage;
@@ -238,24 +239,35 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, Object> getPythonRecommendUsers(Long userId) {
+	public List<SimilarDto> getPythonRecommendUsers(Long userId) {
 		RestTemplate restTemplate = new RestTemplate();
 		String pythonUrl = filterServerUrl + userId;
 		ResponseEntity<List> pythonResponse = restTemplate.getForEntity(pythonUrl, List.class);
 
 		if (pythonResponse.getStatusCode() == HttpStatus.OK) {
 			List<Map<String, Object>> responseBody = pythonResponse.getBody();
-			Map<String, Object> similarUsers = new HashMap<>();
+			List<SimilarDto> similarUsers = new ArrayList<>();
 			if (responseBody != null) {
+				SimilarDto dto = null;
 				for (Map<String, Object> userMap : responseBody) {
-					String userIdFromResponse = String.valueOf(userMap.get("user_id"));
-					Object commonFollowsCount = userMap.get("common_follows_count");
-					similarUsers.put(userIdFromResponse, commonFollowsCount);
+					dto = new SimilarDto();
+					Long findUserId = Long.valueOf(String.valueOf(userMap.get("user_id")));
+					Long commonFollowsCount = Long.valueOf(String.valueOf(userMap.get("common_follows_count")));
+					Users user = userRepository.findByUserId(findUserId).orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
+					dto.setUserId(findUserId);
+					dto.setCommonFollowsCount(commonFollowsCount);
+					dto.setUserNickName(user.getNickname());
+					if (user.getUserImage() != null) {
+						dto.setUserProfileUrl(user.getUserImage().getImageUrl());
+					} else {
+						dto.setUserProfileUrl(null);
+					}
+					similarUsers.add(dto);
 				}
 			}
 			return similarUsers;
 		} else {
-			return new HashMap<>();
+			return new ArrayList<>();
 		}
 	}
 

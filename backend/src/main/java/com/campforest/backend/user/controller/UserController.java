@@ -43,6 +43,7 @@ import com.campforest.backend.user.dto.response.ResponseRefreshTokenDTO;
 import com.campforest.backend.user.dto.response.ResponseSearchDTO;
 import com.campforest.backend.user.dto.response.ResponseLoginDTO;
 import com.campforest.backend.user.dto.response.ResponseUserDTO;
+import com.campforest.backend.user.dto.response.SimilarDto;
 import com.campforest.backend.user.model.Users;
 import com.campforest.backend.user.service.TokenService;
 import com.campforest.backend.user.service.UserService;
@@ -114,7 +115,7 @@ public class UserController {
 				.orElseThrow(() -> new NotFoundException("유저 정보 조회 실패"));
 			ResponseLoginDTO responseDTO = ResponseLoginDTO.fromEntity(users);
 
-			Map<String, Object> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
+			List<SimilarDto> similarUsers = userService.getPythonRecommendUsers(users.getUserId());
 			responseDTO.setSimilarUsers(similarUsers);
 
 			return ApiResponse.createSuccess(responseDTO, "로그인이 완료되었습니다.");
