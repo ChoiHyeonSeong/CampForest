@@ -582,7 +582,7 @@ function CampingSearch() {
   return (
     <div className={`z-[30]`}>
       {/* 메인 화면 */}
-      <div className={`flex flex-col justify-center items-center min-h-screen`}>
+      <div className={`flex flex-col lg:justify-center items-center min-h-screen max-lg:mt-[1rem]`}>
         <h2 
           className={`
             max-lg:hidden
@@ -596,7 +596,6 @@ function CampingSearch() {
             flex flex-col lg:flex-row w-[100%] md:max-w-[48rem] lg:max-w-[80rem] lg:h-[42rem] p-[0.75rem] mx-[0.5rem]
             bg-light-white bg-opacity-80
             dark:bg-dark-white dark:bg-opacity-80
-
           `}
         >
               
@@ -613,7 +612,7 @@ function CampingSearch() {
             <div 
               onClick={moveMapCurrent}
               className='
-                flex flex-all-center absolute top-2 right-2 z-[0] size-[2.3rem] bg-light-white border-light-black border cursor-pointer rounded-full
+                flex flex-all-center absolute top-2 right-2 z-[0] size-[2.3rem] bg-light-white cursor-pointer rounded-full
               '
             >
               <LocationIcon className='fill-light-black size-[2rem]'/>

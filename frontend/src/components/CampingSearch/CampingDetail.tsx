@@ -117,9 +117,9 @@ const CampingDetail = (props: Props) => {
             {/* 캠핑장 태그 */}
             <div className={`flex flex-col md:flex-row`}>
               <div className={`w-[5rem] font-semibold`}>태그</div>
-              <div className={`flex flex-wrap space-x-[0.5rem] max-lg:mt-[0.25rem] ps-[0.25rem] md:ps-0`}>
+              <div className={`flex flex-wrap w-full max-lg:mt-[0.25rem] ps-[0.25rem]`}>
                 {tags.map((tag, index) => (
-                  <div key={index} className={`px-[0.25rem] py-[0.1rem] bg-light-bgbasic dark:bg-dark-bgbasic dark:text-dark-text-secondary text-sm rounded font-medium`}>
+                  <div key={index} className={`px-[0.25rem] py-[0.1rem] me-[0.5rem] mb-[0.5rem] bg-light-bgbasic dark:bg-dark-bgbasic dark:text-dark-text-secondary text-sm rounded font-medium`}>
                     {tag}
                   </div>
                 ))}
@@ -154,10 +154,10 @@ const CampingDetail = (props: Props) => {
           </div>
 
           {/* 날씨 확인 */}
-          <div className='mb-[1rem]'>
+          {/* <div className='mb-[1rem]'>
             <p className='font-semibold'>날씨<span>(최근 7일)</span></p>
             <div className='bg-slate-200 w-full h-[8rem]'></div>
-          </div>
+          </div> */}
 
           {/* 추가 링크 */}
           <div className='flex'>
