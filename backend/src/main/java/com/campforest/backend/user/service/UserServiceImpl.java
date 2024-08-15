@@ -75,6 +75,7 @@ public class UserServiceImpl implements UserService {
 			interests.add(interest);
 		}
 	    users.setInterests(interests);
+		users.setTemperature(300L);
 		Users savedUser = userRepository.save(users);
 
 		if(requestDTO.getProfileImage() != null) {
