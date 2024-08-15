@@ -45,9 +45,7 @@ public class RentService {
 		Long requesterId = rentRequestDto.getRequesterId();
 		Long receiverId = determineReceiverId(product, requesterId, rentRequestDto);
 
-		if(!validateDuplicateRequest(rentRequestDto,receiverId)){
-			return null;
-		}
+
 		result.put("requesterId", requesterId);
 		result.put("receiverId", receiverId);
 
@@ -255,23 +253,6 @@ public class RentService {
 		rentRepository.save(rents[0]);
 		rentRepository.save(rents[1]);
 		return result;
-	}
-
-	private boolean validateDuplicateRequest(RentRequestDto rentRequestDto, Long receiverId) {
-		List<Rent> rentList= rentRepository.findByProductIdAndRequesterId(rentRequestDto.getProductId(), rentRequestDto.getRequesterId());
-
-		for (Rent rent : rentList) {
-			if(!rent.getRentStatus().equals(TransactionStatus.REQUESTED)&&(!rent.getRentStatus().equals(TransactionStatus.RECEIVED))) {
-				return false;
-			}
-		}
-		List<Rent> rentList2= rentRepository.findByProductIdAndRequesterId(rentRequestDto.getProductId(),receiverId);
-		for (Rent rent : rentList2) {
-			if(!rent.getRentStatus().equals(TransactionStatus.REQUESTED)&&(!rent.getRentStatus().equals(TransactionStatus.RECEIVED))) {
-				return false;
-			}
-		}
-			return true;
 	}
 
 	private Rent buildRent(RentRequestDto rentRequestDto, Product product, Long requesterId, Long receiverId,
