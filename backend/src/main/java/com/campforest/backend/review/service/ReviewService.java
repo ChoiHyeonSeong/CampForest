@@ -82,8 +82,7 @@ public class ReviewService {
 
 		Review savedReview = reviewRepository.save(review);
 
-		adjustUserTemperature(reviewed, reviewRequestDto.getRating());
-		userRepository.save(reviewed);
+		adjustUserTemperatureAndSave(reviewed, reviewRequestDto.getRating());
 
 		List<ReviewImage> reviewImages = new ArrayList<>();
 		for (String imageUrl : reviewRequestDto.getReviewImageUrl()) {
@@ -124,7 +123,8 @@ public class ReviewService {
 		return reviewRepository.findById(reviewId);
 	}
 
-	private void adjustUserTemperature(Users reviewed, int rating) {
+	@Transactional
+	public void adjustUserTemperatureAndSave(Users reviewed, int rating) {
 		switch (rating) {
 			case 1:
 				reviewed.setTemperature(reviewed.getTemperature() - 20);
@@ -143,5 +143,7 @@ public class ReviewService {
 			default:
 				throw new IllegalArgumentException("유효하지 않은 평가 점수입니다.");
 		}
+
+		userRepository.save(reviewed);
 	}
 }
