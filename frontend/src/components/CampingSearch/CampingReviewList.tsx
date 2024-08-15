@@ -3,12 +3,14 @@ import CampingReview from './CampingReview'
 import { userGetProfile } from '@services/userService'
 import CampingReviewWrite from './CampingReviewWrite'
 import { AxiosResponse } from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 import { campingLoadReviews, campingReviewWrite, campingReviewDelete } from '@services/campingService'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@store/store'
 import { setIsLoading } from '@store/modalSlice'
 
+import Swal from 'sweetalert2'
 export type Review = {
   reviewId: number;
   content: string;
@@ -26,6 +28,7 @@ type Props = {
 }
 
 const CampingReviewList = (props: Props) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userStore)
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -72,9 +75,22 @@ const CampingReviewList = (props: Props) => {
     }
   }
 
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      if (result.isConfirmed) {
+        navigate('/user/login')
+      }
+    });
+  }
+
   const handleWriteClick = () => {
     if (!user.isLoggedIn) {
-      alert('로그인 후 리뷰를 작성할 수 있습니다.');
+      popLoginAlert()
       return;
     }
     reviewWriteRef.current?.scrollIntoView({ behavior: 'smooth' });

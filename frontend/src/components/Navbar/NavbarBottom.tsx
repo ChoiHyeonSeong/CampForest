@@ -10,6 +10,8 @@ import { ReactComponent as MyPageIcon } from '@assets/icons/mypage.svg'
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 
+import Swal from 'sweetalert2'
+
 type Props = {
   setIsExtendChatListOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleMenu: () => void;
@@ -20,12 +22,24 @@ const NavbarBottom = (props: Props) => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userStore);
   
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      if (result.isConfirmed) {
+        navigate('/user/login')
+      }
+    });
+  }
+
   const clickMyPage = () => {
     if (user.isLoggedIn) {
       navigate(`user/${user.userId}`);
     } else {
-      alert('로그인 해주세요.');
-      navigate('user/login');
+      popLoginAlert()
     }
   };
 

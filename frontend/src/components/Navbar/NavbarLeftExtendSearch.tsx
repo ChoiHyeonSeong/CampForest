@@ -6,6 +6,8 @@ import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 
 import eventEmitter from '@utils/eventEmitter';
 
+import Swal from 'sweetalert2'
+
 type Props = {
   isExtendMenuOpen: boolean;
   toggleExtendMenu: (param:string) => void;
@@ -22,6 +24,13 @@ const NavbarLeftExtendSearch = (props: Props) => {
     setRecentSearches(storedSearches);
   };
 
+  const errorAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "error"
+    });
+  }
+  
   useEffect(() => {
     loadRecentSearches();
   
@@ -64,7 +73,7 @@ const NavbarLeftExtendSearch = (props: Props) => {
       navigate(`/search?query=${encodeURIComponent(text)}`);
       props.closeMenu();
     } else {
-      alert('검색어는 두 글자 이상 입력해야 합니다.');
+      errorAlert('검색어는 두 글자 이상 입력해야 합니다.');
     }
   };
 

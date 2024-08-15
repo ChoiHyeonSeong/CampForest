@@ -4,6 +4,8 @@ import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 
 import { passwordChange } from '@services/authService';
 
+import Swal from 'sweetalert2'
+
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 }
@@ -27,6 +29,20 @@ const PasswordChange = () => {
     console.log(token)
     setToken(token)
   }, [])
+
+  const successAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "success"
+    });
+  }
+
+  const errorAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "error"
+    });
+  }
 
   // 비밃번호 확인 로직
   useEffect(() => {
@@ -72,10 +88,10 @@ const PasswordChange = () => {
         const result = await passwordChange(token, firstPassword)
         console.log(result)
         if (result?.data.status === 'C000') {
-          alert('비밀번호가 변경되었습니다.');
+          successAlert('비밀번호가 변경되었습니다.')
           navigate('/')
         } else {
-          alert('비밀번호 변경에 실패하였습니다. 다시 시도해주세요.')
+          errorAlert('비밀번호 변경에 실패하였습니다. 다시 시도해주세요.')
         };
       } catch (error) {
         console.log(error)

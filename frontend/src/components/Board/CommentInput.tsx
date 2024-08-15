@@ -8,7 +8,7 @@ type Props = {
 
 const CommentInput = (props: Props) => {
   const [comment, setComment] = useState('');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);  
 
   const handleAddComment = () => {
     if (comment.trim()) {

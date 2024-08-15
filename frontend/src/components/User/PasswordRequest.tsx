@@ -4,6 +4,8 @@ import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
 
 import { passwordChangeRequest } from '@services/authService';
 
+import Swal from 'sweetalert2'
+
 const PasswordRequest = () => {
   const [email, setEmail] = useState('')
   const [isEmailValid, setIsEmailValid] = useState(true);
@@ -13,6 +15,20 @@ const PasswordRequest = () => {
   const handleGoBack = () => {
     navigate(-1); // 이전 페이지로 이동
   };
+
+  const successAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "success"
+    });
+  }
+
+  const errorAlert = (message: string) => {
+    Swal.fire({
+      text: message,
+      icon: "error"
+    });
+  }
 
   const requestChange = async () => {
     const isValidEmail = (email: string): boolean => {
@@ -24,9 +40,9 @@ const PasswordRequest = () => {
         const result = await passwordChangeRequest(email)
         console.log(result)
         if (result?.data.status === 'C000') {
-          alert('비밀번호 변경 URL이 이메일로 발송되었습니다.');
+          successAlert('비밀번호 변경 URL이 이메일로 발송되었습니다.');
         } else {
-          alert('URL 발송이 실패했습니다. 다시 시도해주세요.')
+          errorAlert('URL 발송이 실패했습니다. 다시 시도해주세요.')
         };
       } catch (error) {
         console.log(error)

@@ -117,6 +117,19 @@ function Detail() {
     }
   }, [product]);
 
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      if (result.isConfirmed) {
+        navigate('/user/login')
+      }
+    });
+  }
+
   const fetchProduct = async () => {
     try {
       dispatch(setIsLoading(true))

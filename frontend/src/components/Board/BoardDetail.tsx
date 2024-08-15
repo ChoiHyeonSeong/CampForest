@@ -9,6 +9,8 @@ import { commentList, commentWrite } from '@services/commentService';
 import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
 import { RootState } from '@store/store';
 
+import Swal from 'sweetalert2'
+
 type Props = {
   selectedBoard: BoardType;
   detailClose: () => void;
@@ -27,6 +29,19 @@ const BoardDetail = (props: Props) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state: RootState) => state.userStore.isLoggedIn);
+
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      if (result.isConfirmed) {
+        navigate('/user/login')
+      }
+    });
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,7 +98,7 @@ const BoardDetail = (props: Props) => {
 
   const handleAddComment = async (comment: string) => {
     if (!isLoggedIn) {
-      alert('로그인 해주세요.');
+      popLoginAlert()
       return;
     }
     try {
