@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
 import { productList } from '@services/productService';
 import ProductCard, { ProductType } from '@components/Product/ProductCard';
@@ -13,6 +13,9 @@ import LocationDetailFilter from '@components/Public/LocationDetailFilter';
 import Pagination from '@components/Public/Pagination';
 
 import { ReactComponent as RefreshIcon } from '@assets/icons/refresh.svg';
+import { RootState } from '@store/store';
+
+import Swal from 'sweetalert2'
 
 type Option = {
   id: number;
@@ -55,6 +58,7 @@ type FilterCondition = {
 const ProductList = () => {
   // Redux
   const dispatch = useDispatch();
+  const userStore = useSelector((state: RootState) => state.userStore);
 
   // path 관리
   const params = useParams();
@@ -291,8 +295,27 @@ const ProductList = () => {
     }))
   }
 
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      navigate('/user/login')
+    });
+  }
+
+  const moveToProductWrite = () => {
+    if (userStore.isLoggedIn) {
+      navigate('/product/write')
+    } else {
+      popLoginAlert()
+    }
+  }
+
   return (
-    <div className={`flex justify-center items-center min-h-screen lg:mb-[1.5rem]`}>
+    <div className={`flex justify-center min-h-screen lg:mb-[1.5rem]`}>
       <div className={`w-full lg:w-[60rem] xl:w-[66rem] max-lg:p-[1.5rem]`}>
         <div className={`hidden md:flex items-center justify-between lg:mt-[3rem] mb-[2.5rem]`}>
           <div className={`flex font-medium md:text-[1.6rem]`}>
@@ -305,8 +328,8 @@ const ProductList = () => {
             </div>
             
           </div>
-          <Link
-            to="/product/write"
+          <div
+            onClick={moveToProductWrite}
             className={`
               px-[0.5rem] py-[0.25rem]
               bg-light-signature text-light-white
@@ -315,7 +338,7 @@ const ProductList = () => {
             `}
           >
             작성하기
-          </Link>
+          </div>
         </div>
 
         {/* 탭 */}

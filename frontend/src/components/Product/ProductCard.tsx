@@ -3,10 +3,15 @@ import React, { useEffect, useState } from 'react';
 // icon
 import { ReactComponent as EyeIcon } from '@assets/icons/eyes.svg'
 import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { priceComma } from '@utils/priceComma';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+
 import { productLike, productDislike } from '@services/productService';
+
+import Swal from 'sweetalert2'
 
 export type ProductType = {
   category: string;
@@ -31,29 +36,48 @@ type Props = {
 }
 
 const ProductCard = (props: Props) => {
+  const navigate = useNavigate()
+
   const [liked, setLiked] = useState(props.product.saved);
+  const userStore = useSelector((state: RootState) => state.userStore);
+
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      navigate('/user/login')
+    });
+  }
 
   const toggleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    try {
-      if (liked) {
-        const response = await productDislike(props.product.productId)
-        console.log(response)
-        setLiked(false)
-        if (props.likedTrigger) {
-          props.likedTrigger(false)
+    
+    if (userStore.isLoggedIn) {
+      try {
+        if (liked) {
+          const response = await productDislike(props.product.productId)
+          console.log(response)
+          setLiked(false)
+          if (props.likedTrigger) {
+            props.likedTrigger(false)
+          }
+        } else {
+          const response = await productLike(props.product.productId)
+          console.log(response)
+          setLiked(true)
+          if (props.likedTrigger) {
+            props.likedTrigger(true)
+          }
         }
-      } else {
-        const response = await productLike(props.product.productId)
-        console.log(response)
-        setLiked(true)
-        if (props.likedTrigger) {
-          props.likedTrigger(true)
-        }
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
+    } else {
+      popLoginAlert()
     }
   };
 

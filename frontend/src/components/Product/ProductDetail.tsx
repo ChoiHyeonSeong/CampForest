@@ -42,6 +42,8 @@ import { useWebSocket } from 'Context/WebSocketContext';
 import { setIsLoading } from '@store/modalSlice';
 import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
 
+import Swal from 'sweetalert2'
+
 type ImageType = {
   createdAt: string;
   imageUrl: string;
@@ -77,6 +79,7 @@ function Detail() {
   const loginUserId = Number(sessionStorage.getItem('userId'));
   const productId = Number(useParams().productId);
   const chatState = useSelector((state: RootState) => state.chatStore);
+  const userState = useSelector((state: RootState) => state.userStore);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [product, setProduct] = useState<ProductDetailType>({
     category: '',
@@ -116,6 +119,17 @@ function Detail() {
       setCategory(product.category);
     }
   }, [product]);
+
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      navigate('/user/login')
+    });
+  }
 
   const fetchProduct = async () => {
     try {
@@ -162,29 +176,34 @@ function Detail() {
 
   async function handleChatButton() {
     console.log(productId);
-    const matchedUser = chatState.transactionChatUserList.find(
-      (chatUser) => chatUser.productId === productId,
-    );
-    if (matchedUser) {
-      dispatch(setChatInProgressType('거래'));
-      dispatch(selectTransaction());
-      dispatch(setOtherId(matchedUser.otherUserId));
-      dispatch(setRoomId(matchedUser.roomId));
-      dispatch(setIsChatOpen(true));
-    } else {
-      try {
-        const roomId = await initTransactionChat(productId, product.userId);
-        await fetchTransactionChatList();
-        subscribeToChat(roomId);
 
+    if (userState.isLoggedIn) {
+      const matchedUser = chatState.transactionChatUserList.find(
+        (chatUser) => chatUser.productId === productId,
+      );
+      if (matchedUser) {
         dispatch(setChatInProgressType('거래'));
         dispatch(selectTransaction());
-        dispatch(setOtherId(product.userId));
+        dispatch(setOtherId(matchedUser.otherUserId));
+        dispatch(setRoomId(matchedUser.roomId));
         dispatch(setIsChatOpen(true));
-        dispatch(setRoomId(roomId));
-      } catch (error) {
-        console.error('Error in handleChatButton: ', error);
+      } else {
+        try {
+          const roomId = await initTransactionChat(productId, product.userId);
+          await fetchTransactionChatList();
+          subscribeToChat(roomId);
+  
+          dispatch(setChatInProgressType('거래'));
+          dispatch(selectTransaction());
+          dispatch(setOtherId(product.userId));
+          dispatch(setIsChatOpen(true));
+          dispatch(setRoomId(roomId));
+        } catch (error) {
+          console.error('Error in handleChatButton: ', error);
+        }
       }
+    } else {
+      popLoginAlert()
     }
   }
 
@@ -292,42 +311,47 @@ function Detail() {
   const toggleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    try {
-      if (product.saved) {
-        const response = await productDislike(product.productId)
-        console.log(response)
-        setProduct(prev => ({
-          ...prev,
-          saved: false,
-        }))
-
-        console.log(relatedProducts)
-        setRelatedProducts(prevProducts =>
-          prevProducts.map(eachProduct =>
-            eachProduct.productId === product.productId
-              ? { ...eachProduct, saved: false }
-              : eachProduct
-          )
-        );
-
-      } else {
-        const response = await productLike(product.productId)
-        console.log(response)
-        setProduct(prev => ({
-          ...prev,
-          saved: true,
-        }))
-
-        setRelatedProducts(prevProducts =>
-          prevProducts.map(eachProduct =>
-            eachProduct.productId === product.productId
-              ? { ...eachProduct, saved: true }
-              : eachProduct
-          )
-        );
+    
+    if (userState.isLoggedIn) {
+      try {
+        if (product.saved) {
+          const response = await productDislike(product.productId)
+          console.log(response)
+          setProduct(prev => ({
+            ...prev,
+            saved: false,
+          }))
+  
+          console.log(relatedProducts)
+          setRelatedProducts(prevProducts =>
+            prevProducts.map(eachProduct =>
+              eachProduct.productId === product.productId
+                ? { ...eachProduct, saved: false }
+                : eachProduct
+            )
+          );
+  
+        } else {
+          const response = await productLike(product.productId)
+          console.log(response)
+          setProduct(prev => ({
+            ...prev,
+            saved: true,
+          }))
+  
+          setRelatedProducts(prevProducts =>
+            prevProducts.map(eachProduct =>
+              eachProduct.productId === product.productId
+                ? { ...eachProduct, saved: true }
+                : eachProduct
+            )
+          );
+        }
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
+    } else {
+      popLoginAlert()
     }
   };
 
@@ -382,22 +406,18 @@ function Detail() {
       <div
         className={`
           w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6
-          bg-light-gray
-          dark:bg-dark-gray
         `}
       >
         {/* 상단 */}
         <div
           className={`
-            flex lg:flex-row flex-col relative w-full mb-[2rem] p-[0.75rem]
-            bg-light-gray
-            dark:bg-dark-gray
+            flex lg:flex-row flex-col relative w-full mb-[2rem] me-[0.75rem]
             overflow-hidden rounded
           `}
         >
           {/* 이미지 */}
           <Swiper
-            className="w-2/5 aspect-1 bg-black"
+            className="w-full md:w-3/5 lg:w-2/5 aspect-1 bg-black"
             style={{ maxWidth: `${windowWidth}px` }} // 브라우저 크기만큼 maxWidth 설정
             modules={[Navigation, Pagination]}
             spaceBetween={0}
@@ -484,12 +504,17 @@ function Detail() {
                   {product.productType === 'SALE' ? '판매' : '대여'}
                 </div>
               </div>
-              <MoreOptionsMenu
-                isUserPost={loginUserId === product.userId}
-                deleteId={0}
-                deleteFunction={deleteFunction}
-                updateFunction={updateFunction}
-              />
+              {userState.isLoggedIn && userState.userId === product.userId ? (
+                <MoreOptionsMenu
+                  isUserPost={loginUserId === product.userId}
+                  deleteId={0}
+                  deleteFunction={deleteFunction}
+                  updateFunction={updateFunction}
+                />
+              ) : (
+                <></>
+              )}
+              
             </div>
             <div className={`text-2xl font-medium`}>{product.productName}</div>
             <div
@@ -687,12 +712,12 @@ function Detail() {
           >
             <span className={`font-medium`}>{product.nickname}</span>의 다른 거래 상품 구경하기
           </div>
-          <div className={`w-full flex flex-wrap`}>
+          <div className={`w-full flex flex-wrap max-md:flex-col max-md:justify-center max-md:items-center`}>
             {/* <ProductCard /> */}
             {relatedProducts.map((product) => (
               <div
                 key={product.productId}
-                className='w-[20%]'
+                className='w-[80%] md:w-[20%]'
               >
                 <ProductCard 
                   product={product}

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { commentDelete, commentDislike, commentLike, commentList } from '@services/commentService';
 import defaultProfileImage from '@assets/images/basic_profile.png'
 import { formatTime } from '@utils/formatTime';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
+
+import Swal from 'sweetalert2'
 
 export type CommentType = {
   commentId: number;
@@ -25,11 +27,23 @@ type Props = {
 };
 
 const BoardComment = (props: Props) => {
-  const userId = useSelector((state: RootState) => state.userStore.userId);
+  const navigate = useNavigate();
+  const userstate = useSelector((state: RootState) => state.userStore);
   const [timeDifference, setTimeDifference] = useState('');
   const [liked, setLiked] = useState(props.comment.liked);
   const [likeCount, setLikeCount] = useState(props.comment.likeCount);
   const [visible, setVisible] = useState(true);
+
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      navigate('/user/login')
+    });
+  }
 
   const like = async () => {
     try {
@@ -106,7 +120,7 @@ const BoardComment = (props: Props) => {
             >
               {timeDifference}
             </div>
-            {props.comment.commentWriterId === userId &&
+            {props.comment.commentWriterId === userstate.userId &&
             <div 
               className='
                 ms-[0.5rem]

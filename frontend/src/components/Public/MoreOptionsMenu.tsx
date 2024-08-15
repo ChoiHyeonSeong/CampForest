@@ -36,25 +36,6 @@ const MoreOptionsMenu = (props: Props) => {
             font-medium text-left rounded-md border-[0.1rem]
           `}
         >
-          <div 
-            className={`
-              ${props.isUserPost ? 'hidden' : ''} w-full ps-[0.75rem]
-              border-light-border
-              dark:border-dark-border
-              border-b
-            `}
-          >
-            <button 
-              className={`
-                py-[0.75rem] 
-                hover:text-light-signature
-                dark:hover:text-dark-signature
-                text-base
-              `}
-            >
-              신고하기
-            </button>
-          </div>
           {props.isUserPost ? (
             <>
               <div 

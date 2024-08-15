@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import defaultImage from '@assets/images/basic_profile.png';
 import FireGif from '@assets/images/fire.gif';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 import FollowBtn from './FollowBtn';
 import ChatBtn from './ChatBtn';
+
+import Swal from 'sweetalert2'
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 type UserInfo = {
   nickname: string;
@@ -24,9 +29,22 @@ type Props = {
 }
 
 export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, fetchUserInfo }: Props) {
+  const navigate = useNavigate();
+  const userState = useSelector((state: RootState) => state.userStore);
   const userId = Number(useParams().userId);
   const [myPage, setMyPage] = useState(false);
   const loginUserId = Number(sessionStorage.getItem('userId'));
+
+  const popLoginAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "로그인 해주세요.",
+      text: "로그인 후 사용가능합니다.",
+      confirmButtonText: '확인'
+    }).then(result => {
+      navigate('/user/login')
+    });
+  }
 
   useEffect(() => {
     if (userId === loginUserId) {
@@ -87,7 +105,11 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
                 `}
               > 
                 <div className='me-[0.5rem] text-xs md:text-base'>
-                  <FollowBtn targetUserId={userId} callbackFunction={fetchUserInfo}/>
+                  {userState.isLoggedIn ? (
+                    <FollowBtn targetUserId={userId} callbackFunction={fetchUserInfo}/>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <div 
                   className={`
