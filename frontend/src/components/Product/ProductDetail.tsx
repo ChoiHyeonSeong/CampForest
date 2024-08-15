@@ -395,7 +395,7 @@ function Detail() {
     <div className={`flex justify-center mb-[5rem] `}>
       <div
         className={`
-          w-full lg:w-[60rem] xl:w-[66rem] mt-[1.5rem] max-lg:p-6 lg:pt-6
+          w-full lg:w-[60rem] xl:w-[66rem] lg:mt-[1.5rem] lg:pt-6
           bg-light-gray
           dark:bg-dark-gray
         `}
@@ -636,8 +636,8 @@ function Detail() {
                 <div
                   className={`
                     w-full lg:w-4/5 h-4
-                    bg-light-gray
-                    dark:bg-dark-gray
+                    bg-light-gray-2
+                    dark:bg-dark-gray-2
                     rounded-full
                   `}
                 >
@@ -706,7 +706,7 @@ function Detail() {
             {relatedProducts.map((product) => (
               <div
                 key={product.productId}
-                className='w-[20%]'
+                className='w-[50%] sm:w-1/3 md:w-1/4 lg:w-1/5'
               >
                 <ProductCard 
                   product={product}

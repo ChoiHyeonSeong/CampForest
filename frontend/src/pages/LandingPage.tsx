@@ -187,7 +187,6 @@ const LandingPage = () => {
                 </div>
               </div>
             </div>
-
             {/* 버튼 */}
             <div className='flex justify-center w-full mt-[2.5rem] lg:mt-[3rem] font-medium '>
               {/* 시작하기 */}

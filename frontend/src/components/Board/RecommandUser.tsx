@@ -17,7 +17,7 @@ const RecommandUser:React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={`relative h-[17.5rem] md:h-[15rem] p-[1rem] bg-light-gray dark:bg-dark-gray text-center rounded`}>
+    <div className={`relative h-[13.5rem] md:h-[15rem] p-[1rem] bg-light-gray dark:bg-dark-gray text-center rounded`}>
       <img
         src={props.userInfo.userProfileUrl ? props.userInfo.userProfileUrl : userImage} 
         alt="NoImg" 
@@ -30,7 +30,7 @@ const RecommandUser:React.FC<Props> = (props) => {
         onClick={() => handelUserClick()}
       />
       <div
-        className='font-medium cursor-pointer'
+        className='text-sm md:text-base font-semibold mb-[0.5rem] cursor-pointer'
         onClick={() => handelUserClick()}
       >
         {props.userInfo.userNickName}
