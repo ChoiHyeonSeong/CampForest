@@ -126,7 +126,6 @@ public class RentController {
 	@GetMapping("/public/rentable")
 	public ApiResponse<?> getRentable(@RequestParam Long productId,
 		@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate currentDate) {
-		System.out.println("들어오긴하나?");
 		try {
 			List<LocalDate> rentReservedDates = rentService.getRentAvailability(productId, currentDate);
 			return ApiResponse.createSuccess(rentReservedDates, "대여 가능 기간 조회 성공");
