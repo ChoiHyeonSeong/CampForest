@@ -50,7 +50,7 @@ def calculate_common_follows(user_id_1, user_id_2):
     return common_follows_count
 
 # 유사한 사용자 추천 함수
-def find_most_similar_users(user_id, interest_similarity_df, follow_similarity_df, follow_df, follow_weight=0.9, interest_weight=0.1, top_n=10):
+def find_most_similar_users(user_id, interest_similarity_df, follow_similarity_df, follow_df, follow_weight=0.9, interest_weight=0.1, top_n=12):
     if user_id not in interest_similarity_df.index:
         raise ValueError(f"User ID {user_id} not found in the interest data.")
 
