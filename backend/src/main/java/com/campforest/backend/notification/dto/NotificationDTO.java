@@ -32,7 +32,7 @@ public class NotificationDTO {
 		return NotificationDTO.builder()
 			.notificationId(notification.getNotificationId())
 			.senderProfileImage(imageUrl)
-			.senderNickname(notification.getSender().getUserName())
+			.senderNickname(notification.getSender().getNickname())
 			.senderId(notification.getSender().getUserId())
 			.notificationType(notification.getNotificationType())
 			.isRead(notification.isRead())
