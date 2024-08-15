@@ -63,7 +63,7 @@ export default function ProfileTop({ setIsModalOpen, setIsFollowing, userinfo, f
             src={userinfo?.profileImage ? userinfo.profileImage : defaultImage} 
             alt='' 
             className={`
-              absolute rounded-full w-full
+              absolute rounded-full w-full h-full
             `}
           />
         </div>
