@@ -41,6 +41,7 @@ import { useWebSocket } from 'Context/WebSocketContext';
 
 import { setIsLoading } from '@store/modalSlice';
 import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
+import Swal from 'sweetalert2';
 
 type ImageType = {
   createdAt: string;
