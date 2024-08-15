@@ -86,7 +86,7 @@ public class TransactionChatServiceImpl implements TransactionChatService {
 				} else if (!userId.equals(message.getReceiverId())) {
 					return !message.isDeletedForReceiver();
 				}
-				return false;
+				return true;
 			})
 			.map(message -> {
 				if (message.getMessageType() == MessageType.MESSAGE) {
