@@ -1,5 +1,6 @@
 package com.campforest.backend.user.dto.response;
 
+import java.util.List;
 import java.util.Map;
 
 import com.campforest.backend.user.model.Users;
@@ -17,7 +18,7 @@ public class ResponseLoginDTO {
 	private String nickname;
 	private String profileImage;
 	@Setter
-	private Map<String, Object> similarUsers;
+	private List<SimilarDto> similarUsers;
 
 	public static ResponseLoginDTO fromEntity(Users user) {
 		String imageUrl =

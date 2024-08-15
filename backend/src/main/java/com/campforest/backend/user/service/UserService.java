@@ -13,6 +13,7 @@ import com.campforest.backend.user.dto.request.RequestRegisterDTO;
 import com.campforest.backend.user.dto.request.RequestUpdateDTO;
 import com.campforest.backend.user.dto.response.ResponseFollowDTO;
 import com.campforest.backend.user.dto.response.ResponseInfoDTO;
+import com.campforest.backend.user.dto.response.SimilarDto;
 import com.campforest.backend.user.model.Users;
 
 public interface UserService {
@@ -44,7 +45,7 @@ public interface UserService {
 
 	List<ResponseFollowDTO> getFollowing(Long userId);
 
-	Map<String, Object> getPythonRecommendUsers(Long userId);
+	List<SimilarDto> getPythonRecommendUsers(Long userId);
 
 	List<ResponseInfoDTO> findByNicknameContaining(String nickname, Long cursor, int limit);
 
