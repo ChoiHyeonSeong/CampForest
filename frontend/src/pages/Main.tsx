@@ -9,6 +9,7 @@ import { setUser, SimilarUserType } from '@store/userSlice';
 
 import { getOAuthAccessToken } from '@services/authService';
 
+import StarLight from '@components/Public/StarLight';
 import BoardDetail from '@components/Board/BoardDetail';
 import BoardModify from '@components/Board/BoardModify';
 import Recommand from '@components/Board/Recommand';
@@ -21,6 +22,8 @@ function Main() {
   const query = useQuery();
   const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
   const dispatch = useDispatch();
+  const isDark = useSelector((state: RootState) => state.themeStore.isDark);
+
   const [ref, inView] = useInView();
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
@@ -179,6 +182,9 @@ function Main() {
 
   return (
     <div>
+      {/* 배경 스타라이트 - 다크모드일 때만 렌더링 */}
+      {isDark && <StarLight />}
+
       {/* 디테일 모달 */}
       {
         isDetailOpen && selectedDetail !== null ? (

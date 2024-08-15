@@ -30,7 +30,7 @@ const ProfileModal = (props: Props) => {
     <div 
       className={`
         ${props.isOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full opacity-0 pointer-events-none'}
-        fixed right-[1rem] top-[3rem] z-[100] w-[16rem]
+        fixed right-[1rem] top-[4rem] lg:right-[1rem] lg:top-[3rem] z-[100] w-[16rem]
         bg-light-white
         dark:bg-dark-white
         rounded-lg shadow-lg transition-all duration-300 ease-out

@@ -573,14 +573,13 @@ function Detail() {
         <div
           className={`
             flex flex-col lg:flex-row justify-between mt-[2.5rem] mb-[3.5rem] px-[1rem] py-[1.5rem]
-            
             rounded-sm 
           `}
         >
           {/* 판매자 정보 */}
           <div className={`flex flex-col w-full lg:w-[calc(100%-24.5rem)] max-lg:mb-8`}>
             <div className={`w-full mb-[0.75rem]`}>
-              <span className={`font-medium`}>{product.nickname}</span>의 제품
+              <span onClick={() => navigate(`/user/${product.userId}`)} className={`font-medium cursor-pointer`}>{product.nickname}</span> 님의 제품
             </div>
             <div className={`flex w-full`}>
               <div
@@ -592,10 +591,11 @@ function Detail() {
                 `}
               >
                 <img 
+                  onClick={() => navigate(`/user/${product.userId}`)}
                   src={product.userImage !== null ? product.userImage.imageUrl : defaultImage} 
                   alt={''} 
                   className={`
-                    rounded-full w-full h-full
+                    rounded-full w-full h-full cursor-pointer
                   `}
                 />
               </div>
@@ -641,7 +641,7 @@ function Detail() {
                     <img 
                       src={FireGif} 
                       alt="불꽃" 
-                      className={`absolute -right-[4rem] -top-[4.5rem] z-[0] w-[128px] min-w-[128px] h-[160px] min-h-[160px]`}
+                      className={`absolute -right-[4rem] -top-[4.5rem] z-[0] w-[128px] min-w-[128px] h-[160px] min-h-[160px] no-drag`}
                     />
                   </div>
                 </div>
