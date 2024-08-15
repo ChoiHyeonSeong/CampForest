@@ -3,6 +3,7 @@ import React from 'react'
 import userImage from '@assets/images/basic_profile.png'
 import { SimilarUserType } from '@store/userSlice'
 import { useNavigate } from 'react-router-dom';
+import FollowBtn from '@components/User/FollowBtn';
 
 type Props = {
   userInfo: SimilarUserType;
@@ -46,12 +47,10 @@ const RecommandUser:React.FC<Props> = (props) => {
       <button 
         className={`
           absolute bottom-[1rem] left-0 w-[75%] mx-[12.5%] py-[0.25rem]
-          bg-light-signature text-light-white
-          dark:bg-dark-signature dark:text-dark-white
           text-xs rounded-md
         `}
       >
-        팔로우
+        <FollowBtn targetUserId={props.userInfo.userId}/>
       </button>
     </div>
   )
