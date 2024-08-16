@@ -20,7 +20,9 @@ type ProductRegistDto = {
   location: string,
   productType: string,
   category: string,
-  deposit: number | undefined
+  deposit: number | undefined,
+  latitude: number,
+  longitude: number
 }
 
 const categories: Option[] = [
@@ -36,6 +38,7 @@ const categories: Option[] = [
   { id: 10, name: '기타' },
 ];
 
+
 const ProductWrite = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -46,7 +49,7 @@ const ProductWrite = () => {
   const [productImages, setProductImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [loadMap, setLoadMap] = useState(false);
-  const buttons = ['대여', '판매', '나눔'];
+  const buttons = ['대여', '판매'];
 
   const [formData, setFormData]= useState<ProductRegistDto>({
     productName: '',
@@ -56,6 +59,8 @@ const ProductWrite = () => {
     productType: '',
     category: '',
     deposit: undefined,
+    latitude: 0,
+    longitude: 0
   })
 
   const handleToggle = (dropdown: string) => {
@@ -63,6 +68,7 @@ const ProductWrite = () => {
   };
 
   const handleCategorySelect = (option: Option) => {
+    console.log(option)
     setSelectedCategory(option);
   };
 
@@ -78,10 +84,12 @@ const ProductWrite = () => {
     }));
   };
 
-  const handleLocation = (dongName: string) => {
+  const handleLocation = (dongName: string, latitude: number, longitude: number) => {
     setFormData(prevData => ({
       ...prevData,
-      location: dongName
+      location: dongName,
+      latitude: latitude,
+      longitude: longitude
     }));
   };
 
@@ -96,19 +104,32 @@ const ProductWrite = () => {
       return;
     }
     
+    let category: string;
+
+    if (selectedCategory.name === '침낭/매트') {
+      category = '침낭'
+    } else if (selectedCategory.name === '코펠/식기') {
+      category = '코펠'
+    } else if (selectedCategory.name === '버너/화로') {
+      category = '버너'
+    } else {
+      category = selectedCategory.name
+    }
+
     const submitData = {
       ...formData,
       productType: selectedButton === '대여' ? 'RENT' : 'SALE',
-      category: selectedCategory.name,
+      category: category,
     };
 
     console.log(submitData);
     
     try { 
       dispatch(setIsLoading(true));
+      console.log(submitData)
       await productWrite(submitData, productImages);
       dispatch(setIsLoading(false));
-      navigate('/product/list');
+      navigate('/product/list/all');
     } catch (error) {
       console.error('Failed to Product Write: ', error);
       dispatch(setIsLoading(false));
@@ -151,8 +172,20 @@ const ProductWrite = () => {
   }
 
   return (
-    <div className={`flex justify-center`}>
-      <div className={`w-[40rem]`}>
+    <div className={`flex justify-center min-h-screen`}>
+      <div
+        className={`
+          w-full md:w-[40rem] md:my-[1.5rem] p-[1.5rem]
+          bg-light-white bg-opacity-80
+          dark:bg-dark-white dark:bg-opacity-80
+          rounded
+        `}
+      >
+        <h4
+          className='text-2xl font-bold'
+        >
+          글쓰기
+        </h4>
         <form 
           className={`mt-[2rem]`} 
           onSubmit={handleSubmit}
@@ -168,8 +201,8 @@ const ProductWrite = () => {
                 placeholder='제목을 입력하세요.'
                 className={`
                   w-[31rem] me-[2rem] px-[0.5rem] py-[0.25rem]
-                  bg-light-white border-light-border
-                  dark:bg-dark-white dark:border-dark-border
+                  bg-light-white border-light-border placeholder:text-light-text-secondary
+                  dark:bg-dark-white dark:border-dark-border dark:placeholder:text-dark-text-secondary
                   border-b focus:outline-none
                 `}
               />
@@ -248,11 +281,11 @@ const ProductWrite = () => {
               onChange={handleInputChange}
               className={`
                 w-full min-h-[10rem] p-[1rem]
-                bg-light-white border-light-border-3
-                dark:bg-dark-white dark:border-dark-border-3
-                resize-none border focus:outline-none
+                bg-light-white placeholder:text-light-text-secondary
+                dark:bg-dark-white dark:placeholder:text-dark-text-secondary
+                resize-none  focus:outline-none
               `}
-              placeholder='사기치면 손모가지 날아갑니다.&#13;&#10;귀찮은데잉'
+              placeholder='상품에 대한 설명을 작성해주세요. &#13;&#10;상세한 설명과 사진은 판매 및 대여에 도움이 됩니다.'
             />
             {errors.productContent && 
               <p 
@@ -270,7 +303,7 @@ const ProductWrite = () => {
           <div className={`mb-[1.5rem]`}>
             <div 
               className={`
-                my-[0.25rem] 
+                my-[0.5rem] 
                 font-medium
               `}
             >
@@ -281,10 +314,10 @@ const ProductWrite = () => {
                 <div 
                   key={button} 
                   className={`
-                    ${selectedButton === button ? 'bg-light-signature dark:bg-dark-signature text-light-white dark:text-dark-white' : ''}
+                    ${selectedButton === button ? 'bg-light-signature dark:bg-dark-signature text-white' : ''}
                     me-[1rem] px-[2rem] py-[0.15rem]
-                    border-light-border
-                    dark:border-dark-border
+                    border-light-border-2 
+                    dark:border-dark-border-2
                     border cursor-pointer
                   `}
                   onClick={() => handleButtonClick(button)}>{button}</div>
@@ -308,20 +341,20 @@ const ProductWrite = () => {
                 금액
               </div>
               <div className={`flex flex-col`}>
-                <div className={`flex`}>
+                <div className={`flex items-center`}>
                   <input
                     type='number'
                     name='productPrice'
                     value={formData.productPrice || ""}
                     onChange={handleInputChange}
                     className={`
-                      w-[90%] me-[0.75rem] px-[0.5rem] 
+                      w-[90%] me-[0.75rem] px-[0.5rem] py-[0.2rem]
                       bg-light-white border-light-border
                       dark:bg-dark-white dark:border-dark-border
                       text-end border-b focus:outline-none
                     `} 
                   />
-                  <div>
+                  <div className='text-lg'>
                     원
                   </div>
                 </div>
@@ -353,13 +386,13 @@ const ProductWrite = () => {
                   value={formData.deposit || ""}
                   onChange={handleInputChange}
                   className={`
-                    w-[90%] me-[0.75rem] px-[0.5rem]
-                    bg-light-white border-light-border
-                    dark:bg-dark-white dark:border-dark-border
+                    w-[90%] me-[0.75rem] px-[0.5rem] py-[0.2rem]
+                    bg-light-white border-light-border placeholder:text-light-text-secondary
+                    dark:bg-dark-white dark:border-dark-border dark:placeholder:text-dark-text-secondary
                     text-end border-b focus:outline-none
                   `}
                 />
-                <div>
+                <div className='text-lg'>
                   원
                 </div>
               </div>
@@ -379,16 +412,19 @@ const ProductWrite = () => {
               onClick={() => openMap(true)} 
               className={`
                 flex w-1/2 px-[0.5rem] py-[0.25rem] 
-                border-light-border
-                dark:border-dark-border
-                border
+                bg-light-white
+                dark:bg-dark-white
+                cursor-pointer
               `}
             >
-              <LocationIcon 
-                fill='333333' 
-                className={`me-[0.5rem]`}
+              <LocationIcon
+                className={`
+                  size-[1.25rem] me-[0.5rem]
+                  fill-light-border-icon
+                  dark:fill-dark-border-icon
+                `}
               />
-              <div className={`${formData.location === '장소를 선택하세요.' ? 'text-[#999999]' : 'text-black'}`}>
+              <div className={`${formData.location === '장소를 선택하세요.' ? 'text-light-text-secondary dark:text-dark-text-secondary' : 'text-light-text-secondary dark:text-dark-text-secondary'} cursor-pointer`}>
                 {formData.location}
               </div>
             </div>
@@ -403,14 +439,14 @@ const ProductWrite = () => {
               {errors.location}
             </p>}
           </div>
-          <div className={`text-end`}>
+          <div className={`text-center`}>
             <button 
               type='submit' 
               className={`
-                w-1/2 mb-[2rem] py-[0.35rem]
-                bg-light-black text-light-white
-                dark:bg-dark-black dark:text-dark-white
-                text-center
+                w-full md:w-1/2 mb-[2rem] py-[0.35rem]
+                bg-light-black text-light-white hover:bg-light-signature
+                dark:bg-dark-black dark:text-dark-white hover:dark:bg-dark-signature
+                transition-all duration-150
               `}
             >
               작성 완료
@@ -425,7 +461,9 @@ const ProductWrite = () => {
             -translate-y-1/2 -translate-x-1/2
           `}
         >
-      <ProductMap 
+      <ProductMap
+        situation={'productWrite'}
+        isPersonal={false}
         handleLocation={handleLocation} 
         openMap={openMap} />
       </div>}

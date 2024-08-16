@@ -1,52 +1,51 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import RecommandUser from './RecommandUser';
-import RecommandTransaction from './RecommandTransaction';
-import { useSelector } from 'react-redux';
-import { RootState } from '@store/store';
+import { SimilarUserType } from '@store/userSlice';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 const Recommand = () => {
-  const similarUsers = useSelector((state: RootState) => state.userStore).similarUsers;
-  useEffect(() => {
-    console.log(similarUsers);
-  }, [])
+  const similarUsers = JSON.parse(sessionStorage.getItem('similarUsers')!)
   return (
-    <div 
-      className={`
-        hidden xl:sticky lg:top-[13rem] xl:ms-[3rem] p-[2rem]
-        border-light-border
-        dark:border-dark-border
-        border rounded-md
-      `}
-    >
-      {/* 사용자 추천 */}
-      <div 
+    <div>
+      {similarUsers && (<div 
         className={`
-          pb-[1rem]
-          border-light-border
-          dark:border-dark-border
-          border-b
+          mt-[1rem] p-[1rem]
+          border-light-border bg-light-white bg-opacity-60
+          dark:border-dark-border dark:bg-dark-white dark:bg-opacity-60
+          border rounded-md
         `}
       >
-        <div className={`mb-[0.5rem]`}>
-          사용자 추천
+        {/* 사용자 추천 */}
+        <div 
+          className={`
+            border-light-border
+            dark:border-dark-border
+          `}
+        >
+          <div className={`ms-[0.5rem] mb-[0.5rem] font-semibold`}>
+            사용자 추천
+          </div>
+          <Swiper
+            spaceBetween={8}
+            breakpoints={{
+              0: {
+                slidesPerView: 3,
+              },
+              768: {
+                slidesPerView: 4,
+              },
+            }}
+            className="mySwiper"
+          >
+            {similarUsers.map((similarUser: SimilarUserType, index: number) => (
+              <SwiperSlide key={index}>
+                <RecommandUser userInfo={similarUser} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
-        <div className={`space-y-[1rem]`}>
-          {similarUsers.map((similarUser, index) => (
-            <RecommandUser key={index} />
-          ))}
-        </div>
-      </div>
-      {/* 인기 거래 글 */}
-      <div className={`mt-[1rem]`}>
-        <div className={`mb-[0.5rem]`}>
-          인기 거래 글
-        </div>
-        <div className={`space-y-[1rem]`}>
-          <RecommandTransaction />
-          <RecommandTransaction />
-          <RecommandTransaction />
-        </div>
-      </div>
+      </div>)}
     </div>
   )
 }

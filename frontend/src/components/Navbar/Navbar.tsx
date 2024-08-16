@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { RootState } from '@store/store';
-import { setUser, clearUser } from '@store/userSlice';
+import { setUser, clearUser, SimilarUserType } from '@store/userSlice';
 
 import NavbarTop from './NavbarTop';
 import NavbarLeft from './NavbarLeft';
@@ -10,12 +11,15 @@ import NavbarLeftExtendCommunity from './NavbarLeftExtendCommunity';
 import NavbarLeftExtendChatList from './NavbarLeftExtendChat';
 import NavbarLeftExtendNotification from './NavbarLeftExtendNotification'
 import NavbarLeftExtendSearch from './NavbarLeftExtendSearch'
-import Chat from '@components/Chat/Chat';
 import NavbarBottom from './NavbarBottom';
 import Aside from './Aside';
+import { setIsChatOpen } from '@store/chatSlice';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const currentLoc = useLocation();
   const user = useSelector((state: RootState) => state.userStore);
+  const chatState = useSelector((state: RootState) => state.chatStore);
   const dispatch = useDispatch();
 
   // Menu 상태 관리 (메뉴 열기, 닫기)
@@ -48,6 +52,7 @@ const Navbar = () => {
     setIsExtendChatListOpen(false);
     setIsExtendNotificationOpen(false);
     setIsExtendSearchOpen(false);
+    dispatch(setIsChatOpen(false));
   }
 
   const toggleExtendMenu = (selectedCategory: string): void => {
@@ -60,6 +65,7 @@ const Navbar = () => {
         setIsExtendNotificationOpen(false)
         setIsExtendSearchOpen(false)
         setIsExtendRentalOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     } else if (selectedCategory === 'community') {
       if (isExtendCommunityOpen) {
@@ -70,10 +76,12 @@ const Navbar = () => {
         setIsExtendNotificationOpen(false)
         setIsExtendSearchOpen(false)
         setisExtendCommunityOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     } else if (selectedCategory === 'chat') {
       if (isExtendChatListOpen) {
         setIsExtendChatListOpen(false)
+        dispatch(setIsChatOpen(false));
       } else {
         setIsExtendRentalOpen(false)
         setisExtendCommunityOpen(false)
@@ -90,6 +98,7 @@ const Navbar = () => {
         setIsExtendChatListOpen(false)
         setIsExtendSearchOpen(false)
         setIsExtendNotificationOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     } else if (selectedCategory === 'search') {
       if (isExtendSearchOpen) {
@@ -100,13 +109,30 @@ const Navbar = () => {
         setIsExtendChatListOpen(false)
         setIsExtendNotificationOpen(false)
         setIsExtendSearchOpen(true)
+        dispatch(setIsChatOpen(false));
       }
     };
   };
 
   useEffect(() => {
+    if(chatState.isChatOpen && !isExtendChatListOpen) {
+      toggleExtendMenu('chat');
+    }
+  }, [chatState.isChatOpen])
+
+  useEffect(() => {
+    const isLandingSee = localStorage.getItem("isLandingSee");
+    if (isLandingSee === null || isLandingSee === "false") {
+      navigate("/Landing");
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(123)
+
     // 화면 줄어들면 Menu 강제로 닫기
     const handleAllMenu = () => {
+      dispatch(setIsChatOpen(false));
       setIsMenuOpen(false);
       setIsExtendRentalOpen(false);
       setisExtendCommunityOpen(false);
@@ -122,29 +148,27 @@ const Navbar = () => {
     window.addEventListener('resize', handleAllMenu);
 
     const storedIsLoggedIn = sessionStorage.getItem('isLoggedIn');
-    const similarUsersString = sessionStorage.getItem('similarUser');
-    let similarUsers: number[] = [];
+    const similarUsersString = sessionStorage.getItem('similarUsers');
+    let similarUsers: SimilarUserType[] = [];
     if (similarUsersString) {
       try {
-        similarUsers = JSON.parse(similarUsersString).map(Number);
+        similarUsers = JSON.parse(similarUsersString);
       } catch (error) {
         console.error('Failed to parse similarUsers: ', error);
       }
-    } 
+    }
+
     if (storedIsLoggedIn === 'true') {
       const storageObj = {
         userId: Number(sessionStorage.getItem('userId')),
         nickname: sessionStorage.getItem('nickname') || '',
         profileImage: sessionStorage.getItem('profileImage') || '',
-        similarUsers: similarUsers,
+        similarUsers: similarUsers || {test: '123'},
       }
       dispatch(setUser(storageObj));
     } else {
       dispatch(clearUser());
     }
-    
-    console.log('페이지 접속')
-  // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, []);
 
   useEffect(() => {
@@ -158,40 +182,6 @@ const Navbar = () => {
       setIsMenuBlocked(false);
     }
   };
-
-  // 스크롤 방지
-  const currentScrollY = useRef(0);
-  const isAnyModalOpened = useRef(false);
-  useEffect(() => {
-    // 스크롤 방지는 media width가 1024 이하일때만
-    const lgQuery = window.matchMedia('(min-width: 1024px)');
-    const contentBox = document.querySelector('#contentBox') as HTMLElement;
-
-    if (isMenuOpen) {
-      if (!contentBox.style.top) {
-        currentScrollY.current = window.scrollY;
-        isAnyModalOpened.current = false
-      } else {
-        currentScrollY.current = parseInt(contentBox.style.top.replace('-', '').replace('px', ''));
-        isAnyModalOpened.current = true
-      };
-    };
-
-    if (isMenuOpen && !lgQuery.matches) {
-      // 모달이 열릴 때 스크롤 방지
-      contentBox.classList.add('no-scroll');
-      contentBox.style.top = `-${currentScrollY.current}px`;
-    } else if (!isMenuOpen && !lgQuery.matches) {
-        // 모달이 닫힐 때 스크롤 허용
-        const scrollY = parseInt(contentBox.style.top || '0') * -1;
-        if (!isAnyModalOpened.current) {
-          contentBox.classList.remove('no-scroll');
-          contentBox.style.top = '';
-        };
-      window.scrollTo(0, scrollY || currentScrollY.current);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [isMenuOpen]);
 
   return (
     <div>
@@ -212,12 +202,15 @@ const Navbar = () => {
         <NavbarLeftExtendRental isExtendMenuOpen={isExtendRentalOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
         <NavbarLeftExtendCommunity isExtendMenuOpen={isExtendCommunityOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
         <NavbarLeftExtendChatList isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
-        <Chat isExtendMenuOpen={isExtendChatListOpen} toggleExtendMenu={toggleExtendMenu} />
         <NavbarLeftExtendNotification isExtendMenuOpen={isExtendNotificationOpen} toggleExtendMenu={toggleExtendMenu} />
-        <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} />
+        <NavbarLeftExtendSearch isExtendMenuOpen={isExtendSearchOpen} toggleExtendMenu={toggleExtendMenu} closeMenu={closeMenu}/>
       </div>
       {/* 모바일용 하단 네비게이션바 */}
-      <NavbarBottom toggleMenu={toggleMenu} closeMenu={closeMenu}/>
+      <NavbarBottom 
+      setIsExtendChatListOpen={setIsExtendChatListOpen}
+        toggleMenu={toggleMenu} 
+        closeMenu={closeMenu}
+      />
 
       {/* 우측 하단 고정사이드바 */}
       <Aside user={user} />
@@ -226,9 +219,8 @@ const Navbar = () => {
       <div
         onClick={closeMenu}
         className={`
-          ${isMenuOpen ? 'block lg:hidden fixed inset-0 bg-light-black dark:bg-dark-black' : 'hidden bg-none'}
-          z-[30]
-          bg-opacity-80  
+          ${isMenuOpen ? 'block lg:hidden fixed inset-0 bg-light-black bg-opacity-80' : 'hidden bg-none'}
+          z-[120] md:z-[30]
         `}
       >
       </div>

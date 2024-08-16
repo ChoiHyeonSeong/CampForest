@@ -3,9 +3,13 @@ import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
 import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
 import { useDispatch, useSelector } from 'react-redux'
-import { setIsBoardWriteModal } from '@store/modalSlice'
+import { setIsBoardWriteModal, setIsLoading } from '@store/modalSlice'
 import { boardWrite } from '@services/boardService'
 import { RootState } from '@store/store'
+
+import MultiImageUpload from '@components/Public/MultiImageUpload'
+
+import { throttle } from '@utils/throttle'
 
 type CategoryType = {
   text: string;
@@ -18,34 +22,58 @@ type BoardOpenType = {
 }
 
 const BoardWrite = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const user = useSelector((state: RootState) => state.userStore);
   const isBoardWriteModal = useSelector((state: RootState) => state.modalStore.isBoardWriteModal)
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
-  const [category, setCategory] = useState<CategoryType>({text: '캠핑장 후기', value: 'place'});
+  const [category, setCategory] = useState<CategoryType>({text: '장비 후기', value: 'equipment'});
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState<boolean>(false);
   const [boardOpen, setBoardOpen] = useState<boolean>(true);
   const [isBoardOpenDropdownOpen, setIsBoardOpenDropdownOpen] = useState<boolean>(false);
-  const [uploadedImage, setUploadedImage] = useState<string[]>([])
+  const [boardImages, setBoardImages] = useState<File[]>([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch()
+
+  // 안드로이드 뒤로가기 버튼 이벤트 핸들러
+  const handleBackButton = (event: PopStateEvent) => {
+    event.preventDefault();
+    dispatch(setIsBoardWriteModal(false));
+  };
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 이벤트 리스너 추가
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handleBackButton);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, []);
+
   const handleWrite = async (e: React.FormEvent) => {
     e.preventDefault(); 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
-      await boardWrite(user.userId, title, content, category.value, boardOpen, uploadedImage);
+      dispatch(setIsLoading(true))
+      const response = await boardWrite(user.userId, title, content, category.value, boardOpen, boardImages);
       dispatch(setIsBoardWriteModal(false));
+      dispatch(setIsLoading(false))
+      window.location.reload();
     } catch (error) {
+      dispatch(setIsLoading(false))
       console.log(error)
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
+  // 3초 쓰로틀링
+  const throttledHandleWrite = throttle(handleWrite, 3000)
+
   const categories: CategoryType[] = [
-    {
-      text: '캠핑장 후기',
-      value: 'place'
-    },
     {
       text: '장비 후기',
       value: 'equipment'
@@ -98,31 +126,19 @@ const BoardWrite = () => {
     setIsBoardOpenDropdownOpen(false);
   } 
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setUploadedImage((prevImages: string[]) => [...prevImages, base64String]);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImagesChange = (images: File[]) => {
+    console.log(images)
+    setBoardImages(images);
   };
-
-  const handleRemoveImage = (index: number) => {
-    setUploadedImage(prev => prev.filter((_, i) => i !== index));
-  };
-
 
   const formClear = () => {
     setTitle('');
     setContent('');
-    setCategory({text: '캠핑장 후기', value: 'place'});
+    setCategory({text: '장비 후기', value: 'equipment'});
     setIsCategoryDropdownOpen(false);
     setBoardOpen(true);
     setIsBoardOpenDropdownOpen(false);
-    setUploadedImage([]);
+    setBoardImages([]);
   }
 
   useEffect(() => {
@@ -140,54 +156,54 @@ const BoardWrite = () => {
   return (
     <div 
       className={`
-        ${isBoardWriteModal ? 'block' : 'hidden'} 
-        fixed z-[100] w-full h-full
-        bg-light-black
-        dark:bg-dark-black 
-        bg-opacity-80 inset-0
+        fixed z-[100] w-full h-[calc(100vh-3.2rem)] md:h-full
+        bg-light-black bg-opacity-80
+        inset-0
       `}
       onClick={() => dispatch(setIsBoardWriteModal(false))} 
     >
       <div 
-        className={`md:w-[40rem] h-full md:h-[90%] md:mx-auto`} 
+        className={`md:w-[50rem] h-full md:h-[95%] md:mx-auto`} 
         onClick={(event) => event.stopPropagation()}
       >
         <div 
           className={`
-            flex flex-col justify-between md:w-[35rem] h-[calc(100vh-5.95rem)] md:h-[85%] mt-[3.2rem] md:mt-[15%] md:mx-auto p-[1rem] md:px-[2rem] md:py-[3rem]
+            flex flex-col justify-between md:w-[45rem] h-full md:h-[90%] mt-0 md:mt-[8%] md:mx-auto p-[1rem] md:p-[1.5rem]
             bg-light-white
             dark:bg-dark-white
-            overflow-auto md:rounded-md 
+            overflow-auto md:rounded-md
           `}
         >
           <div className={`flex flex-col flex-grow`}>
-            <div className={`flex items-center mb-[1rem]`}>
+            <div className={`flex items-center mb-[1.5rem]`}>
               <div>
                 <ArrowLeftIcon 
                   onClick={() => dispatch(setIsBoardWriteModal(false))} 
                   className={`
-                    md:hidden md:size-[2rem] 
+                    md:hidden size-[1.4rem]
+                    fill-light-border-3
+                    dark:fill-dark-border-3
                     cursor-pointer
                   `}
-                  fill='000000' 
                 />
               </div>
               <div 
                 className={`
-                  ms-[1rem]
-                  font-bold text-2xl
+                  ms-[1rem] md:ms-0
+                  font-semibold text-xl md:text-2xl
                 `}
               >
-                  글 쓰기
+                  커뮤니티 글쓰기
               </div>
               <div className={`ms-auto`}>
                 <CloseIcon 
                   onClick={() => dispatch(setIsBoardWriteModal(false))} 
                   className={`
                     hidden md:block md:size-[1.5rem]
+                    fill-light-border-icon
+                    dark:fill-dark-border-icon
                     cursor-pointer
-                  `} 
-                  fill='000000' 
+                  `}
                 />
               </div>
             </div>
@@ -195,20 +211,27 @@ const BoardWrite = () => {
               <div className={`relative`}>
                 <div 
                   className={`
-                    flex justify-between items-center w-[10rem] ms-[0.5rem] md:px-[1rem] py-[0.3rem]
-                    border-light-black
-                    dark:border-dark-black
-                    border-b md:border md:rounded-md
+                    flex justify-between items-center w-[10rem] ms-[0.5rem] md:ms-0 px-[0.5rem] md:px-[1rem] py-[0.3rem]
+                    border-light-gray-2
+                    dark:border-dark-gray-2
+                    border-b md:border md:rounded-md cursor-pointer font-medium
                   `} 
                   onClick={toggleCategoryDropdown}
                 >
                   {category.text}
-                  <ArrowBottomIcon className={`inline size-[1rem] ms-[1.5rem]`}/>
+                  <ArrowBottomIcon
+                    className={`
+                      inline size-[1rem] ms-[1.5rem]
+                      fill-light-border-icon
+                      dark:fill-dark-border-icon
+                      cursor-pointer
+                    `}
+                  />
                 </div>
                 <div 
                   className={`
                     ${isCategoryDropdownOpen ? 'max-h-[18.75rem] opacity-100' : 'max-h-0 opacity-0'}
-                    absolute z-[10] w-[calc(100%-0.5rem)] mt-[0.25rem] ms-[0.5rem]
+                    absolute z-[10] w-[calc(100%-0.5rem)] mt-[0.5rem] ms-[0.5rem] md:ms-0 
                     bg-light-white border-light-border-1
                     dark:bg-dark-white dark:border-dark-border-1
                     border rounded-md shadow-lg overflow-y-auto scrollbar-hide transition-all duration-300 ease-in-out
@@ -218,7 +241,7 @@ const BoardWrite = () => {
                     <div 
                       key={index} 
                       className={`
-                        px-[1rem] py-[0.5rem]
+                        ps-[1rem] py-[0.75rem]
                         cursor-pointer
                       `}
                       onClick={() => selectCategory(eachCategory)}
@@ -231,7 +254,7 @@ const BoardWrite = () => {
               <div className={`relative`}>
                 <div 
                   className={`
-                    ms-auto
+                    ms-auto me-[1rem]
                     text-light-anchor hover:text-light-anchor-hover
                     dark:text-dark-anchor dark:hover:text-dark-anchor-hover
                     text-sm md:text-md cursor-pointer 
@@ -242,19 +265,21 @@ const BoardWrite = () => {
                 </div>
                 <div 
                   className={`
-                    ${isBoardOpenDropdownOpen ? 'max-h-[18.75px] opacity-100' : 'max-h-0 opacity-0'}
-                    absolute z-10 w-[calc(100%-0.5rem)] mt-[0.25rem] ms-[0.5rem]
-                    bg-light-white border-light-border-1
-                    dark:bg-dark-white dark:border-dark-border-1
-                    border rounded-md shadow-lg overflow-y-auto scrollbar-hide transition-all duration-300 ease-in-out 
+                    ${isBoardOpenDropdownOpen ? 'max-h-[18.75rem] opacity-100' : 'max-h-0 opacity-0'}
+                    absolute z-10 w-20 mt-[0.5rem]
+                    bg-light-white border-light-border-1 text-light-text-secondary
+                    dark:bg-dark-white dark:border-dark-border-1 dark:text-dark-text-secondary
+                    text-sm border rounded-md shadow-lg overflow-y-auto scrollbar-hide transition-all duration-300 ease-in-out 
                   `}
                 > 
                   {boradOpenBoolean.map((eachChoice, index) => (
                     <div 
                       key={index} 
                       className={`
-                        px-[1rem] py-[0.5rem] 
-                        cursor-pointer
+                        ps-[0.5rem] py-[0.5rem]
+                        hover:text-light-signature
+                        dark:hover:text-dark-signature
+                        cursor-pointer duration-150
                       `}
                       onClick={() => selectBoardOpen(eachChoice.bool)}
                     >
@@ -268,89 +293,50 @@ const BoardWrite = () => {
               <input
                 className={`
                   py-[0.5rem] ps-[1rem]
-                  bg-light-white border-light-border
-                  dark:bg-dark-white dark:border-dark-border
+                  bg-light-white border-light-border placeholder:text-light-text-secondary
+                  dark:bg-dark-white dark:border-dark-border dark:placeholder:text-dark-text-secondary
                   border-b focus:outline-none
                 `}
-                placeholder='제목을 입력하세요.'
+                placeholder='제목'
                 onChange={(e) => setTitle(e.target.value)}
                 value={title}
               />
               <textarea 
                 className={`
-                  flex-grow h-[17rem] mb-[2rem] py-[0.5rem] ps-[1rem]
-                  bg-light-white
-                  dark:bg-dark-white
-                  resize-none focus:outline-none
+                  flex-grow h-[17rem] mt-[1rem] mb-[2rem] py-[0.5rem] ps-[1rem]
+                  bg-light-bgbasic placeholder:text-light-text-secondary
+                  dark:bg-dark-gray opacity-80 dark:placeholder:text-dark-text-secondary
+                  resize-none focus:outline-none rounded-sm
                 `}
-                placeholder='내용을 입력하세요.'
+                placeholder='사람들과 공유하고 싶은 내용을 작성해주세요.'
                 onChange={(e) => setContent(e.target.value)}
                 value={content}
               />
             </div>
           </div>
           <div className={`flex flex-col`}>
+            <MultiImageUpload onImagesChange={handleImagesChange}/>
             <div 
               className={`
-                flex md:static mb-[1.25rem] 
-                overflow-x-auto scrollbar-hide
-              `}
-            >
-              {uploadedImage.map((eachImage, index) => (
-                <div 
-                  key={index} 
-                  className={`
-                    flex-shrink-0 size-[6rem] md:mb-[2rem] me-[1.25rem]
-                    cursor-pointer rounded-md
-                  `}
-                  onClick={() => handleRemoveImage(index)}
-                >
-                  <img 
-                    src={eachImage} 
-                    alt="NOIMG" 
-                    className={`
-                      w-full h-full
-                      rounded-md
-                    `}
-                  />
-                </div>
-              ))}
-              <div 
-                className={`
-                  flex-shrink-0 size-[6rem] md:mb-[2rem] me-[1.25rem]
-                  cursor-pointer rounded-md
-                `}
-                onClick={() => {fileInputRef.current?.click()}}
-              >
-                <input 
-                  type="file" 
-                  ref={fileInputRef}
-                  className={`hidden`}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                />
-              </div>
-            </div>
-            <div 
-              className={`
-                md:static w-full
+                md:static w-full mt-[1rem]
                 md:text-center
               `} 
-              onClick={handleWrite}
+              onClick={throttledHandleWrite}
             >
               <button 
                 className={`
                   ${
                     isSubmitDisabled ? 
-                    '' :
                     `
-                      bg-light-black md:bg-light-white text-light-white md:text-light-black border-light-black md:hover:bg-light-black md:hover:text-light-white
-                      dark:bg-dark-black dark:md:bg-dark-white dark:text-dark-white dark:md:text-dark-black dark:border-dark-black dark:md:hover:bg-dark-black dark:md:hover:text-dark-white
-                      md:border
+                      bg-light-gray text-light-text-secondary
+                      dark:bg-dark-gray dark:text-dark-text-secondary
+                    ` : `
+                      bg-light-black text-light-white hover:bg-light-signature hover:text-light-white
+                      dark:bg-dark-black dark:text-dark-white dark:hover:bg-dark-signature dark:hover:text-white
                     `
                   }
-                  w-full md:w-[15rem] py-[0.75rem] md:py-[0.25rem]  
-                  transition duration-300 text-center md:rounded-md 
+                  w-full py-[0.5rem]
+                  transition duration-300 text-center rounded-md 
                 `}
                 disabled={isSubmitDisabled}
               >

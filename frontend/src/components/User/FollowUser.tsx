@@ -1,12 +1,20 @@
 import React from 'react';
+import FollowBtn from './FollowBtn';
+import defaultImage from '@assets/images/basic_profile.png';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
 
 type Props = {
   userId: number;
   nickname: string;
   profileImage: string;
+  fetchUserInfo: () => void;
 }
 
 const FollowUser = (props: Props) => {
+  const userState = useSelector((state: RootState) => state.userStore);
+
   return (
     <div
       className={`
@@ -17,7 +25,7 @@ const FollowUser = (props: Props) => {
       `}
     >
       <img 
-        src={props.profileImage} 
+        src={props.profileImage ? props.profileImage : defaultImage} 
         alt="프로필 사진" 
         className={`
           size-[3.25rem] me-1
@@ -49,20 +57,11 @@ const FollowUser = (props: Props) => {
         </div>
       </div>
       <div className={`flex items-center ms-auto`}>
-        
-        {/* 팔로잉 버튼 클릭 시 버튼 색상 전환되야함
-          bg-light-anchor text-light-text-white  // 클릭시 토글전환색상
-          dark:bg-dark-anchor dark:text-dark-text-white   // 클릭시 토글전환색상
-        */}
-        <button 
-          className={`
-            py-[0.25rem] px-[0.75rem]
-            bg-light-border-1 text-light-text
-            rounded-md
-          `}
-        >
-          팔로잉
-        </button>
+        {userState.isLoggedIn ? (
+          <FollowBtn targetUserId={props.userId} callbackFunction={props.fetchUserInfo}/>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import KakaoIcon from '@assets/icons/kakao.png'
 import NaverIcon from '@assets/icons/naver.png'
@@ -6,11 +6,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@services/authService'
 import { setUser } from '@store/userSlice'
 import { useDispatch } from 'react-redux'
-import axios from 'axios'
+
+import { kakaoLogin, naverLogin } from '@services/authService'
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoginFailed, setIsLoginFailed] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -19,36 +21,72 @@ function Login() {
     try {
       const data = await login(email, password);
       dispatch(setUser(data.user));
-      axios.post(`http://3.36.78.37:8081/user/auth/refreshToken`, {}, {
-        withCredentials: true
-      });
-      console.log('Login successful');
+      // console.log('Login successful');
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
+      setIsLoginFailed(true);
     }
   };
 
-  return (
-    <div className={`flex justify-center items-center min-h-[100vh] -mt-[3rem]`}>
-      <div className={`w-[100%] lg:w-[35rem] md:max-w-[42rem] p-[1.5rem] lg:p-0 bg-light-white dark:bg-dark-white`}>
-        <h3 className={`pb-[0.75rem] mb-[2.5rem] text-[2rem] text-center`}>로그인</h3>
+  useEffect(() => {
+    setIsLoginFailed(false);
+  }, [email, password])
 
+  return (
+    <div
+      className='
+        flex justify-center md:items-center w-full h-[calc(100vh-6.4rem)] sm:h-[calc(100vh-3.2rem)] lg:h-screen
+        bg-light-white bg-opacity-80 md:bg-transparent md:bg-opacity-0
+        dark:bg-dark-white dark:bg-opacity-80 md:dark:bg-transparent md:dark:bg-opacity-0        
+      '
+    >
+      <div
+        className={`
+          w-[100%] h-fit md:max-w-[42rem] p-[2rem]
+          md:bg-light-white md:bg-opacity-80
+          md:dark:bg-dark-white md:dark:bg-opacity-80
+          rounded
+        `}
+      >
+        <h3
+          className={`
+            pb-[0.75rem] mb-[2.5rem]
+            text-[2rem] text-center font-medium
+          `}
+        >
+          로그인
+        </h3>
+
+        <p className={`${isLoginFailed ? 'block' : 'hidden'} mb-[2.5rem] text-light-warning dark:text-dark-warning text-center whitespace-pre-line`}>
+          {'로그인에 실패했습니다\n아이디 / 비밀번호를 다시확인해주세요.'}
+        </p>
         {/* 로그인 폼 */}
         <form onSubmit={handleLogin}>
           {/* 이메일 */}
           <div className={`mb-[1.5rem]`}>
-            <label htmlFor="email" className={`block mb-[0.5rem] text-light-text-secondary dark:text-dark-text-secondary text-left`}>이메일</label>
+            <label
+              htmlFor="email"
+              className={`
+                block mb-[0.5rem]
+                text-light-text placeholder:text-light-text-secondary
+                dark:text-dark-text dark:placeholder:text-dark-text-secondary
+                text-left
+              `}
+            >
+              이메일
+            </label>
             <input 
               type="email" 
               className={`
                 w-[100%] px-[1rem] py-[0.5rem] 
                 bg-light-white border-light-border
                 dark:bg-dark-white dark:border-dark-border 
-                border-b focus:outline-none rounded-md`} 
+                border-b focus:outline-none rounded-md
+              `} 
               placeholder="이메일을 입력하세요."
               onChange={(e) => setEmail(e.target.value)}
-              required 
+              required
             />
           </div>
 
@@ -56,9 +94,10 @@ function Login() {
           <div className="mb-2">
             <label 
               htmlFor="password" 
-              className={`block mb-[0.5rem] 
-                text-light-text-secondary
-                dark:text-dark-text-secondary 
+              className={`
+                block mb-[0.5rem]
+                text-light-text placeholder:text-light-text-secondary
+                dark:text-dark-text dark:placeholder:text-dark-text-secondary
                 text-left
               `}
             >
@@ -76,13 +115,13 @@ function Login() {
               `} 
               placeholder="비밀번호를 입력하세요." 
               onChange={(e) => setPassword(e.target.value)}
-              required 
+              required
             />
           </div>
 
           {/* 비밀번호 잊으셨나요? */}
-          <div className={`flex justify-between items-center mb-[4rem]`}>
-            <a href="/" className={`w-[100%] text-light-anchor dark:text-dark-anchor text-sm text-right font-medium`}>비밀번호를 잊으셨나요?</a>
+          <div className={`flex justify-between items-center mb-[1.5rem] md:mb-[2.5rem]`}>
+            <a href="/user/password" className={`w-[100%] text-light-anchor dark:text-dark-anchor text-sm text-right font-medium`}>비밀번호를 잊으셨나요?</a>
           </div>
           <button 
             type="submit" 
@@ -98,7 +137,7 @@ function Login() {
         </form>
 
         {/* 회원가입 하세요 */}
-        <div className={`mt-[3rem] text-center`}>
+        <div className={`mt-[1rem] text-center`}>
           <p className={`text-light-text-secondary dark:text-dark-text-secondary`}>아직 회원이 아니신가요? 
             <Link to='/user/regist'>
               <span className={`text-light-anchor dark:text-dark-anchor font-medium cursor-pointer`}> 회원가입하세요!</span>
@@ -107,8 +146,9 @@ function Login() {
         </div>
 
         {/* 소셜 로그인 */}
-        <div className={`md:flex md:justify-center mt-[1.5rem] md:space-x-4`}>
+        <div className={`md:flex md:justify-center mt-[2.5rem] md:space-x-4`}>
           <button 
+            onClick={kakaoLogin}
             className={`
               flex flex-all-center w-[50%] max-md:w-[100%] max-md:mb-[1rem] py-[0.5rem] px-[1rem]
               bg-[#FEE500] text-black
@@ -119,6 +159,7 @@ function Login() {
             <p>카카오로 로그인</p>
           </button>
           <button 
+            onClick={naverLogin}
             className={`
               flex flex-all-center w-[50%] max-md:w-[100%] py-[0.5rem] px-[1rem]
               bg-[#03C75A] text-white 

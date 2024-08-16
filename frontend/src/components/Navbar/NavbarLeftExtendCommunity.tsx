@@ -21,10 +21,6 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       path: 'all'
     },
     {
-      title: '캠핑장 후기',
-      path: 'place'
-    },
-    {
       title: '장비 후기',
       path: 'equipment'
     },
@@ -62,8 +58,8 @@ const NavbarLeftExtendCommunity = (props: Props) => {
           onClick={() => props.toggleExtendMenu('community')}
           className={`
             w-[1.25rem] h-[1.25rem] me-[0.75rem] 
-            fill-light-black
-            dark:fill-dark-black
+            fill-light-border-icon
+            dark:fill-dark-border-icon
             cursor-pointer
           `}
         />
@@ -73,13 +69,22 @@ const NavbarLeftExtendCommunity = (props: Props) => {
       {/* 채팅방 카테고리 */}
       <div 
         className={`
-          flex flex-col h-[calc(100vh-5rem)] ps-[2.5rem]
+          flex flex-col h-[calc(100vh-5rem)] ps-[1rem]
           overflow-y-auto scrollbar-hide text-left
         `}
       >
         {communityCategory.map((eachObj, index) => (
           <Link key={index} to={`/community/${eachObj.path}`} onClick={props.closeMenu}>
-            <div className={`p-[1.5rem]`}>{eachObj.title}</div>
+            <div
+              className={`
+                p-[1.5rem]
+                hover:bg-light-gray 
+                dark:hover:bg-dark-gray
+                rounded-lg transition-colors
+              `}
+            >
+              {eachObj.title}
+            </div>
           </Link>
         ))}
       </div>

@@ -8,6 +8,7 @@ type Props = {
   isFollowing: boolean;
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchUserInfo: () => void;
 }
 
 type FollowUserType = {
@@ -16,10 +17,10 @@ type FollowUserType = {
   profileImage: string;
 }
 
-const FollowUsers = ({userId, isFollowing, isModalOpen, setIsModalOpen}: Props) => {
+const FollowUsers = ({userId, isFollowing, isModalOpen, setIsModalOpen, fetchUserInfo}: Props) => {
   const [followUsers, setFollowUsers] = useState<FollowUserType[]>([]);
 
-  async function fetchFollowers() {
+  const fetchFollowers = async () => {
     try {
       const followerData = await followerList(userId);
       setFollowUsers(followerData);
@@ -28,7 +29,7 @@ const FollowUsers = ({userId, isFollowing, isModalOpen, setIsModalOpen}: Props) 
     }
   }
 
-  async function fetchFollowings() {
+  const fetchFollowings = async () => {
     try {
       const followingData = await followingList(userId);
       setFollowUsers(followingData);
@@ -90,6 +91,7 @@ const FollowUsers = ({userId, isFollowing, isModalOpen, setIsModalOpen}: Props) 
             userId={followUser.userId}
             nickname={followUser.nickname}
             profileImage={followUser.profileImage}
+            fetchUserInfo={fetchUserInfo}
           />
         ))}
       </div>

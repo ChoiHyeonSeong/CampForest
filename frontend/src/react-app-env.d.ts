@@ -1,4 +1,4 @@
 /// <reference types="react-scripts" />
-interface Window {
-  kakao: any;
+type window = {
+  naver: any;
 }

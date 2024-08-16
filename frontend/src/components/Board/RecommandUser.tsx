@@ -1,32 +1,56 @@
 import React from 'react'
 
-import userImage from '@assets/logo192.png'
+import userImage from '@assets/images/basic_profile.png'
+import { SimilarUserType } from '@store/userSlice'
+import { useNavigate } from 'react-router-dom';
+import FollowBtn from '@components/User/FollowBtn';
 
-const RecommandUser = () => {
+type Props = {
+  userInfo: SimilarUserType;
+}
+
+const RecommandUser:React.FC<Props> = (props) => {
+  const navigate = useNavigate();
+
+  const handelUserClick = () => {
+    navigate(`/user/${props.userInfo.userId}`);  
+  }
+
   return (
-    <div className={`grid grid-cols-6 items-center`}>
-      <img 
-        src={userImage} 
+    <div className={`relative min-h-[13.5rem] md:h-[15rem] p-[1rem] bg-light-gray dark:bg-dark-gray text-center rounded`}>
+      <img
+        src={props.userInfo.userProfileUrl ? props.userInfo.userProfileUrl : userImage} 
         alt="NoImg" 
         className={`
-          size-[2.5rem]
+          w-[80%] md:w-[90%] aspect-1 mx-auto mb-[0.5rem]
           border-light-border
           dark:border-dark-border
-          rounded-full border
-          `}
-        />
-      <div className={`col-span-3 ms-[0.75rem]`}>
-        사용자 닉네임
+          rounded-full border cursor-pointer
+        `}
+        onClick={() => handelUserClick()}
+      />
+      <div
+        className='text-sm md:text-base font-semibold mb-[0.5rem] cursor-pointer line-clamp-1'
+        onClick={() => handelUserClick()}
+      >
+        {props.userInfo.userNickName}
+      </div>
+      <div 
+        className='
+          text-light-text-secondary
+          dark:text-dark-text-secondary 
+          text-xs
+        '
+      >
+        함께 아는 친구 {props.userInfo.commonFollowsCount}명
       </div>
       <button 
         className={`
-          col-span-2 mx-[1rem] py-[0.25rem]
-          bg-light-signature text-light-white
-          dark:bg-dark-signature dark:text-dark-white
-          text-xs rounded-md
+          md:absolute bottom-[1rem] left-0 w-[75%] mx-[12.5%] py-[0.25rem]
+          text-xs rounded-md max-md:line-clamp-1
         `}
       >
-        팔로우
+        <FollowBtn targetUserId={props.userInfo.userId}/>
       </button>
     </div>
   )

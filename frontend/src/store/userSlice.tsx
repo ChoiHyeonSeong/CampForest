@@ -1,10 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export type SimilarUserType = {
+  commonFollowsCount: number;
+  userNickName: string;
+  userProfileUrl: string;
+  userId: number;
+}
 type UserState = {
   userId: number,
   nickname: string,
   profileImage: string,
-  similarUsers: number[],
+  similarUsers: SimilarUserType[],
   isLoggedIn: boolean
 }
 
@@ -20,7 +26,7 @@ const userSlice = createSlice({
   name: 'userStore',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<{ userId: number; nickname: string; profileImage: string; similarUsers: number[]}>) => {
+    setUser: (state, action: PayloadAction<{ userId: number; nickname: string; profileImage: string; similarUsers: SimilarUserType[]}>) => {
       state.userId = action.payload.userId;
       state.nickname = action.payload.nickname;
       state.profileImage = action.payload.profileImage;
@@ -31,6 +37,7 @@ const userSlice = createSlice({
       state.userId = 0;
       state.nickname = '';
       state.profileImage = '';
+      state.similarUsers = [];
       state.isLoggedIn = false;
     },
   },

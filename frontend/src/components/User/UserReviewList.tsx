@@ -1,63 +1,122 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import UserReviewCard from '@components/User/UserReviewCard'
+import { userReviewList, writeReviewList } from '@services/reviewService';
+import { ReviewType } from '@components/Chat/Chat';
+import { store } from '@store/store';
 
-type Props = {}
+type Props = {
+  userId: number;
+}
 
 const UserReviewList = (props: Props) => {
+  const [reviewList, setReviewList] = useState<ReviewType[]>([]);
+  const [myReviewList, setMyReviewList] = useState<ReviewType[]>([]);
+  const [avarage, setAvarage] = useState(0);
+  const [myPage, setMyPage] = useState(false);
+  const [written, setWritten] = useState(false);
+
+  function calculateAvarage (reviewList: ReviewType[]) {
+    let rating = 0;
+    let size = reviewList.length;
+    reviewList.forEach((review) => {
+      rating += review.rating;
+    })
+    return rating / size;
+  }
+
+  async function fetchReviewList () {
+    try {
+      const result = await userReviewList(props.userId);
+      if(result.length) {
+        setAvarage(calculateAvarage(result));
+      }
+      setReviewList(result);
+    } catch (error) {
+      console.error('fetch Review List failed :', error);
+    }
+  }
+
+  async function fetchMyReviewList () {
+    try {
+      const result = await writeReviewList();
+
+      setMyReviewList(result);
+    } catch (error) {
+      console.error(`fetch myReview list Failed: `, error);
+    }
+  }
+
+  useEffect(() => {
+    fetchReviewList();
+    if (props.userId === store.getState().userStore.userId) {
+      setMyPage(true);
+      setWritten(true);
+      fetchMyReviewList();
+    }
+  }, [])
+
   return (
     <div className={`w-full`}>
-      {/* 거래후기 상단 */}
-      <div className={`flex w-full flex-all-center py-[1.25rem]`}>
-        {/* 받은 후기 */}
-        <div 
+      {/* 작성글, 저장됨, 필터 */}
+      <div
           className={`
-            flex flex-col w-1/2 
-            text-center
+            flex justify-center relative mt-[1.5rem] mb-[1.5rem]
           `}
         >
-          <div 
+          {/* 작성글 */}
+          <div
+            onClick={() => setWritten(true)}
             className={`
-              w-full 
-              font-medium
+              ${myPage ? '' : 'hidden'}
+              ${written ? 'font-bold' : 'text-light-text-secondary'}
+              me-[2.5rem]
+              flex items-center
             `}
           >
-            20
+            <span
+              className={`
+                ms-[0.5rem]
+                text-[0.875rem]
+              `}
+            >
+              보낸 리뷰 {myReviewList.length}
+            </span>
           </div>
-          <div className={`w-full`}>
-            받은 후기 수
-          </div>
-        </div>
-
-        {/* 받은 평점 */}
-        <div 
-          className={`
-            flex flex-col w-1/2 
-            text-center
-          `}
-        >
+          {/* 북마크 */}
           <div 
+            onClick={() => setWritten(false)}
             className={`
-              w-full 
-              font-medium
+              flex items-center
             `}
           >
-            4.0
-          </div>
-          <div className={`w-full`}>
-            받은 평점
+            <span
+              className={`
+                ${!written ? 'font-bold' : 'text-light-text-secondary'}
+                text-[0.875rem]
+              `}
+            >
+              받은 리뷰 {reviewList.length}
+            </span>
           </div>
         </div>
-      </div>
 
       {/* 후기 카드 */}
-      <div className={`w-full px-[0.75rem]`}>
-        {/* 거래 후기 개수에 따라 map 함수 실행할 곳 */}
-        <UserReviewCard />
-        <UserReviewCard />
-        <UserReviewCard />
-        <UserReviewCard />
-        <UserReviewCard />
-      </div>
+      {written ? (
+        <div className={`w-full px-[0.75rem]`}>
+        {myReviewList.map((review) => (
+          <div key={review.id}>
+            <UserReviewCard review={review}/>
+          </div>
+        ))}
+      </div>) : (
+        <div className={`w-full px-[0.75rem]`}>
+        {reviewList.map((review) => (
+          <div key={review.id}>
+            <UserReviewCard review={review}/>
+          </div>
+        ))}
+      </div>)}
+      
     </div>
   )
 }

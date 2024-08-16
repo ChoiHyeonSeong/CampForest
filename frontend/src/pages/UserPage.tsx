@@ -1,55 +1,67 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, Route, Routes, useLocation } from 'react-router-dom';
 import ProfileTop from '@components/User/ProfileTop'
 import MenuBar from '@components/User/MenuBar';
 import FollowUsers from '@components/User/FollowUsers';
-import { useDispatch } from 'react-redux';
-import { setIsLoading } from '@store/modalSlice';
-import { productList } from '@services/productService';
-import ProductCard from '@components/Product/ProductCard';
-import { boardUserList } from '@services/boardService';
-import Board from '@components/Board/Board';
-import UserReviewList from '@components/User/UserReviewList';
+
+import { userPage } from '@services/userService';
+import UBoard from '@components/User/UBoard';
+import UProduct from '@components/User/UProduct';
+import UReview from '@components/User/UReview';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/store';
+import PageNotFound from './PageNotFound';
+
+export type UserInfo = {
+  nickname: string;
+  followingCount: number;
+  followerCount: number;
+  introduction: string;
+  profileImage: string;
+  temperature: number;
+  isOpen: boolean;
+}
 
 const UserPage = () => {
-  const dispatch = useDispatch();
+  const currentLoc = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(true);
-  const [selectedMenu, setSelectedMenu] = useState('게시물');
-  const [products, setProducts] = useState({ content: [], totalElements: 0 });
-  const [boards, setBoards] = useState({ content: [], totalElements: 0 });
-  const userId = Number(useParams().userId);
+  const [selectedMenu, setSelectedMenu] = useState<string | null>('게시물');
+ 
+  const params = useParams()
+  const userId = Number(params.userId);
+  const userState = useSelector((state: RootState) => state.userStore);
 
-  const pageReload = () => {
-  }
+  const [userinfo, setUserInfo] = useState<UserInfo>();
 
-  async function fetchBoards() {
+  const fetchUserInfo = async () => {
     try {
-      const boardData = await boardUserList(userId);
-      setBoards(boardData);
+      const userData = await userPage(userId);
+      console.log(userData)
+      setUserInfo(userData);
     } catch (error) {
-      console.error("Failed to fetch boards: ", error);
-    } finally {
-      dispatch(setIsLoading(false));
-    }
-  }
-
-  async function fetchProducts() {
-    try {
-      dispatch(setIsLoading(true));
-      const productData = await productList({userId: userId});
-      setProducts(productData);
-    } catch (error) {
-      console.error("Failed to fetch products: ", error);
+      console.error("Failed to fetch user info: ", error);
     }
   }
 
   useEffect(() => {
+    fetchUserInfo();
+  }, [userId]);
 
-    fetchProducts();
-    fetchBoards();
-  }, [])
 
+  useEffect(() => {
+    if (currentLoc.pathname.endsWith('/product')) {
+      setSelectedMenu('판매/대여')
+    } else if (currentLoc.pathname.endsWith('/review')) {
+      setSelectedMenu('거래후기')
+    } else {
+      setSelectedMenu('게시물')
+    }
+  }, [currentLoc.pathname])
+
+  const isCurrentUser = userState.userId === userId;
+  
   return (
     <>
       {/* 팔로잉 모달 */}
@@ -58,9 +70,8 @@ const UserPage = () => {
         className={`
           ${isModalOpen ? 'flex' : 'hidden'} 
           md:items-center fixed z-[20] w-[100%] h-[100%] 
-          bg-light-black
-          dark:bg-dark-black
-          bg-opacity-80
+          bg-light-black bg-opacity-80
+          dark:bg-dark-black dark:bg-opacity-80
         `}
       >
         <div 
@@ -71,50 +82,57 @@ const UserPage = () => {
             userId={userId}
             isModalOpen={isModalOpen}
             isFollowing={isFollowing} 
-            setIsModalOpen={setIsModalOpen}/>
+            setIsModalOpen={setIsModalOpen}
+            fetchUserInfo={fetchUserInfo}  
+          />
         </div>
       </div>
 
       {/* 유저 메인 페이지 */}
-      <div className={`flex justify-center min-h-[100vh]`}>
-        <div className={`w-[100%] lg:w-[54rem] bg-light-white dark:bg-dark-white p-[1.5rem] lg:p-0`}>
-          <h3 className={`hidden lg:block pb-[0.75rem] text-lg md:text-[1.5rem]`}>유저 프로필</h3>
-          <ProfileTop 
-            userId={userId} 
-            setIsModalOpen={setIsModalOpen} 
-            setIsFollowing={setIsFollowing}/>
+      <div className={`flex justify-center min-h-screen bg-light-white dark:bg-dark-text-white`}>
+        <div
+          className={`
+            w-[100%] lg:w-[50rem] lg:mt-[2rem] max-sm:py-0 max-lg:px-[1.25rem] max-lg:py-[0.75rem]
+          `}
+        >
+          <h3
+            className={`
+              hidden md:block pb-[0.75rem] text-lg md:text-[1.5rem] ps-[1rem] pt-[1rem]
+              dark:bg-dark-white dark:bg-opacity-80
+              rounded-t-lg
+            `}
+          >
+            {isCurrentUser ? (
+              <span className='font-medium'>마이프로필</span>
+            ) : (
+              <>
+                <span className='font-medium'>{userinfo?.nickname}</span>님의 프로필
+              </>
+            )}
+          </h3>
+
+          <div className='px-[0.5rem] py-[1rem] mb-[0.75rem] rounded'>
+            <ProfileTop
+              setIsModalOpen={setIsModalOpen} 
+              setIsFollowing={setIsFollowing}
+              userinfo={userinfo}
+              fetchUserInfo={fetchUserInfo}
+            />
+          </div>
           <div>
             {/* 목록전환박스 */}
-            <MenuBar 
-              boardCount={boards.totalElements} 
-              productCount={products?.totalElements} 
+            <MenuBar
               selectedMenu={selectedMenu} 
-              setSelectedMenu={setSelectedMenu}/>
+            />
 
             {/* 목록 */}
-            <div className={`w-[100%] h-[14rem]`}>
-              {/* 게시물 목록 */}
-              <div className={`${selectedMenu === '게시물' ? '' : 'hidden'} px-[4rem]`}>
-              {boards?.content.map((board: any) => (
-                  <Board 
-                    board={board} 
-                    deleteFunction={pageReload} 
-                    isDetail={false}/>
-              ))}
-              </div>
-              {/* 판매/대여 목록 */}
-              <div className={`${selectedMenu === '판매/대여' ? '' : 'hidden'} grid grid-cols-2 md:grid-cols-3`}>
-                {products?.content.map((product: any) => (
-                  <ProductCard product={product}/>
-                ))}
-              </div>
-              {/* 거래후기 목록 */}
-              <div className={`${selectedMenu === '거래후기' ? '' : 'hidden'}`}>
-                {/* {reveiw?.content.map((reveiw: any) => ( */}
-                  <UserReviewList />
-                {/* ))} */}
-        
-              </div>
+            <div className={`w-[100%]`}>
+              <Routes>
+                <Route path='/' element={<UBoard />} />
+                <Route path='/product' element={<UProduct />} />
+                <Route path='/review' element={<UReview userId={userId} />} />
+                <Route path='*' element={<PageNotFound />} />
+              </Routes>
             </div>
 
           </div>

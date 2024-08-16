@@ -8,7 +8,7 @@ type Props = {
 
 const CommentInput = (props: Props) => {
   const [comment, setComment] = useState('');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);  
 
   const handleAddComment = () => {
     if (comment.trim()) {
@@ -46,6 +46,7 @@ const CommentInput = (props: Props) => {
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
         />
         <input
+          data-testid="e2e-boardcomment-2"
           type='text'
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -55,13 +56,14 @@ const CommentInput = (props: Props) => {
             flex-1 px-[0.5rem] py-[0.25rem] 
             bg-light-white border-light-border
             dark:bg-dark-white dark:border-dark-border
-            outline-none focus:border-none border border-transparent rounded cursor-text
+            outline-none border border-transparent rounded cursor-text
           `}
         />
         <button 
+          data-testid="e2e-boardcomment-3"
           onClick={handleAddComment} 
           className={`
-            me-[0.5rem] 
+            mx-[0.5rem] 
             text-light-anchor
             dark:text-dark-anchor
           `}

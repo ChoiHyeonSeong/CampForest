@@ -5,52 +5,57 @@ import Board, { BoardType } from '@components/Board/Board';
 import { useInView } from 'react-intersection-observer';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from '@store/modalSlice';
+import BoardDetail from '@components/Board/BoardDetail';
+import BoardModify from '@components/Board/BoardModify';
+import DayNightToggle from '@components/Public/DayNightToggle';
 
 const Community = () => {
   const dispatch = useDispatch();
-
   const params = useParams();
   const category = params.category ?? 'all'
-
   const [ref, inView] = useInView();
-
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [nextPageExist, setNextPageExist] = useState(true);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isModifyOpen, setIsModyfyOpen] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState<BoardType | null>(null);
+  const [selectedModifyId, setSelectedModifyId] = useState<number | null>(null);
+  const boardCursorIdRef = useRef<number | null>(null);
+  const [visibleBoards, setVisibleBoards] = useState<number[]>([]);
 
-  const isFirstLoadRef = useRef(true);
-  const boardPageRef = useRef(0);
-
-  const fetchBoards = async (reset = false) => {
+  const fetchBoards = async () => {
     try {
-      if (reset) {
-        boardPageRef.current = 0
-        setBoards([]);
-        setNextPageExist(true);
-      }
-
       dispatch(setIsLoading(true))
-      let result: any;
+      let response: any;
       if (category === 'all') {
-        result = await boardList(boardPageRef.current, 10);
+        response = await boardList(boardCursorIdRef.current, 10);
       } else {
-        result = await filteredBoardList(category, boardPageRef.current, 10);
+        response = await filteredBoardList(category, boardCursorIdRef.current, 10);
       }
+      console.log(response)
       dispatch(setIsLoading(false))
-      if (!result.data.data.empty && !result.data.data.last) {
-        boardPageRef.current += 1
-      }
-      if (reset) {
-        isFirstLoadRef.current = false;
-      } 
-      if (result.data.data.last) {
+      boardCursorIdRef.current = response.data.data.nextCursor
+      if (!response.data.data.hasNext) {
         setNextPageExist(false);
       }
-      setBoards((prevBoards) => [...prevBoards, ...result.data.data.content]);
+      setBoards((prevBoards) => [...prevBoards, ...response.data.data.content]);
     } catch (error) {
       dispatch(setIsLoading(false))
       console.error('게시글 불러오기 실패: ', error);
     }
   };
+
+  const pageReload = () => {
+    boardCursorIdRef.current = null
+    setBoards([]);
+    setNextPageExist(true);
+
+    fetchBoards()
+  }
+
+  useEffect(() => {
+    pageReload()
+  }, [category])
 
   useEffect(() => {
     if (inView && nextPageExist) {
@@ -60,32 +65,141 @@ const Community = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [inView]);
 
-  useEffect(() => {
-    isFirstLoadRef.current = true
-    fetchBoards(true)
-  // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [category])
+  const detailClose = () => {
+    setIsDetailOpen(false)
+  }
 
-  const pageReload = () => {
-    isFirstLoadRef.current = true
-    fetchBoards(true)
+  const detailOpen = (selectedId: number) => {
+    const selected = boards.find(board => {
+      return Number(board.boardId) === selectedId
+    })
+    console.log(selected)
+    if (selected) {
+      setSelectedDetail(selected)
+      setIsDetailOpen(true)
+    }
+  }
+
+  useEffect(() => {
+    const contentBox = document.querySelector('#contentBox') as HTMLElement;
+    if (isDetailOpen) {
+      contentBox.classList.add('md:scrollbar-hide')
+    } else {
+      contentBox.classList.remove('md:scrollbar-hide')
+    }
+  }, [isDetailOpen])
+
+  const updateComment = async (boardId: number, commentCount: number) => {
+    setBoards(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, commentCount: commentCount }
+          : board
+      )
+    );
+  }
+
+  const updateLike = async (boardId: number, isLiked: boolean, likedCount: number) => {
+    console.log(123)
+    setBoards(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, likeCount: likedCount, liked: isLiked } // 좋아요 수를 1 증가시킴
+          : board
+      )
+    );
+  };
+
+  const updateSaved = async (boardId: number, isSaved: boolean) => {
+    console.log(123456124901)
+    console.log(isSaved)
+    setBoards(prevBoards =>
+      prevBoards.map(board =>
+        board.boardId === boardId
+          ? { ...board, saved: isSaved }
+          : board
+      )
+    );
+  }
+
+  useEffect(() => {
+    let indexRef = visibleBoards.length
+    boards.forEach((board, index) => {
+      setTimeout(() => {
+        setVisibleBoards(prev => [...prev, board.boardId]);
+      }, index * 100 - indexRef * 100); // 각 게시물마다 100ms 지연
+    });
+  }, [boards])
+
+  const handleModify = (boardId: number) => {
+    setSelectedModifyId(boardId)
+    setIsModyfyOpen(true)
+  }
+
+  const modifyClose = () => {
+    setIsModyfyOpen(false)
   }
 
   return (
     <div>
+      {/* 배경 */}
+      {<DayNightToggle />}
+      {/* 디테일 모달 */}
+      {
+        isDetailOpen && selectedDetail !== null ? (
+          <BoardDetail selectedBoard={selectedDetail} detailClose={detailClose} pageReload={pageReload} updateComment={updateComment} updateLike={updateLike} updateSaved={updateSaved} modifyOpen={handleModify}/>
+        ) : (
+          <></>
+        )
+      }
+
+      {/* 수정하기 모달 */}
+      {
+        isModifyOpen && selectedModifyId !== null ? (
+          <BoardModify selectedModifyId={selectedModifyId} modifyClose={modifyClose} isModifyOpen={isModifyOpen}/>
+        ) : (
+          <></>
+        )
+      }
+
+      {/* 본문 */}
       <div className={`flex justify-center`}>
-        <div className={`hidden lg:block w-[15rem]`}/>
         <div className={`w-[100%] md:w-[40rem]`}>
-          {boards?.map((board, index) => (
-            <div className={`my-[1.25rem]`} key={index}>
-              <Board board={board} deleteFunction={pageReload} isDetail={false}/>
-            </div>
-          ))}
+          <div
+            className='
+              h-[2rem] mt-[1rem]
+              text-2xl
+            '
+          >
+            {category === 'place' ? '캠핑장 후기' :
+              category === 'equipment' ? '장비 후기' :
+              category === 'recipe' ? '레시피 추천' :
+              category === 'assign' ? '캠핑장 양도' :
+              category === 'free' ? '자유 게시판' :
+              category === 'question' ? '질문 게시판' : ''}
+          </div>
+          {boards?.map((board) => (
+              <div 
+                className={`my-[1.25rem] ${visibleBoards.includes(board.boardId) ? 'fade-in-down' : 'opacity-0'}`} 
+                key={board.boardId}
+              >
+                <Board 
+                  board={board} 
+                  deleteFunction={pageReload} 
+                  isDetail={false} 
+                  detailOpen={detailOpen} 
+                  updateComment={updateComment}
+                  updateLike={updateLike} 
+                  updateSaved={updateSaved}
+                  modifyOpen={handleModify}
+                />
+              </div>
+            ))}
         </div>
       </div>
 
       {/* intersection observer */}
-      <div ref={ref} className={`${isFirstLoadRef.current ? 'hidden' : 'block'} h-[0.25rem]`}></div>
+      <div ref={ref} className={`${boards.length >= 1 ? 'block' : 'hidden'} h-[0.25rem]`}></div>
     </div>
   )
 }

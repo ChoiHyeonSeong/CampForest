@@ -3,8 +3,21 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        'landing-bg-lg': "url('@assets/images/landing-lg.png')",
+        'landing-bg': "url('@assets/images/landing-bg-big.webp')",
+        'landing-bg-sm': "url('@assets/images/landing-sm.png')",
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
+      boxShadow: {
+        'sun': '0 0 90px 90px rgba(255,248,216, 0.2)',
+      },
       animation: {
-        'shake': 'shake 0.5s 3', // 애니메이션 이름과 지속 시간 설정
+        'shake': 'shake 0.5s 3',
+        'clouds1': 'clouds1 110s linear infinite',
+        'clouds2': 'clouds2 100s linear infinite',
+        'slideIn': 'slide-in 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'bounceY': 'bounceY 2s infinite',
       },
       keyframes: {
         shake: {
@@ -12,6 +25,20 @@ module.exports = {
           '25%': { transform: 'translateX(-2px)' },
           '75%': { transform: 'translateX(2px)' },
         },
+        clouds1: {
+          'to': { backgroundPosition: '200%' },
+        },
+        clouds2: {
+          'to': { backgroundPosition: '-200%' },
+        },
+        slideIn: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        bounceY: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        }
       },
       colors: {
         light: {
@@ -41,10 +68,14 @@ module.exports = {
           white: '#FFFFFF',
           heart: '#FF5B62',
           warning: '#FF0000',
+          star: '#FFD233',
+          reviewcard: '#FFF7ED',
+          bgbasic : '#f3f4f6',
           anchor: {
             DEFAULT: '#3982FF',
             hover: '#355388'
           },
+          background: '#FFFFFF'
         },
 
         dark: {
@@ -74,10 +105,14 @@ module.exports = {
           white: '#262626',
           heart: '#FF7F84',
           warning: '#FF5555',
+          star: '#FFC107',
+          reviewcard: '#615E5B',
+          bgbasic : '#121212',
           anchor: {
             DEFAULT: '#6BA4FF',
             hover: '#9CC3FF'
           },
+          background: '#111111'
         }
       }
     },
