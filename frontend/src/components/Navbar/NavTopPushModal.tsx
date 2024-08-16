@@ -51,7 +51,7 @@ const NavTopPushModal = (props: Props) => {
   return (
     <div 
       className={`
-        fixed inset-0 z-[100] max-md:h-[calc(100vh-3.2rem)]
+        fixed inset-0 z-[50] max-md:h-[calc(100vh-3.2rem)]
         ${isMobile ? 'flex justify-end' : ''}
       `}
       onClick={props.onClose}

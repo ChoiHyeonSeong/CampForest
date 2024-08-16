@@ -213,6 +213,11 @@ const useSSE = () => {
     eventSource.addEventListener('notification', (event: any) => {
       const eventData = JSON.parse(event.data);
       console.log('새 알림', eventData);
+      if(!eventData.createdAt) {
+        const date = new Date();
+        date.setHours(date.getHours() - 9);
+        eventData.createdAt = date;
+      }
       switch (eventData.notificationType) {
         // case 'SALE':
         //   break;
