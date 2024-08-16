@@ -1,15 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
-import noImg from '@assets/images/basic_profile.png'
+import noImg from '@assets/images/basic_profile.png';
 import { RootState, store } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { communityChatDetail, communityChatList, exitCommunityChat, exitTransactionChat, transactionChatDetail } from '@services/chatService';
+import {
+  communityChatDetail,
+  exitCommunityChat,
+  exitTransactionChat,
+  transactionChatDetail,
+} from '@services/chatService';
 import { userPage } from '@services/userService';
 import { useWebSocket } from 'Context/WebSocketContext';
-import { 
-  deleteCommunityChatUser, setChatInProgress, setCommunityChatUserList, 
-  setCommunityUnreadCount, setIsChatOpen, setProduct, setSaleStatus, 
-  deleteTransactionChatUser 
+import {
+  deleteCommunityChatUser,
+  setChatInProgress,
+  setIsChatOpen,
+  setProduct,
+  setSaleStatus,
+  deleteTransactionChatUser,
 } from '@store/chatSlice';
 import { formatTime } from '@utils/formatTime';
 import ProductInfoChat from './ProductInfoChat';
@@ -18,7 +26,6 @@ import ChatTradePropser from './ChatTradePropser';
 import { productDetail } from '@services/productService';
 import TransactionDetail from './TransactionDetail';
 import { setOpponentInfo, setTransactionInfo } from '@store/reviewSlice';
-import { ChatUserType } from './ChatUser';
 
 type UnifiedMessage = {
   [x: string]: any;
@@ -53,7 +60,7 @@ export type ReviewType = {
   rating: number;
   reviewContent: string;
   reviewImages: string[];
-}
+};
 
 export type TransactionEntityType = {
   buyerId: number;
@@ -135,7 +142,7 @@ const Chat = () => {
   const [transactionEntity, setTransactionEntity] = useState<TransactionEntityType>();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  async function fetchProduct () {
+  async function fetchProduct() {
     const result = await productDetail(chatState.product.productId);
     dispatch(setProduct(result));
   }
@@ -143,7 +150,7 @@ const Chat = () => {
   useEffect(() => {
     // 컴포넌트 마운트 시 이벤트 리스너 추가
     window.history.pushState(null, '', window.location.href);
-    if(chatState.isChatOpen) {
+    if (chatState.isChatOpen) {
       window.addEventListener('popstate', handleBackButton);
     } else {
       window.removeEventListener('popstate', handleBackButton);
@@ -155,71 +162,79 @@ const Chat = () => {
     };
   }, [chatState.isChatOpen]);
 
-  function handleBackButton () {
-    dispatch(setIsChatOpen(false))
+  function handleBackButton() {
+    dispatch(setIsChatOpen(false));
   }
 
-const fetchMessages = async () => {
-  try {
-    let fetchedMessages;
-    if (chatState.chatInProgressType === '일반') {
-      fetchedMessages = await communityChatDetail(chatState.roomId);
-      dispatch(setChatInProgress(fetchedMessages));
-    } else if (chatState.chatInProgressType === '거래') {
-      fetchedMessages = await transactionChatDetail(chatState.roomId);
-      dispatch(setProduct({ ...chatState.product, productId: fetchedMessages.productId }));
-      dispatch(setChatInProgress(fetchedMessages.messages));
+  const fetchMessages = async () => {
+    try {
+      let fetchedMessages;
+      if (chatState.chatInProgressType === '일반') {
+        fetchedMessages = await communityChatDetail(chatState.roomId);
+        dispatch(setChatInProgress(fetchedMessages));
+      } else if (chatState.chatInProgressType === '거래') {
+        fetchedMessages = await transactionChatDetail(chatState.roomId);
+        dispatch(setProduct({ ...chatState.product, productId: fetchedMessages.productId }));
+        dispatch(setChatInProgress(fetchedMessages.messages));
 
-      let lastSaleState = '';
-      let confirmedCount = 0;
+        let lastSaleState = '';
+        let confirmedCount = 0;
 
-      for (const message of fetchedMessages.messages) {
-        if (message.transactionEntity) {
-          if (message.transactionEntity.saleStatus) {
-            if (message.transactionEntity.saleStatus === 'CONFIRMED') {
-              ++confirmedCount;
-              if (confirmedCount === 2) {
+        for (const message of fetchedMessages.messages) {
+          if (message.transactionEntity) {
+            if (message.transactionEntity.saleStatus) {
+              if (message.transactionEntity.saleStatus === 'CONFIRMED') {
+                ++confirmedCount;
+                if (confirmedCount === 2) {
+                  lastSaleState = message.transactionEntity.saleStatus;
+                  dispatch(
+                    setOpponentInfo({
+                      opponentId: chatState.otherId,
+                      opponentNickname: reviewState.opponentNickname,
+                    }),
+                  );
+                  dispatch(
+                    setTransactionInfo({
+                      ...reviewState,
+                      productType: 'SALE',
+                      price: message.transactionEntity.realPrice,
+                      deposit: 0,
+                    }),
+                  );
+                }
+              } else if (message.transactionEntity.saleStatus !== '') {
                 lastSaleState = message.transactionEntity.saleStatus;
-                dispatch(setOpponentInfo({opponentId: chatState.otherId, opponentNickname: reviewState.opponentNickname}))
-                dispatch(setTransactionInfo({
-                  ...reviewState,
-                  productType: 'SALE',
-                  price: message.transactionEntity.realPrice,
-                  deposit: 0
-                }))
-              }
-            } else if (message.transactionEntity.saleStatus !== '') {
-              lastSaleState = message.transactionEntity.saleStatus;
-            }
-          } else {
-            if (message.transactionEntity.rentStatus === 'CONFIRMED') {
-              ++confirmedCount;
-              if (confirmedCount === 2) {
-                console.log('setTransactionInfo', message.transactionEntity);
-                lastSaleState = message.transactionEntity.rentStatus;
-                dispatch(setOpponentInfo({...reviewState, opponentId: chatState.otherId}))
-                dispatch(setTransactionInfo({
-                  ...reviewState,
-                  productType: 'RENT',
-                  price: message.transactionEntity.realPrice,
-                  deposit: message.transactionEntity.deposit
-                }))
               }
             } else {
-              lastSaleState = message.transactionEntity.rentStatus;
+              if (message.transactionEntity.rentStatus === 'CONFIRMED') {
+                ++confirmedCount;
+                if (confirmedCount === 2) {
+                  console.log('setTransactionInfo', message.transactionEntity);
+                  lastSaleState = message.transactionEntity.rentStatus;
+                  dispatch(setOpponentInfo({ ...reviewState, opponentId: chatState.otherId }));
+                  dispatch(
+                    setTransactionInfo({
+                      ...reviewState,
+                      productType: 'RENT',
+                      price: message.transactionEntity.realPrice,
+                      deposit: message.transactionEntity.deposit,
+                    }),
+                  );
+                }
+              } else {
+                lastSaleState = message.transactionEntity.rentStatus;
+              }
             }
           }
         }
+
+        console.log('lastSaleState', lastSaleState);
+        dispatch(setSaleStatus(lastSaleState));
       }
-
-      console.log('lastSaleState', lastSaleState);
-      dispatch(setSaleStatus(lastSaleState));
+    } catch (error) {
+      console.error('Failed to fetch messages:', error);
     }
-  } catch (error) {
-    console.error('Failed to fetch messages:', error);
-  }
-};
-
+  };
 
   const opponentInfo = async () => {
     try {
@@ -238,7 +253,7 @@ const fetchMessages = async () => {
   };
 
   const handleExitButton = () => {
-    if(chatState.chatInProgressType === '일반') {
+    if (chatState.chatInProgressType === '일반') {
       try {
         exitCommunityChat(chatState.roomId);
         dispatch(deleteCommunityChatUser(chatState.roomId));
@@ -255,7 +270,7 @@ const fetchMessages = async () => {
         console.error('거래 채팅방 나가기 실패: ', error);
       }
     }
-  }
+  };
 
   useEffect(() => {
     if (chatState.roomId !== 0) {
@@ -263,12 +278,12 @@ const fetchMessages = async () => {
       fetchMessages();
     }
   }, [chatState.roomId]);
-  
+
   useEffect(() => {
-    if(chatState.product.productId !== 0) {
+    if (chatState.product.productId !== 0) {
       fetchProduct();
     }
-  }, [chatState.product.productId])
+  }, [chatState.product.productId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -307,24 +322,22 @@ const fetchMessages = async () => {
       `}
     >
       {/* 모달 */}
-      {modalOpen && (
-        modalType === 'request' ? (
-        <div className={`${modalOpen ? '' : 'hidden'}`}>
-          <ChatTradeModal setModalOpen={setModalOpen} />
-        </div>
-      ) : (
-        <div>
-          {transactionEntity && 
-            (
-              <TransactionDetail 
+      {modalOpen &&
+        (modalType === 'request' ? (
+          <div className={`${modalOpen ? '' : 'hidden'}`}>
+            <ChatTradeModal setModalOpen={setModalOpen} />
+          </div>
+        ) : (
+          <div>
+            {transactionEntity && (
+              <TransactionDetail
                 modalOpen={modalOpen}
                 setModalOpen={setModalOpen}
                 transactionEntity={transactionEntity}
               />
-            )
-          }
-        </div>
-      ))}
+            )}
+          </div>
+        ))}
       {/* 상대 정보 */}
       <div
         className={`flex items-center shrink-0 h-[3rem] p-[0.8rem]
@@ -340,8 +353,8 @@ const fetchMessages = async () => {
           />
         </div>
         <div className={`text-lg font-medium`}>{opponentNickname}</div>
-        <div 
-          className='ms-auto text-light-warning dark:text-dark-warning cursor-pointer'
+        <div
+          className="ms-auto text-light-warning dark:text-dark-warning cursor-pointer"
           onClick={() => {
             handleExitButton();
           }}
@@ -352,10 +365,10 @@ const fetchMessages = async () => {
       {/* 상품 정보 */}
       {chatState.chatInProgressType === '거래' && (
         <div>
-          <ProductInfoChat 
+          <ProductInfoChat
             opponentNickname={opponentNickname}
             setModalType={setModalType}
-            setModalOpen={setModalOpen} 
+            setModalOpen={setModalOpen}
           />
         </div>
       )}
@@ -376,7 +389,7 @@ const fetchMessages = async () => {
                 </div>
                 {message.messageType === 'TRANSACTION' ? (
                   <div>
-                    <ChatTradePropser 
+                    <ChatTradePropser
                       setModalType={setModalType}
                       setModalOpen={setModalOpen}
                       setTransactionEntity={setTransactionEntity}
@@ -411,7 +424,7 @@ const fetchMessages = async () => {
                 </div>
                 {message.messageType === 'TRANSACTION' ? (
                   <div>
-                    <ChatTradePropser 
+                    <ChatTradePropser
                       setModalType={setModalType}
                       setModalOpen={setModalOpen}
                       setTransactionEntity={setTransactionEntity}
@@ -419,14 +432,14 @@ const fetchMessages = async () => {
                     />
                   </div>
                 ) : (
-                <div
-                  className="max-w-[10rem] px-[0.8rem] py-[0.3rem]
+                  <div
+                    className="max-w-[10rem] px-[0.8rem] py-[0.3rem]
                   bg-light-signature text-light-text
                   dark:bg-dark-signature dark:text-dark-text
                   rounded-md break-words"
-                >
-                  {message.content}
-                </div>
+                  >
+                    {message.content}
+                  </div>
                 )}
               </div>
             ),

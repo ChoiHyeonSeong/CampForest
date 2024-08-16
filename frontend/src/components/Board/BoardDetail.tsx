@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+
 import Board from './Board';
 import BoardComment, { CommentType } from './BoardComment';
 import CommentInput from './CommentInput';
@@ -9,7 +10,7 @@ import { commentList, commentWrite } from '@services/commentService';
 import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
 import { RootState } from '@store/store';
 
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 type Props = {
   selectedBoard: BoardType;
@@ -18,8 +19,8 @@ type Props = {
   updateComment: (boardId: number, commentCount: number) => void;
   updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
   updateSaved: (boardId: number, isSaved: boolean) => void;
-  modifyOpen? : (param: number) => void;
-}
+  modifyOpen?: (param: number) => void;
+};
 
 const BoardDetail = (props: Props) => {
   const [show, setShow] = useState(false);
@@ -32,16 +33,16 @@ const BoardDetail = (props: Props) => {
 
   const popLoginAlert = () => {
     Swal.fire({
-      icon: "error",
-      title: "로그인 해주세요.",
-      text: "로그인 후 사용가능합니다.",
-      confirmButtonText: '확인'
-    }).then(result => {
+      icon: 'error',
+      title: '로그인 해주세요.',
+      text: '로그인 후 사용가능합니다.',
+      confirmButtonText: '확인',
+    }).then((result) => {
       if (result.isConfirmed) {
-        navigate('/user/login')
+        navigate('/user/login');
       }
     });
-  }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -77,7 +78,7 @@ const BoardDetail = (props: Props) => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchComments();
@@ -98,7 +99,7 @@ const BoardDetail = (props: Props) => {
 
   const handleAddComment = async (comment: string) => {
     if (!isLoggedIn) {
-      popLoginAlert()
+      popLoginAlert();
       return;
     }
     try {
@@ -108,17 +109,20 @@ const BoardDetail = (props: Props) => {
       console.error('댓글 작성 실패: ', error);
     }
   };
-  
-  const handleDetailClose = useCallback((e?: React.MouseEvent) => {
-    if (screenSize === 'mobile' || (e && e.target === e.currentTarget)) {
-      setShow(false);
-      setTimeout(() => {
-        props.detailClose();
-        window.history.back();
-      }, 300);
-    }
-  }, [screenSize, props.detailClose]);
-  
+
+  const handleDetailClose = useCallback(
+    (e?: React.MouseEvent) => {
+      if (screenSize === 'mobile' || (e && e.target === e.currentTarget)) {
+        setShow(false);
+        setTimeout(() => {
+          props.detailClose();
+          window.history.back();
+        }, 300);
+      }
+    },
+    [screenSize, props.detailClose],
+  );
+
   const deleteFunction = () => {
     props.pageReload();
     setShow(false);
@@ -132,7 +136,7 @@ const BoardDetail = (props: Props) => {
   }
 
   return (
-    <div 
+    <div
       onClick={handleDetailClose}
       className={`
         fixed inset-0 z-[20] md:z-[60]
@@ -142,12 +146,15 @@ const BoardDetail = (props: Props) => {
         ${screenSize === 'mobile' ? 'max-md:h-[calc(100vh-3.2rem)]' : ''}
       `}
     >
-      <div 
+      <div
         onClick={(e) => e.stopPropagation()}
         className={`
-          ${show ? (screenSize === 'mobile' ? 'translate-x-0' : 'opacity-100') : (screenSize === 'mobile' ? 'translate-x-full' : 'opacity-0')}
-          ${screenSize === 'mobile' ? 'fixed inset-y-0 right-0 left-0 w-full h-[calc(100vh-3.2rem)] mb-[3.2rem]' : 
-            'mx-auto my-8 max-w-[40rem] max-h-[calc(100vh-4rem)]'}
+          ${show ? (screenSize === 'mobile' ? 'translate-x-0' : 'opacity-100') : screenSize === 'mobile' ? 'translate-x-full' : 'opacity-0'}
+          ${
+            screenSize === 'mobile'
+              ? 'fixed inset-y-0 right-0 left-0 w-full h-[calc(100vh-3.2rem)] mb-[3.2rem]'
+              : 'mx-auto my-8 max-w-[40rem] max-h-[calc(100vh-4rem)]'
+          }
           z-[110] bg-light-white dark:bg-dark-white
           flex flex-col
           transition-all duration-300 ease-in-out
@@ -155,20 +162,20 @@ const BoardDetail = (props: Props) => {
         `}
       >
         {screenSize === 'mobile' && (
-          <div className='flex items-center h-[3.2rem] px-[0.5rem] py-[0.25rem] sticky top-0 bg-light-white dark:bg-dark-white z-[120]'>
-            <button onClick={() => handleDetailClose()} className='flex items-center'>
-              <LeftIcon className='size-[1.1rem] fill-light-text dark:fill-dark-text' />
-              <p className='font-medium ml-2'>뒤로</p>
+          <div className="flex items-center h-[3.2rem] px-[0.5rem] py-[0.25rem] sticky top-0 bg-light-white dark:bg-dark-white z-[120]">
+            <button onClick={() => handleDetailClose()} className="flex items-center">
+              <LeftIcon className="size-[1.1rem] fill-light-text dark:fill-dark-text" />
+              <p className="font-medium ml-2">뒤로</p>
             </button>
           </div>
         )}
 
         {/* 스크롤 가능한 컨텐츠 영역 */}
-        <div className='flex-1 overflow-y-auto'>
-          <div className='w-full'>
-            <Board 
+        <div className="flex-1 overflow-y-auto">
+          <div className="w-full">
+            <Board
               board={props.selectedBoard}
-              deleteFunction={deleteFunction} 
+              deleteFunction={deleteFunction}
               isDetail={true}
               updateComment={props.updateComment}
               updateLike={props.updateLike}
@@ -176,29 +183,29 @@ const BoardDetail = (props: Props) => {
               modifyOpen={props.modifyOpen}
             />
           </div>
-          
-          <div className='w-full'>
+
+          <div className="w-full">
             {comments.length >= 1 ? (
               comments.map((comment) => (
-                <BoardComment 
+                <BoardComment
                   key={comment.commentId}
                   updateComment={props.updateComment}
                   comment={comment}
                 />
               ))
             ) : (
-              <div className='m-[2rem]'>아직 댓글이 없습니다.</div>
+              <div className="m-[2rem]">아직 댓글이 없습니다.</div>
             )}
           </div>
         </div>
 
         {/* 댓글 입력 영역 */}
-        <div className='sticky bottom-0 w-full bg-light-white dark:bg-dark-white'>
+        <div className="sticky bottom-0 w-full bg-light-white dark:bg-dark-white">
           <CommentInput onAddComment={handleAddComment} />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BoardDetail
+export default BoardDetail;

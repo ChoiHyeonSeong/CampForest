@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { commentDelete, commentDislike, commentLike, commentList } from '@services/commentService';
-import defaultProfileImage from '@assets/images/basic_profile.png'
-import { formatTime } from '@utils/formatTime';
 import { useSelector } from 'react-redux';
+
+import defaultProfileImage from '@assets/images/basic_profile.png';
+import { commentDelete, commentDislike, commentLike, commentList } from '@services/commentService';
+import { formatTime } from '@utils/formatTime';
 import { RootState } from '@store/store';
 
-import Swal from 'sweetalert2'
+import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg';
+
+import Swal from 'sweetalert2';
 
 export type CommentType = {
   commentId: number;
@@ -19,7 +21,7 @@ export type CommentType = {
   userImage: string;
   createdAt: string;
   liked: boolean;
-}
+};
 
 type Props = {
   updateComment: (boardId: number, commentCount: number) => void;
@@ -36,16 +38,16 @@ const BoardComment = (props: Props) => {
 
   const popLoginAlert = () => {
     Swal.fire({
-      icon: "error",
-      title: "로그인 해주세요.",
-      text: "로그인 후 사용가능합니다.",
-      confirmButtonText: '확인'
-    }).then(result => {
+      icon: 'error',
+      title: '로그인 해주세요.',
+      text: '로그인 후 사용가능합니다.',
+      confirmButtonText: '확인',
+    }).then((result) => {
       if (result.isConfirmed) {
-        navigate('/user/login')
+        navigate('/user/login');
       }
     });
-  }
+  };
 
   const like = async () => {
     if (userstate.isLoggedIn) {
@@ -57,9 +59,9 @@ const BoardComment = (props: Props) => {
         console.log(error);
       }
     } else {
-      popLoginAlert()
-    } 
-  }
+      popLoginAlert();
+    }
+  };
 
   const dislike = async () => {
     if (userstate.isLoggedIn) {
@@ -69,19 +71,19 @@ const BoardComment = (props: Props) => {
         setLikeCount(result);
       } catch (error) {
         console.log(error);
-      };
+      }
     } else {
-      popLoginAlert()
+      popLoginAlert();
     }
-  }
+  };
 
   useEffect(() => {
-    console.log(props.comment)
+    console.log(props.comment);
     setTimeDifference(formatTime(props.comment.createdAt));
-  }, [])
+  }, []);
 
   return (
-    <div 
+    <div
       className={`
         ${visible ? 'flex' : 'hidden'}
         justify-between items-center w-full min-h-[5rem] px-[1.25rem] py-[0.75rem]
@@ -102,10 +104,10 @@ const BoardComment = (props: Props) => {
           `}
         >
           {/* 사용자 프로필 이미지 받아와서 넣을 곳 ! */}
-          <img 
-            src={props.comment.userImage ? props.comment.userImage : defaultProfileImage } 
-            alt='NOIMG'
-            className='w-full'
+          <img
+            src={props.comment.userImage ? props.comment.userImage : defaultProfileImage}
+            alt="NOIMG"
+            className="w-full"
           />
         </Link>
 
@@ -121,7 +123,7 @@ const BoardComment = (props: Props) => {
             >
               {props.comment.nickname}
             </Link>
-            <div 
+            <div
               className={`
                 text-light-text-secondary
                 dark:text-dark-text-secondary
@@ -130,27 +132,28 @@ const BoardComment = (props: Props) => {
             >
               {timeDifference}
             </div>
-            {props.comment.commentWriterId === userstate.userId &&
-            <div 
-              data-testid="e2e-boardcomment-5"
-              className='
+            {props.comment.commentWriterId === userstate.userId && (
+              <div
+                data-testid="e2e-boardcomment-5"
+                className="
                 ms-[0.5rem]
                 text-light-warning
                 dark:text-dark-warning
                 text-sm cursor-pointer
-              '
-              onClick={async () => {
-                commentDelete(props.comment.commentId);
-                setVisible(false);
-                const result = await commentList(props.comment.boardId);
-                props.updateComment(props.comment.boardId, result.totalElements-1);
-              }}
-            >
+              "
+                onClick={async () => {
+                  commentDelete(props.comment.commentId);
+                  setVisible(false);
+                  const result = await commentList(props.comment.boardId);
+                  props.updateComment(props.comment.boardId, result.totalElements - 1);
+                }}
+              >
                 삭제
-            </div>}
+              </div>
+            )}
           </div>
           {/* user-comment */}
-          <div 
+          <div
             className={`
             text-light-text
               dark:text-dark-text
@@ -162,7 +165,7 @@ const BoardComment = (props: Props) => {
         </div>
       </div>
       {/* 좋아요 */}
-      <div 
+      <div
         className={`
           ms-[1rem] space-y-[0.5rem]
           text-center
@@ -177,24 +180,24 @@ const BoardComment = (props: Props) => {
               fill-light-heart stroke-light-heart
               dark:fill-dark-heart dark:stroke-dark-heart
               cursor-pointer
-            `} 
+            `}
           />
         ) : (
           <HeartIcon
             data-testid="e2e-boardcomment-4"
             onClick={like}
-            className='
+            className="
               size-[1.2rem]
               fill-none stroke-light-black
               dark:stroke-dark-black
               cursor-pointer
-            '
+            "
           />
         )}
         <div className={`text-sm`}>{likeCount}</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BoardComment
+export default BoardComment;

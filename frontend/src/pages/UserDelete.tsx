@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg'
+import { ReactComponent as LeftArrow } from '@assets/icons/arrow-left.svg';
 
-import axiosInstance, { userDelete, logout } from '@services/authService';
+import axiosInstance, { userDelete } from '@services/authService';
 
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 const UserDelete = () => {
-  const [isNicknameMatched, setIsNicknameMatched] = useState(true)
+  const [isNicknameMatched, setIsNicknameMatched] = useState(true);
   const [currentNickname, setCurrentNickname] = useState('');
   const [inputNickname, setInputNickname] = useState('');
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    if (isLoggedIn === null || isLoggedIn === "false") {
-      navigate("/");
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    if (isLoggedIn === null || isLoggedIn === 'false') {
+      navigate('/');
     } else {
-      const nickname = sessionStorage.getItem('nickname')
+      const nickname = sessionStorage.getItem('nickname');
       if (nickname !== null) {
-        setCurrentNickname(nickname)
+        setCurrentNickname(nickname);
       } else {
-        setCurrentNickname('닉네임 조회 불가')
+        setCurrentNickname('닉네임 조회 불가');
       }
     }
-  }, [])
+  }, []);
 
   const navigate = useNavigate();
 
@@ -34,22 +34,22 @@ const UserDelete = () => {
   const successAlert = (message: string) => {
     Swal.fire({
       text: message,
-      icon: "success"
+      icon: 'success',
     });
-  }
+  };
 
   const errorAlert = (message: string) => {
     Swal.fire({
       text: message,
-      icon: "error"
+      icon: 'error',
     });
-  }
-  
+  };
+
   const requestDelete = async () => {
     if (currentNickname === inputNickname) {
-      const result = await userDelete()
+      const result = await userDelete();
       if (result.data.status === 'C000') {
-         // 토큰 제거
+        // 토큰 제거
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('userId');
         sessionStorage.removeItem('nickname');
@@ -57,27 +57,27 @@ const UserDelete = () => {
         sessionStorage.removeItem('similarUsers');
         sessionStorage.removeItem('isLoggedIn');
         delete axiosInstance.defaults.headers['Authorization'];
-        successAlert('회원탈퇴가 완료되었습니다.')
-        navigate('/')
+        successAlert('회원탈퇴가 완료되었습니다.');
+        navigate('/');
       } else {
-        errorAlert('회원탈퇴를 실패했습니다. 다시 시도해주세요.')
+        errorAlert('회원탈퇴를 실패했습니다. 다시 시도해주세요.');
       }
     } else {
-      setIsNicknameMatched(false)
+      setIsNicknameMatched(false);
     }
-  }
+  };
 
   useEffect(() => {
-    setIsNicknameMatched(true)
-  }, [inputNickname])
+    setIsNicknameMatched(true);
+  }, [inputNickname]);
 
   return (
     <div
-    className='
+      className="
       flex justify-center md:items-center w-full h-[calc(100vh-6.4rem)] sm:h-[calc(100vh-3.2rem)] lg:h-screen
       bg-light-white bg-opacity-80 md:bg-transparent md:bg-opacity-0
       dark:bg-dark-white dark:bg-opacity-80 md:dark:bg-transparent md:dark:bg-opacity-0
-    '
+    "
     >
       <div
         className={`
@@ -85,9 +85,10 @@ const UserDelete = () => {
           md:bg-light-white md:bg-opacity-80
           md:dark:bg-dark-white md:dark:bg-opacity-80
           rounded
-        `}>
+        `}
+      >
         {/* 비밀번호 재설정 텍스트 */}
-        <div 
+        <div
           className={`
             max-md:flex items-center max-md:py-[1rem]
             border-light-black
@@ -101,14 +102,14 @@ const UserDelete = () => {
               md:hidden me-[1rem]
               fill-light-border-icon
               dark:fill-dark-border-icon
-            `} 
+            `}
           />
-          <div className='hidden md:block'>회원 탈퇴</div>
+          <div className="hidden md:block">회원 탈퇴</div>
         </div>
 
         {/* 비밀번호 설정부모 */}
         <div className={`w-full mt-[40%] md:mt-[4.5rem]`}>
-          <div 
+          <div
             className={`
               mb-[3rem] 
               selection:text-light-text
@@ -119,8 +120,8 @@ const UserDelete = () => {
             <div>회원 탈퇴를 원하시면 닉네임을 입력해주세요.</div>
           </div>
           <div className={`text-center`}>
-            <input 
-              type='email' 
+            <input
+              type="email"
               placeholder={currentNickname}
               className={`
                 w-[100%] max-w-[30rem] py-[0.75rem] px-[1rem]
@@ -133,7 +134,7 @@ const UserDelete = () => {
                 setInputNickname(event.target.value);
               }}
             />
-            <div 
+            <div
               className={`
                 ${isNicknameMatched ? 'hidden' : 'block'}
                 my-[0.25rem]
@@ -144,7 +145,7 @@ const UserDelete = () => {
             >
               닉네임이 다릅니다. 다시 입력해주세요.
             </div>
-            <div 
+            <div
               onClick={requestDelete}
               className={`
                 w-[100%] max-w-[30rem] mt-[1.5rem] mx-auto py-[0.75rem]
@@ -159,7 +160,7 @@ const UserDelete = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserDelete
+export default UserDelete;

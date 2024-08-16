@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from 'react'
-import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg'
-import { ReactComponent as BookmarkIcon } from '@assets/icons/bookmark.svg'
-import { ReactComponent as CommentIcon} from '@assets/icons/comment.svg'
+import React, { useState, useEffect } from 'react';
+import { RootState } from '@store/store';
+import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+
+import MoreOptionsMenu from '@components/Public/MoreOptionsMenu';
+import defaultProfileImage from '@assets/images/basic_profile.png';
+import {
+  boardDelete,
+  boardLike,
+  boardDislike,
+  boardSave,
+  deleteSave,
+} from '@services/boardService';
+
+import { ReactComponent as HeartIcon } from '@assets/icons/heart.svg';
+import { ReactComponent as BookmarkIcon } from '@assets/icons/bookmark.svg';
+import { ReactComponent as CommentIcon } from '@assets/icons/comment.svg';
 import { ReactComponent as LeftArrowIcon } from '@assets/icons/arrow-left.svg';
 import { ReactComponent as RightArrowIcon } from '@assets/icons/arrow-right.svg';
-import { RootState } from '@store/store'
-import { useSelector } from 'react-redux'
-import MoreOptionsMenu from '@components/Public/MoreOptionsMenu'
-import { Link, useNavigate } from 'react-router-dom'
-import defaultProfileImage from '@assets/images/basic_profile.png'
 
-import { boardDelete, boardLike, boardDislike, boardSave, deleteSave } from '@services/boardService';
-
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 // swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -34,23 +41,23 @@ export type BoardType = {
   liked: boolean;
   modifiedAt: string;
   nickname: string;
-  saved: boolean
+  saved: boolean;
   title: string;
   userId: number;
   userImage: string;
   recommended: boolean;
-}
+};
 
 type Props = {
   board: BoardType;
   deleteFunction: () => void;
   isDetail: boolean;
-  detailOpen? : (param: number) => void;
+  detailOpen?: (param: number) => void;
   updateComment: (boardId: number, commentCount: number) => void;
   updateLike: (boardId: number, isLiked: boolean, likedCount: number) => void;
   updateSaved: (boardId: number, isSaved: boolean) => void;
-  modifyOpen? : (param: number) => void;
-}
+  modifyOpen?: (param: number) => void;
+};
 
 const Board = (props: Props) => {
   const navigate = useNavigate();
@@ -63,55 +70,55 @@ const Board = (props: Props) => {
 
   const popLoginAlert = () => {
     Swal.fire({
-      icon: "error",
-      title: "로그인 해주세요.",
-      text: "로그인 후 사용가능합니다.",
-      confirmButtonText: '확인'
-    }).then(result => {
+      icon: 'error',
+      title: '로그인 해주세요.',
+      text: '로그인 후 사용가능합니다.',
+      confirmButtonText: '확인',
+    }).then((result) => {
       if (result.isConfirmed) {
-        navigate('/user/login')
+        navigate('/user/login');
       }
     });
-  }
+  };
 
   const deleteBoard = async () => {
     try {
-      const result = await boardDelete(props.board.boardId)
-      console.log(result)
-      props.deleteFunction()
+      const result = await boardDelete(props.board.boardId);
+      console.log(result);
+      props.deleteFunction();
     } catch (error) {
-      console.log(error)
-    };
+      console.log(error);
+    }
   };
 
   const handleDetailClick = () => {
     if (props.detailOpen) {
-      props.detailOpen(props.board.boardId)
+      props.detailOpen(props.board.boardId);
     }
-  }
+  };
 
   const toggleLike = async () => {
     try {
       if (user.isLoggedIn) {
         if (props.board.liked) {
           // dislike
-          const result = await boardDislike(props.board.boardId, user.userId)
-          props.updateLike(props.board.boardId, false, result)
+          const result = await boardDislike(props.board.boardId, user.userId);
+          props.updateLike(props.board.boardId, false, result);
           setLikeCount(result);
           setLiked(false);
         } else {
-          const result = await boardLike(props.board.boardId, user.userId)
-          props.updateLike(props.board.boardId, true, result)
+          const result = await boardLike(props.board.boardId, user.userId);
+          props.updateLike(props.board.boardId, true, result);
           setLikeCount(result);
           setLiked(true);
         }
       } else {
-        popLoginAlert()
+        popLoginAlert();
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     const modifiedAt = props.board.createdAt; // 예: "2024-07-30T11:19:40" 형식의 시간 문자열
@@ -132,33 +139,33 @@ const Board = (props: Props) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-  
+
   const handleBookmark = async () => {
     try {
       if (user.isLoggedIn) {
         if (props.board.saved) {
           await deleteSave(props.board.boardId);
-          props.updateSaved(props.board.boardId, false)
+          props.updateSaved(props.board.boardId, false);
         } else {
           await boardSave(props.board.boardId);
-          props.updateSaved(props.board.boardId, true)
+          props.updateSaved(props.board.boardId, true);
         }
       } else {
-        popLoginAlert()
+        popLoginAlert();
       }
     } catch (error) {
       console.error('북마크 취소 실패: ', error);
     }
-  }
-  
+  };
+
   const updateFunction = () => {
     if (props.modifyOpen) {
-      props.modifyOpen(props.board.boardId)
+      props.modifyOpen(props.board.boardId);
     }
-  }
+  };
 
   return (
-    <div 
+    <div
       className={`
         flex flex-col w-full sm:min-w-[22rem] lg:h-full lg:px-[1rem]
         bg-light-bgbasic border-light-border bg-opacity-80
@@ -167,7 +174,9 @@ const Board = (props: Props) => {
       `}
     >
       {props.board.recommended && (
-        <div className='mt-[1rem] ms-[0.5rem] text-sm text-light-text-secondary dark:text-dark-text-secondary'>추천 게시물</div>
+        <div className="mt-[1rem] ms-[0.5rem] text-sm text-light-text-secondary dark:text-dark-text-secondary">
+          추천 게시물
+        </div>
       )}
       <div>
         {/* 포스팅 상단바 */}
@@ -180,43 +189,41 @@ const Board = (props: Props) => {
                 rounded-full shadow-md overflow-hidden
               `}
             >
-              <img 
+              <img
                 src={props.board.userImage ? props.board.userImage : defaultProfileImage}
-                alt=''
-                className='w-full aspect-1'
+                alt=""
+                className="w-full aspect-1"
               />
             </Link>
             <div className={`ms-[1rem]`}>
-              <Link
-                to={`/user/${props.board.userId}`} 
-                className={`text-xl md:text-lg`}>{props.board.nickname}
+              <Link to={`/user/${props.board.userId}`} className={`text-xl md:text-lg`}>
+                {props.board.nickname}
               </Link>
               <div className={`md:text-sm`}>{props.board.category}</div>
             </div>
           </div>
           {user.isLoggedIn && user.userId === props.board.userId ? (
-            <MoreOptionsMenu 
-              isUserPost={user.userId === props.board.userId} 
+            <MoreOptionsMenu
+              isUserPost={user.userId === props.board.userId}
               updateFunction={updateFunction}
-              deleteFunction={deleteBoard} 
+              deleteFunction={deleteBoard}
               deleteId={props.board.boardId}
             />
           ) : (
             <></>
           )}
-          
         </div>
 
         {/* 사진 및 내용 */}
         <div className={`w-full mb-[0.5rem] px-[0.75rem]`}>
           {/* 사진 */}
-          <div 
+          <div
             className={`
               ${props.board.imageUrls.length > 0 ? 'bg-black' : 'hidden'}
               ${props.isDetail ? 'z-[0]' : ''}
               flex flex-all-center relative w-full max-w-full
               overflow-hidden aspect-1
-            `} 
+            `}
           >
             {props.board.imageUrls.length > 0 && (
               <Swiper
@@ -229,7 +236,7 @@ const Board = (props: Props) => {
                 pagination={{ clickable: true }}
               >
                 {props.board.imageUrls.map((imageUrl, index) => (
-                  <SwiperSlide key={index} >
+                  <SwiperSlide key={index}>
                     <img
                       src={imageUrl}
                       alt="ProductImg"
@@ -240,7 +247,7 @@ const Board = (props: Props) => {
                     />
                   </SwiperSlide>
                 ))}
-                <button 
+                <button
                   className={`
                     my-next-button 
                     absolute top-1/2 right-[0.5rem] z-[10] p-[0.5rem]
@@ -255,7 +262,7 @@ const Board = (props: Props) => {
                     "
                   />
                 </button>
-                <button 
+                <button
                   className={`
                     my-prev-button
                     absolute top-1/2 left-2 z-10 p-2
@@ -293,13 +300,13 @@ const Board = (props: Props) => {
                   `,
                   }}
                 />
-            </Swiper>
+              </Swiper>
             )}
           </div>
           {/* 내용 및 포스팅 시간 */}
           <div className={`px-[1rem] py-[1rem]`}>
             {/* 제목 */}
-            <div 
+            <div
               className={`
                 ${props.detailOpen ? 'cursor-pointer' : ''}
                 mb-[0.5rem]
@@ -310,18 +317,18 @@ const Board = (props: Props) => {
               {props.board.title}
             </div>
             {/* 내용 */}
-            <div 
+            <div
               className={`
                 ${props.detailOpen ? 'cursor-pointer' : ''}
                 ${props.isDetail ? '' : 'line-clamp-3'}
                 text-xl md:text-base
                 break-all whitespace-pre-wrap
-              `} 
+              `}
               onClick={handleDetailClick}
             >
               {props.board.content}
             </div>
-            <div 
+            <div
               className={`
                 my-[0.5rem]
               text-light-text-secondary
@@ -336,7 +343,7 @@ const Board = (props: Props) => {
       </div>
 
       {/* 좋아요, 댓글, 북마크 아이콘 */}
-      <div 
+      <div
         className={`
           flex items-center mb-[1rem] px-[1rem]
           text-center
@@ -344,17 +351,20 @@ const Board = (props: Props) => {
       >
         <div>
           <div className={`flex items-center me-[1rem]`}>
-              <HeartIcon 
-                data-testid="e2e-boardheart"
-                onClick={toggleLike}
-                className={`
-                  ${liked ? 'fill-light-heart stroke-light-heart dark:fill-dark-heart dark:stroke-dark-heart'
-                    : 'fill-transparent dark:fill-dark-white stroke-light-border-icon dark:stroke-dark-border-icon'}
+            <HeartIcon
+              data-testid="e2e-boardheart"
+              onClick={toggleLike}
+              className={`
+                  ${
+                    liked
+                      ? 'fill-light-heart stroke-light-heart dark:fill-dark-heart dark:stroke-dark-heart'
+                      : 'fill-transparent dark:fill-dark-white stroke-light-border-icon dark:stroke-dark-border-icon'
+                  }
                   size-[1.5rem]
                   cursor-pointer transition-colors duration-300
                 `}
-              />
-            <div 
+            />
+            <div
               className={`
                 mx-[0.5rem]
                 text-start md:text-sm
@@ -368,28 +378,28 @@ const Board = (props: Props) => {
         <div
           data-testid="e2e-boardcomment-1"
           onClick={handleDetailClick}
-          className='flex items-center'
+          className="flex items-center"
         >
-          <CommentIcon 
+          <CommentIcon
             className={`
               ${props.detailOpen ? 'cursor-pointer' : ''}
               size-[1.25rem]
             `}
           />
-          <div 
+          <div
             className={`
               ${props.detailOpen ? 'cursor-pointer' : ''}
               mx-[0.5rem]
               text-start md:text-sm
             `}
           >
-              {props.board.commentCount}
+            {props.board.commentCount}
           </div>
         </div>
 
-        <div className='flex items-center ms-auto'>
-          {props.board.saved ? 
-            (<BookmarkIcon
+        <div className="flex items-center ms-auto">
+          {props.board.saved ? (
+            <BookmarkIcon
               data-testid="e2e-boardsave"
               onClick={() => handleBookmark()}
               className={`
@@ -398,7 +408,9 @@ const Board = (props: Props) => {
                 dark:fill-dark-border-icon
                 cursor-pointer
               `}
-            />) : (<BookmarkIcon
+            />
+          ) : (
+            <BookmarkIcon
               data-testid="e2e-boardsave"
               onClick={() => handleBookmark()}
               className={`
@@ -407,12 +419,12 @@ const Board = (props: Props) => {
                 dark:stroke-dark-border-icon
                 cursor-pointer
               `}
-            />)
-          }
+            />
+          )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Board;
