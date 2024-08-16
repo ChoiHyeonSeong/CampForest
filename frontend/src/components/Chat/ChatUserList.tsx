@@ -65,7 +65,7 @@ const ChatUserList = (props: Props) => {
       overflow-auto
       '
     >
-      <div className='absolute z-[10] w-full h-full bg-light-white dark:bg-dark-white'>
+      <div className='absolute z-[10] w-full h-[calc(100%-6rem)] bg-light-white dark:bg-dark-white'>
       {/* 일반 채팅 */}
       <div className={`${chatState.selectedCategory === '일반' ? '' : 'hidden'}`}>
         {!userState.isLoggedIn ? (

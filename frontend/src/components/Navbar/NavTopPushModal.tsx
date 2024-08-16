@@ -80,15 +80,21 @@ const NavTopPushModal = (props: Props) => {
             <h2 className="text-lg font-semibold">알림</h2>
           </div>
         ) : (
-          <CloseIcon
-            onClick={props.onClose}
-            className='
-              absolute size-[1.5rem] right-4 top-4
-              fill-light-border-icon
-              dark:fill-dark-border-icon
-              cursor-pointer
-            '
-          />
+          <div className='flex items-center fixed h-[3rem] w-full bg-light-white dark:bg-dark-white border-b rounded-t-lg'>
+            <div className='ms-[1.5rem]'>
+              알람
+            </div>
+            
+            <CloseIcon
+              onClick={props.onClose}
+              className='
+                absolute size-[1.5rem] right-4 top-[0.7rem]
+                fill-light-border-icon
+                dark:fill-dark-border-icon
+                cursor-pointer
+              '
+            />
+          </div>
         )}
 
         <div className='max-md:mt-[3.2rem] p-4'>

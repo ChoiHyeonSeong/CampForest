@@ -300,7 +300,7 @@ const fetchMessages = async () => {
   return (
     <div
       className={`
-        flex flex-col fixed top-0 max-md:w-[100vw] md:w-[35rem] md:max-w-[40rem] h-full pt-[3.2rem] lg:pt-0
+        flex flex-col fixed top-[-3.2rem] md:top-0 max-md:w-[100vw] md:w-[35rem] md:max-w-[40rem] h-screen md:h-full pt-[3.2rem] lg:pt-0
         bg-light-white outline-light-border-1
         dark:bg-dark-white dark:outline-dark-border-1
         transition-all duration-300 ease-in-out outline outline-1
