@@ -213,6 +213,7 @@ const Board = (props: Props) => {
           <div 
             className={`
               ${props.board.imageUrls.length > 0 ? 'bg-black' : 'hidden'}
+              ${props.isDetail ? 'z-[0]' : ''}
               flex flex-all-center relative w-full max-w-full
               overflow-hidden aspect-1
             `} 

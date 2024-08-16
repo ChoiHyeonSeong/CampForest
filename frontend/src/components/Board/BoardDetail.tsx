@@ -135,7 +135,7 @@ const BoardDetail = (props: Props) => {
     <div 
       onClick={handleDetailClose}
       className={`
-        fixed inset-0 z-[60] 
+        fixed inset-0 z-[20] md:z-[60]
         ${show ? 'bg-black bg-opacity-60' : 'bg-transparent'}
         transition-all duration-300 ease-in-out
         ${screenSize === 'mobile' ? 'overflow-hidden' : 'overflow-auto'}
