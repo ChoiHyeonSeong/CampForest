@@ -1,7 +1,6 @@
-
-import React, { useEffect, useState }  from 'react'
-import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
+import React, { useEffect, useState } from 'react';
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
+import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg';
 import Notification from '@components/Notification/Notification';
 import { logout } from '@services/authService';
 import { useSelector } from 'react-redux';
@@ -11,19 +10,12 @@ import { useNavigate } from 'react-router-dom';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-
 };
 
 const NavTopPushModal = (props: Props) => {
   const navigate = useNavigate();
   const notificationState = useSelector((state: RootState) => state.notificationStore);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  
-  const loggedout = async () => {
-    await logout()
-    navigate('/')
-    window.location.reload();
-  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,10 +29,9 @@ const NavTopPushModal = (props: Props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [props.onClose]);
 
-
   const handleBackButton = (event: PopStateEvent) => {
     event.preventDefault();
-    props.onClose()
+    props.onClose();
   };
 
   useEffect(() => {
@@ -55,7 +46,7 @@ const NavTopPushModal = (props: Props) => {
   }, []);
 
   return (
-    <div 
+    <div
       className={`
         ${props.isOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full opacity-0 pointer-events-none'}
         fixed
@@ -65,7 +56,7 @@ const NavTopPushModal = (props: Props) => {
         rounded-lg shadow-lg transition-all duration-300 ease-out
       `}
     >
-      <div 
+      <div
         className={`
           ${isMobile ? 'h-[calc(100vh-3.2rem)] bg-light-white dark:bg-dark-white' : 'max-h-[40rem] bg-light-gray dark:bg-dark-gray'}
           rounded scrollbar-hide-mo
@@ -76,7 +67,10 @@ const NavTopPushModal = (props: Props) => {
       >
         {isMobile ? (
           <div className="flex items-center p-4 md:border-b fixed top-0 w-full bg-light-white dark:bg-dark-white">
-            <ArrowLeftIcon onClick={props.onClose} className="w-6 h-6 mr-2 cursor-pointer fill-light-text dark:fill-dark-text" />
+            <ArrowLeftIcon
+              onClick={props.onClose}
+              className="w-6 h-6 mr-2 cursor-pointer fill-light-text dark:fill-dark-text"
+            />
             <h2 className="text-lg font-semibold">알림</h2>
           </div>
         ) : (
@@ -97,8 +91,8 @@ const NavTopPushModal = (props: Props) => {
           </div>
         )}
 
-        <div className='max-md:mt-[3.2rem] p-4'>
-          {notificationState.newNotificationList.length !== 0 &&
+        <div className="max-md:mt-[3.2rem] p-4">
+          {notificationState.newNotificationList.length !== 0 && (
             <div className="mb-4">
               <h3 className="font-semibold mb-2">
                 새로운 알림
@@ -110,25 +104,20 @@ const NavTopPushModal = (props: Props) => {
                 {notificationState.newNotificationList.map((newNotification) => (
                   <Notification
                     key={newNotification.notificationId}
-                    notification={newNotification}  
+                    notification={newNotification}
                   />
                 ))}
               </div>
             </div>
-          }
+          )}
           <div>
             <h3 className="font-semibold mb-2">
               지난 알림
-              <span className="ml-2 font-normal">
-                {notificationState.notificationList.length}
-              </span>
+              <span className="ml-2 font-normal">{notificationState.notificationList.length}</span>
             </h3>
             <div>
               {notificationState.notificationList.map((notification) => (
-                <Notification 
-                  key={notification.notificationId}
-                  notification={notification}  
-                />
+                <Notification key={notification.notificationId} notification={notification} />
               ))}
             </div>
           </div>
@@ -136,15 +125,14 @@ const NavTopPushModal = (props: Props) => {
       </div>
     </div>
 
-
-    // <div 
+    // <div
     //   className={`
     //     fixed inset-0 z-[100] max-md:h-[calc(100vh-3.2rem)]
     //     ${isMobile ? 'flex justify-end' : ''}
     //   `}
     //   onClick={props.onClose}
     // >
-    //   <div 
+    //   <div
     //     className={`
     //       ${isMobile ? 'w-full h-full bg-light-white dark:bg-dark-white' : 'absolute right-0 top-[3rem] w-[23rem] max-h-[40rem]'}
     //       bg-light-gray dark:bg-dark-gray rounded scrollbar-hide
@@ -183,7 +171,7 @@ const NavTopPushModal = (props: Props) => {
     //             {notificationState.newNotificationList.map((newNotification) => (
     //               <Notification
     //                 key={newNotification.notificationId}
-    //                 notification={newNotification}  
+    //                 notification={newNotification}
     //               />
     //             ))}
     //           </div>
@@ -198,9 +186,9 @@ const NavTopPushModal = (props: Props) => {
     //         </h3>
     //         <div>
     //           {notificationState.notificationList.map((notification) => (
-    //             <Notification 
+    //             <Notification
     //               key={notification.notificationId}
-    //               notification={notification}  
+    //               notification={notification}
     //             />
     //           ))}
     //         </div>
@@ -208,7 +196,7 @@ const NavTopPushModal = (props: Props) => {
     //     </div>
     //   </div>
     // </div>
-  )
-}
+  );
+};
 
-export default NavTopPushModal
+export default NavTopPushModal;
