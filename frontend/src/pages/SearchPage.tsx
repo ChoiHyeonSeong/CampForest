@@ -59,6 +59,8 @@ const SearchPage = () => {
   // 엔터키 검색 처리
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault(); // 기본 동작을 막음
+      e.stopPropagation(); // 이벤트 전파를 막음
       executeSearch(getSearchPath());
     }
   }, [executeSearch, getSearchPath]);

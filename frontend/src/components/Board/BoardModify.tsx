@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg' 
 import { ReactComponent as ArrowBottomIcon } from '@assets/icons/arrow-bottom.svg'
-import { ReactComponent as ArrowLeftIcon } from '@assets/icons/arrow-left.svg'
+import { ReactComponent as LeftIcon } from '@assets/icons/arrow-left.svg';
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsLoading } from '@store/modalSlice'
 import { RootState } from '@store/store'
@@ -42,6 +42,8 @@ const BoardModify = (props: Props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [screenSize, setScreenSize] = useState<'mobile' | 'desktop'>('desktop');
 
   useEffect(() => {
     console.log(originalImages)
@@ -196,10 +198,20 @@ const BoardModify = (props: Props) => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth <= 768 ? 'mobile' : 'desktop');
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div 
       className={`
-        fixed z-[10] md:z-[100] w-full h-[calc(100vh-5.95rem)] md:h-full mt-[3.2rem] md:mt-0
+        fixed z-[100] md:z-[100] w-full h-[calc(100vh-5.95rem)] md:h-full mt-[3.2rem] md:mt-0
         bg-light-black bg-opacity-80
         inset-0
       `}
@@ -211,45 +223,51 @@ const BoardModify = (props: Props) => {
       >
         <div 
           className={`
-            flex flex-col justify-between md:w-[45rem] h-[calc(100vh-5.95rem)] md:h-[90%] mt-0 md:mt-[8%] md:mx-auto p-[1rem] md:p-[1.5rem]
+            flex flex-col justify-between md:w-[45rem] h-[calc(100vh-5.95rem)] md:h-[90%] mt-0 md:mt-[8%] md:mx-auto md:p-[1.5rem]
             bg-light-white
             dark:bg-dark-white
             overflow-auto md:rounded-md
           `}
         >
           <div className={`flex flex-col flex-grow`}>
-            <div className={`flex items-center mb-[1.5rem]`}>
-              {/* <div>
-                <ArrowLeftIcon 
-                  onClick={() => props.modifyClose()} 
-                  className={`
-                    md:hidden size-[1.5rem]
-                    fill-light-border-icon
-                    dark:fill-dark-border-icon
-                    cursor-pointer
-                  `}
-                />
-              </div> */}
-              <div 
-                className={`
-                  font-bold text-lg md:text-2xl
-                `}
-              >
-                  글수정하기
-              </div>
-              <div className={`ms-auto`}>
-                <CloseIcon 
-                  onClick={() => props.modifyClose()} 
-                  className={`
-                    hidden md:block md:size-[1.5rem]
-                    fill-light-border-icon
-                    dark:fill-dark-border-icon
-                    cursor-pointer
-                  `}
-                />
-              </div>
+            <div>
+              {screenSize === 'mobile' ? (
+                <div className='fixed top-0 flex items-center w-full h-[3.2rem] bg-light-white dark:bg-dark-white px-[0.5rem]'>
+                  <div>
+                    <LeftIcon onClick={() => props.modifyClose()} className='size-[1.1rem] fill-light-text dark:fill-dark-text cursor-pointer' />
+                  </div>
+                  <div 
+                    className={`
+                      font-medium ml-2
+                    `}
+                  >
+                      글수정하기
+                  </div>
+                </div>
+              ) : (
+                <div className='flex items-center mb-[1.5rem] w-full'>
+                  <div 
+                    className={`
+                      font-bold text-lg md:text-2xl
+                    `}
+                  >
+                      글수정하기
+                  </div>
+                  <div className={`ms-auto`}>
+                    <CloseIcon 
+                      onClick={() => props.modifyClose()} 
+                      className={`
+                        hidden md:block md:size-[1.5rem]
+                        fill-light-border-icon
+                        dark:fill-dark-border-icon
+                        cursor-pointer
+                      `}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-            <div className={`flex items-baseline justify-between mb-[1rem]`}>
+            <div className={`flex items-baseline justify-between mb-[1rem] p-[1rem]`}>
               <div className={`relative`}>
                 <div 
                   className={`
@@ -331,7 +349,7 @@ const BoardModify = (props: Props) => {
                 </div>
               </div>
             </div>
-            <div className={`flex flex-col flex-grow`}>
+            <div className={`flex flex-col flex-grow p-[1rem]`}>
               <input
                 className={`
                   py-[0.5rem] ps-[1rem]
@@ -356,7 +374,7 @@ const BoardModify = (props: Props) => {
               />
             </div>
           </div>
-          <div className={`flex flex-col`}>
+          <div className={`flex flex-col p-[1rem]`}>
             <MultiImageUpload onImagesChange={handleImagesChange} prevImages={originalImages} handleOriginalImages={handleOriginalImages}/>
             <div 
               className={`

@@ -143,7 +143,7 @@ const NavbarTop = (props: Props) => {
         dark:bg-dark-white
         lg:bg-inherit border-light-border-1
         dark:lg:bg-inherit dark:border-dark-border-1
-        border-b
+        max-lg:border-b
       `}  
     >
       <div>
@@ -166,7 +166,7 @@ const NavbarTop = (props: Props) => {
             <div className='flex items-center'>
               <ArrowLeftIcon
                 onClick={handleBackNavigation}
-                className='fill-light-black dark:fill-dark-black size-[1.4rem] me-[0.25rem]'
+                className='fill-light-black dark:fill-dark-black size-[1.4rem] me-[0.25rem] cursor-pointer'
               />
 
               <div className={`text-xl`}>
