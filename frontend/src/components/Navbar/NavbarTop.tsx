@@ -143,7 +143,7 @@ const NavbarTop = (props: Props) => {
         dark:bg-dark-white
         lg:bg-inherit border-light-border-1
         dark:lg:bg-inherit dark:border-dark-border-1
-        border-b
+        max-lg:border-b
       `}  
     >
       <div>

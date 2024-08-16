@@ -79,6 +79,8 @@ const NavbarLeftExtendSearch = (props: Props) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault(); // 기본 동작을 막음
+      e.stopPropagation(); // 이벤트 전파를 막음
       handleSearch();
     }
   };
